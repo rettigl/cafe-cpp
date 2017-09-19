@@ -1,0 +1,69 @@
+#
+# Jan Chrin
+# June 2016
+#
+# Makefile to build C++ cafe client 
+#
+# For cafeClient that needs loadSFGroups we need to
+# link in python libraries
+
+
+#CAFE version to link to
+CAFE_VERSION=pyzcafe-1.3.0-alpha-1
+
+
+PYTHON_INCLUDE=/opt/gfa/python-3.5/latest/include/python3.5m
+PYTHON_LIB=/opt/gfa/python-3.5/latest/lib
+
+EPICS_BASE=${EPICS}/base
+
+#CAFE project base
+CAFE_BASE=/opt/gfa/cafe
+CAFE_CPP_BASE=${CAFE_BASE}/python/python-3.5
+BOOST_BASE=${CAFE_BASE}/boost/boost_1_61_0/include
+
+ZEROMQ_BASE=/opt/gfa/zmq/zeromq-4.1.5
+
+#INCLUDE_PATH += -I/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/include 
+#-I$(CAFE_CPP_BASE)/$(CAFE_VERSION)/include \
+
+INCLUDE_PATH += -I$(CAFE_CPP_BASE)/$(CAFE_VERSION)/include \
+ -I$(EPICS_BASE)/include -I$(EPICS_BASE)/include/os/Linux \
+ -I$(BOOST_BASE) -I$(ZEROMQ_BASE)/include \
+ -I/opt/gfa/zmsglog/json/jsoncpp-src-0.6.0-rc2/include \
+ -I/opt/gfa/zmq/curl-7.54.1/include \
+ -I${PYTHON_INCLUDE}
+
+#-I$(BOOST_BASE)/boost
+
+
+# -L/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/src/.libs \
+#  -Wl,-rpath,/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/src/.libs \
+ 
+LIB_DIR += -L$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
+  -Wl,-rpath,$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
+  -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
+  -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
+  -L$(ZEROMQ_BASE)/lib \
+  -Wl,-rpath,$(ZEROMQ_BASE)/lib \
+  -L/opt/gfa/zmsglog/json/jsoncpp-src-0.6.0-rc2/libs/linux-gcc-4.4.7 \
+  -Wl,-rpath,/opt/gfa/zmsglog/json/jsoncpp-src-0.6.0-rc2/libs/linux-gcc-4.4.7 \
+  -L/opt/gfa/zmq/curl-7.54.1/lib/.libs \
+  -Wl,-rpath,/opt/gfa/zmq/curl-7.54.1/lib/.libs \
+  -L$(PYTHON_LIB) -Wl,-rpath,$(PYTHON_LIB) -L/usr/lib64
+# -L/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/src/.libs \
+# -Wl,-rpath,/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/src/.libs \
+
+
+LIBS += -lpython3.5m
+LIBS += -lcafe -lca -lCom -lzmq -ljson_linux-gcc-4.4.7_libmt -lcurl
+ 
+
+cafeTest: cafeTest.cc 
+	g++ cafeTest.cc -o cafeTest \
+ 	$(INCLUDE_PATH) $(LIB_DIR) $(LIBS)
+	
+
+clean:
+	rm -f cafeTest.o cafeTest
+

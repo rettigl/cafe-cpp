@@ -1,0 +1,26 @@
+{
+	"channels":
+	[
+		{
+			"name":"S10BC01-DBPM010:X1",
+			"backend":"sf-databuffer",
+			"modulo":1,
+			"offset":0
+		},
+		{
+			"name":"S10BC01-DBPM010:X1-VALID",
+			"backend":"sf-databuffer",
+			"modulo":1,
+			"offset":0
+		}
+	],
+	"mapping":{
+		"incomplete":"fill-null"
+	},
+	"channelValidation":{
+		"inconsistency":"keep-as-is"
+	},
+	"sendBehaviour":{
+		"strategy":"complete-all"
+	}
+}	

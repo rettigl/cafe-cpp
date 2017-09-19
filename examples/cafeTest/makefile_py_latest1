@@ -1,0 +1,55 @@
+#
+# Jan Chrin
+# June 2016
+#
+# Makefile to build C++ cafe client 
+#
+# For cafeClient that needs loadSFGroups we need to
+# link in python libraries
+
+
+#CAFE version to link to
+CAFE_VERSION=pycafe-1.0.0-beta-1
+CAFE_VERSION_OTHER=pycafe-noqt-1.0.0-beta-1
+
+PYTHON_INCLUDE=/opt/gfa/python-3.5/latest/include/python3.5m
+PYTHON_LIB=/opt/gfa/python-3.5/latest/lib
+
+EPICS_BASE=${EPICS}/base
+
+#CAFE project base
+CAFE_BASE=/opt/gfa/cafe
+#python/python-3.5
+CAFE_CPP_BASE=${CAFE_BASE}/python/python-3.5
+BOOST_BASE=${CAFE_BASE}/boost/boost_1_57_0
+
+
+#INCLUDE_PATH += -I/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp 
+INCLUDE_PATH += -I$(CAFE_CPP_BASE)/$(CAFE_VERSION)/include \
+ -I$(EPICS_BASE)/include -I$(EPICS_BASE)/include/os/Linux \
+ -I$(BOOST_BASE) \
+ -I${PYTHON_INCLUDE}
+ 
+#-I$(BOOST_BASE)/boost
+ 
+LIB_DIR += -L$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
+ -Wl,-rpath,$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
+ -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
+ -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
+ -L$(PYTHON_LIB) -Wl,-rpath,$(PYTHON_LIB) 
+# -L/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/src/.libs \
+# -Wl,-rpath,/afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/src/.libs \
+
+
+#LIBS += -lpython2.6 
+LIBS += -lcafe -lca -lCom -lpython3.5m
+ 
+
+cafeTest: cafeTest.cc 
+	g++ cafeTest.cc -o cafeTest \
+ 	$(INCLUDE_PATH) $(LIB_DIR) $(LIBS)
+	
+
+clean:
+	rm -f cafeTest.o cafeTest
+

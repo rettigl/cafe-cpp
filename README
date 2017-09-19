@@ -1,0 +1,25 @@
+## --------------------------------------------------------------------------
+## autogen.sh
+##
+## --prefix: This is the prefix to the include sub-directory to which the 
+##           cafe include files are installed     
+## 
+## --libdir: This is the directory to which the cafe shared objects are 
+##           installed 
+
+## --with-boost: base directory for the boost header files
+## --with-epics: epics top level directory 
+##               Note that configure.ac assume that the architecture is
+##               base/lib/${EPICS_HOST_ARCH}
+## --with-qt-inc Qt include directory (optional)
+## --with-qt-lib Qt lib directory (optional)
+## --with-python-inc Python include directory, if building PyCafe  
+## --with-python-lib Python lib directory, if bulding PyCafe
+## --------------------------------------------------------------------------
+
+1) Modify autogen.sh according to above
+2) 'source autogen.sh'
+3) 'make install'  This installs cafe headers/libraries to the directories 
+   specified by --prefix/--libdir in the above
+                
+ 

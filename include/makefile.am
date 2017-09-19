@@ -1,0 +1,27 @@
+## Makefile.am - used by automake to produce makefile.in
+##
+## input file for production of cafe library 
+##
+
+include_HEADERS = cafe.h cafeCache.h cafeConvert.h cafeDataType.h cafeDataTypeHelper.h cafeEnum.h \
+				  cafeEnumStrings.h cafeRoast.h  cafeVectors.h cafeXML.h caopCodes.h channelRegalia.h \
+				  conduit.h conduitConnectionHandlerArgs.h conduitEventHandlerArgs.h conduitFriends.h \
+                  connect.h defines.h deviceCollection.h exceptions.h exceptionsHelper.h global.h \
+                  enumStrings.h granules.h handleHelper.h hashConduit.h helper.h instant.h instant.cpp \
+                  loadCollectionXMLParser.h loadGroupXMLParser.h methodCallbacks.h policies.h policyHelper.h \
+                  PVCtrlHolder.h PVDataHolder.h PVGroup.h PVHolder.h statusCodes.h transpose.h \
+				  conduitGroup.h hashConduitGroup.h restorePVGroupXMLParser.h
+
+
+
+if HAVE_PYTHON_
+include_HEADERS += PyCafe_api.h
+endif
+
+if HAVE_PYCAFE_EXT
+include_HEADERS += PyCafe.h 
+endif
+
+#if HAVE_ZEROMQ
+#include_HEADERS += cafeService.h zhelpers.h
+#endif

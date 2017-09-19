@@ -1,0 +1,8 @@
+cd include
+rm -f PyCafe_api.h
+ln -s PyCafe3_api.h  PyCafe_api.h
+cd ../src
+rm -f PyCafe.cpp
+ln -s PyCafe3.cpp PyCafe.cpp
+cd ../
+

@@ -1,0 +1,24 @@
+## makefile.am - processed by automake to produce makefile.in
+##
+## input file for production of cafe library
+##
+
+
+lib_LTLIBRARIES = libcafe.la
+libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp cafeVectors.cpp cafeXML.cpp \
+					 callbackHandlerCreate.cpp callbackHandlerMonitor.cpp conduit.cpp connect.cpp connectCallbacks.cpp \
+					 exceptionsHelper.cpp granules.cpp handleHelper.cpp loadCollectionXMLParser.cpp \
+					 loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp policyHelper.cpp \
+					 conduitGroup.cpp connectGroup.cpp transpose.cpp restorePVGroupXMLParser.cpp
+
+
+if HAVE_PYCAFE_EXT
+libcafe_la_SOURCES += PyCafe.cpp
+endif
+
+#if HAVE_ZEROMQ
+#libcafe_la_SOURCES += cafeService.cpp 
+#endif
+
+AM_CPPFLAGS = @AM_CPPFLAGS@ @CAFE_CPPFLAGS@
+AM_LDFLAGS= @AM_LDFLAGS@

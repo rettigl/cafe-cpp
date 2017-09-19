@@ -1,0 +1,23 @@
+INCLUDES = -Ic:\CAFE\CAFE\cpp\include -Ic:\CAFE\CAFE\cpp -Ic:\local\boost_1_62_0 \
+-Ic:\local\boost_1_62_0\boost  -Ic:\epics\base-3.14.12.5\include -Ic:\epics\base-3.14.12.5\include\os\WIN32 \
+-Ic:\Qt\4.8.4\include
+CXX=cl
+CXXFLAGS = /W4 /EHsc
+OUTPUT_OPTION = /o $@
+LIB_LOCAL = C:\epics\base-3.14.12.5\lib\windows-x64\Com.lib C:\epics\base-3.14.12.5\lib\windows-x64\ca.lib \
+C:\CAFE\CAFE\cpp\cafe.lib \
+C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_thread-vc100-mt-s-1_62.lib \
+C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_system-vc100-mt-s-1_62.lib \
+C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_date_time-vc100-mt-s-1_62.lib \
+C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_chrono-vc100-mt-s-1_62.lib \
+C:\Qt\4.8.4\lib\QtCore4.lib C:\Qt\4.8.4\lib\QtXml4.lib
+
+cafeTest: cafeTest.obj
+	$(CXX) cafeTest.obj $(LIB_LOCAL) 
+	
+cafeTest.obj: cafeTest.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) /c cafeTest.cpp
+	
+#"C:\Program Files (x86)\GnuWin32\bin\make" 
+
+

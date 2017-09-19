@@ -1,0 +1,22 @@
+#
+# Jan Chrin
+# June 2016
+#
+
+##### CHANGE AS APPROPRIATE #################
+#Cafe CPP Version to install
+CAFE_VERSION=cafe-1.0.0-alpha-1
+
+#CAFE project base
+CAFE_BASE=/opt/gfa/cafe/cpp
+
+CAFE_ACTUAL=${CAFE_BASE}/${CAFE_VERSION}
+
+EXAMPLES_INSTALL_PATH= $(CAFE_ACTUAL)/examples/cafeTest
+#############################################
+
+install: 
+	mkdir -p       $(EXAMPLES_INSTALL_PATH)
+	cp makefile    $(EXAMPLES_INSTALL_PATH)
+	cp cafeTest.cc $(EXAMPLES_INSTALL_PATH)
+

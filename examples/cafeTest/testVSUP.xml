@@ -1,0 +1,1557 @@
+<cafe:config xmlns:cafe="http://www.psi.ch/swissfel">
+    <cafe:collection id="cDBPM">
+        <cafe:description>Collection of Nodes at SwissFEL</cafe:description>
+        <cafe:attributes>
+            <cafe:attribute>X</cafe:attribute>
+            <cafe:attribute>Y</cafe:attribute>
+            <cafe:attribute>X0</cafe:attribute>
+            <cafe:attribute>Y0</cafe:attribute>
+            <cafe:attribute>REF-X</cafe:attribute>
+            <cafe:attribute>REF-Y</cafe:attribute>
+            <cafe:attribute>REFOFF-X</cafe:attribute>
+            <cafe:attribute>REFOFF-Y</cafe:attribute>
+            <cafe:attribute>REFORB-X</cafe:attribute>
+            <cafe:attribute>REFORB-Y</cafe:attribute>
+            <cafe:attribute>SET-GAIN</cafe:attribute>
+            <cafe:attribute>I</cafe:attribute>
+            <cafe:attribute>FB-STAT</cafe:attribute>
+            <cafe:attribute>FB-ENABLE</cafe:attribute>
+            <cafe:attribute>STAT</cafe:attribute>
+            <cafe:attribute>ENABLE</cafe:attribute>
+        </cafe:attributes>
+        <cafe:member pos="   3.0149">
+            <cafe:device>VA-SINEG01-DBPM340</cafe:device>
+        </cafe:member>
+        <cafe:member pos="   7.9459">
+            <cafe:device>VA-SINSB01-DBPM150</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  12.9489">
+            <cafe:device>VA-SINSB02-DBPM150</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  14.5560">
+            <cafe:device>VA-SINLH01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  16.4806">
+            <cafe:device>VA-SINLH02-DBPM210</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  17.4826">
+            <cafe:device>VA-SINLH02-DBPM240</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  19.2172">
+            <cafe:device>VA-SINLH03-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  20.4632">
+            <cafe:device>VA-SINLH03-DBPM050</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  21.6002">
+            <cafe:device>VA-SINLH03-DBPM090</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  26.9202">
+            <cafe:device>VA-SINSB03-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  32.4202">
+            <cafe:device>VA-SINSB03-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  37.9202">
+            <cafe:device>VA-SINSB04-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  43.4202">
+            <cafe:device>VA-SINSB04-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  48.9202">
+            <cafe:device>VA-SINSB05-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  54.4202">
+            <cafe:device>VA-SINSB05-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  56.2420">
+            <cafe:device>VA-SINXB01-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  60.2912">
+            <cafe:device>VA-SINBC01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  61.0912">
+            <cafe:device>VA-SINBC01-DBPM030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  64.4172">
+            <cafe:device>VA-SINBC01-DBPM080</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  65.9432">
+            <cafe:device>VA-SINBC01-DBPM100</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  69.3739">
+            <cafe:device>VA-SINBC02-DBPM140</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  77.5610">
+            <cafe:device>VA-SINBC02-DBPM320</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  82.0967">
+            <cafe:device>VA-SINDI01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  83.5117">
+            <cafe:device>VA-SINDI01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  86.0767">
+            <cafe:device>VA-SINDI02-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  88.3857">
+            <cafe:device>VA-SINDI02-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  90.6297">
+            <cafe:device>VA-SINDI02-DBPM080</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  95.3947">
+            <cafe:device>VA-S10CB01-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 100.2947">
+            <cafe:device>VA-S10CB01-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 105.1947">
+            <cafe:device>VA-S10CB02-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 110.0947">
+            <cafe:device>VA-S10CB02-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 114.9947">
+            <cafe:device>VA-S10DI01-DBPM110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 119.8947">
+            <cafe:device>VA-S10CB03-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 124.7947">
+            <cafe:device>VA-S10CB03-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 129.6947">
+            <cafe:device>VA-S10CB04-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 134.5947">
+            <cafe:device>VA-S10CB04-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 139.4947">
+            <cafe:device>VA-S10CB05-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 144.3947">
+            <cafe:device>VA-S10CB05-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 149.2947">
+            <cafe:device>VA-S10CB06-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 154.1947">
+            <cafe:device>VA-S10CB06-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 159.0947">
+            <cafe:device>VA-S10CB07-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 163.9947">
+            <cafe:device>VA-S10CB07-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 168.8947">
+            <cafe:device>VA-S10CB08-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 173.7947">
+            <cafe:device>VA-S10CB08-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 178.6947">
+            <cafe:device>VA-S10CB09-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 183.5947">
+            <cafe:device>VA-S10BC01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 187.8307">
+            <cafe:device>VA-S10BC01-DBPM050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 192.2847">
+            <cafe:device>VA-S10BC01-DBPM090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 196.7798">
+            <cafe:device>VA-S10BC02-DBPM140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 206.5399">
+            <cafe:device>VA-S10BC02-DBPM320</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 211.2940">
+            <cafe:device>VA-S10MA01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 215.6600">
+            <cafe:device>VA-S10MA01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 220.1200">
+            <cafe:device>VA-S10MA01-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 229.0850">
+            <cafe:device>VA-S20CB01-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 238.1850">
+            <cafe:device>VA-S20CB02-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 247.2850">
+            <cafe:device>VA-S20CB03-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 256.3850">
+            <cafe:device>VA-S20SY01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 262.5020">
+            <cafe:device>VA-S20SY01-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 263.6280">
+            <cafe:device>VA-S20SY01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 269.1300">
+            <cafe:device>VA-S20SY02-DBPM080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 271.0800">
+            <cafe:device>VA-S20SY02-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 272.7600">
+            <cafe:device>VA-S20SY02-DBPM150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 280.6200">
+            <cafe:device>VA-S20SY03-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 286.9200">
+            <cafe:device>VA-S20SY03-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 294.3800">
+            <cafe:device>VA-S20SY03-DBPM080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 303.8150">
+            <cafe:device>VA-S30CB01-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 312.9150">
+            <cafe:device>VA-S30CB02-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 322.0150">
+            <cafe:device>VA-S30CB03-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 331.1150">
+            <cafe:device>VA-S30CB04-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 340.2150">
+            <cafe:device>VA-S30CB05-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 349.3150">
+            <cafe:device>VA-S30CB06-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 358.4150">
+            <cafe:device>VA-S30CB07-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 367.5150">
+            <cafe:device>VA-S30CB08-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 376.6150">
+            <cafe:device>VA-S30CB09-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 385.7150">
+            <cafe:device>VA-S30CB10-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 394.8150">
+            <cafe:device>VA-S30CB11-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 403.9150">
+            <cafe:device>VA-S30CB12-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 413.0150">
+            <cafe:device>VA-S30CB13-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 422.1150">
+            <cafe:device>VA-S30CB14-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 431.2150">
+            <cafe:device>VA-S30CB15-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 440.3150">
+            <cafe:device>VA-SARCL01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 444.6750">
+            <cafe:device>VA-SARCL01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 450.7750">
+            <cafe:device>VA-SARCL01-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 452.1510">
+            <cafe:device>VA-SARCL01-DBPM150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 456.9100">
+            <cafe:device>VA-SARCL02-DBPM110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 460.9609">
+            <cafe:device>VA-SARCL02-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 462.7569">
+            <cafe:device>VA-SARCL02-DBPM260</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 466.6909">
+            <cafe:device>VA-SARCL02-DBPM330</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 471.1067">
+            <cafe:device>VA-SARCL02-DBPM470</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 476.4267">
+            <cafe:device>VA-SARMA01-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 483.2767">
+            <cafe:device>VA-SARMA01-DBPM100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 487.9617">
+            <cafe:device>VA-SARMA02-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 490.0107">
+            <cafe:device>VA-SARMA02-DBPM020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 492.0597">
+            <cafe:device>VA-SARMA02-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 496.8097">
+            <cafe:device>VA-SARMA02-DBPM110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 501.5597">
+            <cafe:device>VA-SARUN01-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 506.3097">
+            <cafe:device>VA-SARUN02-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 511.0597">
+            <cafe:device>VA-SARUN03-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 515.8097">
+            <cafe:device>VA-SARUN04-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 520.5597">
+            <cafe:device>VA-SARUN05-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 525.3097">
+            <cafe:device>VA-SARUN06-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 530.0597">
+            <cafe:device>VA-SARUN07-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 534.8097">
+            <cafe:device>VA-SARUN08-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 539.5597">
+            <cafe:device>VA-SARUN09-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 544.3097">
+            <cafe:device>VA-SARUN10-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 549.0597">
+            <cafe:device>VA-SARUN11-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 553.8097">
+            <cafe:device>VA-SARUN12-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 558.5597">
+            <cafe:device>VA-SARUN13-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 563.3097">
+            <cafe:device>VA-SARUN14-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 568.0597">
+            <cafe:device>VA-SARUN15-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 572.8097">
+            <cafe:device>VA-SARUN16-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 577.5597">
+            <cafe:device>VA-SARUN17-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 582.3097">
+            <cafe:device>VA-SARUN18-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 587.0597">
+            <cafe:device>VA-SARUN19-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 591.8097">
+            <cafe:device>VA-SARUN20-DBPM070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 279.1202">
+            <cafe:device>VA-SATSY01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 284.6202">
+            <cafe:device>VA-SATSY01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 288.9352">
+            <cafe:device>VA-SATSY01-DBPM100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 296.1202">
+            <cafe:device>VA-SATSY01-DBPM240</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 302.8202">
+            <cafe:device>VA-SATSY01-DBPM290</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 306.8663">
+            <cafe:device>VA-SATSY02-DBPM020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 312.6833">
+            <cafe:device>VA-SATSY02-DBPM210</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 317.2003">
+            <cafe:device>VA-SATSY03-DBPM030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 320.0003">
+            <cafe:device>VA-SATSY03-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 322.8003">
+            <cafe:device>VA-SATSY03-DBPM090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 325.6003">
+            <cafe:device>VA-SATSY03-DBPM120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 331.9185">
+            <cafe:device>VA-SATCL01-DBPM140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 340.8637">
+            <cafe:device>VA-SATDI01-DBPM030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 342.7637">
+            <cafe:device>VA-SATDI01-DBPM060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 349.2197">
+            <cafe:device>VA-SATDI01-DBPM210</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 352.1997">
+            <cafe:device>VA-SATDI01-DBPM240</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 355.1797">
+            <cafe:device>VA-SATDI01-DBPM270</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 357.0907">
+            <cafe:device>VA-SATDI01-DBPM310</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 361.5357">
+            <cafe:device>VA-SATCB01-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 366.4357">
+            <cafe:device>VA-SATCB01-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 371.3357">
+            <cafe:device>VA-SATCB02-DBPM220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 376.2357">
+            <cafe:device>VA-SATCB02-DBPM420</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 377.2657">
+            <cafe:device>VA-SATMA01-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 379.3147">
+            <cafe:device>VA-SATMA01-DBPM020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 381.3637">
+            <cafe:device>VA-SATMA01-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 114.6628">
+            <cafe:device>VA-S10BD01-DBPM020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 593.9132">
+            <cafe:device>VA-SARBD01-DBPM040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 596.9584">
+            <cafe:device>VA-SARBD02-DBPM010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 598.3943">
+            <cafe:device>VA-SARBD02-DBPM040</cafe:device>
+        </cafe:member>
+    </cafe:collection>
+    <cafe:collection id="cVSUP">
+        <cafe:description>Collection of Nodes at SwissFEL</cafe:description>
+        <cafe:attributes/>
+        <cafe:member pos="  -1.2100">
+            <cafe:device>VA-SINEG01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="   -.5254">
+            <cafe:device>VA-SINEG01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="   7.8299">
+            <cafe:device>VA-SINSB01-VSUP-B010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  12.8274">
+            <cafe:device>VA-SINSB02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  13.5550">
+            <cafe:device>VA-SINLH01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  13.7250">
+            <cafe:device>VA-SINLH01-VSUP-020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  21.8617">
+            <cafe:device>VA-SINSB03-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  26.1987">
+            <cafe:device>VA-SINSB03-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  27.3617">
+            <cafe:device>VA-SINSB03-VSUP-C030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  31.6987">
+            <cafe:device>VA-SINSB03-VSUP-C040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  32.8617">
+            <cafe:device>VA-SINSB04-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  37.1987">
+            <cafe:device>VA-SINSB04-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  38.3617">
+            <cafe:device>VA-SINSB04-VSUP-C030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  42.6987">
+            <cafe:device>VA-SINSB04-VSUP-C040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  43.8317">
+            <cafe:device>VA-SINSB05-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  44.9752">
+            <cafe:device>VA-SINSB05-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  46.0332">
+            <cafe:device>VA-SINSB05-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  46.2762">
+            <cafe:device>VA-SINSB05-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  46.5192">
+            <cafe:device>VA-SINSB05-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  47.5852">
+            <cafe:device>VA-SINSB05-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  49.3317">
+            <cafe:device>VA-SINSB05-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  50.4752">
+            <cafe:device>VA-SINSB05-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  51.5332">
+            <cafe:device>VA-SINSB05-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  51.7762">
+            <cafe:device>VA-SINSB05-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  52.0192">
+            <cafe:device>VA-SINSB05-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  53.0852">
+            <cafe:device>VA-SINSB05-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  54.8317">
+            <cafe:device>VA-SINSB05-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  58.2758">
+            <cafe:device>VA-SINXB01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  59.5518">
+            <cafe:device>VA-SINXB01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  60.2177">
+            <cafe:device>VA-SINBC01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  60.7912">
+            <cafe:device>VA-SINBC01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  62.1412">
+            <cafe:device>VA-SINBC01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  62.6102">
+            <cafe:device>VA-SINBC01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  63.5372">
+            <cafe:device>VA-SINBC01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  64.2372">
+            <cafe:device>VA-SINBC01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  64.9772">
+            <cafe:device>VA-SINBC01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  66.4849">
+            <cafe:device>VA-SINBC02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  67.1784">
+            <cafe:device>VA-SINBC02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  69.8924">
+            <cafe:device>VA-SINBC02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  77.2975">
+            <cafe:device>VA-SINBC02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  79.5290">
+            <cafe:device>VA-SINBC02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  80.0125">
+            <cafe:device>VA-SINBC02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  82.0032">
+            <cafe:device>VA-SINDI01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  82.9117">
+            <cafe:device>VA-SINDI01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  83.3117">
+            <cafe:device>VA-SINDI01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  85.9152">
+            <cafe:device>VA-SINDI02-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  87.2027">
+            <cafe:device>VA-SINDI02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  87.6857">
+            <cafe:device>VA-SINDI02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  88.7972">
+            <cafe:device>VA-SINDI02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos="  89.4302">
+            <cafe:device>VA-SINDI02-VSUP-C050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 112.4154">
+            <cafe:device>VA-S10DI01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 113.2997">
+            <cafe:device>VA-S10DI01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 113.7747">
+            <cafe:device>VA-S10DI01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 115.4812">
+            <cafe:device>VA-S10DI01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 184.3112">
+            <cafe:device>VA-S10BC01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 185.1047">
+            <cafe:device>VA-S10BC01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 185.7047">
+            <cafe:device>VA-S10BC01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 186.9047">
+            <cafe:device>VA-S10BC01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 188.3487">
+            <cafe:device>VA-S10BC01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 188.8687">
+            <cafe:device>VA-S10BC01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 189.3437">
+            <cafe:device>VA-S10BC01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 190.3987">
+            <cafe:device>VA-S10BC01-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 191.1247">
+            <cafe:device>VA-S10BC01-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 192.0847">
+            <cafe:device>VA-S10BC01-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 193.0263">
+            <cafe:device>VA-S10BC02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 193.9333">
+            <cafe:device>VA-S10BC02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 197.1448">
+            <cafe:device>VA-S10BC02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 206.2739">
+            <cafe:device>VA-S10BC02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 207.7429">
+            <cafe:device>VA-S10BC02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 209.0429">
+            <cafe:device>VA-S10BC02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 209.4864">
+            <cafe:device>VA-S10BC02-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 211.1805">
+            <cafe:device>VA-S10MA01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 212.1200">
+            <cafe:device>VA-S10MA01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 213.4250">
+            <cafe:device>VA-S10MA01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 214.0400">
+            <cafe:device>VA-S10MA01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 215.4600">
+            <cafe:device>VA-S10MA01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 217.4515">
+            <cafe:device>VA-S10MA01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 256.8785">
+            <cafe:device>VA-S20SY01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 257.1200">
+            <cafe:device>VA-S20SY01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 258.0340">
+            <cafe:device>VA-S20SY01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 258.9480">
+            <cafe:device>VA-S20SY01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 259.5480">
+            <cafe:device>VA-S20SY01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 260.0480">
+            <cafe:device>VA-S20SY01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 261.3880">
+            <cafe:device>VA-S20SY01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 262.3020">
+            <cafe:device>VA-S20SY01-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 263.4280">
+            <cafe:device>VA-S20SY01-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 264.0550">
+            <cafe:device>VA-S20SY02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 264.3350">
+            <cafe:device>VA-S20SY02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 265.0215">
+            <cafe:device>VA-S20SY02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 266.0085">
+            <cafe:device>VA-S20SY02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 266.2315">
+            <cafe:device>VA-S20SY02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 267.2185">
+            <cafe:device>VA-S20SY02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 267.9600">
+            <cafe:device>VA-S20SY02-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 268.9100">
+            <cafe:device>VA-S20SY02-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 269.9050">
+            <cafe:device>VA-S20SY02-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 271.8550">
+            <cafe:device>VA-S20SY02-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 272.5985">
+            <cafe:device>VA-S20SY02-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 274.0200">
+            <cafe:device>VA-S20SY02-VSUP-B120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 275.4815">
+            <cafe:device>VA-S20SY02-VSUP-B130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 276.7970">
+            <cafe:device>VA-S20SY02-VSUP-B140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 277.2365">
+            <cafe:device>VA-S20SY03-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 277.9350">
+            <cafe:device>VA-S20SY03-VSUP-020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 280.3405">
+            <cafe:device>VA-S20SY03-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 281.1150">
+            <cafe:device>VA-S20SY03-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 283.3480">
+            <cafe:device>VA-S20SY03-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 283.9480">
+            <cafe:device>VA-S20SY03-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 284.4250">
+            <cafe:device>VA-S20SY03-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 287.4150">
+            <cafe:device>VA-S20SY03-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 290.6760">
+            <cafe:device>VA-S20SY03-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 291.3760">
+            <cafe:device>VA-S20SY03-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 292.1020">
+            <cafe:device>VA-S20SY03-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 294.1800">
+            <cafe:device>VA-S20SY03-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 295.0670">
+            <cafe:device>VA-S20SY03-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 313.3630">
+            <cafe:device>VA-S30CB02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 322.4630">
+            <cafe:device>VA-S30CB03-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 331.5630">
+            <cafe:device>VA-S30CB04-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 349.7630">
+            <cafe:device>VA-S30CB06-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 358.8630">
+            <cafe:device>VA-S30CB07-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 395.2630">
+            <cafe:device>VA-S30CB11-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 413.7315">
+            <cafe:device>VA-S30CB14-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 414.2250">
+            <cafe:device>VA-S30CB14-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 415.8710">
+            <cafe:device>VA-S30CB14-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 416.6035">
+            <cafe:device>VA-S30CB14-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 417.0970">
+            <cafe:device>VA-S30CB14-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 418.7430">
+            <cafe:device>VA-S30CB14-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 419.8690">
+            <cafe:device>VA-S30CB14-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 421.5150">
+            <cafe:device>VA-S30CB14-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 422.0215">
+            <cafe:device>VA-S30CB14-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 422.8315">
+            <cafe:device>VA-S30CB15-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 423.3250">
+            <cafe:device>VA-S30CB15-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 424.9710">
+            <cafe:device>VA-S30CB15-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 425.7035">
+            <cafe:device>VA-S30CB15-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 426.1970">
+            <cafe:device>VA-S30CB15-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 427.8430">
+            <cafe:device>VA-S30CB15-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 428.9690">
+            <cafe:device>VA-S30CB15-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 430.6150">
+            <cafe:device>VA-S30CB15-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 431.1215">
+            <cafe:device>VA-S30CB15-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 431.6630">
+            <cafe:device>VA-S30CB15-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 431.9315">
+            <cafe:device>VA-S30CB16-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 432.4250">
+            <cafe:device>VA-S30CB16-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 434.0710">
+            <cafe:device>VA-S30CB16-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 434.8035">
+            <cafe:device>VA-S30CB16-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 435.2970">
+            <cafe:device>VA-S30CB16-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 436.9430">
+            <cafe:device>VA-S30CB16-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 438.0690">
+            <cafe:device>VA-S30CB16-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 439.7150">
+            <cafe:device>VA-S30CB16-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 440.2215">
+            <cafe:device>VA-S30CB16-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 441.5765">
+            <cafe:device>VA-SARCL01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 441.7315">
+            <cafe:device>VA-SARCL01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 442.0315">
+            <cafe:device>VA-SARCL01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 443.0510">
+            <cafe:device>VA-SARCL01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 444.3750">
+            <cafe:device>VA-SARCL01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 445.0815">
+            <cafe:device>VA-SARCL01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 445.6815">
+            <cafe:device>VA-SARCL01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 446.1010">
+            <cafe:device>VA-SARCL01-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 447.4250">
+            <cafe:device>VA-SARCL01-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 447.8315">
+            <cafe:device>VA-SARCL01-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 448.1315">
+            <cafe:device>VA-SARCL01-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 448.8185">
+            <cafe:device>VA-SARCL01-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 449.6500">
+            <cafe:device>VA-SARCL01-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 450.3150">
+            <cafe:device>VA-SARCL01-VSUP-A140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 451.1815">
+            <cafe:device>VA-SARCL01-VSUP-A150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 453.0315">
+            <cafe:device>VA-SARCL01-VSUP-A160</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 454.0750">
+            <cafe:device>VA-SARCL02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 454.7900">
+            <cafe:device>VA-SARCL02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 456.1140">
+            <cafe:device>VA-SARCL02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 457.3165">
+            <cafe:device>VA-SARCL02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 458.1035">
+            <cafe:device>VA-SARCL02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 458.2165">
+            <cafe:device>VA-SARCL02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 458.8035">
+            <cafe:device>VA-SARCL02-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 459.3174">
+            <cafe:device>VA-SARCL02-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 459.8259">
+            <cafe:device>VA-SARCL02-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 460.3674">
+            <cafe:device>VA-SARCL02-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 462.1634">
+            <cafe:device>VA-SARCL02-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 463.7709">
+            <cafe:device>VA-SARCL02-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 465.0709">
+            <cafe:device>VA-SARCL02-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 465.2774">
+            <cafe:device>VA-SARCL02-VSUP-A140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 465.9644">
+            <cafe:device>VA-SARCL02-VSUP-A150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 467.1329">
+            <cafe:device>VA-SARCL02-VSUP-A160</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 467.7149">
+            <cafe:device>VA-SARCL02-VSUP-A170</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 468.3259">
+            <cafe:device>VA-SARCL02-VSUP-A180</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 469.1389">
+            <cafe:device>VA-SARCL02-VSUP-A190</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 469.3132">
+            <cafe:device>VA-SARCL02-VSUP-A200</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 469.9002">
+            <cafe:device>VA-SARCL02-VSUP-A210</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 470.2132">
+            <cafe:device>VA-SARCL02-VSUP-A220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 471.0002">
+            <cafe:device>VA-SARCL02-VSUP-A230</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 472.1027">
+            <cafe:device>VA-SARCL02-VSUP-A240</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 473.1807">
+            <cafe:device>VA-SARCL02-VSUP-A250</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 474.0767">
+            <cafe:device>VA-SARCL02-VSUP-B260</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 475.1267">
+            <cafe:device>VA-SARMA01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 475.6267">
+            <cafe:device>VA-SARMA01-VSUP-020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 476.2267">
+            <cafe:device>VA-SARMA01-VSUP-030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 476.8332">
+            <cafe:device>VA-SARMA01-VSUP-040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 477.8527">
+            <cafe:device>VA-SARMA01-VSUP-050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 479.1157">
+            <cafe:device>VA-SARMA01-VSUP-060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 479.5767">
+            <cafe:device>VA-SARMA01-VSUP-070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 479.9767">
+            <cafe:device>VA-SARMA01-VSUP-080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 480.3832">
+            <cafe:device>VA-SARMA01-VSUP-090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 482.0527">
+            <cafe:device>VA-SARMA01-VSUP-100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 482.8017">
+            <cafe:device>VA-SARMA01-VSUP-110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 484.4012">
+            <cafe:device>VA-SARMA01-VSUP-120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 484.8027">
+            <cafe:device>VA-SARMA01-VSUP-130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 486.0527">
+            <cafe:device>VA-SARMA01-VSUP-140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 487.3202">
+            <cafe:device>VA-SARMA01-VSUP-150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 487.8302">
+            <cafe:device>VA-SARMA02-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 488.1917">
+            <cafe:device>VA-SARMA02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 488.6517">
+            <cafe:device>VA-SARMA02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 489.4207">
+            <cafe:device>VA-SARMA02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 489.8807">
+            <cafe:device>VA-SARMA02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 490.2407">
+            <cafe:device>VA-SARMA02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 490.6407">
+            <cafe:device>VA-SARMA02-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 491.2597">
+            <cafe:device>VA-SARMA02-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 491.6597">
+            <cafe:device>VA-SARMA02-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 497.1267">
+            <cafe:device>VA-SARUN01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 497.3517">
+            <cafe:device>VA-SARUN01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 498.3407">
+            <cafe:device>VA-SARUN01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 501.8767">
+            <cafe:device>VA-SARUN02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 502.1017">
+            <cafe:device>VA-SARUN02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 503.0907">
+            <cafe:device>VA-SARUN02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 568.3767">
+            <cafe:device>VA-SARUN16-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 571.8542">
+            <cafe:device>VA-SARUN16-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 573.1267">
+            <cafe:device>VA-SARUN17-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 576.6042">
+            <cafe:device>VA-SARUN17-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 577.8767">
+            <cafe:device>VA-SARUN18-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 581.3542">
+            <cafe:device>VA-SARUN18-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 582.6267">
+            <cafe:device>VA-SARUN19-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 586.1042">
+            <cafe:device>VA-SARUN19-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 587.3776">
+            <cafe:device>VA-SARUN20-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 590.8542">
+            <cafe:device>VA-SARUN20-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 278.4402">
+            <cafe:device>VA-SATSY01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 278.8407">
+            <cafe:device>VA-SATSY01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 280.0002">
+            <cafe:device>VA-SATSY01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 281.6442">
+            <cafe:device>VA-SATSY01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 281.8742">
+            <cafe:device>VA-SATSY01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 282.5742">
+            <cafe:device>VA-SATSY01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 282.7492">
+            <cafe:device>VA-SATSY01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 284.8002">
+            <cafe:device>VA-SATSY01-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 285.8262">
+            <cafe:device>VA-SATSY01-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 286.1002">
+            <cafe:device>VA-SATSY01-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 287.8552">
+            <cafe:device>VA-SATSY01-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 288.7552">
+            <cafe:device>VA-SATSY01-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 289.5702">
+            <cafe:device>VA-SATSY01-VSUP-A140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 289.5702">
+            <cafe:device>VA-SATSY01-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 292.7522">
+            <cafe:device>VA-SATSY01-VSUP-A150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 293.6332">
+            <cafe:device>VA-SATSY01-VSUP-A160</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 293.8197">
+            <cafe:device>VA-SATSY01-VSUP-A170</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 294.5132">
+            <cafe:device>VA-SATSY01-VSUP-A180</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 295.2272">
+            <cafe:device>VA-SATSY01-VSUP-A190</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 295.9702">
+            <cafe:device>VA-SATSY01-VSUP-A200</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 296.4002">
+            <cafe:device>VA-SATSY01-VSUP-A210</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 297.4002">
+            <cafe:device>VA-SATSY01-VSUP-A220</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 297.6802">
+            <cafe:device>VA-SATSY01-VSUP-A230</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 298.4752">
+            <cafe:device>VA-SATSY01-VSUP-A240</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 299.9952">
+            <cafe:device>VA-SATSY01-VSUP-A250</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 301.3177">
+            <cafe:device>VA-SATSY01-VSUP-A260</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 302.6402">
+            <cafe:device>VA-SATSY01-VSUP-A270</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 303.0002">
+            <cafe:device>VA-SATSY01-VSUP-A280</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 303.4202">
+            <cafe:device>VA-SATSY01-VSUP-A290</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 303.9202">
+            <cafe:device>VA-SATSY01-VSUP-A300</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 304.6703">
+            <cafe:device>VA-SATSY01-VSUP-A310</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 305.2468">
+            <cafe:device>VA-SATSY02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 306.2163">
+            <cafe:device>VA-SATSY02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 307.3728">
+            <cafe:device>VA-SATSY02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 307.4728">
+            <cafe:device>VA-SATSY02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 308.5358">
+            <cafe:device>VA-SATSY02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 308.9358">
+            <cafe:device>VA-SATSY02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 309.8358">
+            <cafe:device>VA-SATSY02-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 310.1618">
+            <cafe:device>VA-SATSY02-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 310.8618">
+            <cafe:device>VA-SATSY02-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 311.2618">
+            <cafe:device>VA-SATSY02-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 312.2898">
+            <cafe:device>VA-SATSY02-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 313.4403">
+            <cafe:device>VA-SATSY02-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 314.0403">
+            <cafe:device>VA-SATSY02-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 314.1818">
+            <cafe:device>VA-SATSY03-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 314.9948">
+            <cafe:device>VA-SATSY03-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 315.1003">
+            <cafe:device>VA-SATSY03-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 316.0503">
+            <cafe:device>VA-SATSY03-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 317.0003">
+            <cafe:device>VA-SATSY03-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 317.7938">
+            <cafe:device>VA-SATSY03-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 317.9003">
+            <cafe:device>VA-SATSY03-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 318.8503">
+            <cafe:device>VA-SATSY03-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 319.8003">
+            <cafe:device>VA-SATSY03-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 320.7003">
+            <cafe:device>VA-SATSY03-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 321.6503">
+            <cafe:device>VA-SATSY03-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 322.6003">
+            <cafe:device>VA-SATSY03-VSUP-A120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 323.5003">
+            <cafe:device>VA-SATSY03-VSUP-A130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 324.4503">
+            <cafe:device>VA-SATSY03-VSUP-A140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 325.4003">
+            <cafe:device>VA-SATSY03-VSUP-A150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 326.9505">
+            <cafe:device>VA-SATCL01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 328.4805">
+            <cafe:device>VA-SATCL01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 330.9135">
+            <cafe:device>VA-SATCL01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 332.5755">
+            <cafe:device>VA-SATCL01-VSUP-B040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 332.9755">
+            <cafe:device>VA-SATCL01-VSUP-B050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 334.1170">
+            <cafe:device>VA-SATCL01-VSUP-C060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 334.5290">
+            <cafe:device>VA-SATCL01-VSUP-C070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 334.6305">
+            <cafe:device>VA-SATCL01-VSUP-C080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 336.9905">
+            <cafe:device>VA-SATCL01-VSUP-C090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 338.5006">
+            <cafe:device>VA-SATCL01-VSUP-C100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 339.4122">
+            <cafe:device>VA-SATDI01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 340.6437">
+            <cafe:device>VA-SATDI01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 341.5637">
+            <cafe:device>VA-SATDI01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 342.1637">
+            <cafe:device>VA-SATDI01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 343.8827">
+            <cafe:device>VA-SATDI01-VSUP-B050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 344.8327">
+            <cafe:device>VA-SATDI01-VSUP-B060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 345.7827">
+            <cafe:device>VA-SATDI01-VSUP-B070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 347.1387">
+            <cafe:device>VA-SATDI01-VSUP-B080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 348.0887">
+            <cafe:device>VA-SATDI01-VSUP-B090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 349.0497">
+            <cafe:device>VA-SATDI01-VSUP-B100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 350.0697">
+            <cafe:device>VA-SATDI01-VSUP-B110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 350.5697">
+            <cafe:device>VA-SATDI01-VSUP-B120</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 351.3697">
+            <cafe:device>VA-SATDI01-VSUP-B130</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 351.9697">
+            <cafe:device>VA-SATDI01-VSUP-B140</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 352.9497">
+            <cafe:device>VA-SATDI01-VSUP-B150</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 353.5497">
+            <cafe:device>VA-SATDI01-VSUP-B160</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 354.3497">
+            <cafe:device>VA-SATDI01-VSUP-B170</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 354.9497">
+            <cafe:device>VA-SATDI01-VSUP-B180</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 357.3322">
+            <cafe:device>VA-SATCB01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 358.3167">
+            <cafe:device>VA-SATCB01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 359.2077">
+            <cafe:device>VA-SATCB01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 360.4847">
+            <cafe:device>VA-SATCB01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 361.3757">
+            <cafe:device>VA-SATCB01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 361.9837">
+            <cafe:device>VA-SATCB01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 362.2707">
+            <cafe:device>VA-SATCB01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 363.1857">
+            <cafe:device>VA-SATCB01-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 365.3417">
+            <cafe:device>VA-SATCB01-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 366.2557">
+            <cafe:device>VA-SATCB01-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 366.8837">
+            <cafe:device>VA-SATCB01-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 367.1322">
+            <cafe:device>VA-SATCB02-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 368.1167">
+            <cafe:device>VA-SATCB02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 369.0077">
+            <cafe:device>VA-SATCB02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 370.2847">
+            <cafe:device>VA-SATCB02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 371.1757">
+            <cafe:device>VA-SATCB02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 371.7837">
+            <cafe:device>VA-SATCB02-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 372.0707">
+            <cafe:device>VA-SATCB02-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 372.9857">
+            <cafe:device>VA-SATCB02-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 375.1417">
+            <cafe:device>VA-SATCB02-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 376.0557">
+            <cafe:device>VA-SATCB02-VSUP-A100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 376.6837">
+            <cafe:device>VA-SATCB02-VSUP-A110</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 377.1342">
+            <cafe:device>VA-SATMA01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 377.4957">
+            <cafe:device>VA-SATMA01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 377.9557">
+            <cafe:device>VA-SATMA01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 378.7247">
+            <cafe:device>VA-SATMA01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 379.1847">
+            <cafe:device>VA-SATMA01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 379.5447">
+            <cafe:device>VA-SATMA01-VSUP-A060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 379.9447">
+            <cafe:device>VA-SATMA01-VSUP-A070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 380.5637">
+            <cafe:device>VA-SATMA01-VSUP-A080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 380.9637">
+            <cafe:device>VA-SATMA01-VSUP-A090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 114.3268">
+            <cafe:device>VA-S10BD01-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 116.7048">
+            <cafe:device>VA-S10BD01-VSUP-020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 118.4598">
+            <cafe:device>VA-S10BD01-VSUP-030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 592.1267">
+            <cafe:device>VA-SARBD01-VSUP-A010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 592.2617">
+            <cafe:device>VA-SARBD01-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 593.0497">
+            <cafe:device>VA-SARBD01-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 593.6647">
+            <cafe:device>VA-SARBD01-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 595.5392">
+            <cafe:device>VA-SARBD01-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 599.6127">
+            <cafe:device>VA-SARBD01-VSUP-B060</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 600.0837">
+            <cafe:device>VA-SARBD01-VSUP-B070</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 601.2372">
+            <cafe:device>VA-SARBD01-VSUP-B080</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 602.9372">
+            <cafe:device>VA-SARBD01-VSUP-B090</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 606.4372">
+            <cafe:device>VA-SARBD01-VSUP-B100</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 597.3269">
+            <cafe:device>VA-SARBD02-VSUP-010</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 598.9211">
+            <cafe:device>VA-SARBD02-VSUP-A020</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 605.8385">
+            <cafe:device>VA-SARBD02-VSUP-A030</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 609.8385">
+            <cafe:device>VA-SARBD02-VSUP-A040</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 614.6814">
+            <cafe:device>VA-SARBD02-VSUP-A050</cafe:device>
+        </cafe:member>
+        <cafe:member pos=" 616.1239">
+            <cafe:device>VA-SARBD02-VSUP-A060</cafe:device>
+        </cafe:member>
+    </cafe:collection>
+</cafe:config>
