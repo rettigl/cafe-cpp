@@ -182,17 +182,18 @@ public:
 						return ss.str();		
 		}
 
+		#if HAVE_ZEROMQ
 	  //cafeService.h
-		#if HAVE_ZEROMQ	
 		int  calcDBPMStatus(int, int, string);
 
-		
+
+		int  getDBPM(DBPMHolder &dbpm);
 		int  getDBPM(DBPMKeeper &dbpm);
 		int  readDBPMOffsets(DBPMKeeper &dbpm);
 		
 		int  prepareDBPM(vector<string> &_glist, vector<unsigned int> &_hV, std::vector<std::string> &dev,  std::vector<float> &pos) ;
 		int  prepareDBPM(vector<string> &_glist, vector<unsigned int> &_hV, std::map<float, std::string> &posDev) ;
-		#endif
+	  #endif 
 
 		
 

@@ -668,10 +668,10 @@ public:
     mapStatusCode.insert(std::make_pair((int)  ECAFE_LOAD_COLLECTION,      "CAFE ERROR: ECAFE_LOAD_COLLECTION"));
     mapStatusCode.insert(std::make_pair((int)  ECAFE_LOAD_GROUP,           "CAFE ERROR: ECAFE_LOAD_GROUP"));
 		
-	mapStatusCode.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, "CAFE_ERROR: ECAFE_BPM_DATA_IS_INVALID" ));
+	  mapStatusCode.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, "CAFE_ERROR: ECAFE_BPM_DATA_IS_INVALID" ));
 
 		mapStatusCode.insert(std::make_pair((int)  LINUX_EINTR,    "CAFE_ERROR: LINUX_EINTR" ));
-		mapStatusCode.insert(std::make_pair((int)  LINUX_EAGAIN,   "CAFE_ERROR: LINUX_EAGAIN " ));
+		mapStatusCode.insert(std::make_pair((int)  LINUX_EAGAIN,   "CAFE_WARN: LINUX_EAGAIN " ));
 		mapStatusCode.insert(std::make_pair((int)  LINUX_EFAULT,   "CAFE_ERROR: LINUX_EFAULT" ));
 		mapStatusCode.insert(std::make_pair((int)  LINUX_ENOTSOCK, "CAFE_ERROR: LINUX_ENOTSOCK" ));
 		mapStatusCode.insert(std::make_pair((int)  LINUX_EPROTONOSUPPORT,   "CAFE_ERROR: LINUX_EPROTONOSUPPORT" ));
@@ -875,6 +875,13 @@ public:
     mapStatusSeverity.insert(std::make_pair((int)  ECAFE_LOAD_GROUP,           "ERROR"));
 	
 		mapStatusSeverity.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, 						"WARN" ));
+	
+		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EINTR,    "ERROR" ));
+		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EAGAIN,   "WARN" ));
+		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EFAULT,   "ERROR"));
+		mapStatusSeverity.insert(std::make_pair((int)  LINUX_ENOTSOCK,  "ERROR"));
+		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EPROTONOSUPPORT, "ERROR"  ));
+	
 	
 		
 };
