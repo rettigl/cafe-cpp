@@ -764,15 +764,15 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
 
     if (it_handle != handle_index.end()) {
 
-        union db_access_val * PVDataL;
-        unsigned int   nelem;
-        //unsigned int   offset;
-        chtype dbrTypeRequest_DataBuffer;
+        //union db_access_val * PVDataL;
+        //unsigned int   nelem;
+       
+        //chtype dbrTypeRequest_DataBuffer;
 
-        PVDataL  = (*it_handle).getPutBuffer  ();
-        nelem    = (*it_handle).getChannelRequestMetaPrimitive().getNelem();
+        //PVDataL  = (*it_handle).getPutBuffer  ();
+        //nelem    = (*it_handle).getChannelRequestMetaPrimitive().getNelem();
 
-        dbrTypeRequest_DataBuffer = (*it_handle).getChannelRequestMetaPrimitive().getDbrDataType();
+        //dbrTypeRequest_DataBuffer = (*it_handle).getChannelRequestMetaPrimitive().getDbrDataType();
 
         switch(_dbrType) {
         case DBR_STRING:
@@ -805,15 +805,7 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
             return ECAFE_INVALID_SWITCH_CASE;
             break;
         }
-		/*
-		epicsTimeStamp ts;
-		ts.secPastEpoch= 0; // default value if cache does not have timeStamp
-		ts.nsec        = 0; // default value if cache does not have timeStamp
-		dbr_short_t alarmStatus    =-1; // default value if cache does not have alarmStatus
-		dbr_short_t alarmSeverity  =-1; // default value if cache does not have alarmSeverity
-		//helper function to set TimeStamps!
-		helper.setSTS(_handle, alarmStatus, alarmSeverity, ts);
-		*/
+		
     }
 
     else {

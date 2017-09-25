@@ -2298,6 +2298,127 @@ int  Connect::monitorStart(vector<unsigned int> handleV, vector<int> &statusV,
  }
 
 
+
+
+
+ /**
+  *  \brief print status information of given pv
+  *  \param pv input: pv for which handle is to be matched \n
+  *  \param  status input: reporting status \n
+  *  \return ECA_NORMAL if all OK else ECAFE_INVALID_HANDLE
+  */
+ int  Connect::printStatus(const char *pv, int  status) {
+ 			
+		 unsigned int handle=handleHelper.getHandleFromPV(pv);
+		 
+		 if (handle==0) {	
+		 	return ECAFE_INVALID_HANDLE;	
+ 		 }			 
+		 return Connect::printStatus(handle, status);
+ 
+ }
+
+
+ /**
+  *  \brief print status information of given pv only on error
+  *  \param pv input: pv for which handle is to be matched\n
+  *  \param  status input: reporting status \n
+  *  \return ECA_NORMAL if all OK else ECAFE_INVALID_HANDLE
+  */
+ int  Connect::printStatusIfError(const char * pv, int  status) {
+ 
+     if (status==ICAFE_NORMAL) {return ICAFE_NORMAL;};
+		 	
+		 unsigned int handle=handleHelper.getHandleFromPV(pv);
+		 
+		 if (handle==0) {	
+		 	return ECAFE_INVALID_HANDLE;	
+ 		 }			 
+		 return Connect::printStatus(handle, status);
+     
+ }
+
+
+ /**
+  *  \brief print status information of given PVs
+  *  \param pvV input: vector of pvs for which handles to conduit objects are to be matched\n
+  *  \param statusV input: vector of statuses \n
+  *  \return ECA_NORMAL if all OK else ECAFE_INVALID_HANDLE (if one or more handles are invalid)
+  */
+ int  Connect::printStatus(vector<string> pvV, vector<int> statusV) {
+ 
+     int  overallStatus=ICAFE_NORMAL; bool isGood=true;
+     int  localStatus=ICAFE_NORMAL;
+	   for (unsigned int  i=0; i < min(pvV.size(),statusV.size()); ++i) {
+			localStatus=Connect::printStatus(pvV[i].c_str(), statusV[i]);
+            if(isGood && localStatus!=ICAFE_NORMAL) {overallStatus=localStatus; isGood=false;}
+     }
+     return overallStatus;
+ }
+
+ /**
+  *  \brief print status information of given PVs only on error
+  *  \param pvV input: vector of PVs for which handles to Conduit objects are to be matched\n
+  *  \param statusV input: vector of statuses \n
+  *  \return ECA_NORMAL if all OK else ECAFE_INVALID_HANDLE (if one or more handles are invalid)
+  */
+ int  Connect::printStatusIfError(vector<string> pvV, vector<int>  statusV) {
+     int  overallStatus=ICAFE_NORMAL; bool isGood=true;
+     int  localStatus=ICAFE_NORMAL;
+	   for (unsigned int  i=0; i <min(pvV.size(),statusV.size()); ++i) {
+		  if (statusV[i]!=ICAFE_NORMAL) {
+			  localStatus=Connect::printStatus(pvV[i].c_str(), statusV[i]);
+            if(isGood && localStatus!=ICAFE_NORMAL) {overallStatus=localStatus; isGood=false;}
+        };
+     }
+     return overallStatus;
+ }
+
+
+ /**
+  *  \brief print status information of given PVs
+  *  \param pvArray input: array of PVs for which handles to conduit objects are to be matched\n
+  *  \param nelem input: size of array of PVs
+  *  \param statusArray input: array of statuses \n
+  *  \return ECA_NORMAL if all OK else ECAFE_INVALID_HANDLE (if one or more handles are invalid)
+  */
+ int  Connect::printStatus(const char * pvArray, unsigned int  nelem, int  *statusArray) {
+	 int  overallStatus=ICAFE_NORMAL; bool isGood=true;
+	 int  localStatus=ICAFE_NORMAL;
+	 for (unsigned int  i=0; i <nelem; ++i) {
+			localStatus=Connect::printStatus(pvArray[i], statusArray[i]);
+			if(isGood && localStatus!=ICAFE_NORMAL) {overallStatus=localStatus; isGood=false;}
+	 }
+	 return overallStatus;
+ }
+
+ /**
+  *  \brief print status information of given PVs only on error
+  *  \param handleArray input: array of Handles to Conduit objects \n
+  *  \param nelem input: size of array of handles
+  *  \param statusArray input: array of statuses \n
+  *  \return ECA_NORMAL if all OK else ECAFE_INVALID_HANDLE (if one or more handles are invalid)
+  */
+ int  Connect::printStatusIfError(const char  * pvArray, unsigned int  nelem, int  *statusArray) {
+	 int  overallStatus=ICAFE_NORMAL; bool isGood=true;
+	 int  localStatus=ICAFE_NORMAL;
+	 for (unsigned int  i=0; i <nelem; ++i) {
+		if (statusArray[i]!=ICAFE_NORMAL) {
+			localStatus=Connect::printStatus(pvArray[i], statusArray[i]);
+			if(isGood && localStatus!=ICAFE_NORMAL) {overallStatus=localStatus; isGood=false;}
+		};
+	 }
+	 return overallStatus;
+ }
+
+
+
+
+
+
+
+
+
  /**
   *  \brief Closes all channels within the given context and their respective handles \n
   *  Shuts down the given channel access client context and frees allocated resources \n

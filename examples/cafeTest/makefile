@@ -7,7 +7,7 @@
 
 
 #CAFE version to link to
-CAFE_VERSION=cafe-1.3.0-final-1
+CAFE_VERSION=cafe-1.3.0-final-2
 
 #PYTHON_INCLUDE=/opt/gfa/python-3.5/latest/include/python3.5m
 #PYTHON_LIB=/opt/gfa/python-3.5/latest/lib

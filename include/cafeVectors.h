@@ -94,12 +94,21 @@ int getCache(const unsigned int  _handle, vector<long long> & V,
 int getCache(const unsigned int  _handle, vector<double> & V,
         dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts);//6
 
-
+//NON_BLOCKING
 int get(vector<unsigned int> handleV, vector<int> &statusV);
 
 int getV(vector<unsigned int> handleV, vector<int> &statusV){
-	status=get(handleV, statusV); ca_flush_io(); //Yes let's flush here!
+	  status=get(handleV, statusV); ca_flush_io(); //Yes let's flush here!
     return status;}
+
+int get(vector<string> pvV, vector<int> &statusV) {
+		vector<unsigned int> hV;
+		hV.reserve(pvV.size());
+		hV=handleHelper.getHandlesFromPVs(pvV);
+		return get(hV, statusV);
+		
+}
+
 
 int getScalars(vector<unsigned int> handleV, vector<string> & V, vector<int> &statusV){ //0
 	CAFE::get(handleV, statusV);

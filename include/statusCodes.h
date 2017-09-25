@@ -107,7 +107,8 @@ enum CAFE_ERROR_STATE { ECAFE_NODATA=ICAFE_STATUS_ERROR,
                         ECAFE_INVALID_ENUM_INDEX,
                         ECAFE_PVGROUP_GROUPHANDLE_MISMATCH,
                         ECAFE_TIMEOUT_SET_AND_MATCH,
-												ECAFE_HANDLE_MISMATCH_SET_AND_MATCH
+												ECAFE_HANDLE_MISMATCH_SET_AND_MATCH,
+												ECAFE_INCONSISTENT_CONTAINER_CORRECTED
                     };
 
 enum CAFE_FILE_ERROR  { ECAFE_LOAD_COLLECTION=ICAFE_FILE_ERROR,
@@ -415,6 +416,7 @@ public:
 * 1033 ECAFE_PVGROUP_GROUPHANDLE_MISMATCH \n
 * 1034 ECAFE_TIMEOUT_SET_AND_MATCH \n
 * 1035 ECAFE_HANDLE_MISMATCH_SET_AND_MATCH \n
+* 1036 ECAFE_INCONSISTENT_CONTAINER_CORRECTED \n
 * 1100 ECAFE_LOAD_COLLECTION \n
 * 1101 ECAFE_LOAD_GROUP \n
 * 1200 ECAFE_BPM_DATA_IS_INVALID \n														
@@ -507,7 +509,10 @@ public:
     mapStatusInfo.insert(std::make_pair((int)  ECAFE_TIMEOUT_SET_AND_MATCH, "Readback channel did not reach set value within specified timeout period "));
 
 		mapStatusInfo.insert(std::make_pair((int)  ECAFE_HANDLE_MISMATCH_SET_AND_MATCH, "Number of set/readback handles do not match"));
-    mapStatusInfo.insert(std::make_pair((int)  ECAFE_LOAD_COLLECTION,     "CAFE collection could not be loaded from xml configuration file " ));
+    mapStatusInfo.insert(std::make_pair((int)  ECAFE_INCONSISTENT_CONTAINER_CORRECTED, "Boost container required update after consistency check"));
+	 
+	 
+	  mapStatusInfo.insert(std::make_pair((int)  ECAFE_LOAD_COLLECTION,     "CAFE collection could not be loaded from xml configuration file " ));
     mapStatusInfo.insert(std::make_pair((int)  ECAFE_LOAD_GROUP,          "CAFE group could not be loaded from group xml configuration file " ));
 
 	mapStatusInfo.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, "CAFE BPM Service: Data Validity channel reports BPM data is INVALID " ));
@@ -659,12 +664,15 @@ public:
     mapStatusCode.insert(std::make_pair((int)  ECAFE_HASH_UNIQUEID_EXISTS, "CAFE ERROR: ECAFE_HASH_UNIQUEID_EXISTS"));
     mapStatusCode.insert(std::make_pair((int)  ECAFE_WRONG_CA_CONTEXT,     "CAFE ERROR: ECAFE_WRONG_CA_CONTEXT"));
     mapStatusCode.insert(std::make_pair((int)  ECAFE_INVALID_CAFENUM_POLICY_TYPE, "CAFE ERROR: ECAFE_INVALID_CAFENUM_POLICY_TYPE"));
-	mapStatusCode.insert(std::make_pair((int)  ECAFE_MAX_MONITORS_PER_CHAN_EXCEEDED, "CAFE_ERROR: ECAFE_MAX_MONITORS_PER_CHAN_EXCEEDED"));
-	mapStatusCode.insert(std::make_pair((int)  ECAFE_INVALID_ENUM_INDEX,   "CAFE_ERROR: ECAFE_INVALID_ENUM_INDEX"));
+	  mapStatusCode.insert(std::make_pair((int)  ECAFE_MAX_MONITORS_PER_CHAN_EXCEEDED, "CAFE_ERROR: ECAFE_MAX_MONITORS_PER_CHAN_EXCEEDED"));
+	  mapStatusCode.insert(std::make_pair((int)  ECAFE_INVALID_ENUM_INDEX,   "CAFE_ERROR: ECAFE_INVALID_ENUM_INDEX"));
     mapStatusCode.insert(std::make_pair((int)  ECAFE_PVGROUP_GROUPHANDLE_MISMATCH, "CAFE ERROR:ECAFE_PVGROUP_GROUPHANDLE_MISMATCH"));
 
     mapStatusCode.insert(std::make_pair((int)  ECAFE_TIMEOUT_SET_AND_MATCH, "CAFE ERROR: CAFE_TIMEOUT_SET_AND_MATCH"));
 		mapStatusCode.insert(std::make_pair((int)  ECAFE_HANDLE_MISMATCH_SET_AND_MATCH, "CAFE ERROR: CAFE_HANDLE_MISMATCH_SET_AND_MATCH"));
+		mapStatusCode.insert(std::make_pair((int)  ECAFE_INCONSISTENT_CONTAINER_CORRECTED,"CAFE ERROR: ECAFE_INCONSISTENT_CONTAINER_CORRECTED"));
+		
+		
     mapStatusCode.insert(std::make_pair((int)  ECAFE_LOAD_COLLECTION,      "CAFE ERROR: ECAFE_LOAD_COLLECTION"));
     mapStatusCode.insert(std::make_pair((int)  ECAFE_LOAD_GROUP,           "CAFE ERROR: ECAFE_LOAD_GROUP"));
 		
@@ -871,6 +879,9 @@ public:
 
     mapStatusSeverity.insert(std::make_pair((int)  ECAFE_TIMEOUT_SET_AND_MATCH, "WARN"));
 	  mapStatusSeverity.insert(std::make_pair((int)  ECAFE_HANDLE_MISMATCH_SET_AND_MATCH, "ERROR"));
+		mapStatusSeverity.insert(std::make_pair((int)  ECAFE_INCONSISTENT_CONTAINER_CORRECTED, "WARN"));
+		
+		
     mapStatusSeverity.insert(std::make_pair((int)  ECAFE_LOAD_COLLECTION,      "ERROR"));
     mapStatusSeverity.insert(std::make_pair((int)  ECAFE_LOAD_GROUP,           "ERROR"));
 	
@@ -966,6 +977,10 @@ class CAFEStatus {
 			strRet.append(" ");
 			strRet.append(csi.message(i));
 			return (std::string) strRet; 
+		}
+		
+		bool isTimeout(int i) {
+			return csc.isTimeout(i);
 		}
 
 	void report (int i) {

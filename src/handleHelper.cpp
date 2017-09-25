@@ -100,16 +100,19 @@ int HandleHelper::checkConsistency(unsigned int _handle) {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             std::cout << "Following Corrections Made:" << std::endl;
             std::cout << message << endl;
-        }
 		//else {
 		//	std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
 		//	std::cout << "CA CONSISTENCY VERIFIED " << std::endl;
 		//}
 
 
-        if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelRegalia(chInfo));
-        if(MUTEX){cafeMutex.unlock();}
+        	if(MUTEX){cafeMutex.lock();}
+          	  handle_index.modify(it_handle, change_channelRegalia(chInfo));
+        	if(MUTEX){cafeMutex.unlock();}
+				
+					return ECAFE_INCONSISTENT_CONTAINER_CORRECTED;
+				
+				}
 
     }
     else {
@@ -1311,6 +1314,80 @@ int HandleHelper::getAlarmStatusSeverityAsString(unsigned int _handle, string as
     }
 #undef __METHOD__
 }
+
+
+
+
+/**
+ *  \brief Rerieves vector of handles for given vector of PVs
+ *  \param pvV input: vector of PVS
+ *  \retun handleV output: vector of handles 
+ */
+vector<unsigned int>  HandleHelper::getHandlesFromPVs(vector<string> pvV) {
+
+		ca_client_context * ccc = ca_current_context();
+
+    return getHandlesFromPVs(pvV,ccc);
+
+}
+
+
+/**
+ *  \brief Rerieves vector of handles for given vector of PVs
+ *  \param pvV input: vector of PVS
+ *  \param ccc input: ca_client_context *
+ *  \param handleV output: vector of handles 
+ *  \return ICAFE_NORMAL if all OK else ECAFE_INVALID_HANDLE
+ */
+vector<unsigned int> HandleHelper::getHandlesFromPVs(vector<string> pvV,  ca_client_context * ccc) {
+#define __METHOD__ "HandleHelper::getHandlesFromPVs()"
+
+		vector<unsigned int> handleV;
+		
+		handleV.reserve(pvV.size());
+	 
+
+		cafeConduit_set_by_pv & pv_index = cs.get<by_pv> ();
+    cafeConduit_set_by_pv::iterator it_pv;
+
+		for (unsigned int i=0; i<pvV.size(); ++i) {
+
+
+    		char pv[PVNAME_SIZE];
+    		removeLeadingAndTrailingSpaces(pvV[i].c_str(), pv);
+
+    		it_pv = pv_index.find(pv);
+
+    		// Possibilities of getting a match!
+    		if (it_pv != pv_index.end()) {
+
+       		 // Examine ca_client_context noting that channels within a group don't count!
+        		if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 ) {
+            handleV.push_back((*it_pv).handle);
+						}
+        }
+        else {
+            // Loop through all elements and search for pv/ca_client_context match
+            for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+                if((*itcs).getGroupHandle()>0) {continue;} // Channels within a group don't count!
+
+                if (!strcmp((*itcs).getPV(), pvV[i].c_str()) && (*itcs).getClientContext()== ccc) {
+                   
+                    handleV.push_back((*itcs).handle);
+										break;
+                }
+            }
+						handleV.push_back(0);
+        }
+    } //for
+
+
+	
+	return handleV;
+#undef __METHOD__
+			
+}
+
 
 /**
  *  \brief Prints Conduit member values for all given handles

@@ -618,7 +618,7 @@ int  CAFE::get(const char * pv, PVDataHolder & pvd) {
 int  CAFE::get(const unsigned int handle, PVDataHolder & pvd) {
 #define __METHOD__ "CAFE::get(unsigned int handle, PVDataHolder & pvd)"
 
-		 cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << endl;
+		//cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << endl;
 		
     status=ICAFE_NORMAL;
 

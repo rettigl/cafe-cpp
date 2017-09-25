@@ -40,6 +40,10 @@ class Connect
   CAFEStatus cafeStatus;
   CAFEStatusSeverity cafeStatusSeverity;
  
+  CAFEGlobalAlarmSeverity  epicsAlarmSeverity;
+	CAFEGlobalAlarmCondition epicsAlarmStatus;
+ 
+ 
   cafeConduit_set::iterator itcs;
   cafeGroup_set::iterator itgs;
 
@@ -139,6 +143,11 @@ class Connect
 
   CAFEStatus          getCafeStatus() {return cafeStatus;}
 	CAFEStatusSeverity  getCafeStatusSeverity() {return cafeStatusSeverity;}
+	
+	CAFEGlobalAlarmCondition   getEpicsAlarmStatus() {return epicsAlarmStatus;}
+  CAFEGlobalAlarmCondition   getEpicsAlarmCondition() {return epicsAlarmStatus;}
+	CAFEGlobalAlarmSeverity    getEpicsAlarmSeverity() {return epicsAlarmSeverity;}
+	
 	
 	int flushNow() {return ca_flush_io();}
 	
@@ -492,6 +501,13 @@ class Connect
   int  printStatus(vector<unsigned int> handleV, vector<int> statusV);
   int  printStatusIfError(vector<unsigned int> handleV, vector<int> statusV);
 
+
+  int  printStatus(const char *pv, int  status);
+  int  printStatusIfError(const char *pv, int  status);
+  int  printStatus(const char * pvArray, unsigned int  nelem, int  * statusArray);
+  int  printStatusIfError(const char * pvArray, unsigned int  nelem, int  * statusArray);
+  int  printStatus(vector<string> pvV, vector<int> statusV);
+  int  printStatusIfError(vector<string> pvV, vector<int> statusV);
 
   int  setPVAlias(unsigned int handle, const char * pv) throw (CAFEException_open);
 

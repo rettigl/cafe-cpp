@@ -10,8 +10,8 @@
 // PV_X1,PV_Y1 are scalar numerics
 // PV_WF is a vector numeric
 // PV_MBBI is an mbbi record with a number of enum vakues
-// PV_X!_DESC is of data type dbr_string_t 
-// PV_JOKE is a non-existant channel (used to show CAFE response is such cases)
+// PV_X1_DESC is of data type dbr_string_t 
+// PV_JOKE is a non-existant channel (used to illustrate CAFE response is such cases)
 
 #define PV_X1      "ARIDI-BPM-01LE:X-AVG"
 #define PV_Y1      "ARIDI-BPM-01LE:Y-AVG"
@@ -22,7 +22,7 @@
 
 #define NHANDLES 6 // should match number of pvs above that we are to open.
 
-
+#define __METHOD__ "cafeTest.cc"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //  (1) Establishing connections to EPICS Process Variables (PVs) 
@@ -51,22 +51,21 @@ int main( int argc, char *argv[] )
     using namespace std;
 		
 		
-    string pvArray[NHANDLES]={PV_X1,PV_Y1,PV_WF,PV_MBBI,PV_X1_DESC,PV_JOKE};
-		unsigned int hArray[NHANDLES];
+          string pvArray[NHANDLES]={PV_X1,PV_Y1,PV_WF,PV_MBBI,PV_X1_DESC,PV_JOKE};
+		unsigned int hArray [NHANDLES];
 		
-		
-	  //Instantaite CAFE
-										 						
-    CAFE  * cafe = new CAFE();
-		
-		
+	
+		vector<unsigned int>   hV;    //vector of handles
+		vector<string>         pvV;	  //corresponding vector of pvs
+		vector<unsigned short> stateV;//corresponding vector of connection states 
+			
 	  unsigned int handle;
-    int status;
-		//Class with methods to report on the value and meaning of status codes
-    CAFEStatus cstat;
-		//Classes defining value/name pairs of alarm status andseverity
-		CAFEGlobalAlarmSeverity  alarmSev;
-		CAFEGlobalAlarmCondition alarmStat;
+             int status;
+		
+	  //Instantaite CAFE										 						
+    CAFE  * cafe = new CAFE();
+			
+		
 		
 	
 		//------------------------------------------------------------
@@ -77,17 +76,18 @@ int main( int argc, char *argv[] )
 		cout << "START: (1) Establishing connections to EPICS Process Variables (PVs) " << endl;
 		cout << "---------------------------------------------------------------------" << endl;
 		
-  	
-		
-		// An open operation will pend the ioc for a default amount of time given by:
+  		
+		// An open channel operation will pend the ioc for a default amount of time given by:
 		// cafe->channelOpenPolicy.getDefaultTimeout() 
 		// else otherwise specified.	
 		cafe->channelOpenPolicy.setTimeout(0.1); //pend 0.1 seconds
-		
-		
+				
 		// Open one channel
-		// It is not an error if the channel is not connected!	 
+		// An exception is ***not*** thrown if the channel does not connect!	 
 	  
+		// The open method returns a handle as an output argument
+		// Subsequent cafe method invocations on a channel may be made on a per handle or pv basis
+		
 		try {       		
 			cafe->open(pvArray[0].c_str(), handle);			
 		}
@@ -95,13 +95,6 @@ int main( int argc, char *argv[] )
 		  cout << e.what() << endl;
 			exit(1);
 		}
-	
-		
-		unsigned int hDesc;
-				
-		vector<unsigned int> hV; 
-		vector<string> pvV;
-		vector<unsigned short> stateV;
 		
 		
 		try{ 
@@ -116,8 +109,7 @@ int main( int argc, char *argv[] )
       //cafe->channelOpenPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
 			//cafe->channelOpenPolicy.setTimeout(1.0);
 			
-			//cafe->open(...)
-			
+			//cafe->open(...)			
 			//cafe->openNow() // Now send messages to IOC
 		 
 		  
@@ -130,31 +122,33 @@ int main( int argc, char *argv[] )
 		  // Vector interfaces also exist
 			// vector<string> pvVector
 	 	  // vector<unsigned int> hVector
-			// cafe->open(pvVector,  hVector, NHANDLES);		
+			// cafe->open(pvVector,  hVector);		
 			
+			//Only after the following method is invoked are the open requests made
+			//or if the ca message buffer becomes full and is consequently flushed
 
       //cafe->openNow() ; // and wait for cafe->channelOpenPolicy.getTimeout()
 			//or
       cafe->openNowAndWait(0.5);  //wait for specified time, here 0.5 seconds
-			
-			
+						
 			//Is the given channel connected? Returns true/false
 			bool ifYes= cafe->isChannelConnected(hArray[0]); 
 			
 			//Are all channels connected? Returns true/false
 			ifYes= cafe->allChannelsConnected();
-			
-			
+						
 			if (!ifYes) {
       	cafe->printDisconnectedHandles();
 			}
-	
+		 
 			//Handle helper functions also provide information on PV handles and their connection states
-			status=cafe->getHandleHelper().getDisconnectedHandles(hV, pvV);
-			status=cafe->getHandleHelper().getHandles(hV, pvV);
-			status=cafe->getHandleHelper().getHandleStates(hV, pvV,stateV);
-							
-	
+		  //hV and pvV vectors are used further down this code.
+		
+			status=cafe->getHandleHelper().getDisconnectedHandles(hV, pvV); //output args return handles and their pv names
+			status=cafe->getHandleHelper().getHandles(hV, pvV); //output args return handles and their pv names
+			//output args return handles, their pv names, and connection states
+			status=cafe->getHandleHelper().getHandleStates(hV, pvV,stateV);  
+								
 		}
 		catch(CAFEException_open & e) {
 		  cout << e.what() << endl;
@@ -166,36 +160,34 @@ int main( int argc, char *argv[] )
 		// To close a single Channel
 		// cafe->close(hArray[0]);
 		
-		// To close many channels
+		// To close an array of channels
 		// cafe->closeChannels(hArray, NHANDLES);
 	
-	  // To close alls channesl
+	  // To close all channels
 		// cafe->closeChannels();
 			
 		// If you wish to close channels that are in other threads 
 		// (i.e., with other ca_client_context)
 		// use instead the following methods:	
 		// To close a single Channel irrespective of ca_client_context
-		// i.e. these will also close handles in other threads
 		// cafe->closeHandle(hArray[0[);
 		
-		// To close many handles
+		// To close an array of handles 
 		// cafe->closeHandles(hArray, NHANDLES);
+		// 
 	
 	  // To close all handles
-		// cafe->closeHandles();	
-	
+		// cafe->closeHandles();
+			
 		
-	
-		
+		// Methods also exist that close a vector of handles - not shown
 		
 		
 		cout << "---------------------------------------------------------------------" << endl;
 		cout << "STOP:  (1) Establishing connections to EPICS Process Variables (PVs) " << endl;
 		cout << "---------------------------------------------------------------------" << endl;
 		
-		
-		
+				
 		//------------------------------------------------------------
     //(2) Basic Single Channel Operations
     //------------------------------------------------------------
@@ -213,10 +205,16 @@ int main( int argc, char *argv[] )
 		status=cafe->get(hArray[0], d);
 			
 		if (status != ICAFE_NORMAL) {
-		  cout << "Status indicates an error at line no." << __LINE__ << endl;
-		 	cstat.report(status);	
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);	
 			//or
 			cafe->printStatus(handle,status);	
+						
+			//To explicitly check on timeout error
+			if (cafe->getCafeStatus().isTimeout(status)) {
+				cout << "Above is a timeout error" << endl;	
+			}
+			
 		}
 		else {
 			cout << "Value d=" << d << endl; 
@@ -227,50 +225,80 @@ int main( int argc, char *argv[] )
 		status=cafe->get(handle, f, alarmStatus, alarmSeverity, ets);
 			
 		if (status != ICAFE_NORMAL) {
-		  cout << "Status indicates an error at line no." << __LINE__ << endl;
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+			cafe->getCafeStatus().report(status);	
+			//or
 			cafe->printStatus(hArray[0],status);	
 		}
 		else {
 			cout << "Value f=" << f << endl;
-			cout << "AlarmStatus= " << alarmStat.asString(alarmStatus) << " AlarmSeverity=" << alarmSev.asString(alarmSeverity)
+			cout << "AlarmStatus= " << cafe->getEpicsAlarmCondition().asString(alarmStatus) << " AlarmSeverity=" << cafe->getEpicsAlarmSeverity().asString(alarmSeverity)
           << " TimeStamp= " << ets.secPastEpoch << " sec. " << ets.nsec << " nsec " << endl;		
  		}
 		
-		
+		d=0;
 		//get by pvname
 		status=cafe->get(pvArray[0].c_str(), d);
 		if (status != ICAFE_NORMAL) {
-		  cout << "Status indicates an error at line no." << __LINE__ << endl;
-		 	cstat.report(status);	
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);	
 			//or
 			cafe->printStatus(handle,status);	
-		
-		
+			
 			//To explicitly check on timeout error
-			if (cstat.csc.isTimeout(status)) {
+			if (cafe->getCafeStatus().isTimeout(status)) {
 				cout << "Above is a timeout error" << endl;	
 			}
 		
 		}	
-	
+	  else {
+			cout << "Value d=" << d << endl; 
+		}
 		
-		//To interchange between handle and array
-		            handle = cafe->getHandleFromPV(pvArray[0].c_str());
-		const char * pvName= cafe->getPVFromHandle(handle);
+		//Handle and PV Mappring, i.e., to interchange between handle and pvName
+		             handle = cafe->getHandleFromPV(pvArray[0].c_str());
+		const char * pvName = cafe->getPVFromHandle(handle);
 		  
 			
 		
-		
 		//------------------------------------------------------------	
-		//Data retrieval methods returning structured data
+		//Set data
+		//The set method is able to intrepret all data types, and can 
+		//cater for scalar values and arrays
 		//------------------------------------------------------------
 	
+	  //by pvName
+    status=cafe->set(PV_X1, 0.02453);
 	
-			
+	  //by Handle
+		status=cafe->set(handle, 0.02453);
+	
+    if (status!=ICAFE_NORMAL) {
+      cafe->getCafeStatus().report(status);
+    }
+    //or to print an error with pv name (handle as input argument)
+		//cafe->printStatusIfError(handle,status);
+		//or
+    //cafe->printStatusIfError(cafe->getHandleFromPV(PV_X1),status);
+		//or another way to print an error with pv name 
+		cafe->printStatusIfError(PV_X1,status);
+		
+		
+		
+		//------------------------------------------------------------	
+		//Data retrieval methods returning structured data 
+		//and set with PvDataHolder object
+		//------------------------------------------------------------
+	
+		
+		//This example acts on a waveform
+				
 		PVDataHolder pvd;
-	
+	  //if wf, ***must*** allocate memory as follows:
 		pvd.setNelem(cafe->getNelemNative(hArray[2]));
+		//status=cafe->get(pvArray[2].c_str(), pvd);
 		status=cafe->get(hArray[2], pvd);
+		
 		
 		if (status==ICAFE_NORMAL) {
 		
@@ -294,16 +322,32 @@ int main( int argc, char *argv[] )
 			cout << "pvd.getAsLongLong()     = " << pvd.getAsLongLong() << endl;
 			cout << "pvd.getAsULongLong()    = " << pvd.getAsULongLong() << endl;
 		
-			boost::shared_ptr<vector<double> > spVd = pvd.getAsVDouble();				
-			cout << "pvd.getAsVDouble()      = " << spVd.get()[0][0] << " [0] " << spVd.get()[0][1] << " [1] " << endl;		
+			boost::shared_ptr<vector<double> > spVd = pvd.getAsVDouble();		
+					
+			cout << "pvd.getAsVDouble()      = " << spVd.get()[0][0] << " [0] " ;
+			if (spVd.get()[0].size()>1) {
+				cout << spVd.get()[0][1] << " [1] ";
+			}			
+			cout << endl;
 			vector<double> * vd= spVd.get();
-			cout << "pvd.getAsVDouble()      = " << vd[0][0] << " [0] " << vd[0][1] << " [1] " << endl;	
-		
+			cout << "pvd.getAsVDouble()      = " << vd[0][0] << " [0] " ;
+			if (vd[0].size()>1 ) {
+				cout << vd[0][1] << " [1] ";	
+		  }
+			cout << endl;
 			boost::shared_ptr<vector<float> >  spVf = pvd.getAsVFloat();
-			cout << "pvd.getAsVFloat()       = " << spVf.get()[0][0] << " [0] " << spVf.get()[0][1] << " [1] " << endl;
+			cout << "pvd.getAsVFloat()       = " << spVf.get()[0][0] << " [0] " ;
+			if (spVf.get()[0].size()>1) {
+			 cout <<  spVf.get()[0][1] << " [1] ";
+			}
+			cout << endl;
+			 
 			vector<float> * vf= spVf.get();
-			cout << "pvd.getAsVFloat()       = " << vf[0][0] << " [0] " << vf[0][1] << " [1] " << endl;	
-	
+			cout << "pvd.getAsVFloat()       = " << vf[0][0] << " [0] " ;
+			if (vf[0].size()>1) {
+				cout << vf[0][1] << " [1] ";	
+			}
+			cout << endl;
 		
 			cout << "pvd.getPVName()         = " << pvd.getPV() << endl;
 			cout << "pvd.getPVAlias()        = " << pvd.getPVAlias() << endl; 
@@ -326,8 +370,8 @@ int main( int argc, char *argv[] )
 
 				
 			//cout << "pvd.getEnumIntegerValueAsString()  = " << pvd.getEnumIntegerValueAsString() << endl; //for mbbi/o records
-			cout << "pvd.concatToString()    = " << pvd.concatToString() << endl; //for waveforesm with data type dbr_chart_t
-			cout << "pvd.getWFAsString()    = " << pvd.concatToString() << endl; 
+			cout << "pvd.concatToString()    = " << pvd.concatToString() << endl; // for waveforesm with data type dbr_chart_t
+			cout << "(Does same as above)    = " << pvd.getWFAsString()  << endl; // for waveforesm with data type dbr_chart_t
 		
 		
 		 
@@ -338,41 +382,59 @@ int main( int argc, char *argv[] )
 			//Alarm status and severities have value/name (int/string) pairs.
 			//The string equivalent of a given value may be gotten as shown 				
 		
-			cout << "Alarm Status    =" << alarmStat.asString(pvd.getAlarmStatus()) << endl;
-			cout << "Alarm Severity  =" << alarmSev.asString(pvd.getAlarmSeverity()) << endl;
+			cout << "Alarm Status    = " << cafe->getEpicsAlarmCondition().asString(pvd.getAlarmStatus()) << endl;
+			cout << "Alarm Severity  = " << cafe->getEpicsAlarmSeverity().asString(pvd.getAlarmSeverity()) << endl;
 		
 			//Information concerning the meaning of the status of the cafe operation
-			cout << cstat.severity(pvd.getStatus()) << endl; //Whether WARNING OR ERROR
-			cout << cstat.asString(pvd.getStatus()) << endl;
-			cout << cstat.code(pvd.getStatus()) << endl;
-			cout << cstat.info(pvd.getStatus()) << endl;
-			cout << cstat.message(pvd.getStatus()) << endl;
-			//print summary
-			cstat.report(pvd.getStatus());
+			cout << cafe->getCafeStatus().severity(pvd.getStatus()) << endl; //Whether WARNING, ERROR, OR INFO
+			cout << cafe->getCafeStatus().asString(pvd.getStatus()) << endl;
+			cout << cafe->getCafeStatus().code(pvd.getStatus()) << endl;
+			cout << cafe->getCafeStatus().info(pvd.getStatus()) << endl;
+			cout << cafe->getCafeStatus().message(pvd.getStatus()) << endl;
 			
+			//print summary
+			cout << "<---- SUMMARY --> " << endl;
+			cafe->getCafeStatus().report(pvd.getStatus());
+			cout << "<---- END SUMMARY --> " << endl;
 					
 		} // if status=ICAFE_NORMAL	
-		
-		//------------------------------------------------------------	
-		//Set data
-		//The set method is able to intrepret all data types, and can 
-		//cater for scalar values and arrays
-		//------------------------------------------------------------
+		else  {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
 	
-    status=cafe->set(PV_X1, 0.02453);
-	
-    if (status!=ICAFE_NORMAL) {
-      cstat.report(status);
-    }
-    //or another way to print an error with pv name
-    cafe->printStatusIfError(cafe->getHandleFromPV(PV_X1),status);
+	  //Can also perform a set using PvDataHolder as follows:
+		//Single value
+		pvd.set(2.2); //
+		status=cafe->set(hArray[2], pvd);
+		if (status != ICAFE_NORMAL) {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
+ 	 
+		//For Waveform	
+		double inwf [20] = {1.15,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9,10.10, 11, 12, 13,14,15,16,17,18,19,20.20};
+		//***Must*** declare size of array here, or the number of elements to set if less!
+		//cafe->getHandleHelper().setNelem(hArray[2],20);
+		pvd.setNelem(20); 
+		pvd.set(inwf);
 		
+		
+		status=cafe->set(hArray[2], pvd);
+		
+		
+		//cout << "nelements " << pvd.getNelem() << " " << endl;
+		//cout << " client " << cafe->getHandleHelper().getNelemClient(hArray[2])  << endl;
+	  //cout << " native " << cafe->getHandleHelper().getNelemClient(hArray[2])  << endl;	
+		//cout << " requested " << cafe->getHandleHelper().getNelemRequest(hArray[2])  << endl;	
+			
 		cout << "------------------------------------------------------------" << endl;
 		cout << "END: (2) Basic Single Channel Operations " << endl;
 		cout << "------------------------------------------------------------" << endl;
 		
-		
-		
+			
+			
+				
 		//------------------------------------------------------------
     //(3) Waveforms and Arrays
     //------------------------------------------------------------
@@ -380,47 +442,65 @@ int main( int argc, char *argv[] )
 		cout << "------------------------------------------------------------" << endl;
 		cout << "START: (3) Waveforms and Arrays  " << endl;
 		cout << "------------------------------------------------------------" << endl;
-		
-				
+						
 		//------------------------------------------------------------	
 		//Data retrieval methods returning a waveform array
 		//------------------------------------------------------------
 	
-			
-		double * dwf = new double[cafe->getNelemNative(hArray[2])]; 
 	
-		double inwf [20] = {1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9,10, 11, 12, 13,14,15,16,17,18,19,20};
-		
-		
+	  //inwf array of 20 doubles previous defined
+		//copy to vector to illustrate other possibilities
 			
-		//by pvName	
-		status=cafe->set(PV_WF, inwf);
+		vector<double> dvv (inwf, inwf+20);			
+		//Be sure to assign memory
+		cafe->getHandleHelper().setNelem(hArray[2], 20);
+		//Actually set method with vectors, will check the size of the vector
+		//and adjust the setNelem accordingly if required
+		
+		//Methods invoking vectors are by Handle
+		status=cafe->set(cafe->getHandleFromPV(PV_WF), dvv);
+		//or
+		//status=cafe->set(hArray[2], inwf);
+	  if (status != ICAFE_NORMAL) {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
+	
+	
+	
+	  //reset Number of elements to native value for get operation
+		cafe->getHandleHelper().setNelem(hArray[2], cafe->getNelemNative(hArray[2]) );
+		
+		
+		//Allocate	
+		double * dwf = new double[cafe->getNelemNative(hArray[2])]; 
+		
 		status=cafe->get(PV_WF, dwf);
 		
 		if (status != ICAFE_NORMAL) {
-		  cout << "Status indicates an error at line no." << __LINE__ << endl;
-		 	cstat.report(status);		
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
 		}
 		else {
 			cout << PV_WF << " successfully read out " << endl;
 			cout << "First five elements have values: " << endl;
-			for (int i=0; i<std::min(5,(int) cafe->getNelemNative(hArray[2])); ++i) {
+			for (int i=0; i<std::min(10,(int) cafe->getNelemRequest(hArray[2])); ++i) {
 					cout << dwf[i] << " [" << i << "] ";
 			}
 			cout << endl;
 		}
-			  
+				
 	
-	  //One may also set the number of elements to retrieve
+	  //One may also set the number of elements to retrieve an offset
 		//int nelem  =cafe->getHandleHelper().setNelemToNative(hArray[2]);
-		int nelem  = cafe->getHandleHelper().setNelem(hArray[2], 10); //returns max(10, cafe->getNelemNative(handle))
+		int nelem  = cafe->getHandleHelper().setNelem (hArray[2], 10); //returns max(10, cafe->getNelemNative(handle))
 		//and offset
 		int offset = cafe->getHandleHelper().setOffset(hArray[2], 2);
 		//by Handle
 		status=cafe->get(hArray[2], dwf);
 		if (status != ICAFE_NORMAL) {
-		  cout << "Status indicates an error at line no." << __LINE__ << endl;
-		 	cstat.report(status);		
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
 		}
 		else {
 			cout << PV_WF << " sucessfully read out " << endl;
@@ -434,48 +514,61 @@ int main( int argc, char *argv[] )
 		//reset offset for read and the nelemtonative
 		cout << "Resetting nelem for wf to native value: " << cafe->getHandleHelper().setNelemToNative(hArray[2]) 
 		     << " and resetting offset to: " <<  cafe->getHandleHelper().setOffset(hArray[2], 0) << endl;
-			
-		cafe->get(hArray[2]);
+	
+	  //by handle	
+		status=cafe->set(cafe->getHandleFromPV(PV_WF), dvv);
+	
+		if (status != ICAFE_NORMAL) {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
 		delete  dwf;
 		
 			
 		//------------------------------------------------------------	
 		//Data retrieval methods returning a std::vector
 		//------------------------------------------------------------
-		vector<float> dV;
+		vector<double> dV;
 	  dbr_short_t alarmSta; dbr_short_t alarmSe; epicsTimeStamp tsta;
 		 		
-		cout << "nELEM n: " << 	cafe->getHandleHelper().getNelemNative (hArray[2])  << endl;	
-		cout << "nELEM r: " << 	cafe->getHandleHelper().getNelemRequest(hArray[2]) << endl;
-		cout << "nELEM c: " << 	cafe->getHandleHelper().getNelemClient (hArray[2])  << endl;
+		//cout << "nELEM native: " << 	cafe->getHandleHelper().getNelemNative (hArray[2])  << endl;	
+		//cout << "nELEM requested over ca: " << 	cafe->getHandleHelper().getNelemRequest(hArray[2]) << endl;
+		//cout << "nELEM client requested: " << 	cafe->getHandleHelper().getNelemClient (hArray[2])  << endl;
 		
 		cout << "set nelem to 16, get: " << cafe->getHandleHelper().setNelem(hArray[2],16) << endl;;
 				
-		cout << "nELEM n: " << 	cafe->getHandleHelper().getNelemNative (hArray[2])  << endl;	
-		cout << "nELEM r: " << 	cafe->getHandleHelper().getNelemRequest(hArray[2]) << endl;
-		cout << "nELEM c: " << 	cafe->getHandleHelper().getNelemClient (hArray[2])  << endl;
+		//cout << "nELEM native: " << 	cafe->getHandleHelper().getNelemNative (hArray[2])  << endl;	
+		//cout << "nELEM requested over ca: " << 	cafe->getHandleHelper().getNelemRequest(hArray[2]) << endl;
+		//cout << "nELEM client requested: " << 	cafe->getHandleHelper().getNelemClient (hArray[2])  << endl;
 				
 		//		
-		cout << "get nelem cache        get: " << cafe->getHandleHelper().getNelemToRetrieveFromCache(hArray[2]) << endl;				
+		//cout << "get nelem cache        get: " << cafe->getHandleHelper().getNelemToRetrieveFromCache(hArray[2]) << endl;				
 		cout << "set nelem cache to 12, get: " << cafe->getHandleHelper().setNelemToRetrieveFromCache(hArray[2],12) << endl;
-		cout << "get nelem cache        get: " << cafe->getHandleHelper().getNelemToRetrieveFromCache(hArray[2]) << endl;			
+		//cout << "get nelem cache        get: " << cafe->getHandleHelper().getNelemToRetrieveFromCache(hArray[2]) << endl;			
 		
 		//Will retrieve 16 elements	
 		status=cafe->get(hArray[2], dV);
-		cout << "dV.size " << dV.size() << endl;
+		
+		if (status != ICAFE_NORMAL) {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
+		else {
+			cout << "dV.size will be 16 -> " << dV.size() << endl;
+		}
 		
 		//Will retrieve 12 elements from cache
 		status=cafe->getCache(hArray[2], dV,   alarmSta, alarmSe, tsta);	
-		cout << "status " << status << endl; 
-		cout << "dV.size " << dV.size() << endl;	
+		
+		cout << "dV.size will be 12 -> " << dV.size() << endl;	
 		if (status != ICAFE_NORMAL) {
-		  cout << "Status indicates an error at line no." << __LINE__ << endl;
-		 	cstat.report(status);		
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
 		}
 		else {
 			cout << PV_WF << " successfully read out " << endl;
 			cout << "Elements 1-5 of WF  have values:" << endl;
-			for (int i=0; i<min(25, (int) dV.size()); ++i) {
+			for (int i=0; i<min(20, (int) dV.size()); ++i) {
 					cout << dV[i] << " [" << i << "] ";
 			}
 			cout << endl;
@@ -485,6 +578,59 @@ int main( int argc, char *argv[] )
 		cout << "END: (3) Waveforms and Arrays " << endl;
 		cout << "------------------------------------------------------------" << endl;
 	
+	  //cafe->terminate();
+		//exit(1);
+		
+		cout << "------------------------------------------------------------" << endl;
+		cout << "START: (5) Handling Enumerated Types " << endl;
+		cout << "------------------------------------------------------------" << endl;
+	
+	  //GET INFORMATION OF ENUM PV
+		PVCtrlHolder pvCtrl;
+		status=cafe->getCtrl(PV_MBBI, pvCtrl);
+	
+		vector<string> enums= pvCtrl.getEnumStrings();
+		cout << "------------------------" << endl;
+		cout << "ENUM NAME/VALUE PAIRS ARE:" << endl;
+		for (int i=0; i<enums.size(); ++i) {
+		  cout << i << " : " << enums[i] << endl;
+		}
+	  cout << "-------------------------" << endl;
+	
+	
+	  string enumStrVal;
+	  status= cafe->get(PV_MBBI, enumStrVal);	 
+		cout << "VALUE as string:   " << enumStrVal << endl;
+		
+		
+		cout << "getEnumFromString:  " << pvCtrl.getEnumFromString(enumStrVal) << endl;
+		
+	  unsigned short enumShortVal;
+	  status= cafe->get(PV_MBBI, enumShortVal);	 
+		cout << "VALUE as int:       " << enumShortVal << endl;
+	
+	  cout << "getStringFromEnum: " << pvCtrl.getStringFromEnum(enumShortVal) << endl;
+	
+		
+		PVDataHolder pvDat;
+		status= cafe->get(PV_MBBI, pvDat);	 
+		cout << "VALUE as string:         " << pvDat.getAsString() << endl;
+		cout << "VALUE as int:             " << pvDat.getAsUShort() << endl;
+		cout << "Integer Value as String:  " << pvDat.getEnumIntegerValueAsString() << endl;
+		
+    //Each of these 3 methods will set the pv value to 1, i.e., "on"
+    status = cafe->set(PV_MBBI, "on");
+		status = cafe->set(PV_MBBI, 1);
+		status = cafe->set(PV_MBBI, " 1 "); //leading and trailing spaces are ignored
+		
+		//try to set an illegal value
+		status = cafe->set(PV_MBBI, "invalid enum name");
+		cafe->printStatus(PV_MBBI,status);
+
+
+		cout << "------------------------------------------------------------" << endl;
+		cout << "END: (5) Handling Enumerated Types " << endl;
+		cout << "------------------------------------------------------------" << endl;
 	
 			
 		cout << "------------------------------------------------------------" << endl;
@@ -492,26 +638,46 @@ int main( int argc, char *argv[] )
 		cout << "------------------------------------------------------------" << endl;
 		
 	  vector<int> statusV;
-	  cafe->getScalars(hV, dV, statusV);
+		//vector of doubles
+	  status=cafe->getScalars(hV, dV, statusV);
 		
-		for (unsigned int i=0; i<hV.size(); ++i) {
-			cout << pvV[i] << " has value " << dV[i] << " and status " << statusV[i] << endl;
-		} 
+		if (status != ICAFE_NORMAL) {
+			cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+			for (int i=0; i< statusV.size(); ++ i) {
+		  	cafe->printStatusIfError(hV[i],statusV[i]);	
+			}	
+		}
+		else {
+			for (unsigned int i=0; i<hV.size(); ++i) {
+				cout << pvV[i] << " has value " << dV[i] << " and status " << statusV[i] << endl;
+			} 
+		}
 		
 		status=cafe->set(hV[0], 3.214);
+		if (status != ICAFE_NORMAL) {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
 		
 		//or Asynchronous gets
-		cafe->get(hV, statusV);
-		cafe->getCache(hV, dV, statusV);
-		
-		
-		for (unsigned int i=0; i<hV.size(); ++i) {
-			cout << pvV[i] << " has value " << dV[i] << " and status " << statusV[i] << endl;
-		} 
+		status=cafe->get(hV, statusV);
+		if (status != ICAFE_NORMAL) {
+		  cout << "Status = " << status << "; indicates an error at " << __METHOD__ << "//" << __LINE__ << endl;
+		 	cafe->getCafeStatus().report(status);		
+		}
+		else {
+			status=cafe->getCache(hV, dV, statusV);
+				
+			for (unsigned int i=0; i<hV.size(); ++i) {
+				cout << pvV[i] << " has value " << dV[i] << " and status " << statusV[i] << endl;
+			} 
+		}
 	
 	  cout <<  "------------------------------------------------------------" << endl;
 		cout << "  END: (4) Multiple Scalar Operations " << endl;
 		cout << "------------------------------------------------------------" << endl;
+		
+		
 		
 		
 			
@@ -520,12 +686,13 @@ int main( int argc, char *argv[] )
 		cout << "------------------------------------------------------------" << endl;
 		
 		PVDataHolder pvdArray[NHANDLES];
+		//Allocate memory for each PVData Holder
+		//Necessary only for WFs as deault size is 1
 		for (int i=0; i<NHANDLES; ++i) {
 			pvdArray[i].setNelem(cafe->getNelemNative(hArray[i]));
 		}
 		
-		
-		
+			
 		//input Array of handles
 		cout << "---------------------------------------" << endl;
 		cout << "status=cafe->get(hArray, NHANDLES, pvdArray)" << endl;
@@ -541,6 +708,11 @@ int main( int argc, char *argv[] )
 		
 		status=cafe->getPVArray(hV, pvdArray);
 		
+		if (status != ICAFE_NORMAL) {       
+        for (size_t i=0; i<NHANDLES; ++i) {            
+            cafe->printStatusIfError(hV[i],pvdArray[i].getStatus());
+        }
+    }
 		
 		//Asynchronous get
 		cout << "---------------------------------------" << endl;
@@ -553,7 +725,7 @@ int main( int argc, char *argv[] )
     status=cafe->get(hArray, NHANDLES, statusArray);
 
     if (status != ICAFE_NORMAL) {
-        //cstat.report(status);
+        //cafe->getCafeStatus().report(status);
         for (size_t i=0; i<NHANDLES; ++i) {            
             cafe->printStatusIfError(hArray[i],statusArray[i]);
         }
@@ -570,11 +742,87 @@ int main( int argc, char *argv[] )
 
 		
 		cout << "------------------------------------------------------------" << endl;
-		cout << "  END: (5) Mulitple Compound Operations " << endl;
+		cout << "  END: (5) Multiple Compound Operations " << endl;
 		cout << "------------------------------------------------------------" << endl;
 	
 	
+			
+		cout << "------------------------------------------------------------" << endl;
+		cout << "START: (9) Asynchronous interactions and retrieving data from cache " << endl;
+		cout << "------------------------------------------------------------" << endl;
 	
+	  //status=cafe->get(hArray[0]);	
+		//by array
+		//status=cafe->get(hArray, NHANDLES, statusV);
+		//by vector
+		//status=cafe->get(hV, statusV);
+		
+		
+	  //status=cafe->get(pvArray[0].c_str());	
+		//by array
+		//status=cafe->get(pvArray, NHANDLES, statusV);
+		//by vector
+		
+	  //	hV=cafe->getHandleHelper().getHandlesFromPVs(pvV);
+		
+		//for (int i=0; i< hV.size(); ++i) {
+		//	cout << hV[i] << " " << pvV[i] << endl;
+		//}
+		
+		status=cafe->get(pvV, statusV);
+
+		if (status != ICAFE_NORMAL) {
+			cout << "//ERROR MESSAGE REPORT// " << endl;
+			for (int i=0; i <statusV.size(); ++i) {
+				if (statusV[i] != ICAFE_NORMAL) {
+					cafe->printStatusIfError(pvV[i].c_str(), statusV[i]);
+				}
+			}
+			cout << "//--------------------// " << endl;
+		}
+		
+		
+		//cafe->_ca_flush_io();
+		cafe->flushNow();
+		
+		status=cafe->getCache(hArray, NHANDLES, pvdArray);
+		
+	
+	  status=cafe->getCachePVArray(hV,  pvdArray);
+	
+	
+	 
+		for (size_t i=0; i<NHANDLES; ++i) {      
+            pvdArray[i].print();  
+    }
+		
+		cafe->set(hArray[1], 3.333455666);
+		cafe->flushNow();
+		cafe->get(hArray[1]);
+		cafe->flushNow();
+		
+		
+		status=cafe->getCache(hV,  pvdArray);
+		
+		
+		for (size_t i=0; i<NHANDLES; ++i) {      
+           pvdArray[i].print();      
+    }
+	
+	  
+	  status=cafe->getCache(hV, dV, statusV);
+		
+		//for (size_t i=0; i<NHANDLES; ++i) {      
+    //       cout << "pv " << pvV[i] << " has value " << dV[i] << " and status " << statusV[i] << endl;      
+    //}
+	
+					
+		cout << "------------------------------------------------------------" << endl;
+		cout << "  END: (9) Asynchronous interactions and retrieving data from cache " << endl;
+		cout << "------------------------------------------------------------" << endl;
+	
+	
+			
 			
 		cout << "------------------------------------------------------------" << endl;
 		cout << "START: (6) Synchronous Group Operations " << endl;
@@ -599,7 +847,7 @@ int main( int argc, char *argv[] )
     catch(CAFEException_groupOpen &e) {
 
         cout << e.what() << endl;
-        cstat.report(e.groupEx.statusCode);
+        cafe->getCafeStatus().report(e.groupEx.statusCode);
         exit(1);
     }
 
@@ -611,7 +859,7 @@ int main( int argc, char *argv[] )
 
 	
 	  PVDataHolder * pvdA = pvgroup.getPVData();	
-		pvdA[0].setNelem(1); //just an example, only required if user wishes to set nelemens for wf from native
+		pvdA[0].setNelem(1); //just an example, only required if user wishes to set nelems for wf to other than native
 		
     cafe->groupGet(gHandle, pvgroup);
 		
@@ -621,13 +869,12 @@ int main( int argc, char *argv[] )
     pvgroup.print(pvgroup.getNPV(),25); 
  
  
- 
     //Overwrite values for set method 
     pvdA[0].set(1.111);
-		double d4[4]= {1,2,3,4};
+		float d4[4]= {1,2,3,4};
     pvdA[2].set(d4);
  
-      
+     
     status=cafe->groupSet(gHandle, pvgroup);
  
 	  cafe->groupGet(gHandle, pvgroup);
@@ -649,7 +896,7 @@ int main( int argc, char *argv[] )
  
  
  		//Will send to /tmp
-    cafe->snapshot2XML(pvgroup);
+    //cafe->snapshot2XML(pvgroup);
  
   
   
@@ -659,7 +906,7 @@ int main( int argc, char *argv[] )
 		
 		
 		cout << "------------------------------------------------------------" << endl;
-		cout << "START: (7) Control System Parameters and Channel Information" << endl;
+		cout << "START: (7) Control System Parameters " << endl;
 		cout << "------------------------------------------------------------" << endl;
 	
 		// An example of a single get that retrieves control display parameters
@@ -713,7 +960,7 @@ int main( int argc, char *argv[] )
 		
 				
 		cout << "------------------------------------------------------------" << endl;
-		cout << "  END: (7) Control System Parameters and Channel Information" << endl;
+		cout << "  END: (7) Control System Parameters" << endl;
 		cout << "------------------------------------------------------------" << endl;
 	
 		cout << "------------------------------------------------------------" << endl;
@@ -819,6 +1066,7 @@ int main( int argc, char *argv[] )
 	  usleep(100000); // 0.1s just about long enough to trigger an extra monitor
 		
 		
+		
 		cafe->monitorStop(hArray[0], mp);
 		cafe->monitorStop(hArray[0], mp2.getMonitorID()); //Actually, only the monitorID is required 
 		
@@ -850,58 +1098,7 @@ int main( int argc, char *argv[] )
 		cout << "  END: (8) Monitors, either with or without user supplied callbacks " << endl;
 		cout << "------------------------------------------------------------" << endl;
 		
-			
-		cout << "------------------------------------------------------------" << endl;
-		cout << "START: (9) Asynchronous interactions and retrieving data from cache " << endl;
-		cout << "------------------------------------------------------------" << endl;
 	
-	  status=cafe->get(hArray[0]);	
-		//by array
-		status=cafe->get(hArray, NHANDLES, statusV);
-		//by vector
-		status=cafe->get(hV, statusV);
-		
-		//cafe->_ca_flush_io();
-		cafe->flushNow();
-		
-		status=cafe->getCache(hArray, NHANDLES, pvdArray);
-		
-		int NL=10;
-		system("date");
-		for (int i=0; i<NL; ++i) {
-			status=cafe->getCachePVArray(hV,  pvdArray);
-		}
-		system("date");
-	
-	  sleep(1); 
-		for (size_t i=0; i<NHANDLES; ++i) {      
-            pvdArray[i].print();  
-    }
-		
-		cafe->set(hArray[1], 3.333455666);
-		cafe->get(hArray[1]);
-		cafe->flushNow();
-		system("date");
-		for (int i=0; i<NL; ++i) {
-		status=cafe->getCache(hV,  pvdArray);
-		}
-	  system("date");
-		
-		for (size_t i=0; i<NHANDLES; ++i) {      
-           pvdArray[i].print();      
-    }
-	
-	  
-	  status=cafe->getCache(hV, dV, statusV);
-		
-		//for (size_t i=0; i<NHANDLES; ++i) {      
-    //       cout << "pv " << pvV[i] << " has value " << dV[i] << " and status " << statusV[i] << endl;      
-    //}
-	
-					
-		cout << "------------------------------------------------------------" << endl;
-		cout << "  END: (9) Asynchronous interactions and retrieving data from cache " << endl;
-		cout << "------------------------------------------------------------" << endl;
 		
 		
 		cout << "------------------------------------------------------------" << endl;
@@ -930,23 +1127,33 @@ int main( int argc, char *argv[] )
 		cout << "------------------------------------------------------------" << endl;
 		
 				
+				
+				
 		cout << "------------------------------------------------------------" << endl;
 		cout << "START: (12) Gracefully terminate CAFE " << endl;
 		cout << "------------------------------------------------------------" << endl;
 	
+	
+		//Diagnostics method
+		//Checks that data in hash table is consistent with actual states
+		//Run this as a check. Should return ICAFE_NORMAL.	
+		status=cafe->getHandleHelper().checkConsistency();			
+		if (status != ICAFE_NORMAL) {	
+			cafe->getCafeStatus().report(status);	
+		}	
+		
+			
+		cafe->groupClose();
+		cafe->closeHandles();
+	
+		cafe->terminate();
+		return 0;	
 			
 		cout << "------------------------------------------------------------" << endl;
 		cout << "  END: (12) Gracefully terminate CAFE " << endl;
 		cout << "------------------------------------------------------------" << endl;
-		
-		cafe->printHandles();
-		
-		cafe->groupClose();
-		cafe->closeHandles();
 	
 	
-		cafe->terminate();
-		return 0;
 		
 	
   
@@ -984,7 +1191,7 @@ int main( int argc, char *argv[] )
                 cout << "Channel: " << pvgroup.getPVData()[i].getPVName() << endl;
                 cout << "Status:  " << pvgroup.getPVData()[i].getStatus() << " [" << i << "] of "
                         << pvgroup.getNPV() << endl;
-                cstat.report( pvgroup.getPVData()[i].getStatus() );
+                cafe->getCafeStatus().report( pvgroup.getPVData()[i].getStatus() );
             }
         }
     }

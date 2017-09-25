@@ -311,6 +311,12 @@ template <class CTYPE> int  Transpose<CTYPE>::put(const unsigned int  _handle,
             }//if noStrings>0
 
         }//if
+				
+				
+				//cout << "dbrTypeRequest_DataBuffer " << dbrTypeRequest_DataBuffer << endl;
+				//cout << "_dbrType " << _dbrType << endl;
+				
+				//cout << "nelem " << nelem << endl;
 
         switch (dbrTypeRequest_DataBuffer)
         {
@@ -444,9 +450,12 @@ template <class CTYPE> int  Transpose<CTYPE>::put(const unsigned int  _handle,
                 }
                 break;
             case DBR_DOUBLE:  //6
+						   
                 for (unsigned int  i=0; i<nelem; ++i) {
                     *((dbr_float_t *) (PVDataL) + i ) =   (dbr_float_t)   val[i] ;
+										
                 }
+								
                 break;
             case DBR_STRING:  //0
                 status=putString(_handle, (dbr_string_t *) val);
@@ -688,7 +697,7 @@ template <class CTYPE> int  Transpose<CTYPE>::put(const unsigned int  _handle,
         return ECAFE_INVALID_HANDLE;
     }
 
-
+    cout << "status " << status << endl;
 
     return status;
 

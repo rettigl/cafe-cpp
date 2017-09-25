@@ -31,31 +31,31 @@ void callbackHandlerMonitor( struct event_handler_args args)  {
          if (args.type < DBR_GR_STRING) {
             PVDataHolder pvd(args.count);
             (*it_handle).getPVDataHolder(pvd);
-            pvd.print();
-            cout << "val/D//= " << pvd.getAsString(0) << endl;
+            //pvd.print();
+            //cout << "val/D//= " << pvd.getAsString(0) << endl;
 
          }
          else if (args.type < DBR_PUT_ACKT) {
             PVCtrlHolder pvc(args.count);
             (*it_handle).getPVCtrlHolder(pvc);
-            pvc.print();
-            cout << "val/C/= " << pvc.getAsString(0) << endl;
+            //pvc.print();
+            //cout << "val/C/= " << pvc.getAsString(0) << endl;
          }
 				 
+				  			
+			  //cout <<  "args.usr = " << (unsigned int) args.usr << endl;
+				//cout <<  "getUsrArgs() = " << (unsigned int) (*it_handle).getUsrArgs() << endl;
 				 
+				 
+				/* 
 				vector<MonitorPolicy> mpV = (*it_handle).getMonitorPolicyVector();
-				
-				 			
-			  cout <<  args.usr << endl;
-				cout << (*it_handle).getUsrArgs() << endl;
-				
-				for (int i=0; i<mpV.size(); ++i) {
-				
+										
+				for (int i=0; i<mpV.size(); ++i) {				
 			  	cout << " i " << i << endl;
 				  cout <<  mpV[i].getUserArgs() << endl;
 					mpV[i].print();
 				}
-			
+				*/
 				//****  END USER CODE ***// 
 		
     }
@@ -99,7 +99,7 @@ void handlerPut( struct event_handler_args args)  {
 
             handle_index.modify(it_handle, change_channelRequestStatusPut(channelRequestStatusPut));
 						
-						cout << __METHOD__ << " WITH_CALLBACK_USER_SUPLLIED for PUT done " << (*it_handle).getChannelRequestStatusPut().getCallbackProgressKind() << endl;
+						//cout << __METHOD__ << " WITH_CALLBACK_USER_SUPLLIED for PUT done " << (*it_handle).getChannelRequestStatusPut().getCallbackProgressKind() << endl;
 
             if(MUTEX)cafeMutex.unlock();
 				
@@ -155,22 +155,25 @@ void handlerGet( struct event_handler_args args)  {
 						if(MUTEX){cafeMutex.unlock();}
 						
 						
+							//**** ADD USER CODE HERE ***//
+						
+						
          		if (args.type < DBR_GR_STRING) {
             	PVDataHolder pvd(args.count);
             	(*it_handle).getPVDataHolder(pvd);
-            	pvd.print();
-            	cout << "val/D//= " << pvd.getAsString(0) << endl;
+            	//pvd.print();
+            	//cout << "val/D//= " << pvd.getAsString(0) << endl;
 
          		}
          		else if (args.type < DBR_PUT_ACKT) {
             	PVCtrlHolder pvc(args.count);
             	(*it_handle).getPVCtrlHolder(pvc);
-            	pvc.print();
-            	cout << "val/C/= " << pvc.getAsString(0) << endl;
+            	//pvc.print();
+            	//cout << "val/C/= " << pvc.getAsString(0) << endl;
          		}
 				 
 						
-						
+							//****  END USER CODE ***// 
     }
 		else {
 				

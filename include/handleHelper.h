@@ -83,6 +83,8 @@ class HandleHelper : public Helper {
         unsigned int  getHandleFromPVAlias(const char * _pv);
         unsigned int  getHandleFromPVAlias(const char * _pv, ca_client_context * ccc);
 
+				vector<unsigned int> getHandlesFromPVs(vector<string> pvV,  ca_client_context * ccc);
+				vector<unsigned int> getHandlesFromPVs(vector<string> pvV); 
 
 		    vector<unsigned int>  getHandlesFromWithinGroupV(unsigned int  gh);
         unsigned int * getHandlesFromWithinGroup(unsigned int  gh);
