@@ -156,6 +156,8 @@ public:
             CAFEStatus cstat; cstat.report(statusGroup);
         }
         for (unsigned int  i=0; i<npvToPrint; ++i) {
+				    std::cout <<  "------------------------------------------" << std::endl;
+            std::cout <<  "Element [" << i << "] of " << npvToPrint << " in group: " << name << endl;
             pvdata[i].print();
         }
     }
@@ -169,6 +171,8 @@ public:
             CAFEStatus cstat; cstat.report(statusGroup);
         }
         for (unsigned int  i=0; i<npvToPrint; ++i) {
+						std::cout <<  "------------------------------------------" << std::endl;
+            std::cout <<  "Element [" << i << "] of " << npvToPrint << " in group: " << name << endl;
             pvdata[i].print(min(maxNelemWF,pvdata[i].getNelem()));
         }
     }

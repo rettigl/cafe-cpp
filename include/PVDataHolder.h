@@ -159,6 +159,7 @@ public:
             std::cout <<  "Variable has not been applied to a get operation!" << std::endl;
             return;
         }
+       
         std::cout <<  "------------------------------------------" << std::endl;
         //std::cout <<  "PVDataHolder:" << std::endl;
 
@@ -171,7 +172,8 @@ public:
         std::cout <<  "attrib         = "  << attrib << std::endl;
         std::cout <<  "dataType       = "  << cafeDataTypeCode.message(dataType).c_str()
                 << " (" << dataType << ") "  << std::endl;
-        std::cout <<  "dbrTypeRequest = "  << dbr_type_to_text(dbrDataType)<< std::endl;
+        std::cout <<  "dbrTypeRequest = "  << dbr_type_to_text(dbrDataType)
+                  << " (" << dbrDataType << ") " << std::endl;
 
         //std::cout <<  "dataType = "  << CAFEDataTypeCode.message(dataType).c_str() << std::endl;
 
@@ -187,15 +189,16 @@ public:
         }
 
         if (dbr_type_is_STS(dbrDataType) || dbr_type_is_TIME(dbrDataType) ) {
-            std::cout <<  "alarmStatus    = "  << alarmStatus << std::endl;
-            std::cout <<  "alarmSeverity  = "  << alarmSeverity << std::endl;
+           
+            std::cout <<  "alarmStatus    = " << acond.asString(alarmStatus)  << " ("  <<  alarmStatus <<  ")" << std::endl;
+            std::cout <<  "alarmSeverity  = " << aseve.asString(alarmSeverity) << " (" <<alarmSeverity <<  ")" << std::endl;
 
             if (dbr_type_is_TIME(dbrDataType)) {
             std::cout <<  "epicsTimeStamp = "  << ts.secPastEpoch << " sec. and " << ts.nsec << " nsec" << std::endl;
             }
         }
         if(beamEventNo!=0) {std::cout <<  "beamEventNo    = "  << beamEventNo << std::endl;};
-        std::cout <<  "status         = "  << cafeStatusCode.message(status).c_str() << std::endl;
+        std::cout <<  "status         = "  << cafeStatusCode.message(status).c_str() << " (" << status << ") " << std::endl;
         std::cout <<  "value(s)       = "  ;
 	
         switch (dataType) {

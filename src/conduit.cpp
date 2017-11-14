@@ -49,6 +49,9 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,  bool _pyCafeFlag) {
  *   \param _pv      input:      	process variable
  *   \param _ccc     input:     	ca_client_context
  *   \param _pyCafeFlag input: bool
+ *   \param _channelRequestPolicyPut input: ChannelRequestPolicyPut
+ *   \param _channelRequestPolicyGet input: ChannelRequestPolicyGet
+ *   \param _channelGetActionWhenMonitorPolicyGet input: ChannelGetActionWhenPolicyGet 
  */
 Conduit::Conduit(const char * _pv, ca_client_context *_ccc, 
 	ChannelRequestPolicy _channelRequestPolicyPut, ChannelRequestPolicy _channelRequestPolicyGet,
@@ -382,7 +385,7 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const {
     chtype channelType = channelRequestMetaData.getDbrDataType();
     CAFENUM::DBR_TYPE dbrTypeClass=helper.convertToCAFEDbrTypeClass(channelType);
 
-    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN ) {
+    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN  &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED) {
 
         switch(dbrTypeClass)
         {
@@ -610,7 +613,7 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const {
         break;
 
     case TYPENOTCONN:
-        if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN ) {
+        if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN  &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED ) {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
         cout << "ERROR CAFE_TYPENOTCONN: dataType: "
                 <<  channelType <<  " : " << dbr_type_to_text(channelType) << endl;
@@ -648,7 +651,7 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const {
 
     CAFENUM::DBR_TYPE dbrTypeClass=helper.convertToCAFEDbrTypeClass(channelType);
 
-    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN ) {
+    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED ) {
 
         switch(dbrTypeClass)
         {

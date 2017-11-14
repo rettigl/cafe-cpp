@@ -59,6 +59,7 @@ public:
     bool    * mRule;
 
     unsigned int  * mHandle;
+		
 
     virtual ~ConduitGroup();
 	
@@ -80,6 +81,7 @@ public:
     unsigned int        getGroupHandle(void) const {return groupHandle;};
     ChannelTimeoutPolicy getChannelTimeoutPolicySGPut(void) const {return channelTimeoutPolicySGPut;};
     ChannelTimeoutPolicy getChannelTimeoutPolicySGGet(void) const {return channelTimeoutPolicySGGet;};
+		
  };
 
 

@@ -38,7 +38,7 @@ public:
     friend struct change_connectionHandlerArgs; 
     friend struct change_eventHandlerArgs;
     //friend struct change_channelRegalia;
-    //friend class  Connect;
+    friend class  Connect;
     friend class  HandleHelper;
     friend class  Conduit;
     friend class  ConduitGroup;
@@ -64,8 +64,8 @@ protected:
     void                setReadAccess (unsigned short r){accessRead=r;};
     void                setWriteAccess(unsigned short w){accessWrite=w;};
     void                setNelem      (unsigned int  n) {nelem=n;};
-    void                setConnectionState     (long cs)   {connectionState=cs;};
-    void                setCafeConnectionState (long ccs)  {cafeConnectionState=ccs;};
+    void                setConnectionState     (int cs)   {connectionState=cs;};
+    void                setCafeConnectionState (int ccs)  {cafeConnectionState=ccs;};
 
 public:
     chid                getChannelID()  const   {return channelID;};

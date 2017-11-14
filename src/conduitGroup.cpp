@@ -57,11 +57,10 @@ ConduitGroup::ConduitGroup(const char * _groupName, ca_client_context * _ccc,  C
     ++groupHandleNext;
     groupHandle	      = groupHandleNext;
 
-
     mStatus = new int [nMember];
     mRule = new bool[nMember];
     for (unsigned int i=0; i<nMember; ++i) {
-        mRule[i]="true";
+        mRule[i]=true;
         mStatus[i]=ICAFE_NORMAL;
     }
 };

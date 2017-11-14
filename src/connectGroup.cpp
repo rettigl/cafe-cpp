@@ -1128,9 +1128,9 @@ int Connect::collectionMemberList(const char * collectionName, vector<string> &l
 
 
 /**
- * \brief Connect::devicePositionOrderedMultiMap - returms a map of devices and their positions
+ * \brief Connect::devicePositionOrderedMultiMap - returns a map of devices and their positions
  * \param collectionName input: name of collection
- * \param devPos output: multimap of devices (string) and their positions (float) - odered in position
+ * \param posDev output: multimap of devices (string) and their positions (float) - odered in position
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
 int Connect::devicePositionOrderedMultiMap(const char * collectionName, std::multimap<float, string> &posDev) {
@@ -1171,9 +1171,9 @@ int Connect::devicePositionOrderedMultiMap(const char * collectionName, std::mul
 
 
 /**
- * \brief Connect::devicePositionMap - returms a map of devices and their positions
+ * \brief Connect::devicePositionMap - returns a map of devices and their positions
  * \param collectionName input: name of collection
- * \param devPos output: map of devices (string) and their positions (float) - not ordered
+ * \param posDev output: map of devices (string) and their positions (float) - not ordered
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
 int Connect::devicePositionMap(const char * collectionName, std::map<float, string> &posDev) {
@@ -1211,9 +1211,10 @@ int Connect::devicePositionMap(const char * collectionName, std::map<float, stri
 
 
 /**
- * \brief Connect::devicePositionMap - returms a map of devices and their positions
+ * \brief Connect::devicePositionV - returns a vector of devices and their positions
  * \param collectionName input: name of collection
- * \param devPos output: map of devices (string) and their positions (float) - not ordered
+ * \param dev output: vector of devices (string) 
+ * \param pos output: vector of devices positions (float) 
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
 int Connect::devicePositionV(const char * collectionName, std::vector<string> &dev, std::vector<float> &pos) {
@@ -1294,6 +1295,11 @@ int Connect::fetchIndexOfCollectionMember(const char *collectionName, const char
 
 
 /////////////////////////END COLLECTION //////////////////////////////////////////////
+
+
+
+
+
 
 
 
@@ -1502,9 +1508,75 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
     {
 			  //Set timeout to a value that depends on the no of members: 1200 takes 3.5 seconds
 				double extraTime=nMember/NMEMBER_PER_SEC_SG_PEND_EVENT;
+				//if ( (DEFAULT_TIMEOUT_SG_PEND_EVENT + extraTime) > channelOpenGroupPolicy.getTimeout() ) {
+				if ( (channelOpenGroupPolicy.getDefaultTimeout() + extraTime) > channelOpenGroupPolicy.getTimeout() ) {
+					channelOpenGroupPolicy.setTimeout(channelOpenGroupPolicy.getDefaultTimeout()+ extraTime);
+				}
 				
-				channelOpenGroupPolicy.setTimeout(DEFAULT_TIMEOUT_SG_PEND_EVENT + extraTime);
-        channelOpenGroupPolicy.flushSendBufferNow();
+							
+				
+            using namespace boost::posix_time;
+            ptime timeStart(microsec_clock::local_time());
+
+            double  timeElapsed=0;
+            unsigned int  nPoll=0;	
+				
+				
+            channelOpenGroupPolicy.flushSendBufferNow();
+						
+						bool allConnected=true;						
+            for (unsigned int i = 0; i < nMember; ++i) {
+              it_handle = handle_index.find(memberHandle[i]);
+              if (it_handle != handle_index.end()) {
+							  if (!(*it_handle).isConnected()) {		
+									allConnected=false;						
+                }
+              }
+            }
+								
+					  ptime timeEnd(microsec_clock::local_time());
+            time_duration duration(timeEnd-timeStart);
+            timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+            while ( !allConnected && timeElapsed <= channelOpenGroupPolicy.getTimeout()){	
+									
+                #if HAVE_BOOST_THREAD
+                  boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
+                #else
+                  #if HAVE_LINUX
+                  usleep(1000);
+                  #endif
+                #endif
+								
+                ++nPoll;
+								
+								allConnected=true;								
+                for (unsigned int i = 0; i < nMember; ++i) {
+                  it_handle = handle_index.find(memberHandle[i]);
+                  if (it_handle != handle_index.end()) {
+							      if (!(*it_handle).isConnected()) {		
+									    allConnected=false;						
+                    }
+                  }
+                }
+
+                ptime timeEnd(microsec_clock::local_time());
+                time_duration duration(timeEnd-timeStart);
+                timeElapsed= (double) duration.total_microseconds()/1000000.0;
+							
+            }
+							
+						/*
+						if (allConnected)  {
+								cout << groupName << " // is all connected //" << endl;
+						} 					        
+						else {
+								cout << groupName << " // is not all connected //" << endl;
+						}
+						cout << "timeElapsed for open " << timeElapsed << " nPoll = " << nPoll << endl;
+						*/
+				
+				
     }
 
     //memHandle must not be deleted; allocated memory for use elsewhere
@@ -1703,6 +1775,9 @@ int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chi
 
         if (status != ECA_NORMAL) {
             cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " ca_create_channel failed: " << endl;
+						if (status == ECA_EVDISALLOW) {
+               cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " inappropriate function " << endl;
+						}
             cafeStatus.report(status);
 
             if(MUTEX){cafeMutex.lock();}  //lock
@@ -1712,6 +1787,7 @@ int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chi
         }
 
         // Peculiar if true
+				/*
         if (status == ECA_EVDISALLOW) {
             cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " inappropriate function " << endl;
             cafeStatus.report(status);
@@ -1719,7 +1795,7 @@ int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chi
             handle_index.modify(it_handle, change_status (status) );
             if(MUTEX){cafeMutex.unlock();} //unlock
         }
-
+				*/
     }
     else {
         return ECAFE_INVALID_HANDLE;
@@ -1827,4 +1903,131 @@ int Connect::createHandleWithinGroup(const char  * pv, ca_client_context * ccc,
         return ICAFE_NORMAL;
 
 }
+
+
+
+
+
+ /**
+  *  \brief send the command to the ioc to open channels within all group(s).
+  *  \param _timeout input: max pend time to establish connections \n
+  */
+  void Connect::openGroupNowAndWait(double _timeout) {
+	  double dto = channelOpenGroupPolicy.getTimeout();
+	  channelOpenGroupPolicy.setTimeout(_timeout);
+	  		
+		//Time lapsed
+			
+    using namespace boost::posix_time;
+    ptime timeStart(microsec_clock::local_time());
+
+    double  timeElapsed=0;
+    unsigned int  nPoll=0;	
+							 	     
+    channelOpenGroupPolicy.flushSendBufferNow(); 	
+		
+		ptime timeEnd(microsec_clock::local_time());
+    time_duration duration(timeEnd-timeStart);
+    timeElapsed= (double) duration.total_microseconds()/1000000.0;
+		
+
+    while ( !handleHelper.allChannelsWithinGroupConnected() && (timeElapsed <= channelOpenGroupPolicy.getTimeout())){	
+									
+          #if HAVE_BOOST_THREAD
+            boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
+          #else
+            #if HAVE_LINUX
+              usleep(1000);
+            #endif
+          #endif
+								
+          ++nPoll;
+
+          ptime timeEnd(microsec_clock::local_time());
+          time_duration duration(timeEnd-timeStart);
+          timeElapsed= (double) duration.total_microseconds()/1000000.0;
+							
+     }
+				
+							
+						if ( handleHelper.allChannelsWithinGroupConnected() ) {
+								cout << " // all group members are connected //" << endl;
+						} 					        
+						else {
+								cout << " // not all group members are connected //" << endl;
+						}
+						cout << "timeElapsed for group open " << timeElapsed << " nPoll = " << nPoll << endl;
+						
+		
+		
+		//reset 
+		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+		//channelOpenPolicy.setTimeoutToDefault();
+		channelOpenGroupPolicy.setTimeout(dto);
+		return;
+	} 
+	
+
+ /**
+  *  \brief send the command to the ioc to open channels within given group(s).
+	*  \param _timeout input: max pend time to establish connections \n
+	*  \param  gHandles input: vector of groups handles \n
+  */
+  void Connect::openGroupNowAndWaitForInputGroups(double _timeout, vector<unsigned int> gHandles) {
+	  double dto = channelOpenGroupPolicy.getTimeout();
+	  channelOpenGroupPolicy.setTimeout(_timeout);
+	  		
+		//Time lapsed
+			
+    using namespace boost::posix_time;
+    ptime timeStart(microsec_clock::local_time());
+
+    double  timeElapsed=0;
+    unsigned int  nPoll=0;	
+							 	     
+    channelOpenGroupPolicy.flushSendBufferNow(); 	
+		
+		ptime timeEnd(microsec_clock::local_time());
+    time_duration duration(timeEnd-timeStart);
+    timeElapsed= (double) duration.total_microseconds()/1000000.0;
+		
+
+    while ( !handleHelper.allChannelsWithinGroupConnectedV(gHandles) && (timeElapsed <= channelOpenGroupPolicy.getTimeout())){	
+									
+          #if HAVE_BOOST_THREAD
+            boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
+          #else
+            #if HAVE_LINUX
+              usleep(1000);
+            #endif
+          #endif
+								
+          ++nPoll;
+
+          ptime timeEnd(microsec_clock::local_time());
+          time_duration duration(timeEnd-timeStart);
+          timeElapsed= (double) duration.total_microseconds()/1000000.0;
+							
+     }
+				
+							
+						if ( handleHelper.allChannelsWithinGroupConnectedV(gHandles) ) {
+								cout << " // all group members of all groups are connected //" << endl;
+						} 					        
+						else {
+								cout << " // not all group members of all groups are connected //" << endl;
+						}
+						cout << "timeElapsed for mulitple group open " << timeElapsed << " nPoll = " << nPoll << endl;
+						
+		
+		
+		//reset 
+		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+		//channelOpenPolicy.setTimeoutToDefault();
+		channelOpenGroupPolicy.setTimeout(dto);
+		return;
+	} 
+	
 

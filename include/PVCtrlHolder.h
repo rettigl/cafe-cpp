@@ -42,7 +42,8 @@ private:
     CAFE_DATATYPE_UNION lowerCtrlLimit;
 
     Helper helper;
-  
+   
+	
     public:
 	
     PVCtrlHolder(){
@@ -205,12 +206,13 @@ private:
         print(nelem) ;
     }
 
+
     void print(unsigned int  nelemToPrint) {
 
         nelemToPrint=min(nelemToPrint,nelem);
         std::cout <<  "------------------------------------------" << std::endl;
         std::cout <<  "PVCtrlHolder:" << std::endl;
-	std::cout <<  "processVariable= "  << pv << std::endl;	
+	      std::cout <<  "processVariable= "  << pv << std::endl;	
         if (strcmp(pvAlias,pv)) {
             std::cout <<  "pvAlias        = "  << pvAlias << std::endl;
         }
@@ -220,11 +222,15 @@ private:
                 << " (" << dataType << ") "  << std::endl;
         std::cout <<  "dbrTypeRequest = "  << dbr_type_to_text(dbrDataType)<< std::endl;
         if (dataType!=CAFE_NO_ACCESS || dataType != CAFE_TYPENOTCONN) {
-	std::cout <<  "nelem          = "  << nelem << std::endl;
+	       std::cout <<  "nelem          = "  << nelem << std::endl;
 
-	std::cout <<  "alarmStatus    = "  << alarmStatus << std::endl;
-	std::cout <<  "alarmSeverity  = "  << alarmSeverity << std::endl;
-	std::cout <<  "precision      = "  << precision << std::endl;
+	     //std::cout <<  "alarmStatus    = "  << alarmStatus << " [" <<  acond.asString(alarmStatus)<< "]" << std::endl;
+	     //std::cout <<  "alarmSeverity  = "  << alarmSeverity << " [" << aseve.asString(alarmSeverity) << "]"<< std::endl;
+	      std::cout <<  "alarmStatus    = " << acond.asString(alarmStatus)  << " ("  <<  alarmStatus <<  ")" << std::endl;
+        std::cout <<  "alarmSeverity  = " << aseve.asString(alarmSeverity) << " (" <<alarmSeverity <<  ")" << std::endl;
+
+	
+	      std::cout <<  "precision      = "  << precision << std::endl;
         std::cout <<  "units          = "  << units << std::endl;
         /*
         if (dataType==CAFE_DOUBLE){

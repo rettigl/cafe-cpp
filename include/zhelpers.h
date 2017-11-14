@@ -1,51 +1,24 @@
-/*  =====================================================================
-    zhelpers.h
 
-    Helper header file for example applications.
-    =====================================================================
-*/
+#ifndef ZHELPERS_H
+#define ZHELPERS_H
 
-
-
-#ifndef __ZHELPERS_H_INCLUDED__
-#define __ZHELPERS_H_INCLUDED__
-
-#if HAVE_ZEROMQ
-
-
-//  Include a bunch of headers that we will need in the examples
 
 #include <zmq.h>
 
+/*
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-
-#if (defined (WIN32))
-#   include <time.h>
-#else
-#   include <sys/time.h>
-#endif
+*/
 
 #include <assert.h>
 #include <signal.h>
 
-//  Version checking, and patch up missing constants to match 2.1
-#if ZMQ_VERSION_MAJOR == 2
-#   error "Please upgrade to ZeroMQ/3.2 for these examples"
-#endif
-
-//  Provide random number from 0..(num-1)
-#if (defined (WIN32))
-#   define randof(num)  (int) ((float) (num) * rand () / (RAND_MAX + 1.0))
-#else
-#   define randof(num)  (int) ((float) (num) * random () / (RAND_MAX + 1.0))
-#endif
 
 #if HAVE_JSON
-	#include <json/json.h>
+#include <json/json.h>
 #endif
 	
 #include <cafeService.h>
@@ -57,36 +30,6 @@ string hashOriginal="";
 unsigned short hashOriginalFlag=0;
 bool fillBSPV=false;
 vector<std::string> bsPV;
-	
-//  Receive 0MQ string from socket and convert into C string
-//  Caller must free returned string. Returns NULL if the context
-//  is being terminated.
-static char *
-s_recv (void *socket) {
-    char buffer [4096];
-    int size = zmq_recv (socket, buffer, 4096, 0); //ZMQ_DONTWAIT);
-    if (size == -1)
-        return NULL;
-    if (size > 4096)
-        size = 4096;
-    buffer [size] = 0;
-    return strdup (buffer);
-}
-
-//  Convert C string to 0MQ string and send to socket
-static int
-s_send (void *socket, char *string) {
-    int size = zmq_send (socket, string, strlen (string), 0); 
-    return size;
-}
-
-//  Sends string as 0MQ string, as multipart non-terminal
-static int
-s_sendmore (void *socket, char *string) {
-    int size = zmq_send (socket, string, strlen (string), ZMQ_SNDMORE);
-    return size;
-}
-
 
 
 //  Receives all message parts from socket, prints neatly
@@ -97,7 +40,7 @@ s_dump (DBPMKeeper & dbpm)
 
 		if (inDumpFlag==1) {
 			cout << "zeroMQ socket is busy " << endl;
-			cout << "waiting got zmq timeout " << endl;
+			cout << "waiting for zmq timeout " << endl;
 		}
 		
    	puts ("//START----------------------------------------//");
@@ -124,20 +67,21 @@ s_dump (DBPMKeeper & dbpm)
 
     cout << "df = " << inDumpFlag << endl; 	
 
-	  while (inDumpFlag==1) {
+	   while (inDumpFlag==1) {
 		    cout << "df/ = " << inDumpFlag << endl; 
-	      cout << " sleeping " << endl;
-				sleep(1);
+			cout << " sleeping " << endl;
+				//sleep(1);
 		}
 
 		int subMessage=0;		
 		int nSequentialHeader=0;
 		
+
     while (1) {
 			  inDumpFlag=1;
 			 				
-		   // puts ("//WHILE LOOP ----------------------------------------//");
-				//cout << "subMessage " << subMessage << endl;
+			//puts ("//WHILE LOOP ----------------------------------------//");
+			//cout << "subMessage " << subMessage << endl;
         //  Process all parts of the message
         zmq_msg_t message;
         zmq_msg_init (&message);
@@ -149,32 +93,52 @@ s_dump (DBPMKeeper & dbpm)
 					cout << " Error is " << zmq_errno() << " " << zmq_strerror(zmq_errno()) << endl;
 					//Resource unavailable means that there is nothing to read now
 					
+					zmq_getsockopt (socket, ZMQ_RCVMORE, &more, &more_size);
+
+
+					//cout << "message mulipart --> more == " << more << endl;
+
+
 					 zmq_msg_close (&message);
-					 dbpm.status=ICAFE_LINUX_ERROR+zmq_errno() ;
+
+
+					 //if (!more) {
+					 //		   dbpm.status=ERRNO_EAGAIN; //ICAFE_ERRNO_BASE +zmq_errno() ;
+					 //		   cout << "EARLY BREAK subMessage total: " << subMessage << endl;
+					 //		   puts ("//------------------------------------END-------------------------------------//");
+					 //		 break;      //  Last message
+					 // }
+
+
+
+					 dbpm.status=ICAFE_ERRNO_BASE+zmq_errno() ;
 					 break;
 				} 
 				
 				
 				else if (size == 0) {
 
-					//cout << " Data of Zero SIZE for submessage " << subMessage << endl;
+					////cout << " Data of Zero SIZE for submessage " << subMessage << endl;
 			
 					++nZeroSize;
-					
+
+
 					 //zmq_msg_close (&message);
 					 //dbpm.status=ECAFE_NODATA;
 					 //break;
 					 //Comes in pairs; one for val one for timestamp
 					 if (nZeroSize%2==1) {
-					   ++bsPVIdx;					  
-						
-					  // cout << " pv with zero size:  " << bsPV[bsPVIdx] << endl;
-						 
+					   ++bsPVIdx;
+
+
+						if (bsPVIdx >0) {
+						   cout << bsPV[bsPVIdx] << endl;
+						}
 					 }
-					 				 
+
 					 ++subMessage;
 					 
-					 continue;
+					 //continue;
 				} 
         else { 
 			
@@ -190,9 +154,16 @@ s_dump (DBPMKeeper & dbpm)
             ||  (unsigned char) data [char_nbr] > 127)
                 is_text = 0;
 
-	      // printf (" SIZE [%03d] ", size);
+
+		//TExt is two header files
+		//non-text size=8 is X1, Y1, Q1
+		//non-text size=2 is -VALID
+		//non-text size=16 is timestamp
 
 		/*
+		printf (" SIZE [%03d] ", size);
+
+
 		if (is_text) {
 			cout << " TEXT +++++++++++ " << endl;
 		}
@@ -230,11 +201,11 @@ s_dump (DBPMKeeper & dbpm)
 				if (is_text) {
 						parsingSuccessful=reader.parse(data, parsedFromString);
 						if (parsingSuccessful) {
-							Json::StyledWriter styledWriter;
+							//Json::StyledWriter styledWriter;
 							//cout << "STYLED: --------------------------------" << endl;
 							//cout << styledWriter.write(parsedFromString) << endl;
 							//cout << "----------------------------------" << endl;
-							cout << parsedFromString["htype"] << endl;
+							//cout << parsedFromString["htype"] << endl;
 							
 							
 							if (fastWriter.write(parsedFromString["htype"]).find("bsr_m-1.1") != std::string::npos) { 
@@ -243,7 +214,7 @@ s_dump (DBPMKeeper & dbpm)
 
 								hashIs=parsedFromString["hash"].asString();
 
-								if (hashOriginalFlag<2) {
+								if (hashOriginalFlag==0) {
 									cout << hashIs << " is different to original/// " << hashOriginal << endl;	
 									hashOriginal=hashIs;
 									++hashOriginalFlag;
@@ -252,10 +223,14 @@ s_dump (DBPMKeeper & dbpm)
 
 								if (hashOriginal.compare(hashIs)!=0) {
 									cout << hashIs << " is different to original " << hashOriginal << endl;	
+									hashOriginal=hashIs;
+									++hashOriginalFlag;
 									fillBSPV=true;
 																
 								}
-                cout << "p id " << parsedFromString["pulse_id"].asUInt64() << endl;		
+								 cout << "p id " << parsedFromString["pulse_id"].asUInt64() << endl;
+
+								 dbpm.setPulse_id(parsedFromString["pulse_id"].asUInt64());
 
 								//Reset values as a change of hash signifies that data from two pulse ids
 								//is being sent in one zeromq messages
@@ -283,9 +258,9 @@ s_dump (DBPMKeeper & dbpm)
 							}	
 							else if (fastWriter.write(parsedFromString["htype"]).find("bsr_d-1.1") != std::string::npos) { 
 							
-					
+							++nSequentialHeader;
 								
-							 //if  (fillBSPV) {
+							 if  (fillBSPV) {
 							
 									bsPV.clear();
 									bsPV.reserve(dbpm.getNPV());
@@ -324,7 +299,7 @@ s_dump (DBPMKeeper & dbpm)
 										
 										//cout << "NEW FILL: size of bsPV " <<  bsPV.size() << endl;
 										fillBSPV=false;
-								//}
+								}
 
 							}	
 							
@@ -338,24 +313,37 @@ s_dump (DBPMKeeper & dbpm)
 							}
 							
 							
-							//cout << "----------------------------------" << endl;
+							cout << "/----------------------------------/" << endl;
 								
 					}
 				}
 				
 				
-				if (nSequentialHeader >5) {
+				if (nSequentialHeader >3 && is_text==1) {
 					 cout << "WARNING: ZEROMQ SUB-MESSAGE DOES NOT CLOSE " << endl; 
-					 cout << "WARNING: FORCING CLOSE AND BREAKING FROM LOOP " << endl; 
-					 zmq_getsockopt (socket, ZMQ_RCVMORE, &more, &more_size);
+					 cout << "WARNING: FORCING ZMQ_MSG_CLOSE  " << endl;
+
+					 cout << "No of sequential headers " << nSequentialHeader << endl;
+					 cout << "is_text " << is_text << endl;
+					 //zmq_getsockopt (socket, ZMQ_RCVMORE, &more, &more_size);
 					 			 
-           zmq_msg_close (&message);
-					 cout << "message mulipart --> more == " << more << endl;
+					 //zmq_msg_close (&message);
+					 //cout << "message mulipart --> more == " << more << endl;
 					 	
-						dbpm.status=LINUX_EAGAIN; //ICAFE_LINUX_ERROR +zmq_errno() ;
-			 	  //break;
+
+					 //nSequentialHeader=0;
+					 //cannot break; results in seqmentation fault
+
+					 //if (!more) {
+					//		   dbpm.status=ERRNO_EAGAIN; //ICAFE_ERRNO_BASE +zmq_errno() ;
+					//		   cout << "EARLY BREAK subMessage total: " << subMessage << endl;
+					//		   puts ("//------------------------------------END-------------------------------------//");
+
+					// break;      //  Last message
+					//}
 				
 				}
+
 				
 				
 				union foo
@@ -408,7 +396,9 @@ s_dump (DBPMKeeper & dbpm)
 					
 					
 					dbpm.pvd[dbpm.getPVIdx(bsPV[bsPVIdx])].set(v);
-					
+
+					dbpm.pvd[dbpm.getPVIdx(bsPV[bsPVIdx])].setBSStatus(ICAFE_NORMAL);
+
 					//cout << " readback of value that was set = " << dbpm.pvd[dbpm.getPVIdx(bsPV[bsPVIdx])].val[0].d << endl;
 						
 					}
@@ -465,6 +455,9 @@ s_dump (DBPMKeeper & dbpm)
 							}
 							
 								//cout << "value DBPM = " << dbpm.pvd[dbpm.getPVIdx(bsPV[bsPVIdx])].val[0].str << endl;
+
+
+								dbpm.pvd[dbpm.getPVIdx(bsPV[bsPVIdx])].setBSStatus(ICAFE_NORMAL);
 					}	
 				
 					
@@ -497,23 +490,27 @@ s_dump (DBPMKeeper & dbpm)
 					dbpm.pvd[dbpm.getPVIdx(bsPV[bsPVIdx])].ts.nsec=b;
 				}
 				
-			
-				
+
+
 					//cout << "subMessage above: " << subMessage << endl;
-				
-				++subMessage;
-				
+
+					++subMessage;
+
       
-				} //ifelse
+		} //ifelse
 				
       
         zmq_getsockopt (socket, ZMQ_RCVMORE, &more, &more_size);
+
         zmq_msg_close (&message);
 				
-			
+		//cout << "value of more " << more << endl;
 				
         if (!more) {
+				  dbpm.status=ICAFE_NORMAL;
 				  cout << "subMessage total: " << subMessage << endl;
+				  cout << " of which 0 size: " << nZeroSize << endl;
+				  cout << " Percentage good: " << (subMessage-nZeroSize-2)*100/(subMessage-2);
 				  puts ("//------------------------------------END-------------------------------------//");
 					 
             break;      //  Last message part
@@ -522,6 +519,16 @@ s_dump (DBPMKeeper & dbpm)
 		
 		inDumpFlag=0;
 	
+		if (subMessage>2) {
+			dbpm.status=ICAFE_NORMAL;
+		cout << "subMessage total: " << subMessage << endl;
+		cout << " of which 0 size: " << nZeroSize << endl;
+		cout << " Percentage good: " << (subMessage-nZeroSize-2)*100/(subMessage-2);
+		puts ("//------------------------------------END-------------------------------------//");
+		}
+
+
+		cout << "end of loop " << endl;
 		
 		return;
 }
@@ -763,68 +770,6 @@ s_dump (void *socket)
 		
 }
 
-//  Set simple random printable identity on socket
-//
-static void
-s_set_id (void *socket)
-{
-    char identity [10];
-    sprintf (identity, "%04X-%04X", randof (0x10000), randof (0x10000));
-    zmq_setsockopt (socket, ZMQ_IDENTITY, identity, strlen (identity));
-}
 
-/*
-//  Sleep for a number of milliseconds
-static void
-s_sleep (int msecs)
-{
-#if (defined (WIN32))
-    Sleep (msecs);
-#else
-    struct timespec t;
-    t.tv_sec  =  msecs / 1000;
-    t.tv_nsec = (msecs % 1000) * 1000000;
-    nanosleep (&t, NULL);
-#endif
-}
-*/
 
-//  Return current system clock as milliseconds
-static int64_t
-s_clock (void)
-{
-#if (defined (WIN32))
-    SYSTEMTIME st;
-    GetSystemTime (&st);
-    return (int64_t) st.wSecond * 1000 + st.wMilliseconds;
-#else
-    struct timeval tv;
-    gettimeofday (&tv, NULL);
-    return (int64_t) (tv.tv_sec * 1000 + tv.tv_usec / 1000);
-#endif
-}
-
-//  Print formatted string to stdout, prefixed by date/time and
-//  terminated with a newline.
-
-/*
-static void
-s_console (const char *format, ...)
-{
-    time_t curtime = time (NULL);
-    struct tm *loctime = localtime (&curtime);
-    char *formatted = (char*)malloc (20);
-    strftime (formatted, 20, "%y-%m-%d %H:%M:%S ", loctime);
-    printf ("%s", formatted);
-    free (formatted);
-
-    va_list argptr;
-    va_start (argptr, format);
-    vprintf (format, argptr);
-    va_end (argptr);
-    printf ("\n");
-}
-*/
-#endif  //  __ZHELPERS_H_INCLUDED__
-
-#endif
+#endif  //  ZHELPERS_H

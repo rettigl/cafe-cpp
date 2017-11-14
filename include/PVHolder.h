@@ -48,6 +48,9 @@ protected:
     short alarmStatus;   //alarm.h 0-22 0=NO_ALARM
     short alarmSeverity; //alarm.h 0=NO_ALARM 1=MINOR 2=MAJOR 3=INVALID
 
+    CAFEGlobalAlarmCondition acond;
+	  CAFEGlobalAlarmSeverity  aseve;
+
     unsigned int  userNo; //e.g. add handle
 
     unsigned int  beamEventNo;
@@ -98,10 +101,14 @@ public:
 
    boost::shared_ptr<vector<double> > ValVD_ptr;
    boost::shared_ptr<vector<float> > ValVF_ptr;
-   //boost::shared_ptr<vector<short> > ValVS_ptr;
+   boost::shared_ptr<vector<short> > ValVS_ptr;
    boost::shared_ptr<vector<int> > ValVI_ptr;
-   //boost::shared_ptr<vector<unsigned char> > ValVC_ptr;
-   //boost::shared_ptr<vector<unsigned short> > ValVUS_ptr;
+	 boost::shared_ptr<vector<long> > ValVL_ptr;
+	 boost::shared_ptr<vector<unsigned long> > ValVUL_ptr;
+	 boost::shared_ptr<vector<long long> > ValVLL_ptr;
+	 boost::shared_ptr<vector<unsigned long long> > ValVULL_ptr;	
+   boost::shared_ptr<vector<unsigned char> > ValVC_ptr;
+   boost::shared_ptr<vector<unsigned short> > ValVUS_ptr;
    boost::shared_ptr<vector<string> > ValVStr_ptr;
 
    typedef boost::shared_ptr<double []> ValDPtr;
@@ -135,7 +142,7 @@ public:
         return;
     };
 
-
+	void setBSStatus(int st) {status=st;} //for bsread
 
     const char  * getPV() const {return pv;};
     const char  * getPVName() const {return pv;};
@@ -148,12 +155,15 @@ public:
     CAFE_DATATYPE_UNION_SEQ getVal() const {return val.get();};
 
 
-    short getAlarmStatus() const {return alarmStatus;};
+    short getAlarmStatus()   const {return alarmStatus;};
     short getAlarmSeverity() const {return alarmSeverity;};
+		
+    string getAlarmStatusAsString()   {return acond.asString(alarmStatus);};
+    string getAlarmSeverityAsString()  {return aseve.asString(alarmSeverity);};
 
     unsigned int  getBeamEventNo() const {return beamEventNo;};
     bool getRule() const {return rule;};
-	bool getHasAlarm() const{return hasAlarm;};
+	  bool getHasAlarm() const{return hasAlarm;};
     int  getStatus() const {return status;};
     CAFE_DATATYPE getDataTypeClient() const {return dataType;};
     CAFE_DATATYPE getDataType() const {return dataType;};
@@ -194,6 +204,8 @@ public:
     void setString(std::string     str) {strcpy(val[0].str,str.c_str()); dataType=CAFE_STRING;};
     void setDouble(double d) {val[0].d=d; dataType=CAFE_DOUBLE;};
     void setInt(int    l) {val[0].l=l; dataType=CAFE_LONG;};
+		
+		
 	  void setVString(vector<std::string>  Vstr) {
 		   if(Vstr.size()!=nelem) {nelem=Vstr.size();}
 		   for (unsigned int  i=0; i<nelem; ++ i) {
@@ -206,6 +218,64 @@ public:
 		  if(Vl.size()!=nelem) {nelem=Vl.size();}
 		  for (unsigned int  i=0; i<nelem; ++ i) {
 			val[i].l=Vl[i];} dataType=CAFE_LONG;};
+			
+		
+		
+		
+	  void set(vector<std::string>  Vstr) {
+		   if(Vstr.size()!=nelem) {nelem=Vstr.size();}
+		   for (unsigned int  i=0; i<nelem; ++ i) {
+			 strcpy(val[i].str,Vstr[i].c_str());} dataType=CAFE_STRING;};
+	  void set(vector<double> Vd) {
+		  if(Vd.size()!=nelem) {nelem=Vd.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].d=Vd[i];} dataType=CAFE_DOUBLE;};
+		void set(vector<float> Vf) {
+		  if(Vf.size()!=nelem) {nelem=Vf.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].f=Vf[i];} dataType=CAFE_FLOAT;};	
+			
+	  void set   (vector<int>    Vl) {
+		  if(Vl.size()!=nelem) {nelem=Vl.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].l=Vl[i];} dataType=CAFE_LONG;};
+			
+		void set   (vector<long>    Vl) {
+		  if(Vl.size()!=nelem) {nelem=Vl.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].l=Vl[i];} dataType=CAFE_LONG;};	
+			
+		void set   (vector<unsigned long>    Vul) {
+		  if(Vul.size()!=nelem) {nelem=Vul.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].d=Vul[i];} dataType=CAFE_DOUBLE;};		
+			
+		void set   (vector<long long>    Vll) {
+		  if(Vll.size()!=nelem) {nelem=Vll.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].d=Vll[i];} dataType=CAFE_DOUBLE;};	
+				
+		void set   (vector<unsigned long long>    Vull) {
+		  if(Vull.size()!=nelem) {nelem=Vull.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].d=Vull[i];} dataType=CAFE_DOUBLE;};	
+			
+		void set   (vector<short>    Vs) {
+		  if(Vs.size()!=nelem) {nelem=Vs.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].s=Vs[i];} dataType=CAFE_SHORT;};	
+			
+		void set   (vector<unsigned short>    Vus) {
+		  if(Vus.size()!=nelem) {nelem=Vus.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].us=Vus[i];} dataType=CAFE_ENUM;};		
+			
+		void set   (vector<unsigned char>    Vc) {
+		  if(Vc.size()!=nelem) {nelem=Vc.size();}
+		  for (unsigned int  i=0; i<nelem; ++ i) {
+			val[i].ch=Vc[i];} dataType=CAFE_CHAR;};	
+			
+			
 
     void set(unsigned int    l)  {val[0].l= (int) l; dataType=CAFE_LONG;};
     void set(unsigned short  us) {val[0].us=us; dataType=CAFE_ENUM;};
@@ -287,9 +357,10 @@ public:
     }
 
     boost::shared_ptr<vector<double> > getAsVDouble(){
-    #define __METHOD__  "PVHolder::getVDouble "
+    #define __METHOD__  "PVHolder::getAsVDouble "
 
         ValVD_ptr.reset(new vector<double>());
+				ValVD_ptr->reserve(nelem);
 
         switch (dataType)
         {
@@ -322,9 +393,10 @@ public:
     }
 
     boost::shared_ptr<vector<float> > getAsVFloat(){
-    #define __METHOD__  "PVHolder::getVFloat "
+    #define __METHOD__  "PVHolder::getAsVFloat "
 
         ValVF_ptr.reset(new vector<float>());
+				ValVF_ptr->reserve(nelem);
 
         switch (dataType)
         {
@@ -357,6 +429,10 @@ public:
         //cout << "size/// " << vf[0].size() << endl;
         //cout << vf[0][0] << " val " << val[0].f << endl;
         //cout << vf[0][1] << " val " << val[1].f << endl;
+				//vector<float>  vf= *ValVF_ptr.get();
+        //cout << "size/// " << vf.size() << endl;
+        //cout << vf[0] << " val " << val[0].f << endl;
+        //cout << vf[1] << " val " << val[1].f << endl;
 
     return  ValVF_ptr;
     #undef __METHOD__
@@ -364,10 +440,11 @@ public:
 
 
     boost::shared_ptr<vector<int> > getAsVInt(){
-    #define __METHOD__  "PVHolder::getVInt "
+    #define __METHOD__  "PVHolder::getAsVInt "
 
         ValVI_ptr.reset(new vector<int>());
-
+				ValVI_ptr->reserve(nelem);
+					
         switch (dataType)
         {
             case CAFE_DOUBLE:
@@ -398,15 +475,337 @@ public:
     #undef __METHOD__
     }
 
+
+		
+    boost::shared_ptr<vector<long> > getAsVLong(){
+    #define __METHOD__  "PVHolder::getAsVInt "
+
+        ValVL_ptr.reset(new vector<long>());
+				ValVL_ptr->reserve(nelem);
+
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back((long) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back((long) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back((long) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back((long) val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back((long) val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back((long) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVL_ptr->push_back( getAsLong(i));}
+                break;
+        }
+
+    return  ValVL_ptr;
+    #undef __METHOD__
+    }
+
+		
+    boost::shared_ptr<vector<unsigned long> > getAsVULong(){
+    #define __METHOD__  "PVHolder::getAsVInt "
+
+        ValVUL_ptr.reset(new vector<unsigned long>());
+				ValVUL_ptr->reserve(nelem);
+
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back((unsigned long) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back((unsigned long) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back((unsigned long) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back((unsigned long) val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back((unsigned long) val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back((unsigned long) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVUL_ptr->push_back( getAsULong(i));}
+                break;
+        }
+
+    return  ValVUL_ptr;
+    #undef __METHOD__
+    }
+
+		
+		
+		
+    boost::shared_ptr<vector<long long> > getAsVLongLong(){
+    #define __METHOD__  "PVHolder::getAsVLongLong "
+
+        ValVLL_ptr.reset(new vector<long long>());
+				ValVLL_ptr->reserve(nelem);
+
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back((long long) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back((long long) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back((long long) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back((long long) val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back((long long) val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back((long long) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVLL_ptr->push_back( getAsLongLong(i));}
+                break;
+        }
+
+    return  ValVLL_ptr;
+    #undef __METHOD__
+    }
+
+		
+    boost::shared_ptr<vector<unsigned long long> > getAsVULongLong(){
+    #define __METHOD__  "PVHolder::getAsVLongLong "
+
+        ValVULL_ptr.reset(new vector<unsigned long long>());
+        ValVULL_ptr->reserve(nelem);
+
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back((unsigned long long) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back((unsigned long long) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back((unsigned long long) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back((unsigned long long) val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back((unsigned long long) val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back((unsigned long long) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVULL_ptr->push_back( getAsULongLong(i));}
+                break;
+        }
+
+    return  ValVULL_ptr;
+    #undef __METHOD__
+    }
+
+		
+		
+		
+		
+    boost::shared_ptr<vector<short> > getAsVShort(){
+    #define __METHOD__  "PVHolder::getAsVShort "
+
+        ValVS_ptr.reset(new vector<short>());
+				ValVS_ptr->reserve(nelem);
+				
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back((short) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back((short) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back((short) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back(val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back((short) val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back((unsigned short) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVS_ptr->push_back( getAsShort(i));}
+                break;
+        }
+
+    return  ValVS_ptr;
+    #undef __METHOD__
+    }
+
+		
+		
+    boost::shared_ptr<vector<unsigned short> > getAsVUShort(){
+    #define __METHOD__  "PVHolder::getAsVUShort "
+
+        ValVUS_ptr.reset(new vector<unsigned short>());
+				ValVUS_ptr->reserve(nelem);
+
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back((unsigned short) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back((unsigned short) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back((unsigned short) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back((unsigned short)val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back( val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back((unsigned short) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVUS_ptr->push_back( getAsUShort(i));}
+                break;
+        }
+
+    return  ValVUS_ptr;
+    #undef __METHOD__
+    }
+
+		
+    boost::shared_ptr<vector<unsigned char> > getAsVUChar(){
+    #define __METHOD__  "PVHolder::getAsVUChar "
+
+        ValVC_ptr.reset(new vector<unsigned char>());
+				ValVC_ptr->reserve(nelem);
+
+        switch (dataType)
+        {
+            case CAFE_DOUBLE:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back((unsigned char) val[i].d);}
+                break;
+            case CAFE_FLOAT:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back((unsigned char) val[i].f);}
+                break;
+            case CAFE_LONG:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back((unsigned char) val[i].l);}
+                break;
+            case CAFE_SHORT:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back((unsigned char)val[i].s);}
+                break;
+            case CAFE_ENUM:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back( (unsigned char)val[i].us);}
+                break;
+            case CAFE_CHAR:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back((unsigned char) val[i].ch);}
+                break;
+            case CAFE_STRING:
+                default:
+                for (unsigned i=0; i<nelem; ++i) {ValVC_ptr->push_back( (unsigned char) getAsChar(i));}
+                break;
+        }
+
+    return  ValVC_ptr;
+    #undef __METHOD__
+    }
+
     boost::shared_ptr<vector<string> > getAsVString(){
-    #define __METHOD__  "PVHolder::getVString "
+    #define __METHOD__  "PVHolder::getAsVString "
 
         ValVStr_ptr.reset(new vector<string>());
+				ValVStr_ptr->reserve(nelem);
         for (unsigned i=0; i<nelem; ++i) {ValVStr_ptr->push_back( getAsString(i));}
 
     return  ValVStr_ptr;
     #undef __METHOD__
     }
+
+
+    
+    vector<string> getAsVectorString() {		
+			boost::shared_ptr<vector<string> >  spVs = getAsVString();		 
+			return *spVs.get();
+		}
+    vector<float> getAsVectorFloat() {
+			boost::shared_ptr<vector<float> >  spVf = getAsVFloat();		 
+			return *spVf.get();
+		}		 
+    vector<double> getAsVectorDouble() {		
+			boost::shared_ptr<vector<double> >  spVd = getAsVDouble();		 
+			return *spVd.get();
+		}
+    vector<int> getAsVectorInt() {
+			boost::shared_ptr<vector<int> >  spVi = getAsVInt();		 
+			return *spVi.get();
+		}
+		
+		vector<long> getAsVectorLong() {
+			boost::shared_ptr<vector<long> >  spVl = getAsVLong();		 
+			return *spVl.get();
+		}		
+		
+		vector<unsigned long> getAsVectorULong() {
+			boost::shared_ptr<vector<unsigned long> >  spVul = getAsVULong();		 
+			return *spVul.get();
+		}
+		
+		vector<long long> getAsVectorLongLong() {
+			boost::shared_ptr<vector<long long> >  spVll = getAsVLongLong();		 
+			return *spVll.get();
+		}		
+		
+		vector<unsigned long long> getAsVectorULongLong() {
+			boost::shared_ptr<vector<unsigned long long> >  spVull = getAsVULongLong();		 
+			return *spVull.get();
+		}
+		
+		
+		vector<short> getAsVectorShort() {
+			boost::shared_ptr<vector<short> >  spVsh = getAsVShort();		 
+			return *spVsh.get();
+		}
+  
+	  vector<unsigned short> getAsVectorUShort() {
+			boost::shared_ptr<vector<unsigned short> >  spVus = getAsVUShort();		 
+			return *spVus.get();
+		}
+  	 vector<unsigned char> getAsVectorUChar() {
+			boost::shared_ptr<vector<unsigned char> >  spVc = getAsVUChar();		 
+			return *spVc.get();
+		}
+	
 
     ValDPtr getDouble(){
     #define __METHOD__  "PVHolder::getDouble "

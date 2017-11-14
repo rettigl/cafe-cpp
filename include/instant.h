@@ -108,13 +108,144 @@ public:
 																									
     int  setAndMatchMany(vector<unsigned int> handleSetV, const chtype dbrType, vector<CTYPE> valSet, vector<unsigned int> handleMatch,
                           CTYPE tolerance, double timeout, bool printFlag);
+													
+		int  setTriggerAndMatchMany(vector<unsigned int> handleSetV, const chtype dbrType, vector<CTYPE> valSet, 
+													vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                          CTYPE tolerance, double timeout, bool printFlag);											
 
 		int  matchMany( 													          	const chtype dbrType, vector<CTYPE> valSet, vector<unsigned int> handleMatch,
                           CTYPE tolerance, double timeout, bool printFlag);
 
 		int  match( 													          	const chtype dbrType, CTYPE valSet, unsigned int handleMatch,
                           CTYPE tolerance, double timeout, bool printFlag);
+													
+		int  setMany(vector<unsigned int> handleSet, const chtype dbrType, vector<CTYPE> valSet, bool printFlag); 
+													
+	
+																										
+    int  compareAndMatchMany(vector<unsigned int> handleSet, const chtype dbrType, vector<CTYPE> valSet, vector<unsigned int> handleMatch, 
+															CTYPE tolerance, double timeout, bool printFlag);																							
 
+
+
+		int  setManyString(vector<unsigned int> handleSet, vector<string> valSet, bool printFlag) {
+
+	#define __METHOD__ "Instant<CTYPE>::setMany(vector<unsigned int>handleSet, chtype, vector<CTYPE>valSet)"
+
+    CAFEStatus cstat;
+
+   
+		status=ICAFE_NORMAL;
+   
+    if (handleSet.size() != valSet.size() ) {
+		   return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
+		}
+		
+		for (size_t i=0; i< handleSet.size(); ++i) {
+
+    	if (!helper.isChannelConnected(handleSet[i])) {
+        cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+        cout << "NOT ALL CHANNELS CONNECTED: " << endl;
+        if (!helper.isChannelConnected(handleSet[i])) {
+				  helper.printHandle(handleSet[i]); 
+				  status=helper.getStatus(handleSet[i]);
+				}       
+    	}		
+	  
+		}
+	
+		
+		if (status!=ICAFE_NORMAL) {return status;}
+	
+	  if(printFlag) {
+			cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+		}
+	
+	
+	 	if (printFlag) {
+		
+			for (size_t i=0; i< handleSet.size(); ++i) {	
+							
+       	   cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet[i]) << " to " << valSet[i] << endl;
+				
+							
+  	  } //for
+   
+		} //if
+		
+						
+		for (size_t i=0; i< handleSet.size(); ++i) {
+		
+		
+		
+    	//set No of Elements to 1
+
+    	unsigned int  nelemPrevious, nelemRequestedCheck=0;
+    	unsigned int  nelemRequested=1;
+					
+    	nelemPrevious=helper.getNelemClient(handleSet[i]);
+    	//Check the number of elements requested?
+    	if (nelemPrevious>1) {
+        nelemRequestedCheck = helper.setNelem(handleSet[i],nelemRequested);
+        if (nelemRequestedCheck != nelemRequested) {
+            cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+            cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
+                    << nelemPrevious << endl;
+            cout << "to: " << nelemRequested << " but got instead: "
+                    << nelemRequestedCheck  << endl;
+        }
+    	}
+		
+		
+		
+    	//policy set synchronous
+    	ChannelRequestPolicy polPrevious, polNow;
+
+    	policyHelper.getChannelRequestPolicyPut(handleSet[i], polPrevious);
+
+   		polNow.setMethodKind(WITHOUT_CALLBACK);
+    	polNow.setWaitKind(WAIT);
+    	polNow.setWhenToFlushSendBuffer(FLUSH_AUTOMATIC);
+
+    	policyHelper.setChannelRequestPolicyPut(handleSet[i], polNow);
+     
+		  dbr_string_t valSetA[1];
+
+    
+      helper.removeLeadingAndTrailingSpaces(valSet[i].c_str(), valSetA[0]);
+		 
+     
+    	status=set(handleSet[i], DBR_STRING, valSetA);
+
+    	if (status!=ICAFE_NORMAL) {
+        cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+        cstat.report(status);
+    	}
+
+    	policyHelper.setChannelRequestPolicyPut(handleSet[i], polPrevious);
+			
+			
+    	unsigned int  nelemPreviousCheck=nelemPrevious;
+    	nelemRequested=1;
+    	//Switch back to previous value
+    	//if (nelemPrevious>1) {
+    	if(helper.getNelemRequest(handleSet[i])!= nelemPrevious) {
+        nelemPreviousCheck= helper.setNelem(handleSet[i],nelemPrevious);
+        if (nelemPreviousCheck != nelemPrevious) {
+            cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+            cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
+                    << nelemRequested << endl;
+            cout << "to the previous: " << nelemPrevious << " but got instead: "
+                    << nelemPreviousCheck  << endl;
+        }
+    	}
+			
+
+		} //for size_t
+
+return status;
+#undef __METHOD__
+} 
 
 /**
  *  \brief Set followed by an immediate get

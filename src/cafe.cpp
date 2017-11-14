@@ -23,6 +23,7 @@
 #include "conduitGroup.h"
 #include <set>
 
+
 bool MUTEX=true;
 bool CHECK_CONSISTENCY_CA_STATE=true;
 
@@ -90,7 +91,7 @@ int  CAFE::set(const unsigned int *handleArray, const unsigned int nelem, const 
         }
 
 
-        if ( channelInfo.getCafeConnectionState() != ICAFE_CS_NEVER_CONN) {
+        if ( channelInfo.getCafeConnectionState() != ICAFE_CS_NEVER_CONN  && channelInfo.getCafeConnectionState() != ICAFE_CS_CLOSED ) {
             if (channelInfo.getDataType()==DBF_STRING) {
                 chtMax=DBR_STRING;
                 break;
@@ -171,6 +172,10 @@ int  CAFE::get(const unsigned int handle, long long * _val, \
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
+    }
+		
     status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemNative(handle);
 
@@ -259,6 +264,9 @@ int  CAFE::get(const unsigned int  handle, long long   * _val, \
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
+    }
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemNative(handle);
 
@@ -344,6 +352,9 @@ int  CAFE::get(const unsigned int handle, long long * _val){
     CAFE::getChannelInfo(handle, channelInfo);
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
+    }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
     }
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemNative(handle);
@@ -3016,6 +3027,10 @@ int  CAFE::set(unsigned int handle, const long long * val) { //5+ long long
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
+    }
+		
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemNative(handle);
 

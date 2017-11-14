@@ -187,7 +187,7 @@ public:
 		int  calcDBPMStatus(int, int, string);
 
 
-		int  getDBPM(DBPMHolder &dbpm);
+		int  getBS(BSDataHolder &bsd);
 		int  getDBPM(DBPMKeeper &dbpm);
 		int  readDBPMOffsets(DBPMKeeper &dbpm);
 		
@@ -990,9 +990,21 @@ public:
 		return status;
     }
 
+    //Closes channels but does not delete handle
+		vector<unsigned int> closeDisconnectedChannelsFromWithinGroupV(const unsigned int groupHandle) {	
+			  vector<unsigned int> dhV=handleHelper.getDisconnectedHandlesFromWithinGroupV(groupHandle);
+				if (dhV.size() >0) {closeChannelsKeepHandles(dhV);}
+				return dhV;
+		}
+
+		vector<unsigned int> getDisconnectedHandlesFromWithinGroupV(const unsigned int groupHandle) {
+			return handleHelper.getDisconnectedHandlesFromWithinGroupV(groupHandle);
+		}
+
 		vector<unsigned int> getHandlesFromWithinGroupV(const unsigned int groupHandle) {
 			return handleHelper.getHandlesFromWithinGroupV(groupHandle);
 		}
+
 
 		unsigned int * getHandlesFromWithinGroup(const unsigned int groupHandle) {
 			return handleHelper.getHandlesFromWithinGroup(groupHandle);

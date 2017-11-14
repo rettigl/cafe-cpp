@@ -86,6 +86,8 @@ class HandleHelper : public Helper {
 				vector<unsigned int> getHandlesFromPVs(vector<string> pvV,  ca_client_context * ccc);
 				vector<unsigned int> getHandlesFromPVs(vector<string> pvV); 
 
+				vector<unsigned int>  getDisconnectedHandlesFromWithinGroupV(unsigned int  gh);				
+
 		    vector<unsigned int>  getHandlesFromWithinGroupV(unsigned int  gh);
         unsigned int * getHandlesFromWithinGroup(unsigned int  gh);
 
@@ -167,6 +169,9 @@ class HandleHelper : public Helper {
         unsigned int  getNextFreeHandle();
 
         bool isChannelConnected(unsigned int handle);
+				bool allChannelsConnected();
+				bool allChannelsWithinGroupConnected();
+				bool allChannelsWithinGroupConnectedV(vector<unsigned int>);
 
         int  printHandle (unsigned int  h);
 		    int  printHandlesV(vector<unsigned int> handleV);

@@ -64,10 +64,11 @@ public:
 class ChannelCreatePolicy{
 private:
     unsigned short priority;
-    static void callbackHandlerCreate(struct connection_handler_args args);
+    
     //special method to find handle thru conduit_set iterator
     pCallbackConnection handler;
 public:
+		static void callbackHandlerCreate(struct connection_handler_args args);
     pCallbackConnection getHandler(){return handler;};
     void setHandler(pCallbackConnection h){handler=h;};
     unsigned short getPriority() const {return priority;}
@@ -411,7 +412,7 @@ private:
     int           status;        //output
     unsigned int  id;
 
-    static void callbackHandlerMonitor(struct event_handler_args args);
+   
 	  static void PyCallbackHandlerMonitorData(struct event_handler_args args); //pushes pvd,handle,pvname
 	  static void PyCallbackHandlerMonitor(struct event_handler_args args); //pushes handle
 
@@ -427,6 +428,9 @@ public:
         ++idNext;
         id = idNext;
     };
+		//Make public
+		static void callbackHandlerMonitor(struct event_handler_args args);
+		
     chtype getDataType() const {return dataType;};
     chtype getDbrDataType() const {return dbrDataType;};
     CAFENUM::DBR_TYPE getCafeDbrType() const {return cafeDbrType;};

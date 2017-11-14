@@ -383,6 +383,135 @@ int setAndMatchMany(vector<unsigned int> handleSetV, vector<string> valSetV, vec
 
 
 
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<dbr_double_t> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                dbr_double_t tolerance, double timeout, bool printFlag){										
+						cafeDoppio.setMany   (handleSet,    DBR_DOUBLE, valSet, false);						
+						cafeSoluble.setManyString  (handleAction, valAction, false);																																										
+    return cafeDoppio.compareAndMatchMany(handleSet, DBR_DOUBLE, valSet, handleMatch, tolerance, timeout, printFlag);
+}
+
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<dbr_float_t> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                dbr_float_t tolerance, double timeout, bool printFlag){										
+								cafeFrappuccino.setMany   (handleSet,    DBR_FLOAT, valSet, false);						
+						    cafeSoluble.setManyString  (handleAction, valAction, false);																																										
+    return cafeFrappuccino.compareAndMatchMany(handleSet, DBR_FLOAT, valSet, handleMatch, tolerance, timeout, printFlag);														
+}
+
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<dbr_char_t> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                dbr_char_t tolerance, double timeout, bool printFlag){	
+								cafeCappuccino.setMany   (handleSet,    DBR_CHAR, valSet, false);						
+					    	cafeSoluble.setManyString  (handleAction, valAction, false);																																										
+    return cafeCappuccino.compareAndMatchMany(handleSet, DBR_CHAR, valSet, handleMatch, tolerance, timeout, printFlag);							    
+}
+
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<dbr_enum_t> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                dbr_enum_t tolerance, double timeout, bool printFlag){	
+								cafeEspresso.setMany   (handleSet,    DBR_ENUM, valSet, false);						
+					    	cafeSoluble.setManyString  (handleAction, valAction, false);																																										
+    return cafeEspresso.compareAndMatchMany(handleSet, DBR_ENUM, valSet, handleMatch, tolerance, timeout, printFlag);																
+}
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<dbr_short_t> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                dbr_short_t tolerance, double timeout, bool printFlag){	
+								cafeSchale.setMany   (handleSet,    DBR_SHORT, valSet, false);						
+					    	cafeSoluble.setManyString  (handleAction, valAction, false);																																										
+    return cafeSchale.compareAndMatchMany(handleSet, DBR_SHORT, valSet, handleMatch, tolerance, timeout, printFlag);																 
+}
+
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<dbr_long_t> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                dbr_long_t tolerance, double timeout, bool printFlag){
+								cafeLatte.setMany   (handleSet,    DBR_LONG, valSet, false);						
+					    	cafeSoluble.setManyString  (handleAction, valAction, false);																																										
+    return cafeLatte.compareAndMatchMany(handleSet, DBR_LONG, valSet, handleMatch, tolerance, timeout, printFlag);																	   
+}
+
+
+int gameSetAndMatch(vector<unsigned int> handleSet, vector<long long> valSet, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatch,
+                long long tolerance, double timeout, bool printFlag){		
+								
+		vector<dbr_double_t> valSetDoubleV;
+		valSetDoubleV.reserve(valSet.size());
+		
+		std::copy(valSet.begin(), valSet.end(), 
+          std::back_inserter(valSetDoubleV));
+					
+    dbr_double_t toleranceDouble = tolerance;						
+														
+    return gameSetAndMatch(handleSet, valSetDoubleV,
+													handleAction, valAction,  handleMatch, toleranceDouble, timeout, printFlag);
+}
+
+
+int gameSetAndMatch(vector<unsigned int> handleSetV, vector<string> valSetV, 
+								vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatchV,
+                string tolerance, double timeout, bool printFlag){
+#define __METHOD__ "gameSetAndMatch (vector<unsigned int> handleSetV, vector<string> valSetV, \
+                vector<unsigned int> handleAction, vector<string> valAction, vector<unsigned int> handleMatchV, \
+                string tolerance, double timeout, bool printFlag)"
+
+    vector<dbr_double_t> valSetDoubleV;
+
+    istringstream ss;
+    dbr_double_t d=0;  dbr_double_t toleranceDouble = 0;
+		for (size_t i=0; i< valSetV.size(); ++i) {
+			d=0;
+    	ss.clear();
+    	ss.str(valSetV[i]);
+    	ss>>d;
+		
+    	if ( !ss.fail()) {
+        valSetDoubleV.push_back(d);
+    	}
+    	else {
+        cout << __METHOD__ << __LINE__ << endl;
+        cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << endl;
+        cout << "***WARNING*** COULD NOT CONVERT: ";
+        cout << valSetV[i];
+        cout << " TO DOUBLE!" << endl;
+        return ECAFE_NO_CONVERT;
+    	}
+		}
+		
+    d=0;
+    ss.clear();
+    ss.str(tolerance);
+    ss>>d;
+
+    if ( !ss.fail()) {
+        toleranceDouble=d;
+    }
+    else {
+        cout << __METHOD__ << __LINE__ << endl;
+        cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << endl;
+        cout << "***WARNING*** COULD NOT CONVERT: ";
+        cout << tolerance;
+        cout << " TO DOUBLE!" << endl;
+        return ECAFE_NO_CONVERT;
+    }
+
+    return gameSetAndMatch(handleSetV, valSetDoubleV,  handleAction, valAction, handleMatchV, toleranceDouble, timeout, printFlag);
+#undef __METHOD__
+
+}
+
+
+
+
+
+
+
 int setAndMatch(const unsigned int handleSet, dbr_double_t valSet, const unsigned int handleMatch,
                 dbr_double_t tolerance, double timeout, bool printFlag){
     return cafeDoppio.setAndMatch(handleSet, DBR_DOUBLE, valSet, handleMatch, tolerance, timeout, printFlag);

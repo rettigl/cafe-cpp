@@ -1,8 +1,8 @@
 ///
 /// \file    cafeService.h
 /// \author  Jan Chrin, PSI
-/// \date    Release July: 2017
-/// \version CAFE 1.3.0
+/// \date    Release October 2017
+/// \version CAFE 1.4.0
 ///
 
 #ifndef CAFE_SERVICE_H
@@ -16,7 +16,6 @@
 
 
 #if HAVE_ZEROMQ
-//include <zhelpers.h>
 	#include <zmq.h>
   #if HAVE_JSON
 		#include <json/json.h>
@@ -26,22 +25,331 @@
 	#endif
 #endif
 
-/*
-class BSData{
-friend class CAFE;
+
+class BSChannel {
 private:
-	double val;
-	epicsTimeStamp ets;
-	int status;
+	string name;
+	int modulo;
+	int offset;
+	HandleHelper helper;
+
 public:
-	double getValue() {return val;}
-	epicsTimeStamp getEpicsTimeStamp() {return ets;}
-	int getStatus() { return status;}	
-	
-	BSData(){};
+	PVDataHolder pvd;
+	std::vector<std::string>  pv;
+	//void setName(string _name)  { name=_name;}
+	void setOffset(int _offset) { offset=_offset;}
+	void setModulo(int _modulo) { modulo=_modulo;}
+	string getName(){return name;}
+	int getModulo(){return modulo;}
+	int getOffset(){return offset;}
+	BSChannel(string _name): modulo(1), offset(0) {
+		char pv[PVNAME_SIZE];
+		helper.removeLeadingAndTrailingSpaces(_name.c_str(), pv);
+		name=(string) pv;};
+	BSChannel(string _name, int _modulo): offset(0)	{
+		char pv[PVNAME_SIZE];
+		helper.removeLeadingAndTrailingSpaces(_name.c_str(), pv);
+		name=(string) pv; modulo=_modulo;};
+	BSChannel(string _name, int _modulo, int _offset) {
+		char pv[PVNAME_SIZE];
+		helper.removeLeadingAndTrailingSpaces(_name.c_str(), pv);
+		name=(string) pv; modulo=_modulo; offset=_offset;};
 };
 
 
+class BSDataHolder{
+friend class CAFE;
+private:	
+	int overallStatus;	
+	unsigned long long pulse_id;
+	vector<BSChannel> bsChannel;
+	HandleHelper helper;
+
+	std::vector<std::string>  pv;
+
+	bool isBS;
+	bool BSInitialized;
+	void *context;
+
+	void *receiver;
+	int rc;
+
+	#if HAVE_JSON
+	Json::Value parsedFromString;
+	Json::Reader reader;
+	#endif
+	bool parsingSuccessful;
+
+
+public:	
+	BSDataHolder(){};
+
+	void *subscriber;
+
+	vector<double> getAsDoubleV() {
+		vector<double> V;
+		V.reserve(bsChannel.size());
+		for (size_t i=0; i<bsChannel.size(); ++i){
+			V.push_back(bsChannel[i].pvd.getAsDouble());
+		}
+		return V;
+	}
+
+	vector<string> getAsStringV() {
+		vector<string> V;
+		V.reserve(bsChannel.size());
+		for (size_t i=0; i<bsChannel.size(); ++i){
+			V.push_back(bsChannel[i].pvd.getAsString());
+		}
+		return V;
+	}
+
+	vector<int> getAsIntV() {
+		vector<int> V;
+		V.reserve(bsChannel.size());
+		for (size_t i=0; i<bsChannel.size(); ++i){
+			V.push_back(bsChannel[i].pvd.getAsInt());
+		}
+		return V;
+	}
+
+	vector<double> getAttributeAsDoubleV(string attribute) {
+		vector<double> V;
+		V.reserve(bsChannel.size());
+		char pvAtt[PVNAME_SIZE];
+		helper.removeLeadingAndTrailingSpaces(attribute.c_str(), pvAtt);
+		for (size_t i=0; i<bsChannel.size(); ++i){
+			if ( ((string)pvAtt).compare((string) bsChannel[i].pvd.getAttribute()) ==0){
+				V.push_back(bsChannel[i].pvd.getAsDouble());
+			}
+		}
+		return V;
+	}
+
+	PVDataHolder   getPVData(unsigned int idx) {
+		if (idx > (bsChannel.size()-1)) {
+			idx=bsChannel.size()-1;
+		}
+		return bsChannel[idx].pvd;
+	}
+
+
+	PVDataHolder   getPVData(string name) {
+
+		for (size_t i=0; i< bsChannel.size(); ++i) {
+			if (bsChannel[i].getName().compare(name) ==0 ) {
+				return bsChannel[i].pvd;
+			}
+		}
+	}
+
+
+	int getStatus() { return overallStatus;}
+
+
+	static size_t RecvResponseCallback(char * contents, size_t size, size_t nmemb, void  * up) {
+
+		++nCBs;
+		//cout << "Callback called: " << nCBs << endl;
+		//cout << "SIZE No. of Bytes " << size*nmemb << endl;
+
+		string sLocal=contents;
+
+		//remove \n for newline
+		std::size_t found = sLocal.find('\n');
+
+		if (found != std::string::npos) {
+
+			sLocal=sLocal.substr(0, found);
+		}
+
+		contentsBS=contentsBS+sLocal;
+
+		return (size_t) size * nmemb;
+	}
+
+
+	bool setBS(bool BSFlag) {
+
+	if(MUTEX){cafeMutex.lock();}
+
+	if (BSFlag) {
+		#if HAVE_CURL
+
+		string dataChannels=string("{\"channels\":[");
+		vector<string> pvNew=pv;
+
+		#if HAVE_ZEROMQ
+
+		if (!BSInitialized) {
+
+			//size_t found;
+			dataChannels= dataChannels + string("{\"name\":\"");
+			dataChannels= dataChannels + pvNew[0];
+			dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0}" );
+
+
+			for (size_t i=1; i < pvNew.size(); ++i) {
+				dataChannels= dataChannels + string(",{\"name\":\"");
+				dataChannels= dataChannels + pvNew[i];
+				dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0}");
+			}
+
+			dataChannels= dataChannels + string("],");
+			dataChannels= dataChannels + "\"mapping\":{\"incomplete\":\"fill-null\"},\"channelValidation\":{\"inconsistency\":\"keep-as-is\"},\"sendBehaviour\":{\"strategy\":\"complete-all\"}}";
+
+			cout <<  dataChannels << endl;
+
+			const char * data = dataChannels.c_str();
+
+			///cout << "SIZE OF DATA --------------->"  << sizeof(data) << endl;
+
+			CURL *curl;
+			CURLcode res;
+			struct curl_slist * slist;
+			slist = NULL;
+
+			slist = curl_slist_append(slist, "Content-Type: application/json");
+
+			curl_global_init(CURL_GLOBAL_ALL);
+
+			curl = curl_easy_init();
+
+			if (curl) {
+
+				curl_easy_setopt(curl, CURLOPT_URL, "https://dispatcher-api.psi.ch/sf/stream");
+
+				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data); //"-F file=@./dbpm.json"); //data); //
+
+				curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
+				curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+				//cout << "WAITING FOR CALLBACK... " << endl;
+
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &RecvResponseCallback);
+
+				res = curl_easy_perform(curl);
+
+				if (res != CURLE_OK) {
+					cout << "curl_easy_perform failed " << curl_easy_strerror(res) << endl;
+				}
+				else {
+					cout << " CALLBACK DONE" << endl;
+
+					curl_easy_cleanup(curl);
+
+					curl_slist_free_all(slist);
+
+					slist=NULL;
+				}
+			}//if curl
+
+			cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+			curl_global_cleanup();
+
+
+			//cout << " //1// SHOW contentS " << endl;
+			//cout << contentsBS.c_str() << endl;
+
+			Json::Value parsedFromString;
+			Json::Reader reader;
+			bool parsingSuccessful;
+
+			Json::FastWriter fastWriter;
+			string globalBSZmqStream="";
+			//printf("value= %s\n", contentsBS.c_str());
+
+			if (contentsBS.size() > 2) {
+				parsingSuccessful=reader.parse(contentsBS.c_str(), parsedFromString);
+				if (parsingSuccessful) {
+					//Json::StyledWriter styledWriter;
+					//cout << "STYLED: --------------------------------" << endl;
+					//cout << styledWriter.write(parsedFromString) << endl;
+					//cout << "----------------------------------" << endl;
+					cout << parsedFromString["stream"] << endl;
+
+					cout << "----------------------------------" << endl;
+					globalBSZmqStream = fastWriter.write(parsedFromString["stream"]).c_str();
+					cout << globalBSZmqStream << endl;
+
+					if ( parsedFromString["stream"].isNull() ) {
+						globalBSZmqStream.clear();
+					}
+				}
+				else {
+					cout << "PARSING IN CURL CALLBACK FUNCTION WAS UNSUCCESSFUL !!!" << endl;
+					cout << contentsBS.c_str() << endl;
+					cout << reader.getFormattedErrorMessages() << endl;
+
+				}
+			}
+
+			if (globalBSZmqStream.empty()) {
+				 cout << "BS Data is not available " << endl;
+				 return isBS=false;
+			}
+
+			context = zmq_ctx_new ();
+
+			////  receiver = zmq_socket (context, ZMQ_PULL);
+			//HWM has no effect for PULL
+			//See documentation on zmq-socket
+			//WHEN PUSH Sender reachers HWM, then it blocks
+			////		int nhwm=10;
+			////		zmq_setsockopt (receiver,ZMQ_RCVHWM ,&nhwm, sizeof(int));
+			//			rc = zmq_bind (receiver, "tcp://129.129.145.206:5558"); //ZMQ_PULL
+			////		assert (rc == 0);
+
+			subscriber = zmq_socket (context, ZMQ_SUB);
+
+
+			globalBSZmqStream=globalBSZmqStream.substr(1,globalBSZmqStream.size()-3);
+			//cout << " globalBSZmqStream.c_str() " << globalBSZmqStream.c_str() << endl;
+
+			rc = zmq_connect (subscriber, (const char *) globalBSZmqStream.c_str());
+
+			if (rc != 0 ) {
+				cout << " Error is " << zmq_errno() << " " << zmq_strerror(zmq_errno()) << endl;
+			}
+
+
+			assert (rc == 0);
+
+			int nhwm=1;
+			int timeoutMS=200; //10; //-1 Wait for Ever
+
+			rc=zmq_setsockopt (subscriber,ZMQ_RCVHWM, &nhwm, sizeof(int));
+			assert (rc == 0);
+
+			rc=zmq_setsockopt (subscriber,ZMQ_RCVTIMEO, &timeoutMS, sizeof(int));
+			assert (rc == 0);
+
+			rc=zmq_setsockopt (subscriber,ZMQ_SUBSCRIBE,"",0);
+			assert (rc == 0);
+
+			BSInitialized=true;
+
+		}//is BS initialized
+
+		#endif //have zeromq
+
+		if(MUTEX){cafeMutex.unlock();}
+		return isBS=BSFlag;
+		#else //have curl
+
+		if(MUTEX){cafeMutex.unlock();}
+		return isBS=false;
+		#endif //have curl
+	}//isBSFlag
+
+
+	if(MUTEX){cafeMutex.unlock();}
+	return isBS=BSFlag;
+	} // setBS
+
+};
+
+/*
 class RFData{
 friend class CAFE;
 private:
@@ -87,6 +395,8 @@ private:
 	
 	std::vector<double> offs_x;
 	std::vector<double> offs_y;
+
+	unsigned long long pulse_id;
 	
 	bool isAllXOK;
 	bool isAllYOK;
@@ -101,25 +411,23 @@ private:
 		
 	size_t nDBPM;
 	size_t nPV;
-	
-	
-	
+			
 	bool isBS;
 	bool BSInitialized;
 	void *context; 
   
 	void *receiver;
 	int rc;
+
 	#if HAVE_JSON
 	Json::Value parsedFromString;
 	Json::Reader reader;
-	bool parsingSuccessful;
 	#endif
-	
-	
+	bool parsingSuccessful;
+
 public:	
 
-  std::vector<DBPMData> getX() { return x;}
+	std::vector<DBPMData> getX() { return x;}
 	std::vector<DBPMData> getY() { return y;}
 	std::vector<DBPMData> getQ() { return q;}
 	std::vector<DBPMData> getEnergy() { return energy;}
@@ -135,7 +443,7 @@ public:
 	bool getIsAllOK()  {return isAllOK;}	
 		
 	std::vector<std::string>  getPV(){ return pv;}
-  std::vector<unsigned int> getHandle() { return handle;}
+	std::vector<unsigned int> getHandle() { return handle;}
 	std::vector<std::string>  getDevice() { return device;}
 	std::vector<float>        getS() { return s;} 
 	size_t getNDBPM() {return nDBPM;}
@@ -143,16 +451,18 @@ public:
 	int getStatus()   {return status;}
 	
 	
-	int getPVIdx(string _pv) {	
-			
-		for (size_t i=0;  i< pv.size(); ++i) {
-		 
+	int getPVIdx(string _pv) {				
+		for (size_t i=0;  i< pv.size(); ++i) {	 
 			if ( pv[i].compare(_pv) == 0) {			
-			 return i;
+				return i;
 			}		
 		}
 		return -1;
 	}
+	
+	
+	unsigned long long getPulse_id(){return pulse_id;}
+	void setPulse_id(unsigned long long _pulse_id){pulse_id=_pulse_id;}
 	
 	PVDataHolder * pvd;
 	int status;
@@ -168,26 +478,15 @@ public:
 	
 	void *subscriber;
 
-	//struct MemoryStruct {
- 	// char *memory;
-  //	size_t size;
-	//};
-	
 	static size_t RecvResponseCallback(char * contents, size_t size, size_t nmemb, void  * up) {
 
 		++nCBs;
-		cout << "Callback called: " << nCBs << endl;
-
-		///Json::Value parsedFromString;
-		///Json::Reader reader;
-		///bool parsingSuccessful;
-	
-		///Json::FastWriter fastWriter;
-		
-		cout << "SIZE No. of Bytes " << size*nmemb << endl;
+		//cout << "Callback called: " << nCBs << endl;
+		//cout << "SIZE No. of Bytes " << size*nmemb << endl;
 
 		string sLocal=contents;
 
+		//remove \n for newline
 		std::size_t found = sLocal.find('\n');
 
 		if (found != std::string::npos) {
@@ -196,86 +495,13 @@ public:
 		}
 
 		contentsS=contentsS+sLocal;
-
-
-
-		//if (nCBs%3==1) {
-		//	return size*nmemb;
-		//}
-
-
-		//printf("value= %s\n", contents);
-		/*
-		if (contents != NULL) {
-				parsingSuccessful=reader.parse(contentsS.c_str(), parsedFromString);
-				if (parsingSuccessful) {
-					//Json::StyledWriter styledWriter;
-					cout << "STYLED: --------------------------------" << endl;
-					//cout << styledWriter.write(parsedFromString) << endl;
-					//cout << "----------------------------------" << endl;
-					cout << parsedFromString["stream"] << endl;
-					
-					cout << "----------------------------------" << endl;
-					globalZmqStream = fastWriter.write(parsedFromString["stream"]).c_str();
-				  cout << globalZmqStream << endl;
-					
-					if ( parsedFromString["stream"].isNull() ) {
-						globalZmqStream.clear();
-					}
-				}
-				else {
-					cout << "PARSING IN CURL CALLBACK FUNCTION WAS UNSUCCESSFUL !!!" << endl;
-				
-					cout << reader.getFormattedErrorMessages() << endl;
-				}
-		}	
-		contentsS="";
-		*/
-		
-	/*
-	size_t realsize = size * nmemb;
-  struct MemoryStruct *mem = (struct MemoryStruct *)data;
- 
-  mem->memory = (char *) realloc(mem->memory, (mem->size + realsize + 1));
-	
-  if(mem->memory == NULL) {
-   
-    printf("not enough memory (realloc returned NULL)\n");
-    return 0;
-  }
- 
-  memcpy(&(mem->memory[mem->size]), contents, realsize);
-  mem->size += realsize;
-  mem->memory[mem->size] = 0;
- 
-  //return realsize;
-	
-			printf("value= %s\n",mem->memory);
-		if (mem->memory != NULL) {
-				parsingSuccessful=reader.parse(mem->memory, parsedFromString);
-				if (parsingSuccessful) {
-					Json::StyledWriter styledWriter;
-					cout << "STYLED: --------------------------------" << endl;
-					cout << styledWriter.write(parsedFromString) << endl;
-					cout << "----------------------------------" << endl;
-					cout << parsedFromString["stream"] << endl;
-					
-					cout << "----------------------------------" << endl;
-				
-		
-				}
-		}
-	*/	
 		
 		return (size_t) size * nmemb;
 	}
 
 	
-	
-//	
 
-
-  bool resetBS() {
+	bool resetBS() {
 		closeBS();
 		return setBS(true);	
 	}
@@ -283,92 +509,49 @@ public:
 
 	bool setBS(bool BSFlag) {
 
-   if(MUTEX){cafeMutex.lock();}
+	if(MUTEX){cafeMutex.lock();}
 
+	if (BSFlag) {
+		#if HAVE_CURL
 
-		if (BSFlag) {		
-			#if HAVE_CURL
-			/*
-			//Complete all or complete latest	
-			//const char * data="{\"channels\":[{\"name\":\"S10BC01-DBPM010:X1\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0}, \
-			{\"name\":\"S10BC01-DBPM010:X1-VALID\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0} \
-		],\"mapping\":{\"incomplete\":\"fill-null\"},\"channelValidation\":{\"inconsistency\":\"adjust-global\"},\"sendBehaviour\":{\"strategy\":\"complete-all\"}}";
-*/
-			string dataChannels=string("{\"channels\":[");
-							
-			vector<string> pvNew=pv;
-#if HAVE_ZEROMQ
-if (!BSInitialized) {
-		//pvNew.push_back("SINEG01-DBPM340:X1") ;
-		//pvNew.push_back("SINSB01-DBPM150:X1") ;
-		//pvNew.push_back("SINSB02-DBPM150:X1") ;
-		//pvNew.push_back("SINLH01-DBPM060:X1") ;
-		//pvNew.push_back("SINLH02-DBPM210:X1") ; 
-		//pvNew.push_back("SINLH02-DBPM240:X1") ; 
-		//pvNew.push_back("SINLH03-DBPM010:X1") ; 
-		//pvNew.push_back("SINLH03-DBPM050:X1") ; 
-		//pvNew.push_back("SINLH03-DBPM090:X1") ; 
-		//pvNew.push_back("SINSB03-DBPM120:X1") ; 
-		//pvNew.push_back("SINSB03-DBPM220:X1") ; 
-		//pvNew.push_back("SINSB04-DBPM120:X1") ; 
-		//pvNew.push_back("SINSB04-DBPM220:X1") ; 
-					
-		//pvNew.push_back("SINEG01-DBPM340:X1-VALID") ;
-		//pvNew.push_back("SINSB01-DBPM150:X1-VALID") ;
-		//pvNew.push_back("SINSB02-DBPM150:X1-VALID") ;
-		//pvNew.push_back("SINLH01-DBPM060:X1-VALID") ;
-		//pvNew.push_back("SINLH02-DBPM210:X1-VALID") ; 
-		//pvNew.push_back("SINLH02-DBPM240:X1-VALID") ; 
-		//pvNew.push_back("SINLH03-DBPM010:X1-VALID") ; 
-		//pvNew.push_back("SINLH03-DBPM050:X1-VALID") ; 
-		//pvNew.push_back("SINLH03-DBPM090:X1-VALID") ; 
-		//pvNew.push_back("SINSB03-DBPM120:X1-VALID") ; 
-		//pvNew.push_back("SINSB03-DBPM220:X1-VALID") ; 
-		//pvNew.push_back("SINSB04-DBPM120:X1-VALID") ; 
-		//pvNew.push_back("SINSB04-DBPM220:X1-VALID") ; 
+		string dataChannels=string("{\"channels\":[");
+		vector<string> pvNew=pv;
+
+		#if HAVE_ZEROMQ
+
+		if (!BSInitialized) {
+
 			size_t found;
-			  dataChannels= dataChannels + string("{\"name\":\"");
-				dataChannels= dataChannels + pvNew[0];
-				//dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\"}"		);
-				dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0}" );
+			dataChannels= dataChannels + string("{\"name\":\"");
+			dataChannels= dataChannels + pvNew[0];
+			//dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\"}"		);
+			dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0}" );
 
 				
 			for (size_t i=1; i < pvNew.size(); ++i) {
-			
-			
-			  found = pvNew[i].find("SARUN08-DBPM210");
+					
+				found = pvNew[i].find("SARUN08-DBPM210");
 				if (found != std::string::npos) continue;
 				found = pvNew[i].find("SARUN08-DBPM410");
 				if (found != std::string::npos) continue;
-				//found = pvNew[i].find("Y1");
-				//if (found != std::string::npos) continue;
-				//found = pvNew[i].find("X1");
-				//if (found != std::string::npos) continue;
+
 				found = pvNew[i].find("ENERGY");
 				if (found != std::string::npos) continue;
 				
 			
-			   dataChannels= dataChannels + string(",{\"name\":\"");
+				dataChannels= dataChannels + string(",{\"name\":\"");
 				dataChannels= dataChannels + pvNew[i];
-				
-				//found = pv[i+1].find("ENERGY");
-				//if (found != std::string::npos) break;
-				//dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\"}");
+
 				dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\",\"modulo\":1,\"offset\":0}");
 					
 			}
- 				//dataChannels= dataChannels + string("{\"name\":\"");
-				//dataChannels= dataChannels + pv[pv.size()-1];
-				//dataChannels= dataChannels + string("\",\"backend\":\"sf-databuffer\"}],");
-				dataChannels= dataChannels + string("],");
-				dataChannels= dataChannels + "\"mapping\":{\"incomplete\":\"fill-null\"},\"channelValidation\":{\"inconsistency\":\"keep-as-is\"},\"sendBehaviour\":{\"strategy\":\"complete-all\"}}";
+
+			dataChannels= dataChannels + string("],");
+			dataChannels= dataChannels + "\"mapping\":{\"incomplete\":\"fill-null\"},\"channelValidation\":{\"inconsistency\":\"keep-as-is\"},\"sendBehaviour\":{\"strategy\":\"complete-all\"}}";
 
 			cout <<  dataChannels << endl;
-	
-			//sleep(1);
+
 			const char * data = dataChannels.c_str();
-
-
 
 			///cout << "SIZE OF DATA --------------->"  << sizeof(data) << endl;
 
@@ -379,27 +562,22 @@ if (!BSInitialized) {
 			
 			slist = curl_slist_append(slist, "Content-Type: application/json");
 		
-			curl_global_init(CURL_GLOBAL_ALL);	
-						
-			
+			curl_global_init(CURL_GLOBAL_ALL);
+								
 			curl = curl_easy_init();
-			
-		
-				
+							
 			if (curl) {
 			
 				curl_easy_setopt(curl, CURLOPT_URL, "https://dispatcher-api.psi.ch/sf/stream");
 			
-				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data); //"-F file=@./request.json"); //data); //
+				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data); //"-F file=@./dbpm.json"); //data); //
 			
 				curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
 				curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 				
-				cout << "WAITING FOR CALLBACK " << endl;
+				//cout << "WAITING FOR CALLBACK... " << endl;
 
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &RecvResponseCallback);
-				
-
 
 				res = curl_easy_perform(curl);
 				
@@ -407,148 +585,122 @@ if (!BSInitialized) {
 					cout << "curl_easy_perform failed " << curl_easy_strerror(res) << endl;
 				}
 				else {
-				cout << " CALLBACK DONE" << endl;
+					cout << " CALLBACK DONE" << endl;
 
-				cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+					curl_easy_cleanup(curl);
 
-				curl_easy_cleanup(curl);
+					curl_slist_free_all(slist);
 
-				cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-				curl=NULL;
-
-				curl_slist_free_all(slist);
-				cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-				slist=NULL;
+					slist=NULL;
 				}
-			}
+			}//if curl
 			
 			cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
 			curl_global_cleanup();
 			
-			#endif
-		
+
 			//cout << " //1// SHOW contentS " << endl;
 			//cout << contentsS.c_str() << endl;
-
-			
-			//sleep(1);
 
 			Json::Value parsedFromString;
 			Json::Reader reader;
 			bool parsingSuccessful;
 
 			Json::FastWriter fastWriter;
+			string globalZmqStream;
+
 
 			//printf("value= %s\n", contentsS.c_str());
-
 			
 			if (contentsS.size() > 2) {
-					parsingSuccessful=reader.parse(contentsS.c_str(), parsedFromString);
-					if (parsingSuccessful) {
-						//Json::StyledWriter styledWriter;
-						cout << "STYLED: --------------------------------" << endl;
-						//cout << styledWriter.write(parsedFromString) << endl;
-						//cout << "----------------------------------" << endl;
-						cout << parsedFromString["stream"] << endl;
+				parsingSuccessful=reader.parse(contentsS.c_str(), parsedFromString);
+				if (parsingSuccessful) {
+					//Json::StyledWriter styledWriter;
+					cout << "STYLED: --------------------------------" << endl;
+					//cout << styledWriter.write(parsedFromString) << endl;
+					//cout << "----------------------------------" << endl;
+					cout << parsedFromString["stream"] << endl;
 
-						cout << "----------------------------------" << endl;
-						globalZmqStream = fastWriter.write(parsedFromString["stream"]).c_str();
-					  cout << globalZmqStream << endl;
+					cout << "----------------------------------" << endl;
+					globalZmqStream = fastWriter.write(parsedFromString["stream"]).c_str();
+					cout << globalZmqStream << endl;
 
-						if ( parsedFromString["stream"].isNull() ) {
-							globalZmqStream.clear();
-						}
+					if ( parsedFromString["stream"].isNull() ) {
+						globalZmqStream.clear();
 					}
-					else {
-						cout << "PARSING IN CURL CALLBACK FUNCTION WAS UNSUCCESSFUL !!!" << endl;
-						cout << contentsS.c_str() << endl;
-						cout << reader.getFormattedErrorMessages() << endl;
+				}
+				else {
+					cout << "PARSING IN CURL CALLBACK FUNCTION WAS UNSUCCESSFUL !!!" << endl;
+					cout << contentsS.c_str() << endl;
+					cout << reader.getFormattedErrorMessages() << endl;
 
-					}
+				}
+			}	
+						
+			if (globalZmqStream.empty()) {
+				 cout << "BS Data is not available " << endl;
+				 return isBS=false;
 			}
 
-
-
-//
-//#if HAVE_ZEROMQ
-//if (!BSInitialized) {
-
-
-			   cout << "TESTING STREAM... " << endl;
+			context = zmq_ctx_new ();
 			
-				
-				 if (globalZmqStream.empty()) {
-				 		cout << "BS Data is not available " << endl;
-				   return isBS=false;
-				 }
-				// else {
-				//   cout << globalZmqStream.c_str() << " is not empty " << endl;
-				 
-				// }
-			
-			
-				context = zmq_ctx_new ();
-			
-		///  	receiver = zmq_socket (context, ZMQ_PULL);
-				//HWM has no effect for PULL
-				//See documentation on zmq-socket
-				//WHEN PUSH Sender reachers HWM, then it blocks
-		///		int nhwm=10;
-		///		zmq_setsockopt (receiver,ZMQ_RCVHWM ,&nhwm, sizeof(int));
-				//rc = zmq_bind (receiver, "tcp://129.129.145.206:5558"); //ZMQ_PULL
-		///		rc = zmq_bind (receiver, "tcp://SIN-CVME-DBPM0421:9000");
-		///		assert (rc == 0);
-			
-				
-				subscriber = zmq_socket (context, ZMQ_SUB);
-				//rc = zmq_connect (subscriber, "tcp://129.129.145.206:5556");
-				//rc = zmq_connect (subscriber, "tcp://SIN-CVME-DBPM0421:9000");
-		
-				
-				
-				globalZmqStream=globalZmqStream.substr(1,globalZmqStream.size()-3);
-				//cout << " globalZmqStream.c_str() " << globalZmqStream.c_str() << endl;
-				//sleep(1);
-				
-				
-				
-				rc = zmq_connect (subscriber, (const char *) globalZmqStream.c_str()); // "tcp://sf-daqbuf-28.psi.ch:42465"); //  //"tcp://sf-daqbuf-30.psi.ch:39927");
-				
-				if (rc != 0 ) {
-					cout << " Error is " << zmq_errno() << " " << zmq_strerror(zmq_errno()) << endl;
-				}
-				
-				//rc = zmq_connect (subscriber, "tcp://*:9999");
-				assert (rc == 0);	
-			
-				int nhwm=1;
-				int timeoutMS=400; //10; //-1 Wait for Ever
-				
-				rc=zmq_setsockopt (subscriber,ZMQ_RCVHWM ,&nhwm, sizeof(int));
-				assert (rc == 0);	
-				
-				rc=zmq_setsockopt (subscriber,ZMQ_RCVTIMEO ,&timeoutMS, sizeof(int));
-				assert (rc == 0);		
+			////  receiver = zmq_socket (context, ZMQ_PULL);
+			//HWM has no effect for PULL
+			//See documentation on zmq-socket
+			//WHEN PUSH Sender reachers HWM, then it blocks
+			////		int nhwm=10;
+			////		zmq_setsockopt (receiver,ZMQ_RCVHWM ,&nhwm, sizeof(int));
+			//			rc = zmq_bind (receiver, "tcp://129.129.145.206:5558"); //ZMQ_PULL
+			////		assert (rc == 0);
 						
-				rc=zmq_setsockopt (subscriber,ZMQ_SUBSCRIBE,"",0);				
-				assert (rc == 0);
+			subscriber = zmq_socket (context, ZMQ_SUB);
+			//rc = zmq_connect (subscriber, "tcp://129.129.145.206:5556");
+			//rc = zmq_connect (subscriber, "tcp://SIN-CVME-DBPM0421:9000");
+									
+			globalZmqStream=globalZmqStream.substr(1,globalZmqStream.size()-3);
+			//cout << " globalZmqStream.c_str() " << globalZmqStream.c_str() << endl;
+
+			rc = zmq_connect (subscriber, (const char *) globalZmqStream.c_str());   //"tcp://sf-daqbuf-30.psi.ch:39927");
+				
+			if (rc != 0 ) {
+				cout << " Error is " << zmq_errno() << " " << zmq_strerror(zmq_errno()) << endl;
+			}
+				
+			//rc = zmq_connect (subscriber, "tcp://*:9999");
+			assert (rc == 0);
+			
+			int nhwm=1;
+			int timeoutMS=200; //10; //-1 Wait for Ever
+				
+			rc=zmq_setsockopt (subscriber,ZMQ_RCVHWM, &nhwm, sizeof(int));
+			assert (rc == 0);
+				
+			rc=zmq_setsockopt (subscriber,ZMQ_RCVTIMEO, &timeoutMS, sizeof(int));
+			assert (rc == 0);
+						
+			rc=zmq_setsockopt (subscriber,ZMQ_SUBSCRIBE,"",0);
+			assert (rc == 0);
 							
-				BSInitialized=true;								
-		}
-		
+			BSInitialized=true;
+
+		}//is BS initialized
+
+		#endif //have zeromq
+
 		if(MUTEX){cafeMutex.unlock();}
 		return isBS=BSFlag;
-		#else
+		#else //have curl
 		
 		if(MUTEX){cafeMutex.unlock();}
 		return isBS=false;
-		#endif
-		}	
+		#endif //have curl
+	}//isBSFlag
 		 
-		if(MUTEX){cafeMutex.unlock();}
-		return isBS=BSFlag;
-	}	
+	if(MUTEX){cafeMutex.unlock();}
+	return isBS=BSFlag;
+	} // setBS
 	
+
 	bool setCA(bool CAFlag) {	
 		return CAFlag;
 	}
@@ -582,13 +734,13 @@ if (!BSInitialized) {
 			s.push_back(pos->first);  device.push_back(pos->second);					
 		}		
 	
-	  pvd = new PVDataHolder[handle.size()];
+		pvd = new PVDataHolder[handle.size()];
 				
 		//for (int i=0; i< handle.size(); ++i) {		
 		//	pvd[i].setNelem(1);		
 		//}
 		
-	  nDBPM=device.size();
+		nDBPM=device.size();
 		nPV=_pv.size();	
 		status=ICAFE_NORMAL;	
 					
@@ -612,13 +764,13 @@ if (!BSInitialized) {
 		device.assign(_dev.begin(), _dev.end());
 		s.assign(_pos.begin(), _pos.end());
 	
-	  pvd = new PVDataHolder[handle.size()];
+		pvd = new PVDataHolder[handle.size()];
 		
 		//for (int i=0; i< handle.size(); ++i) {		
 		//	pvd[i].setNelem(1);		
 		//}
 		
-	  nDBPM=device.size();
+		nDBPM=device.size();
 		nPV=_pv.size();	
 		status=ICAFE_NORMAL;	
 					

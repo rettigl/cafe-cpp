@@ -55,7 +55,7 @@ typedef char pv_string_t[PVNAME_SIZE];
 const bool              DEFAULT_SELF_GOVERNING_TIMEOUT    = true;
 
 const double            DEFAULT_TIMEOUT_PEND_IO_WF        =  5.0;
-const double                    TIMEOUT_PEND_IO_MIN       =  0.00001;
+const double                    TIMEOUT_PEND_IO_MIN       =  0.0001;
 const double                    TIMEOUT_PEND_IO_MAX       = 20.0; // max timeout for first attempt (ntries=1)
 const unsigned short    DEFAULT_PEND_IO_NO_TRIES          =  2;
 const unsigned short            PEND_IO_MAX_TRIES         = 10;   // safety net
@@ -63,7 +63,7 @@ const double            DEFAULT_PEND_IO_INCREMENT_TIME    =  2.0;
 const double                    PEND_IO_INCREMENT_TIME_MIN=  0.05;
 const double                    PEND_IO_INCREMENT_TIME_MAX= 10.0;
 const double            DEFAULT_TIMEOUT_PEND_EVENT        =  0.4;
-const double            DEFAULT_TIMEOUT_PEND_IO           =  3.0;
+const double            DEFAULT_TIMEOUT_PEND_IO           =  0.4;  // previously 3.0
 const double            DEFAULT_TIMEOUT_SG_PEND_EVENT     =  0.5; // plus nMember/NMEMBER_PER_SEC_SG_PEND_EVENT
 const double            NMEMBER_PER_SEC_SG_PEND_EVENT     =  400; // 
 const double            DEFAULT_TIMEOUT_SG_PEND_IO        =  5.0;

@@ -25,6 +25,8 @@
 #include <policyHelper.h>
 #include <hashConduitGroup.h>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #if HAVE_BOOST_THREAD
 #include <boost/thread/thread_only.hpp>
 #include <boost/chrono.hpp>
@@ -51,7 +53,7 @@ class Connect
 
   ExceptionsHelper exceptionsHelper;
 
-  ChannelCreatePolicy channelCreatePolicy;
+  
 	
   PolicyHelper policyHelper;
   HandleHelper handleHelper;
@@ -94,11 +96,17 @@ class Connect
 
     channelOpenGroupPolicy.setPolicy(
                                      CAFENUM::FLUSH_AFTER_EACH_GROUP_CREATION,
-                                     CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_SG_PEND_EVENT);
+																		 CAFENUM::WITH_POLL, DEFAULT_TIMEOUT_SG_PEND_EVENT);
+                                     //CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_SG_PEND_EVENT);
 
     channelOpenPolicy.setPolicy(
                                 CAFENUM::FLUSH_AFTER_EACH_CHANNEL_CREATION,
-                                CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_PEND_EVENT);
+																CAFENUM::WITH_POLL, DEFAULT_TIMEOUT_PEND_EVENT);													
+                                //CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_PEND_EVENT);
+																
+		channelClosePolicy.setPolicy(
+                                CAFENUM::FLUSH_AFTER_EACH_CHANNEL_CREATION,
+                                CAFENUM::WITH_PEND_IO, DEFAULT_TIMEOUT_PEND_IO);														
 
     deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
 		
@@ -112,6 +120,8 @@ class Connect
   //these need to be public
 
   PrintErrorPolicy printErrorPolicy;
+
+  ChannelCreatePolicy channelCreatePolicy;
 
   ChannelOpenPolicy channelOpenPolicy;
   ChannelOpenPolicy channelClosePolicy; //can also use for close
@@ -147,7 +157,6 @@ class Connect
 	CAFEGlobalAlarmCondition   getEpicsAlarmStatus() {return epicsAlarmStatus;}
   CAFEGlobalAlarmCondition   getEpicsAlarmCondition() {return epicsAlarmStatus;}
 	CAFEGlobalAlarmSeverity    getEpicsAlarmSeverity() {return epicsAlarmSeverity;}
-	
 	
 	int flushNow() {return ca_flush_io();}
 	
@@ -191,38 +200,48 @@ class Connect
 
   	
 	void openGroupPrepare(){
-		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
+		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
 		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
 		return;	
 	}
-		
-	void openMonitorPrepare(){
-	  channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);
-	  channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+						
+	void openGroupNowAndWait(double _timeout);
+	
+	void openGroupNowAndWaitForInputGroups(double _timeout, vector<unsigned int> gHandles);
+	
+	
+	//Pends for default amount of time
+  void openGroupNow() {	
+	  openGroupNowAndWait(channelOpenGroupPolicy.getTimeout());		
+		return;
+	} 
+	
+	
+	//Same as above - change nanmin convetnion	
+	void groupOpenPrepare(){
+		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+		return;	
+	}
+						
+	void groupOpenNowAndWait(double _timeout) { openGroupNowAndWait(_timeout); return; };
+	void groupOpenNowAndWait(double _timeout, vector<unsigned int> gH) 
+	   { openGroupNowAndWaitForInputGroups(_timeout, gH); return; };
+	
+	//Pends for default amount of time
+  void groupOpenNow() {	
+	  openGroupNowAndWait(channelOpenGroupPolicy.getTimeout());		
+		return;
+	} 
+	
+	
+	
+  //-------------------------------------------------------------------------
+  void openMonitorPrepare(){
+  	channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+	  channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);	  
 		return;
 	}	
-
-	double setOpenDefaultPendTime(double _timeout){
-		return channelOpenPolicy.setDefaultTimeout(_timeout);
-	}
-	
-	double getOpenDefaultPendTime(){
-		return channelOpenPolicy.getDefaultTimeout();
-	}
-
-				
-	void openGroupNowAndWait(double _timeout){
-		double dto = channelOpenGroupPolicy.getTimeout();
-		channelOpenGroupPolicy.setTimeout(_timeout);
-		channelOpenGroupPolicy.flushSendBufferNow();
-		//	
-		//reset
-		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);	
-		//channelOpenGroupPolicy.setTimeoutToDefault();
-		channelOpenGroupPolicy.setTimeout(dto);
-		return;
-	}
 
 	void openMonitorNow(){
 		channelMonitorPolicy.flushSendBufferNow();
@@ -233,44 +252,57 @@ class Connect
 	}
 	
 	void openMonitorNowAndWait(double _timeout){
-		channelMonitorPolicy.setTimeout(_timeout);
+		channelMonitorPolicy.setTimeout(_timeout);	 
+		channelMonitorPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
 		channelMonitorPolicy.flushSendBufferNow();		
 		//reset
 		channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
 		channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);		
 		return;
   }
+  //------------------------------------------------------------------------
 
+
+	double setOpenDefaultPendTime(double _timeout){
+		return channelOpenPolicy.setDefaultTimeout(_timeout);
+	}
+	
+	double getOpenDefaultPendTime(){
+		return channelOpenPolicy.getDefaultTimeout();
+	}
+
+  //------------------------------------------------------------------------
   void openPrepare() {
-     channelOpenPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
+     channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
 		 channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
 		 return;
 	} 
 	
-  void openNowAndWait(double _timeout) {
-	  double dto = channelOpenPolicy.getTimeout();
-	  channelOpenPolicy.setTimeout(_timeout);
-	  channelOpenPolicy.flushSendBufferNow();
-		//reset 
-		channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelOpenPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
-		//channelOpenPolicy.setTimeoutToDefault();
-		channelOpenPolicy.setTimeout(dto);
-		return;
-	} 
-	
-  void openNow() {
-	  channelOpenPolicy.flushSendBufferNow();
-		channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelOpenPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
-		return;
-	} 
-	
+	//Same as openPrepare
 	void openNoWait(){
 		channelOpenPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);		
 		channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
 		return;
 	}
+		
+	//Pends for a maximimum of timeout seconds
+  void openNowAndWait(double _timeout);
+	 
+	
+	//Pends for default amount of time
+  void openNow() {	
+	  openNowAndWait(channelOpenPolicy.getTimeout());
+		/*
+	  channelOpenPolicy.flushSendBufferNow();
+		//reset
+		channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+		channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+		*/
+		return;
+	} 
+
+//-------------------------------------------------------------------------
+
 	
 	bool initCallbackComplete(vector<unsigned int> hV) {
 		return initCallbackComplete(&hV[0], hV.size());
@@ -292,9 +324,7 @@ class Connect
   void printCAFEException_pv(CAFEException_pv & e){exceptionsHelper.printCAFEException_pv(e);};
   
 	
-	
-	
-	
+
 	
   //closeChannel(s) only close within a context
 	int  closeChannels(unsigned int * handleArray, unsigned int nHandles);
@@ -329,6 +359,12 @@ class Connect
   int  closeHandles(unsigned int * handleArray, unsigned int nHandles);
   int  closeHandle(unsigned int  handle);
   int  closeHandles();
+	
+	//Close Channel Keep Handle
+	int  closeChannelKeepHandle(unsigned int  handle);
+	int  closeChannelsKeepHandles(unsigned int  * handleArray,  unsigned int nHandles);
+	int  closeChannelsKeepHandlesV(vector<unsigned int> v){ return closeChannelsKeepHandles(&v[0], v.size());}
+	int  closeChannelsKeepHandles (vector<unsigned int> v){ return closeChannelsKeepHandles(&v[0], v.size());}	
  
   // Monitors
   int  monitorStart(unsigned int  handle, MonitorPolicy &mp);

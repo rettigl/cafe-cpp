@@ -5,7 +5,6 @@
 
 #include "callbacks.h" //ca callback funtions
 
-
 // Test with 6 PVS
 // PV_X1,PV_Y1 are scalar numerics
 // PV_WF is a vector numeric
@@ -15,7 +14,7 @@
 
 #define PV_X1      "ARIDI-BPM-01LE:X-AVG"
 #define PV_Y1      "ARIDI-BPM-01LE:Y-AVG"
-#define PV_WF      "ARIDI-BPM-01LE:WF-INT-1"   //256 elements
+#define PV_WF      "ARIDI-BPM-01LE:WF-INT-2"   //256 elements
 #define PV_MBBI    "ARIDI-BPM-01LE:GET-ENABLE" //mmbi
 #define PV_X1_DESC "ARIDI-BPM-01LE:X-AVG.DESC" //dbr_string_t
 #define PV_JOKE    "PV:JOKE"
@@ -255,7 +254,7 @@ int main( int argc, char *argv[] )
 			cout << "Value d=" << d << endl; 
 		}
 		
-		//Handle and PV Mappring, i.e., to interchange between handle and pvName
+		//Handle and PV Mapping, i.e., to interchange between handle and pvName
 		             handle = cafe->getHandleFromPV(pvArray[0].c_str());
 		const char * pvName = cafe->getPVFromHandle(handle);
 		  
@@ -263,7 +262,7 @@ int main( int argc, char *argv[] )
 		
 		//------------------------------------------------------------	
 		//Set data
-		//The set method is able to intrepret all data types, and can 
+		//The set method is able to interpret all data types, and can 
 		//cater for scalar values and arrays
 		//------------------------------------------------------------
 	
@@ -614,7 +613,7 @@ int main( int argc, char *argv[] )
 		
 		PVDataHolder pvDat;
 		status= cafe->get(PV_MBBI, pvDat);	 
-		cout << "VALUE as string:         " << pvDat.getAsString() << endl;
+		cout << "VALUE as string:          " << pvDat.getAsString() << endl;
 		cout << "VALUE as int:             " << pvDat.getAsUShort() << endl;
 		cout << "Integer Value as String:  " << pvDat.getEnumIntegerValueAsString() << endl;
 		

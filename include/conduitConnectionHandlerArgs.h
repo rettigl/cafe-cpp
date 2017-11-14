@@ -240,6 +240,7 @@ struct change_connectionHandlerArgs
             c.channelRegalia.cafeConnectionState   =ICAFE_CS_DISCONN;
             c.channelRegalia.connectFlag = false;                   
             c.status             = ICAFE_CA_OP_CONN_DOWN;
+						
         }
 					
 				

@@ -20,6 +20,9 @@
 extern bool CHECK_CONSISTENCY_CA_STATE;
 extern bool MUTEX;
 extern epicsMutex cafeMutex;
+
+
+
 extern cafeConduit_set cs;
 extern cafeGroup_set gs;
 extern vector<PVGroup> PVGroupV;
@@ -29,8 +32,9 @@ extern map<vector<unsigned int>, string> groupPseudoMap;
 
 extern vector<string> globalChannelList;
 
-extern string globalZmqStream;
+
 extern string contentsS;
+extern string contentsBS;
 extern unsigned long nCBs;
 
 #endif // GLOBAL_H

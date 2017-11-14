@@ -60,8 +60,6 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup) {
 
 	string s = handleHelper.getGroupNameFromGroupHandle(_groupHandle);
 
-
-
 	unsigned int iIdx;
 
 	if (s!="") {
@@ -450,13 +448,31 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup) {
 			}
 		} //while
 
-		if (ntries>0) {
+		if (ntries > 0 ) {
+		//if (ntries >= channelTimeoutPolicySGPut.getNtries() ) {
+			cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+			std::cout << "No of(additional) tries=" << ntries << std::endl;
+
+      if (gStatus==ECAFE_TIMEOUT) {
+          std::cout << "is the MAXIMUM allowed as configured through SGTimeoutPolicy! "  << std::endl;
+					std::cout << "SETTING SELF-GOVERNING TIMEOUT FOR SG PUT OPERATIONS FOR THIS CHANNEL TO FALSE"  << std::endl;
+					std::cout << "RESTORING TIMEOUT TO ORIGINAL SG PUT VALUE OF: " << originalTimeOut << " SECONDS " << std::endl;
+					channelTimeoutPolicySGPut.setSelfGoverningTimeout(false);
+					channelTimeoutPolicySGPut.setTimeout( originalTimeOut );
+					if(MUTEX){cafeMutex.lock();}  //lock
+						groupHandle_index.modify(it_groupHandle,
+									 change_channelTimeoutPolicySGPut(channelTimeoutPolicySGPut));
+					if(MUTEX){cafeMutex.unlock();}  //unlock	
+										
+      } 
+			else{
 			cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
 			cout << "Changed SG PUT from intitial " << originalTimeOut << " to: "  <<
 				(originalTimeOut +
 				 channelTimeoutPolicySGPut.getDeltaTimeout()*ntries)
 				<< " seconds after " << ntries << " sg_put calls " <<endl;
-		}
+			}
+		} //IF
 
 
 		//Withdraw this test for now; not required
@@ -1264,14 +1280,16 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup) {
 			cout << "Changing SG GET timeout from: " << channelTimeoutPolicySGGet.getTimeout()
 				 << " to: "  << (originalTimeOut + channelTimeoutPolicySGGet.getDeltaTimeout()*ntries)
 				 << " seconds"  << endl;
-
+			
+			
 			channelTimeoutPolicySGGet.setTimeout( (originalTimeOut +
 											  channelTimeoutPolicySGGet.getDeltaTimeout()*ntries));
-
+												
 			if(MUTEX){cafeMutex.lock();}  //lock
 			groupHandle_index.modify(it_groupHandle,
 									 change_channelTimeoutPolicySGGet(channelTimeoutPolicySGGet));
-			if(MUTEX){cafeMutex.unlock();}  //unlock
+			if(MUTEX){cafeMutex.unlock();}  //unlock	
+
 
 			if (gStatus == ECA_TIMEOUT) {
 				gStatus=(*it_groupHandle).get();
@@ -1280,12 +1298,35 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup) {
 		} //while
 
 		if (ntries>0) {
+		//if (ntries >= channelTimeoutPolicySGGet.getNtries() ) {
 			cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-			cout << "Changed SG GET from intitial " << originalTimeOut << " to: "  <<
+			std::cout << "No of(additional) tries=" << ntries << std::endl;
+
+      if (gStatus==ECAFE_TIMEOUT) {
+          std::cout << "is the MAXIMUM allowed as configured through SGTimeoutPolicy! "  << std::endl;
+					std::cout << "SETTING SELF-GOVERNING TIMEOUT FOR SG GET OPERATIONS FOR THIS CHANNEL TO FALSE"  << std::endl;
+					std::cout << "RESTORING TIMEOUT TO ORIGINAL SG GET VALUE OF: " << originalTimeOut << " SECONDS " << std::endl;
+					channelTimeoutPolicySGGet.setSelfGoverningTimeout(false);
+					channelTimeoutPolicySGGet.setTimeout( originalTimeOut );
+					if(MUTEX){cafeMutex.lock();}  //lock
+						groupHandle_index.modify(it_groupHandle,
+									 change_channelTimeoutPolicySGGet(channelTimeoutPolicySGGet));
+					if(MUTEX){cafeMutex.unlock();}  //unlock	
+										
+      } 
+			
+		  else {
+			
+				cout << "Changed SG GET from intitial " << originalTimeOut << " to: "  <<
 				(originalTimeOut +
 				 channelTimeoutPolicySGGet.getDeltaTimeout()*ntries)
-				<< " seconds after " << ntries << " sg_get calls " <<endl;
-		}
+				<< " seconds"  << endl;
+			
+			}
+		
+		}	//if
+				
+		
 
 		//Withdraw this test for now; not required
 		//if (ca_sg_test((*it_groupHandle).getGroupID()) == ECA_IOINPROGRESS) {

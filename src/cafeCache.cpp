@@ -69,7 +69,7 @@ int CAFE::getCache(const unsigned int  *handleArray, unsigned int  nelem, long l
             nbyteChType=1;
         }
 
-        if ( channelInfo.getCafeConnectionState() != ICAFE_CS_NEVER_CONN) {
+        if ( channelInfo.getCafeConnectionState() != ICAFE_CS_NEVER_CONN  && channelInfo.getCafeConnectionState() != ICAFE_CS_CLOSED) {
             if (channelInfo.getDataType()==DBF_STRING) {
                 chtMax=DBR_STRING;
                 break;
@@ -230,6 +230,10 @@ int  CAFE::getCache(const unsigned int handle, long long * _val, \
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
+    }
+		
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemRequest(handle);
 
@@ -319,6 +323,9 @@ int  CAFE::getCache(const unsigned int  handle, long long   * _val, \
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
+    }
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemRequest(handle);
 
@@ -406,6 +413,10 @@ int  CAFE::getCache(const unsigned int handle, long long * _val){
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
+		else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        return ICAFE_CS_CLOSED;
+    }
+		
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemRequest(handle);
 

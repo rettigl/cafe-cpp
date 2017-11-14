@@ -27,8 +27,8 @@ export CAFE_EPICS_V_MINOR=$EBMIN
 export CAFE_EPICS_V_PATCH=$EBPAT
 
 #--enable-boost --with-boost=/afs/psi.ch/intranet/Controls/BD/deps/boost_1_57_0 \
-CAFE_VERSION=cafe-1.0.0-beta-1
-CYCAFE_VERSION=pycafe-noqt-1.0.0-beta-1
+CAFE_VERSION=cafe-1.5.0-final-1
+CYCAFE_VERSION=pycafe-noqt-1.5.0-final-1
 
 ./configure \
     --prefix=/opt/gfa/cafe/python/python-3.5/${CYCAFE_VERSION}/ \

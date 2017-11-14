@@ -27,6 +27,10 @@ int  Granules::channelVerifyPut(const unsigned int  _handle, chtype _dbrType) {
         if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_NEVER_CONN)  {
             return ICAFE_CS_NEVER_CONN;
         }
+				else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+            return ICAFE_CS_CLOSED;
+        }
+				
 
 		if ( CHECK_CONSISTENCY_CA_STATE && !(*it_handle).isConnected())  {
 			status=helper.checkConsistency(_handle);
@@ -386,26 +390,26 @@ int  Granules::channelExecutePut(const unsigned int  _handle) {
                         if (status==ECAFE_TIMEOUT) {
                             std::cout << "is the MAXIMUM allowed as configured through TimeoutPolicy! "  << std::endl;
 
-							std::cout << " SELF-GOVERNING TIMEOUT FOR SET OPERATIONS FOR THIS CHANNEL"  << std::endl;
-							channelTimeoutPolicyPut.setSelfGoverningTimeout(false);
-							channelTimeoutPolicyPut.setTimeout( channelTimeoutPolicyPut.getTimeout() );
+														std::cout << " SELF-GOVERNING TIMEOUT FOR SET OPERATIONS FOR THIS CHANNEL"  << std::endl;
+														channelTimeoutPolicyPut.setSelfGoverningTimeout(false);
+														channelTimeoutPolicyPut.setTimeout( channelTimeoutPolicyPut.getTimeout() );
                         }
-						else {
-							std::cout << "Changing timeout for handle/pv "
+												else {
+														std::cout << "Changing timeout for handle/pv "
                                   << _handle << "/" << (*it_handle).getPV() << " to: "  <<
                             (channelTimeoutPolicyPut.getTimeout() +
                              channelTimeoutPolicyPut.getDeltaTimeout()*ntries) << " seconds"  <<endl;					
-							channelTimeoutPolicyPut.setTimeout( (channelTimeoutPolicyPut.getTimeout() +
+															channelTimeoutPolicyPut.setTimeout( (channelTimeoutPolicyPut.getTimeout() +
                                                           channelTimeoutPolicyPut.getDeltaTimeout()*ntries));
-						}
+												}
                         if(MUTEX){cafeMutex.lock();}    //lock
                         handle_index.modify(it_handle, change_channelTimeoutPolicyPut(channelTimeoutPolicyPut));
-						if(MUTEX){cafeMutex.unlock();}  //unlock
+												if(MUTEX){cafeMutex.unlock();}  //unlock
 
-						if (status==ECAFE_TIMEOUT) {
-							std::cout << "CURRENT STATUS OF HANDLE: " << std::endl;
-							helper.printHandle(_handle);
-						}
+												if (status==ECAFE_TIMEOUT) {
+													std::cout << "CURRENT STATUS OF HANDLE: " << std::endl;
+													helper.printHandle(_handle);
+												}
                     } //isConnected
                 }
 
@@ -558,9 +562,15 @@ int  Granules::channelVerifyGet(const unsigned int  _handle, chtype _dbrType) {
 
     if (it_handle != handle_index.end()) {
 
+
         if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_NEVER_CONN)  {
             return ICAFE_CS_NEVER_CONN;
         }
+				else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+            return ICAFE_CS_CLOSED;
+        }
+				
+						
 
 		if ( CHECK_CONSISTENCY_CA_STATE && !(*it_handle).isConnected())  {
 			status=helper.checkConsistency(_handle);
@@ -579,7 +589,7 @@ int  Granules::channelVerifyGet(const unsigned int  _handle, chtype _dbrType) {
             handle_index.modify(it_handle, change_channelRequestStatusGet(channelRequestStatusGet));
 
             handle_index.modify(it_handle, change_status(ICAFE_CA_OP_CONN_DOWN)); //for return
-          if(MUTEX){cafeMutex.unlock();}//unlock
+            if(MUTEX){cafeMutex.unlock();}//unlock
             return ICAFE_CA_OP_CONN_DOWN;
         }
 
@@ -1447,15 +1457,15 @@ int  Granules::waitForGetEvent(const unsigned int  _handle, double _timeout) {
 
             while (channelRequestStatusGet.getCallbackProgressKind() == CAFENUM::PENDING
                                                         && timeElapsed < _timeout){				
-				ca_flush_io();
+			    	ca_flush_io();
 				
-				#if HAVE_BOOST_THREAD
-				  boost::this_thread::sleep_for(boost::chrono::microseconds(20));
-				#else
-					#if HAVE_LINUX
-	        usleep(20);
-	        #endif
-				#endif
+			  	  #if HAVE_BOOST_THREAD
+				      boost::this_thread::sleep_for(boost::chrono::microseconds(20));
+				    #else
+					   #if HAVE_LINUX
+	           usleep(20);
+	           #endif
+				    #endif
                 ++nPoll;
 
                 ptime timeEnd(microsec_clock::local_time());
@@ -1650,9 +1660,16 @@ int  Granules::channelVerifyGetCtrl(const unsigned int  _handle, chtype _dbrType
 
     if (it_handle != handle_index.end()) {
 
+
+
         if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_NEVER_CONN)  {
             return ICAFE_CS_NEVER_CONN;
         }
+				else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+            return ICAFE_CS_CLOSED;
+        }
+				
+				
 
 		if ( CHECK_CONSISTENCY_CA_STATE && !(*it_handle).isConnected())  {
 			status=helper.checkConsistency(_handle);

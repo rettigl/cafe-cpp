@@ -36,7 +36,7 @@ const unsigned short ICAFE_STATUS_CA_OP =  800;
 const unsigned short ICAFE_STATUS_ERROR = 1000;
 const unsigned short ICAFE_FILE_ERROR   = 1100;
 const unsigned short ICAFE_SERVICE_ERROR =1200;
-const unsigned short ICAFE_LINUX_ERROR  = 5000;
+const unsigned short ICAFE_ERRNO_BASE  = 5000;
 const unsigned short ICAFE_SUCCESS      = ECA_NORMAL;
 const unsigned short ICAFE_NORMAL       = ECA_NORMAL;
 
@@ -119,11 +119,11 @@ enum CAFE_FILE_ERROR  { ECAFE_LOAD_COLLECTION=ICAFE_FILE_ERROR,
 enum CAFE_SERVICE_ERROR { ECAFE_BPM_DATA_IS_INVALID=ICAFE_SERVICE_ERROR
 												};
 //Used by zeromq
-enum CAFE_LINUX_ERROR { LINUX_EINTR =ICAFE_LINUX_ERROR+4,
-						LINUX_EAGAIN=ICAFE_LINUX_ERROR+11,
-						LINUX_EFAULT=ICAFE_LINUX_ERROR+14,
-						LINUX_ENOTSOCK=ICAFE_LINUX_ERROR+88,
-						LINUX_EPROTONOSUPPORT=ICAFE_LINUX_ERROR+93
+enum CAFE_ERRNO_ERROR { ERRNO_EINTR =ICAFE_ERRNO_BASE+4,
+						ERRNO_EAGAIN=ICAFE_ERRNO_BASE+11,
+						ERRNO_EFAULT=ICAFE_ERRNO_BASE+14,
+						ERRNO_ENOTSOCK=ICAFE_ERRNO_BASE+88,
+						ERRNO_EPROTONOSUPPORT=ICAFE_ERRNO_BASE+93
 					  };
 													
 
@@ -420,11 +420,11 @@ public:
 * 1100 ECAFE_LOAD_COLLECTION \n
 * 1101 ECAFE_LOAD_GROUP \n
 * 1200 ECAFE_BPM_DATA_IS_INVALID \n														
-* 5004 LINUX_EINTR \n
-* 5011 LINUX_EGAIN \n
-* 5014 LINUX_EFAULT \n
-* 5088 LINUX_ENOTSOCK \n
-* 5093 LINUX_EPROTONOSUPPORT \n
+* 5004 ERRNO_EINTR \n
+* 5011 ERRNO_EGAIN \n
+* 5014 ERRNO_EFAULT \n
+* 5088 ERRNO_ENOTSOCK \n
+* 5093 ERRNO_EPROTONOSUPPORT \n
 */
 class CAFEStatusInfo {
     typedef std::map<int, std::string> mapLongString;
@@ -510,18 +510,17 @@ public:
 
 		mapStatusInfo.insert(std::make_pair((int)  ECAFE_HANDLE_MISMATCH_SET_AND_MATCH, "Number of set/readback handles do not match"));
     mapStatusInfo.insert(std::make_pair((int)  ECAFE_INCONSISTENT_CONTAINER_CORRECTED, "Boost container required update after consistency check"));
-	 
-	 
+	 	 
 	  mapStatusInfo.insert(std::make_pair((int)  ECAFE_LOAD_COLLECTION,     "CAFE collection could not be loaded from xml configuration file " ));
     mapStatusInfo.insert(std::make_pair((int)  ECAFE_LOAD_GROUP,          "CAFE group could not be loaded from group xml configuration file " ));
 
-	mapStatusInfo.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, "CAFE BPM Service: Data Validity channel reports BPM data is INVALID " ));
+	  mapStatusInfo.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, "CAFE BPM Service: Data Validity channel reports BPM data is INVALID " ));
 		
-	mapStatusInfo.insert(std::make_pair((int)  LINUX_EINTR,    "C ERROR CODE IN LINUX: Interrupted system call" ));
-	mapStatusInfo.insert(std::make_pair((int)  LINUX_EAGAIN,   "C ERROR CODE IN LINUX: Try again" ));
-	mapStatusInfo.insert(std::make_pair((int)  LINUX_EFAULT,   "C ERROR CODE IN LINUX: Bad address" ));
-	mapStatusInfo.insert(std::make_pair((int)  LINUX_ENOTSOCK, "C ERROR CODE IN LINUX: Socket operation on non-socket" ));
-	mapStatusInfo.insert(std::make_pair((int)  LINUX_EPROTONOSUPPORT,   "C ERROR CODE IN LINUX: Protocol not supported" ));
+	  mapStatusInfo.insert(std::make_pair((int)  ERRNO_EINTR,    "C ERRNO CODE: Interrupted system call" ));
+	  mapStatusInfo.insert(std::make_pair((int)  ERRNO_EAGAIN,   "C ERRNO CODE: Try again" ));
+	  mapStatusInfo.insert(std::make_pair((int)  ERRNO_EFAULT,   "C ERRNO CODE: Bad address" ));
+	  mapStatusInfo.insert(std::make_pair((int)  ERRNO_ENOTSOCK, "C ERRNO CODE: Socket operation on non-socket" ));
+	  mapStatusInfo.insert(std::make_pair((int)  ERRNO_EPROTONOSUPPORT,   "C ERRNO CODE: Protocol not supported" ));
 }
 
   ~CAFEStatusInfo() {};
@@ -678,11 +677,11 @@ public:
 		
 	  mapStatusCode.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, "CAFE_ERROR: ECAFE_BPM_DATA_IS_INVALID" ));
 
-		mapStatusCode.insert(std::make_pair((int)  LINUX_EINTR,    "CAFE_ERROR: LINUX_EINTR" ));
-		mapStatusCode.insert(std::make_pair((int)  LINUX_EAGAIN,   "CAFE_WARN: LINUX_EAGAIN " ));
-		mapStatusCode.insert(std::make_pair((int)  LINUX_EFAULT,   "CAFE_ERROR: LINUX_EFAULT" ));
-		mapStatusCode.insert(std::make_pair((int)  LINUX_ENOTSOCK, "CAFE_ERROR: LINUX_ENOTSOCK" ));
-		mapStatusCode.insert(std::make_pair((int)  LINUX_EPROTONOSUPPORT,   "CAFE_ERROR: LINUX_EPROTONOSUPPORT" ));
+		mapStatusCode.insert(std::make_pair((int)  ERRNO_EINTR,    "CAFE_ERROR: ERRNO_EINTR" ));
+		mapStatusCode.insert(std::make_pair((int)  ERRNO_EAGAIN,   "CAFE_WARN: ERRNO_EAGAIN " ));
+		mapStatusCode.insert(std::make_pair((int)  ERRNO_EFAULT,   "CAFE_ERROR: ERRNO_EFAULT" ));
+		mapStatusCode.insert(std::make_pair((int)  ERRNO_ENOTSOCK, "CAFE_ERROR: ERRNO_ENOTSOCK" ));
+		mapStatusCode.insert(std::make_pair((int)  ERRNO_EPROTONOSUPPORT,   "CAFE_ERROR: ERRNO_EPROTONOSUPPORT" ));
 																						
 };
 
@@ -887,11 +886,11 @@ public:
 	
 		mapStatusSeverity.insert(std::make_pair((int)  ECAFE_BPM_DATA_IS_INVALID, 						"WARN" ));
 	
-		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EINTR,    "ERROR" ));
-		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EAGAIN,   "WARN" ));
-		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EFAULT,   "ERROR"));
-		mapStatusSeverity.insert(std::make_pair((int)  LINUX_ENOTSOCK,  "ERROR"));
-		mapStatusSeverity.insert(std::make_pair((int)  LINUX_EPROTONOSUPPORT, "ERROR"  ));
+		mapStatusSeverity.insert(std::make_pair((int)  ERRNO_EINTR,    "ERROR" ));
+		mapStatusSeverity.insert(std::make_pair((int)  ERRNO_EAGAIN,   "WARN" ));
+		mapStatusSeverity.insert(std::make_pair((int)  ERRNO_EFAULT,   "ERROR"));
+		mapStatusSeverity.insert(std::make_pair((int)  ERRNO_ENOTSOCK,  "ERROR"));
+		mapStatusSeverity.insert(std::make_pair((int)  ERRNO_EPROTONOSUPPORT, "ERROR"  ));
 	
 	
 		

@@ -451,7 +451,10 @@ int  CAFE::get(const unsigned int  _handle, vector<long long> & V,
         if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
             return ICAFE_CS_NEVER_CONN;
         }
-
+				else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+            return ICAFE_CS_CLOSED;
+        }
+				
         unsigned int  nelemThatWillBeRequested= (*it_handle).getChannelRegalia().getNelem();
 
         //Reserve only what will be in the buffer.
@@ -2714,7 +2717,10 @@ int  CAFE::set(const unsigned int  _handle, vector<long long> V) {
     if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
         return ICAFE_CS_NEVER_CONN;
     }
-
+    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+            return ICAFE_CS_CLOSED;
+    }
+				
     switch ( channelInfo.getDataType()) {
 
     case DBR_DOUBLE:

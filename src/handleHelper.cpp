@@ -1112,7 +1112,7 @@ unsigned int HandleHelper::getHandleFromPVWithinGroup(const char * _pv,
  *  \return vector of handles within Group
  */
 vector<unsigned int>   HandleHelper::getHandlesFromWithinGroupV(unsigned int _groupHandle) {
-#define __METHOD__ "HandleHelper::getGroupHandlesFromWithinGroup"
+#define __METHOD__ "HandleHelper::getHandlesFromWithinGroupV"
 
 	cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
 	cafeGroup_set_by_groupHandle::iterator it_groupHandle;
@@ -1154,7 +1154,7 @@ vector<unsigned int>   HandleHelper::getHandlesFromWithinGroupV(unsigned int _gr
  *  \return array of handles within Group
  */
 unsigned int *   HandleHelper::getHandlesFromWithinGroup(unsigned int _groupHandle) {
-#define __METHOD__ "HandleHelper::getGroupHandlesFromWithinGroup"
+#define __METHOD__ "HandleHelper::getHandlesFromWithinGroup"
 
     cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
@@ -1187,6 +1187,74 @@ unsigned int *   HandleHelper::getHandlesFromWithinGroup(unsigned int _groupHand
 #undef __METHOD__
 }
 
+
+
+/**
+ *  \brief  Retrieves all handles belonging to a group referenced by its groupHandle
+ *  \param  _groupHandle input: groupHandle
+ *  \return vector of handles within Group
+ */
+vector<unsigned int>   HandleHelper::getDisconnectedHandlesFromWithinGroupV(unsigned int _groupHandle) {
+#define __METHOD__ "HandleHelper::getDisconnectedHandlesFromWithinGroupV"
+
+	cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
+	cafeGroup_set_by_groupHandle::iterator it_groupHandle;
+
+	it_groupHandle = groupHandle_index.find(_groupHandle);
+
+	vector<unsigned int> vhg;
+
+	if (it_groupHandle != groupHandle_index.end()) {
+		vhg.reserve( (*it_groupHandle).getNMember());
+		
+		cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+		cafeConduit_set_by_handle::iterator it_handle;
+		
+		for (unsigned int i=0; i <(*it_groupHandle).getNMember(); ++i ) {
+								
+			it_handle = handle_index.find((*it_groupHandle).mHandle[i]);
+
+			if (it_handle != handle_index.end()) {				
+			  if ( ! ((*it_handle).isConnected()) ) {
+				  vhg.push_back((*it_groupHandle).mHandle[i]);			
+			  }	
+			}
+		}
+		return vhg;
+	} else {
+		// Loop through all elements and search for grouphandle match
+		for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+
+			if ((*itgs).getGroupHandle() == _groupHandle ) {
+				vhg.reserve( (*itgs).getNMember());
+				
+				cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+				cafeConduit_set_by_handle::iterator it_handle;
+				
+									
+				for (unsigned int i=0; i <(*itgs).getNMember(); ++i ) {
+				
+			   	it_handle = handle_index.find((*itgs).mHandle[i]);
+					if (it_handle != handle_index.end()) {		
+						if ( !((*it_handle).isConnected() ) ) {
+							vhg.push_back((*itgs).mHandle[i]);
+						}	
+					}	
+				}
+				return vhg;
+			}
+		}
+	}
+
+	cafeStatus.report(ECAFE_UNKNOWN_GROUP);
+
+  return vhg;
+#undef __METHOD__
+}
+
+
+
+
 /**
  *  \brief  Method returns true if channel is connected, else false
  *  \param  handle input: handle
@@ -1202,6 +1270,72 @@ bool HandleHelper::isChannelConnected(unsigned int handle){
 			//}	
     return false;}
 }
+
+
+
+/**
+ *  \brief  Method returns true if all channels are connected, else false
+ *  \return bool
+ */
+bool HandleHelper::allChannelsConnected() {
+#define __METHOD__ "HandleHelper::allChannelsConnected"
+ 		ca_client_context * ccc = ca_current_context();
+    // Loop through all elements 
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {		
+        if (!(*itcs).isConnected() && (ccc ==(*itcs).getClientContext()) ) {			
+				  return false;	
+				}				
+		}		
+		
+    return true;
+#undef __METHOD__
+}
+
+
+/**
+ *  \brief  Method returns true if all channels are connected, else false
+ *  \return bool
+ */
+bool HandleHelper::allChannelsWithinGroupConnected() {
+#define __METHOD__ "HandleHelper::allChannelsWithinGroupConnected"
+ 		ca_client_context * ccc = ca_current_context();
+    // Loop through all elements 
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {		
+        if (!(*itcs).isConnected() && (ccc ==(*itcs).getClientContext()) && (*itcs).getGroupHandle()>0 ) {			
+				  return false;	
+				}				
+		}		
+		
+    return true;
+#undef __METHOD__
+}
+
+/**
+ *  \brief  Method returns true if all channels within the given vector of groups handles are connected, else false
+ *  \param  grpID input: vector of group handles
+ *  \return bool
+ */
+bool HandleHelper::allChannelsWithinGroupConnectedV(vector<unsigned int> grpID) {
+#define __METHOD__ "HandleHelper::allChannelsWithinGroupConnectedV"
+    if (grpID.size()==0) {
+			cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+			cout << "Input vector listing group handles is of zero size " << endl;
+		} 
+				
+		for (size_t i=0; i<grpID.size(); ++i) {
+		  unsigned int nMem= HandleHelper::getDisconnectedHandlesFromWithinGroupV(grpID[i]).size();
+		  if ( nMem > 0) {
+			//cout << "group handle " << grpID[i] << " NOT all members connected " << endl;
+		   return false;
+		  }	
+			//cout << "group handle " << grpID[i] << " has all members connected " << endl;
+		}
+		
+		return true;
+		
+#undef __METHOD__
+}
+
 
 
 
@@ -1321,7 +1455,7 @@ int HandleHelper::getAlarmStatusSeverityAsString(unsigned int _handle, string as
 /**
  *  \brief Rerieves vector of handles for given vector of PVs
  *  \param pvV input: vector of PVS
- *  \retun handleV output: vector of handles 
+ *  \return vector of handles 
  */
 vector<unsigned int>  HandleHelper::getHandlesFromPVs(vector<string> pvV) {
 
@@ -1336,7 +1470,6 @@ vector<unsigned int>  HandleHelper::getHandlesFromPVs(vector<string> pvV) {
  *  \brief Rerieves vector of handles for given vector of PVs
  *  \param pvV input: vector of PVS
  *  \param ccc input: ca_client_context *
- *  \param handleV output: vector of handles 
  *  \return ICAFE_NORMAL if all OK else ECAFE_INVALID_HANDLE
  */
 vector<unsigned int> HandleHelper::getHandlesFromPVs(vector<string> pvV,  ca_client_context * ccc) {
