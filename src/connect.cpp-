@@ -122,8 +122,6 @@ int  Connect::createChannel(unsigned int handle, const char * pv, chid &pCh) {
 					  ptime timeEnd(microsec_clock::local_time());
             time_duration duration(timeEnd-timeStart);
             timeElapsed= (double) duration.total_microseconds()/1000000.0;
-						
-						//cout << "channelOpenPolicy.getTimeout() " << channelOpenPolicy.getTimeout() << endl;
 
             while ( !(*it_handle).isConnected() && timeElapsed <= channelOpenPolicy.getTimeout()){	
 									
@@ -143,22 +141,18 @@ int  Connect::createChannel(unsigned int handle, const char * pv, chid &pCh) {
 							
             }
 							
-						/*
+						/*	
 						if ( (*it_handle).isConnected() ) {
 								cout << (*it_handle).getPV() << " // is connected //" << endl;
 						} 					        
 						else {
 								cout << (*it_handle).getPV() << " // is not connected //" << endl;
 						}
-					  cout << "timeElapsed for open " << timeElapsed << " nPoll = " << nPoll << endl;
+						cout << "timeElapsed for open " << timeElapsed << " nPoll = " << nPoll << endl;
 						*/
-					
 							
         }
-				//else {
-				
-					//cout << "channelOpenPolicy.getWhenToFlushSendBuffer() is " << channelOpenPolicy.getWhenToFlushSendBuffer() << endl;
-				//}
+
 	
         // Peculiar if true
 				/*
@@ -474,9 +468,7 @@ int  Connect::open(const char ** pvArray, unsigned int * handleArray,
         }
         catch (CAFEException_open &e) {
 						if (flushAtEndFlag) { 
-		   				//channelOpenPolicy.flushSendBufferNow(); 
-							//this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-							Connect::openNow();
+		   				channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 						}
 				
             throw(e);
@@ -485,9 +477,7 @@ int  Connect::open(const char ** pvArray, unsigned int * handleArray,
     }
 		
 		if (flushAtEndFlag) { 
-		   //channelOpenPolicy.flushSendBufferNow(); 
-			 //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-			  Connect::openNow();
+		   channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 		}
 		
     return ICAFE_NORMAL;
@@ -529,9 +519,7 @@ int  Connect::open(const string *pvArrayS, unsigned int *handleArray, const unsi
         }
         catch (CAFEException_open &e) {
 						if (flushAtEndFlag) { 
-		  				 //channelOpenPolicy.flushSendBufferNow(); 
-							 //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-							 Connect::openNow();
+		  				 channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 						}
 				
             throw(e);
@@ -540,9 +528,7 @@ int  Connect::open(const string *pvArrayS, unsigned int *handleArray, const unsi
     }
 		
 		if (flushAtEndFlag) { 
-		   //channelOpenPolicy.flushSendBufferNow(); 
-			 //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-			 Connect::openNow();
+		   channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 		}
 		
     return ICAFE_NORMAL;
@@ -589,9 +575,7 @@ int  Connect::open(vector<string> pvV, vector<unsigned int> &handleV)
         }
         catch (CAFEException_open &e) {
 						if (flushAtEndFlag) { 
-		  				//channelOpenPolicy.flushSendBufferNow(); 
-							//this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-							Connect::openNow();
+		  				channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 						}
 				
             throw(e);
@@ -600,9 +584,7 @@ int  Connect::open(vector<string> pvV, vector<unsigned int> &handleV)
     }
 		
 		if (flushAtEndFlag) { 
-		   //channelOpenPolicy.flushSendBufferNow(); 
-			 //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-			 Connect::openNow();
+		   channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 		}
 		
     return ICAFE_NORMAL;
@@ -648,9 +630,7 @@ int  Connect::open(vector<const char *> pvV, vector<unsigned int> &handleV)
         }
         catch (CAFEException_open &e) {
 						if (flushAtEndFlag) { 
-		   				//channelOpenPolicy.flushSendBufferNow(); 
-							//this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-							Connect::openNow();
+		   				channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 						}
 				
             throw(e);
@@ -659,9 +639,7 @@ int  Connect::open(vector<const char *> pvV, vector<unsigned int> &handleV)
     }
 		
 		if (flushAtEndFlag) { 
-		   //channelOpenPolicy.flushSendBufferNow(); 
-			 //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
-			 Connect::openNow();
+		   channelOpenPolicy.flushSendBufferNow(); //this also resets whenKind=FLUSH_AFTER_EACH_CHANNEL_CREATION
 		}
 		
 		

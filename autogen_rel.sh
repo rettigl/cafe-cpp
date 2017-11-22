@@ -26,7 +26,7 @@ export CAFE_EPICS_V_MINOR=$EBMIN
 export CAFE_EPICS_V_PATCH=$EBPAT
  
 
-CAFE_VERSION=cafe-1.5.0-final-1
+CAFE_VERSION=cafe-1.5.0-final-2
 
 
 ./configure \
