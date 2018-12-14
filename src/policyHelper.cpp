@@ -1,5 +1,5 @@
 ///
-/// \file    policyHelper.cc
+/// \file    policyHelper.cpp
 /// \author  Jan Chrin, PSI
 /// \date    Release: February 2015
 /// \version CAFE 1.0.0
@@ -23,21 +23,22 @@ using namespace std;
  *
  */
 int PolicyHelper::getChannelGetCacheWaitPolicy(unsigned int _handle,
-												   ChannelGetCacheWaitPolicy & cwp){
+        ChannelGetCacheWaitPolicy & cwp)
+{
 #define __METHOD__ "policyHelper::getChannelGetCacheWaitPolicy(handle, ChannelGetCacheWaitPolicy & cwp)"
 
-	cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
-	cafeConduit_set_by_handle::iterator it_handle;
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
 
-	it_handle = handle_index.find(_handle);
+    it_handle = handle_index.find(_handle);
 
-		if (it_handle != handle_index.end()) {
-			cwp=(*it_handle).getChannelGetCacheWaitPolicy();
-		}
-		else {
-			return ECAFE_INVALID_HANDLE;
-		}
-	return ICAFE_NORMAL;
+    if (it_handle != handle_index.end()) {
+        cwp=(*it_handle).getChannelGetCacheWaitPolicy();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -54,33 +55,38 @@ int PolicyHelper::getChannelGetCacheWaitPolicy(unsigned int _handle,
  *
  */
 int PolicyHelper::setChannelGetCacheWaitPolicy(unsigned int _handle,
-												   ChannelGetCacheWaitPolicy  cwp){
+        ChannelGetCacheWaitPolicy  cwp)
+{
 #define __METHOD__ "policyHelper:setChannelGetCacheWaitPolicy(handle, ChannelGetCacheWaitPolicy cwp)"
 
-	cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
-	cafeConduit_set_by_handle::iterator it_handle;
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
 
-	it_handle = handle_index.find(_handle);
+    it_handle = handle_index.find(_handle);
 
-	if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-		if (cwp.getWaitKind() < CAFENUM::GET_CACHE_NO_CHECK || cwp.getWaitKind() > CAFENUM::GET_CACHE_WAIT) {
-			cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
-			cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
-			cout << cwp.getWaitKind()  << " is an unknown policy!" << endl;
-			cout << "Valid types are GET_CACHE_NO_CHECK(0) GET_CACHE_NO_WAIT(1) or  GET_CACHE_WAIT(2)" << endl;
-			return ECAFE_INVALID_CAFENUM_POLICY_TYPE;
-		}
+        if (cwp.getWaitKind() < CAFENUM::GET_CACHE_NO_CHECK || cwp.getWaitKind() > CAFENUM::GET_CACHE_WAIT) {
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
+            cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
+            cout << cwp.getWaitKind()  << " is an unknown policy!" << endl;
+            cout << "Valid types are GET_CACHE_NO_CHECK(0) GET_CACHE_NO_WAIT(1) or  GET_CACHE_WAIT(2)" << endl;
+            return ECAFE_INVALID_CAFENUM_POLICY_TYPE;
+        }
 
-		if(MUTEX){cafeMutex.lock();}
-		handle_index.modify(it_handle, change_channelGetCacheWaitPolicy(cwp));
-		if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        handle_index.modify(it_handle, change_channelGetCacheWaitPolicy(cwp));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
 
-	}
-	else {
-		return ECAFE_INVALID_HANDLE;
-	}
-	return ICAFE_NORMAL;
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -96,18 +102,23 @@ int PolicyHelper::setChannelGetCacheWaitPolicy(unsigned int _handle,
  *  \return status ICAFE_NORMAL else ECAFE_INVALID_HANDLE
  *
  */
-int PolicyHelper::setChannelGetCacheWaitPolicy( ChannelGetCacheWaitPolicy  cwp){
+int PolicyHelper::setChannelGetCacheWaitPolicy( ChannelGetCacheWaitPolicy  cwp)
+{
 #define __METHOD__ "policyHelper:setChannelGetCacheWaitPolicy(ChannelGetCacheWaitPolicy cwp)"
 
-	int localStatus=ICAFE_NORMAL;
-	int gStatus=ICAFE_NORMAL;  bool sflag=false;
+    int localStatus=ICAFE_NORMAL;
+    int gStatus=ICAFE_NORMAL;
+    bool sflag=false;
 
-	// Loop through all elements
-	for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-		localStatus= setChannelGetCacheWaitPolicy ((*itcs).getHandle(), cwp);
-		if (localStatus !=ICAFE_NORMAL && !sflag) {gStatus=localStatus; sflag=true;}
-	}
-	return gStatus;
+    // Loop through all elements
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+        localStatus= setChannelGetCacheWaitPolicy ((*itcs).getHandle(), cwp);
+        if (localStatus !=ICAFE_NORMAL && !sflag) {
+            gStatus=localStatus;
+            sflag=true;
+        }
+    }
+    return gStatus;
 
 #undef  __METHOD__
 }
@@ -125,21 +136,22 @@ int PolicyHelper::setChannelGetCacheWaitPolicy( ChannelGetCacheWaitPolicy  cwp){
  *
  */
 int PolicyHelper::getChannelGetActionWhenMonitorPolicy(unsigned int _handle,
-												   ChannelGetActionWhenMonitorPolicy & awmp){
+        ChannelGetActionWhenMonitorPolicy & awmp)
+{
 #define __METHOD__ "policyHelper::getChannelGetActionWhenMonitorPolicy(handle, ChannelGetActionWhenMonitorPolicy & awmp)"
 
-	cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
-	cafeConduit_set_by_handle::iterator it_handle;
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
 
-	it_handle = handle_index.find(_handle);
+    it_handle = handle_index.find(_handle);
 
-		if (it_handle != handle_index.end()) {
-			awmp=(*it_handle).getChannelGetActionWhenMonitorPolicy();
-		}
-		else {
-			return ECAFE_INVALID_HANDLE;
-		}
-	return ICAFE_NORMAL;
+    if (it_handle != handle_index.end()) {
+        awmp=(*it_handle).getChannelGetActionWhenMonitorPolicy();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -155,34 +167,39 @@ int PolicyHelper::getChannelGetActionWhenMonitorPolicy(unsigned int _handle,
  *
  */
 int PolicyHelper::setChannelGetActionWhenMonitorPolicy(unsigned int _handle,
-												   ChannelGetActionWhenMonitorPolicy awmp){
+        ChannelGetActionWhenMonitorPolicy awmp)
+{
 #define __METHOD__ "policyHelper::setChannelGetActionWhenMonitorPolicy(handle, ChannelGetActionWhenMonitorPolicy  awmp)"
 
-	cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
-	cafeConduit_set_by_handle::iterator it_handle;
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
 
-	it_handle = handle_index.find(_handle);
+    it_handle = handle_index.find(_handle);
 
-	if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-		if (awmp.getActionKind()!=CAFENUM::GET_FROM_CACHE && awmp.getActionKind()!=CAFENUM::GET_FROM_IOC) {
-			cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
-			cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
-			cout << awmp.getActionKind()  << " is an unknown policy!" << endl;
-			cout << "Valid types are: GET_FROM_CACHE (0) or GET_FROM_IOC (1)" << endl;
-			return ECAFE_INVALID_CAFENUM_POLICY_TYPE;
-		}
+        if (awmp.getActionKind()!=CAFENUM::GET_FROM_CACHE && awmp.getActionKind()!=CAFENUM::GET_FROM_IOC) {
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
+            cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
+            cout << awmp.getActionKind()  << " is an unknown policy!" << endl;
+            cout << "Valid types are: GET_FROM_CACHE (0) or GET_FROM_IOC (1)" << endl;
+            return ECAFE_INVALID_CAFENUM_POLICY_TYPE;
+        }
 
-		if(MUTEX){cafeMutex.lock();}
-		handle_index.modify(it_handle, change_channelGetActionWhenMonitorPolicy(awmp));
-		if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        handle_index.modify(it_handle, change_channelGetActionWhenMonitorPolicy(awmp));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
 
-	}
-	else {
-		return ECAFE_INVALID_HANDLE;
-	}
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
-	return ICAFE_NORMAL;
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -197,18 +214,23 @@ int PolicyHelper::setChannelGetActionWhenMonitorPolicy(unsigned int _handle,
  *  \return status ICAFE_NORMAL else ECAFE_INVALID_HANDLE
  *
  */
-int PolicyHelper::setChannelGetActionWhenMonitorPolicy(ChannelGetActionWhenMonitorPolicy awmp){
+int PolicyHelper::setChannelGetActionWhenMonitorPolicy(ChannelGetActionWhenMonitorPolicy awmp)
+{
 #define __METHOD__ "policyHelper::setChannelGetActionWhenMonitorPolicy(ChannelGetActionWhenMonitorPolicy awmp)"
 
-	int localStatus=ICAFE_NORMAL;
-	int gStatus=ICAFE_NORMAL;  bool sflag=false;
+    int localStatus=ICAFE_NORMAL;
+    int gStatus=ICAFE_NORMAL;
+    bool sflag=false;
 
-	// Loop through all elements
-	for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-		localStatus= setChannelGetActionWhenMonitorPolicy ((*itcs).getHandle(), awmp);
-		if (localStatus !=ICAFE_NORMAL && !sflag) {gStatus=localStatus; sflag=true;}
-	}
-	return gStatus;
+    // Loop through all elements
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+        localStatus= setChannelGetActionWhenMonitorPolicy ((*itcs).getHandle(), awmp);
+        if (localStatus !=ICAFE_NORMAL && !sflag) {
+            gStatus=localStatus;
+            sflag=true;
+        }
+    }
+    return gStatus;
 
 
 #undef  __METHOD__
@@ -227,19 +249,20 @@ int PolicyHelper::setChannelGetActionWhenMonitorPolicy(ChannelGetActionWhenMonit
  *
  */
 int PolicyHelper::getChannelRequestDataTypePolicy(unsigned int _handle,
-                                                   ChannelRequestDataTypePolicy & crdtp){
+        ChannelRequestDataTypePolicy & crdtp)
+{
 #define __METHOD__ "policyHelper::getChannelRequestDataTypePolicy(handle, ChannelRequestDataTypePolicy & crdtp)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find(_handle);
-        if (it_handle != handle_index.end()) {
-            crdtp=(*it_handle).getChannelRequestDataTypePolicy();
-        }
-        else {
-            return ECAFE_INVALID_HANDLE;
-        }
+    if (it_handle != handle_index.end()) {
+        crdtp=(*it_handle).getChannelRequestDataTypePolicy();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
     return ICAFE_NORMAL;
 #undef  __METHOD__
 }
@@ -258,16 +281,21 @@ int PolicyHelper::getChannelRequestDataTypePolicy(unsigned int _handle,
  *  \return status ICAFE_NORMAL else ECAFE_INVALID_HANDLE
  *
  */
-int PolicyHelper::setChannelRequestDataTypePolicy(ChannelRequestDataTypePolicy crdtp){
+int PolicyHelper::setChannelRequestDataTypePolicy(ChannelRequestDataTypePolicy crdtp)
+{
 #define __METHOD__ "policyHelper::setChannelRequestDataTypePolicy(ChannelRequestDataTypePolicy  crdtp)"
 
     int localStatus=ICAFE_NORMAL;
-    int gStatus=ICAFE_NORMAL;  bool sflag=false;
+    int gStatus=ICAFE_NORMAL;
+    bool sflag=false;
 
     // Loop through all elements
     for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
         localStatus= setChannelRequestDataTypePolicy ((*itcs).getHandle(), crdtp);
-        if (localStatus !=ICAFE_NORMAL && !sflag) {gStatus=localStatus; sflag=true;}
+        if (localStatus !=ICAFE_NORMAL && !sflag) {
+            gStatus=localStatus;
+            sflag=true;
+        }
     }
     return gStatus;
 
@@ -289,7 +317,8 @@ int PolicyHelper::setChannelRequestDataTypePolicy(ChannelRequestDataTypePolicy c
  *
  */
 int PolicyHelper::setChannelRequestDataTypePolicy(unsigned int _handle,
-                                                   ChannelRequestDataTypePolicy crdtp){
+        ChannelRequestDataTypePolicy crdtp)
+{
 #define __METHOD__ "policyHelper::setChannelRequestDataTypePolicy(handle, ChannelRequestDataTypePolicy  crdtp)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -297,25 +326,29 @@ int PolicyHelper::setChannelRequestDataTypePolicy(unsigned int _handle,
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-            if (crdtp.getRequestKind()!=CAFENUM::NATIVE_DATATYPE &&
+        if (crdtp.getRequestKind()!=CAFENUM::NATIVE_DATATYPE &&
                 crdtp.getRequestKind()!=CAFENUM::LOWEST_DATATYPE) {
-                cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
-                cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
-                cout << crdtp.getRequestKind()  << " is an unknown policy!" << endl;
-                cout << "Valid types are: NATIVE_DATATYPE (0) or LOWEST_DATATYPE (1)" << endl;
-                return ECAFE_INVALID_CAFENUM_POLICY_TYPE;
-            }
-
-            if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelRequestDataTypePolicy(crdtp));
-            if(MUTEX){cafeMutex.unlock();}
-
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
+            cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
+            cout << crdtp.getRequestKind()  << " is an unknown policy!" << endl;
+            cout << "Valid types are: NATIVE_DATATYPE (0) or LOWEST_DATATYPE (1)" << endl;
+            return ECAFE_INVALID_CAFENUM_POLICY_TYPE;
         }
-        else {
-            return ECAFE_INVALID_HANDLE;
+
+        if(MUTEX) {
+            cafeMutex.lock();
         }
+        handle_index.modify(it_handle, change_channelRequestDataTypePolicy(crdtp));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
+
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
     return ICAFE_NORMAL;
 #undef  __METHOD__
 }
@@ -331,7 +364,8 @@ int PolicyHelper::setChannelRequestDataTypePolicy(unsigned int _handle,
  *  \return status ICAFE_NORMAL if all OK else ECAFE_INVALID_HANDLE
  *
  */
-int PolicyHelper::getChannelRequestPolicyGet(unsigned int _handle, ChannelRequestPolicy & crpg){
+int PolicyHelper::getChannelRequestPolicyGet(unsigned int _handle, ChannelRequestPolicy & crpg)
+{
 #define __METHOD__ "policyHelper::getChannelRequestPolicyGet(unsigned int handle, ChannelRequestPolicy & crpg)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -339,12 +373,12 @@ int PolicyHelper::getChannelRequestPolicyGet(unsigned int _handle, ChannelReques
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {     
-            crpg=(*it_handle).getChannelRequestPolicyGet();
-        }
-        else {
-            return ECAFE_INVALID_HANDLE;
-        }
+    if (it_handle != handle_index.end()) {
+        crpg=(*it_handle).getChannelRequestPolicyGet();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
     return ICAFE_NORMAL;
 
@@ -361,7 +395,8 @@ int PolicyHelper::getChannelRequestPolicyGet(unsigned int _handle, ChannelReques
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::setChannelRequestPolicyGet(unsigned int _handle, ChannelRequestPolicy crpg){
+int PolicyHelper::setChannelRequestPolicyGet(unsigned int _handle, ChannelRequestPolicy crpg)
+{
 #define __METHOD__ "policyHelper::setChannelRequestPolicyGet(unsigned int handle, ChannelRequestPolicy crpg)"
 
     int status=ICAFE_NORMAL;
@@ -371,25 +406,29 @@ int PolicyHelper::setChannelRequestPolicyGet(unsigned int _handle, ChannelReques
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-            if (crpg.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpg.getHandler()==NULL) {
-                crpg.setMethodKind(WITH_CALLBACK_DEFAULT);
-                status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
-                cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
-                cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
-                cout << "Changing ChannelRequestPolicyGet methodKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
-                cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
-            }
-
-            if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelRequestPolicyGet(crpg));
-            if(MUTEX){cafeMutex.unlock();}
-
+        if (crpg.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpg.getHandler()==NULL) {
+            crpg.setMethodKind(WITH_CALLBACK_DEFAULT);
+            status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
+            cout << "Handle= "<< (*it_handle).getHandle() << " PV= " << (*it_handle).getPV() << endl;
+            cout << "Changing ChannelRequestPolicyGet methodKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
+            cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
         }
-        else {
-            return ECAFE_INVALID_HANDLE;
+
+        if(MUTEX) {
+            cafeMutex.lock();
         }
+        handle_index.modify(it_handle, change_channelRequestPolicyGet(crpg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
+
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
     return status;
 
@@ -408,7 +447,8 @@ int PolicyHelper::setChannelRequestPolicyGet(unsigned int _handle, ChannelReques
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::setChannelRequestPolicyGet(ChannelRequestPolicy crpg){
+int PolicyHelper::setChannelRequestPolicyGet(ChannelRequestPolicy crpg)
+{
 #define __METHOD__ "policyHelper::setChannelRequestPolicyGet(ChannelRequestPolicy crpg)"
 
     int status=ICAFE_NORMAL;
@@ -418,18 +458,22 @@ int PolicyHelper::setChannelRequestPolicyGet(ChannelRequestPolicy crpg){
     // Loop through all elements
     for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
 
-            if (crpg.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpg.getHandler()==NULL) {
-                crpg.setMethodKind(WITH_CALLBACK_DEFAULT);
-                status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
-                cout << "Handle= "<< (*itcs).getHandle() << " PV= " << (*itcs).getPV() << endl;
-                cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
-                cout << "Changing ChannelRequestPolicyGet BlockingKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
-                cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
-            }
+        if (crpg.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpg.getHandler()==NULL) {
+            crpg.setMethodKind(WITH_CALLBACK_DEFAULT);
+            status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
+            cout << "Handle= "<< (*itcs).getHandle() << " PV= " << (*itcs).getPV() << endl;
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
+            cout << "Changing ChannelRequestPolicyGet BlockingKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
+            cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
+        }
 
-            if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(itcs, change_channelRequestPolicyGet(crpg));
-            if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        handle_index.modify(itcs, change_channelRequestPolicyGet(crpg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
 
     }
 
@@ -450,7 +494,8 @@ int PolicyHelper::setChannelRequestPolicyGet(ChannelRequestPolicy crpg){
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::getChannelRequestPolicyPut(unsigned int _handle, ChannelRequestPolicy & crpp){
+int PolicyHelper::getChannelRequestPolicyPut(unsigned int _handle, ChannelRequestPolicy & crpp)
+{
 #define __METHOD__ "PolicyHelper::getChannelRequestPolicyPut(unsigned int handle, ChannelRequestPolicy & crpp)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -458,12 +503,12 @@ int PolicyHelper::getChannelRequestPolicyPut(unsigned int _handle, ChannelReques
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
-            crpp=(*it_handle).getChannelRequestPolicyPut();
-        }
-        else {
-            return ECAFE_INVALID_HANDLE;
-        }
+    if (it_handle != handle_index.end()) {
+        crpp=(*it_handle).getChannelRequestPolicyPut();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
     return ICAFE_NORMAL;
 
@@ -482,7 +527,8 @@ int PolicyHelper::getChannelRequestPolicyPut(unsigned int _handle, ChannelReques
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::setChannelRequestPolicyPut(unsigned int _handle, ChannelRequestPolicy crpp){
+int PolicyHelper::setChannelRequestPolicyPut(unsigned int _handle, ChannelRequestPolicy crpp)
+{
 #define __METHOD__ "PolicyHelper::getChannelRequestPolicyPut(unsigned int handle, ChannelMethodRequesyPolicy crpp)"
 
     int status=ICAFE_NORMAL;
@@ -492,26 +538,26 @@ int PolicyHelper::setChannelRequestPolicyPut(unsigned int _handle, ChannelReques
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-            if (crpp.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpp.getHandler()==NULL) {
-                crpp.setMethodKind(WITH_CALLBACK_DEFAULT);
-                status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
-                cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
-                cout << "Handle= "<< (*itcs).getHandle() << " PV= " << (*itcs).getPV() << endl;
-                cout << "Changing ChannelRequestPolicyPut BlockingKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
-                cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
-            }
-
-
-            if(MUTEX)cafeMutex.lock();
-            handle_index.modify(it_handle, change_channelRequestPolicyPut(crpp));
-            if(MUTEX)cafeMutex.unlock();
-
+        if (crpp.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpp.getHandler()==NULL) {
+            crpp.setMethodKind(WITH_CALLBACK_DEFAULT);
+            status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
+            cout << "Handle= "<< (*itcs).getHandle() << " PV= " << (*itcs).getPV() << endl;
+            cout << "Changing ChannelRequestPolicyPut BlockingKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
+            cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
         }
-        else {
+
+
+        if(MUTEX)cafeMutex.lock();
+        handle_index.modify(it_handle, change_channelRequestPolicyPut(crpp));
+        if(MUTEX)cafeMutex.unlock();
+
+    }
+    else {
         return ECAFE_INVALID_HANDLE;
-        }
+    }
 
     return status;
 
@@ -529,7 +575,8 @@ int PolicyHelper::setChannelRequestPolicyPut(unsigned int _handle, ChannelReques
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::setChannelRequestPolicyPut(ChannelRequestPolicy crpp){
+int PolicyHelper::setChannelRequestPolicyPut(ChannelRequestPolicy crpp)
+{
 #define __METHOD__ "PolicyHelper::getChannelRequestPolicyPut(ChannelMethodRequesyPolicy crpp)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -539,20 +586,20 @@ int PolicyHelper::setChannelRequestPolicyPut(ChannelRequestPolicy crpp){
     // Loop through all elements
     for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
 
-            if (crpp.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpp.getHandler()==NULL) {
-                crpp.setMethodKind(WITH_CALLBACK_DEFAULT);
-                status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
+        if (crpp.getMethodKind()==WITH_CALLBACK_USER_SUPPLIED && crpp.getHandler()==NULL) {
+            crpp.setMethodKind(WITH_CALLBACK_DEFAULT);
+            status=ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT;
 
-                cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
-                cout << "Handle= "<< (*itcs).getHandle() << " PV= " << (*itcs).getPV() << endl;
-                cout << "Changing ChannelRequestPolicyPut BlockingKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
-                cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
-            }
+            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << " Policy Conflict!" << endl;
+            cout << "Handle= "<< (*itcs).getHandle() << " PV= " << (*itcs).getPV() << endl;
+            cout << "Changing ChannelRequestPolicyPut BlockingKind from WITH_CALLBACK_USER_SUPPLIED " << endl;
+            cout << "to WITH_CALLBACK_DEFAULT as user supplied handler is NULL!" << endl;
+        }
 
 
-            if(MUTEX)cafeMutex.lock();
-            handle_index.modify(itcs, change_channelRequestPolicyPut(crpp));
-            if(MUTEX)cafeMutex.unlock();
+        if(MUTEX)cafeMutex.lock();
+        handle_index.modify(itcs, change_channelRequestPolicyPut(crpp));
+        if(MUTEX)cafeMutex.unlock();
 
     }
 
@@ -575,7 +622,8 @@ int PolicyHelper::setChannelRequestPolicyPut(ChannelRequestPolicy crpp){
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::getChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeoutPolicy & ctpg){
+int PolicyHelper::getChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeoutPolicy & ctpg)
+{
 #define __METHOD__ "PolicyHelper::getChannelTimeoutPolicyGet(unsigned int handle, ChannelTimeoutPolicy & ctpg)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -583,12 +631,12 @@ int PolicyHelper::getChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeou
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {     
-            ctpg=(*it_handle).getChannelTimeoutPolicyGet();
-        }
-        else {
-            return ECAFE_INVALID_HANDLE;
-        }
+    if (it_handle != handle_index.end()) {
+        ctpg=(*it_handle).getChannelTimeoutPolicyGet();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
     return ICAFE_NORMAL;
 
@@ -607,7 +655,8 @@ int PolicyHelper::getChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeou
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::setChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeoutPolicy ctpg){
+int PolicyHelper::setChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeoutPolicy ctpg)
+{
 #define __METHOD__ "PolicyHelper::getChannelTimeoutPolicyGet(unsigned int handle, ChannelTimeoutPolicy ctpg)"
 
 
@@ -616,16 +665,20 @@ int PolicyHelper::setChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeou
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-            if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctpg));
-            if(MUTEX){cafeMutex.unlock();}
-
+        if(MUTEX) {
+            cafeMutex.lock();
         }
-        else {
+        handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctpg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
+
+    }
+    else {
         return ECAFE_INVALID_HANDLE;
-        }
+    }
 
     return ICAFE_NORMAL;
 
@@ -645,7 +698,8 @@ int PolicyHelper::setChannelTimeoutPolicyGet(unsigned int _handle, ChannelTimeou
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::getChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeoutPolicy & ctpp){
+int PolicyHelper::getChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeoutPolicy & ctpp)
+{
 #define __METHOD__ "PolicyHelper::getChannelTimeoutPolicyPut(unsigned int handle, ChannelTimeoutPolicy & cptp)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -653,13 +707,13 @@ int PolicyHelper::getChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeou
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-            ctpp=(*it_handle).getChannelTimeoutPolicyPut();
-        }
-        else {
-            return ECAFE_INVALID_HANDLE;
-        }
+        ctpp=(*it_handle).getChannelTimeoutPolicyPut();
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
     return ICAFE_NORMAL;
 
@@ -677,7 +731,8 @@ int PolicyHelper::getChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeou
  *  \return status ICAFE_NORMAL if all OK
  *
  */
-int PolicyHelper::setChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeoutPolicy ctpp){
+int PolicyHelper::setChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeoutPolicy ctpp)
+{
 #define __METHOD__ "PolicyHelper::setChannelTimeoutPolicyPut(unsigned int handle, ChannelTimeoutPolicy cptp)"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -685,16 +740,20 @@ int PolicyHelper::setChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeou
 
     it_handle = handle_index.find(_handle);
 
-        if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end()) {
 
-            if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctpp));
-            if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctpp));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
 
-        }
-        else {
-            return ECAFE_INVALID_HANDLE;
-        }
+    }
+    else {
+        return ECAFE_INVALID_HANDLE;
+    }
 
     return ICAFE_NORMAL;
 
@@ -715,17 +774,20 @@ int PolicyHelper::setChannelTimeoutPolicyPut(unsigned int _handle, ChannelTimeou
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSelfGoverningTimeout(bool b) {
+int PolicyHelper::setSelfGoverningTimeout(bool b)
+{
 #define __METHOD__ "PolicyHelper::setSelfGoverningTimout(bool b)"
-	int gStatus=ICAFE_NORMAL;
-	int localStatus;
+    int gStatus=ICAFE_NORMAL;
+    int localStatus;
 
-	// Loop through all elements
-	for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-		localStatus=setSelfGoverningTimeout((*itcs).getHandle(),b);
-		if (localStatus !=ICAFE_NORMAL) {gStatus=localStatus;}
-	}
-	return gStatus;
+    // Loop through all elements
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+        localStatus=setSelfGoverningTimeout((*itcs).getHandle(),b);
+        if (localStatus !=ICAFE_NORMAL) {
+            gStatus=localStatus;
+        }
+    }
+    return gStatus;
 #undef __METHOD__
 }
 
@@ -738,31 +800,32 @@ int PolicyHelper::setSelfGoverningTimeout(bool b) {
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSelfGoverningTimeout(unsigned int _handle, bool b){
+int PolicyHelper::setSelfGoverningTimeout(unsigned int _handle, bool b)
+{
 #define __METHOD__ "PolicyHelper::setSelfGoverningTimeout(unsigned int _handle, bool b)"
-	cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-	cafeConduit_set_by_handle::iterator it_handle;
-	it_handle = handle_index.find(_handle);
-	if (it_handle != handle_index.end()) {
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end()) {
 
-		ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
-		ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
+        ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
+        ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
 
-		ctp.setSelfGoverningTimeout(b);
-		ctg.setSelfGoverningTimeout(b);
+        ctp.setSelfGoverningTimeout(b);
+        ctg.setSelfGoverningTimeout(b);
 
 
-		if(MUTEX)cafeMutex.lock();
-		handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
-		handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
-		if(MUTEX)cafeMutex.unlock();
+        if(MUTEX)cafeMutex.lock();
+        handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
+        handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
+        if(MUTEX)cafeMutex.unlock();
 
-	}
-	else {
-		cafeStatus.report(ECAFE_INVALID_HANDLE);
-		return ECAFE_INVALID_HANDLE;
-	}
-	return ICAFE_NORMAL;
+    }
+    else {
+        cafeStatus.report(ECAFE_INVALID_HANDLE);
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -776,25 +839,27 @@ int PolicyHelper::setSelfGoverningTimeout(unsigned int _handle, bool b){
  *  \param g output: bool for get operations
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::getSelfGoverningTimeout(unsigned int _handle, bool &p, bool &g){
+int PolicyHelper::getSelfGoverningTimeout(unsigned int _handle, bool &p, bool &g)
+{
 #define __METHOD__ "PolicyHelper::setSelfGoverningTimeout(unsigned int _handle, bool &p, bool &g)"
-	cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-	cafeConduit_set_by_handle::iterator it_handle;
-	it_handle = handle_index.find(_handle);
-	if (it_handle != handle_index.end()) {
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end()) {
 
-		ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
-		ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
+        ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
+        ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
 
-		p=ctp.getSelfGoverningTimeout();
-		g=ctg.getSelfGoverningTimeout();
-	}
-	else {
-		p=false; g=false;
-		cafeStatus.report(ECAFE_INVALID_HANDLE);
-		return ECAFE_INVALID_HANDLE;
-	}
-	return ICAFE_NORMAL;
+        p=ctp.getSelfGoverningTimeout();
+        g=ctg.getSelfGoverningTimeout();
+    }
+    else {
+        p=false;
+        g=false;
+        cafeStatus.report(ECAFE_INVALID_HANDLE);
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -808,26 +873,27 @@ int PolicyHelper::getSelfGoverningTimeout(unsigned int _handle, bool &p, bool &g
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSelfGoverningTimeoutPut(unsigned int _handle, bool b){
+int PolicyHelper::setSelfGoverningTimeoutPut(unsigned int _handle, bool b)
+{
 #define __METHOD__ "PolicyHelper::setSelfGoverningTimeoutPut(unsigned int _handle, bool b)"
-	cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-	cafeConduit_set_by_handle::iterator it_handle;
-	it_handle = handle_index.find(_handle);
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(_handle);
 
-	if (it_handle != handle_index.end()) {
-		ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
-		ctp.setSelfGoverningTimeout(b);
+    if (it_handle != handle_index.end()) {
+        ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
+        ctp.setSelfGoverningTimeout(b);
 
-		if(MUTEX)cafeMutex.lock();
-		handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
-		if(MUTEX)cafeMutex.unlock();
+        if(MUTEX)cafeMutex.lock();
+        handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
+        if(MUTEX)cafeMutex.unlock();
 
-	}
-	else {
-		cafeStatus.report(ECAFE_INVALID_HANDLE);
-		return ECAFE_INVALID_HANDLE;
-	}
-	return ICAFE_NORMAL;
+    }
+    else {
+        cafeStatus.report(ECAFE_INVALID_HANDLE);
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -839,24 +905,25 @@ int PolicyHelper::setSelfGoverningTimeoutPut(unsigned int _handle, bool b){
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSelfGoverningTimeoutGet(unsigned int _handle, bool b){
+int PolicyHelper::setSelfGoverningTimeoutGet(unsigned int _handle, bool b)
+{
 #define __METHOD__ "PolicyHelper::setSelfGoverningTimeoutGet(unsigned int _handle, bool b)"
-	cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-	cafeConduit_set_by_handle::iterator it_handle;
-	it_handle = handle_index.find(_handle);
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(_handle);
 
-	if (it_handle != handle_index.end()) {
-		ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
-		ctg.setSelfGoverningTimeout(b);
-		if(MUTEX)cafeMutex.lock();
-		handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
-		if(MUTEX)cafeMutex.unlock();
-	}
-	else {
-		cafeStatus.report(ECAFE_INVALID_HANDLE);
-		return ECAFE_INVALID_HANDLE;
-	}
-	return ICAFE_NORMAL;
+    if (it_handle != handle_index.end()) {
+        ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
+        ctg.setSelfGoverningTimeout(b);
+        if(MUTEX)cafeMutex.lock();
+        handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
+        if(MUTEX)cafeMutex.unlock();
+    }
+    else {
+        cafeStatus.report(ECAFE_INVALID_HANDLE);
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -869,7 +936,8 @@ int PolicyHelper::setSelfGoverningTimeoutGet(unsigned int _handle, bool b){
  *  \param g output: get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::getTimeout(unsigned int _handle, double & p, double & g) {
+int PolicyHelper::getTimeout(unsigned int _handle, double & p, double & g)
+{
 #define __METHOD__ "PolicyHelper::getTimeout(unsigned int _handle, double &p, double &g)"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -898,10 +966,12 @@ int PolicyHelper::getTimeout(unsigned int _handle, double & p, double & g) {
  *  \param g: output: get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::getTimeoutMin(double & p, double & g) {
+int PolicyHelper::getTimeoutMin(double & p, double & g)
+{
 #define __METHOD__ "PolicyHelper::getTimeoutMin(double &p, double &g)"
 
-    double a=TIMEOUT_PEND_IO_MAX ; double b=TIMEOUT_PEND_IO_MAX ;
+    double a=TIMEOUT_PEND_IO_MAX ;
+    double b=TIMEOUT_PEND_IO_MAX ;
 
     bool isFound=false;
 
@@ -913,15 +983,16 @@ int PolicyHelper::getTimeoutMin(double & p, double & g) {
 
         a=std::min(a,ctp.getTimeout());
         b=std::min(b,ctg.getTimeout());
-				isFound=true;
+        isFound=true;
     }
-		if (isFound) {
-    	p=a; g=b;
-		}
-		else {
-		  p=DEFAULT_TIMEOUT_PEND_IO;
-			g=DEFAULT_TIMEOUT_PEND_IO;
-		}
+    if (isFound) {
+        p=a;
+        g=b;
+    }
+    else {
+        p=DEFAULT_TIMEOUT_PEND_IO;
+        g=DEFAULT_TIMEOUT_PEND_IO;
+    }
 
     return ICAFE_NORMAL;
 #undef __METHOD__
@@ -934,12 +1005,14 @@ int PolicyHelper::getTimeoutMin(double & p, double & g) {
  *  \param g: output: get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::getTimeoutMax(double & p, double & g) {
+int PolicyHelper::getTimeoutMax(double & p, double & g)
+{
 #define __METHOD__ "PolicyHelper::getTimeoutMin(double &p, double &g)"
 
-    double a=TIMEOUT_PEND_IO_MIN ; double b=TIMEOUT_PEND_IO_MIN;
+    double a=TIMEOUT_PEND_IO_MIN ;
+    double b=TIMEOUT_PEND_IO_MIN;
 
-		bool isFound=false;
+    bool isFound=false;
 
     // Loop through all elements
     for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
@@ -949,15 +1022,16 @@ int PolicyHelper::getTimeoutMax(double & p, double & g) {
 
         a=std::max(a,ctp.getTimeout());
         b=std::max(b,ctg.getTimeout());
-				isFound=true;
+        isFound=true;
     }
     if (isFound) {
-    	p=a; g=b;
-		}
-		else {
-		  p=DEFAULT_TIMEOUT_PEND_IO;
-			g=DEFAULT_TIMEOUT_PEND_IO;		
-		}
+        p=a;
+        g=b;
+    }
+    else {
+        p=DEFAULT_TIMEOUT_PEND_IO;
+        g=DEFAULT_TIMEOUT_PEND_IO;
+    }
 
     return ICAFE_NORMAL;
 #undef __METHOD__
@@ -969,7 +1043,8 @@ int PolicyHelper::getTimeoutMax(double & p, double & g) {
  *  \brief Prints timeout for put/get operations
  *  \return ICAFE_NORMAL
  */
-int PolicyHelper::printTimeout() {
+int PolicyHelper::printTimeout()
+{
 #define __METHOD__ "PolicyHelper::printTimeout()"
 
 
@@ -989,8 +1064,8 @@ int PolicyHelper::printTimeout() {
         ChannelTimeoutPolicy ctp=(*itcs).getChannelTimeoutPolicyPut();
         ChannelTimeoutPolicy ctg=(*itcs).getChannelTimeoutPolicyGet();
         //cout << std::setw(40) << cc.pv <<  std::setw(3)  << cc.getHandle()
-         //     << std::setw(10) << ctp.getTimeout()
-          //    << std::setw(10)  << ctg.getTimeout() << endl;
+        //     << std::setw(10) << ctp.getTimeout()
+        //    << std::setw(10)  << ctg.getTimeout() << endl;
         printf("%5d %s %*s %6.3f %6.3f\n",  (*itcs).getHandle(),(*itcs).pv.c_str(),
                std::max((int) (pvstrl-(*itcs).pv.length()),(int) 0),"",
                ctp.getTimeout(), ctg.getTimeout() ) ;
@@ -1006,7 +1081,8 @@ int PolicyHelper::printTimeout() {
  *  \param _handle input: handle to Conduit Object
  *  \return ICAFE_NORMAL
  */
-int PolicyHelper::printTimeout(unsigned int _handle) {
+int PolicyHelper::printTimeout(unsigned int _handle)
+{
 #define __METHOD__ "PolicyHelper::printTimeout(unsigned int _handle)"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -1042,7 +1118,8 @@ int PolicyHelper::printTimeout(unsigned int _handle) {
  *  for all handles
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setTimeoutToDefault() {
+int PolicyHelper::setTimeoutToDefault()
+{
 #define __METHOD__ "PolicyHelper::setTimeoutToDefault()"
 
     int gStatus=ICAFE_NORMAL;
@@ -1051,7 +1128,9 @@ int PolicyHelper::setTimeoutToDefault() {
     // Loop through all elements
     for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
         localStatus=setTimeoutToDefault((*itcs).getHandle());
-        if (localStatus !=ICAFE_NORMAL) {gStatus=localStatus;}
+        if (localStatus !=ICAFE_NORMAL) {
+            gStatus=localStatus;
+        }
     }
     return gStatus;
 #undef __METHOD__
@@ -1065,7 +1144,8 @@ int PolicyHelper::setTimeoutToDefault() {
  *  \param  _handle input: Conduit object reference
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setTimeoutToDefault(unsigned int _handle) {
+int PolicyHelper::setTimeoutToDefault(unsigned int _handle)
+{
 #define __METHOD__ "PolicyHelper::setTimeoutToDefault(unsigned int _handle)"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -1074,15 +1154,19 @@ int PolicyHelper::setTimeoutToDefault(unsigned int _handle) {
 
         ChannelTimeoutPolicy ctp=(*it_handle).getChannelTimeoutPolicyPut();
         ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
-				
-				double a=(double) NULL, b= (double) NULL;
+
+        double a=(double) NULL, b= (double) NULL;
         a=ctp.setTimeoutToDefault();
         b=ctg.setTimeoutToDefault();
 
-        if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
-            handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
-        if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
+        handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
     }
     else {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
@@ -1102,7 +1186,8 @@ int PolicyHelper::setTimeoutToDefault(unsigned int _handle) {
  *  \param g input: get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setTimeout(double p, double g) {
+int PolicyHelper::setTimeout(double p, double g)
+{
 #define __METHOD__ "PolicyHelper::setTimeout(double p, double g)"
 
     int gStatus=ICAFE_NORMAL;
@@ -1111,7 +1196,9 @@ int PolicyHelper::setTimeout(double p, double g) {
     // Loop through all elements
     for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
         localStatus=setTimeout((*itcs).getHandle(),p,g);
-        if (localStatus !=ICAFE_NORMAL) {gStatus=localStatus;}
+        if (localStatus !=ICAFE_NORMAL) {
+            gStatus=localStatus;
+        }
     }
     return gStatus;
 #undef __METHOD__
@@ -1126,7 +1213,8 @@ int PolicyHelper::setTimeout(double p, double g) {
  *  \param g input: get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setTimeout(unsigned int _handle, double p, double g) {
+int PolicyHelper::setTimeout(unsigned int _handle, double p, double g)
+{
 #define __METHOD__ "PolicyHelper::setTimeout(unsigned int _handle, double p, double g)"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -1137,8 +1225,12 @@ int PolicyHelper::setTimeout(unsigned int _handle, double p, double g) {
         ChannelTimeoutPolicy ctg=(*it_handle).getChannelTimeoutPolicyGet();
 
         double a=(double) NULL, b= (double) NULL;
-        if (p!=(double) NULL) {a=ctp.setTimeout(p);}
-        if (g!=(double) NULL) {b=ctg.setTimeout(g);}
+        if (p!=(double) NULL) {
+            a=ctp.setTimeout(p);
+        }
+        if (g!=(double) NULL) {
+            b=ctg.setTimeout(g);
+        }
 
         if (a != p || b != g) {
             cout << "------------------------------------------------------" << endl;
@@ -1148,18 +1240,22 @@ int PolicyHelper::setTimeout(unsigned int _handle, double p, double g) {
 
             if (a != p) {
                 cout << "Timeout Granted (Requested) for put operation = "
-                        << a << " (" << p <<")" <<endl;
+                     << a << " (" << p <<")" <<endl;
             }
             if (b != g) {
                 cout << "Timeout Granted (Requested) for get operation = "
-                        << b << " (" << g <<")" <<endl;
+                     << b << " (" << g <<")" <<endl;
             }
             cout << "------------------------------------------------------" << endl;
         }
-        if(MUTEX){cafeMutex.lock();}
-            handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
-            handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
-        if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        handle_index.modify(it_handle, change_channelTimeoutPolicyPut(ctp));
+        handle_index.modify(it_handle, change_channelTimeoutPolicyGet(ctg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
     }
     else {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
@@ -1178,17 +1274,20 @@ int PolicyHelper::setTimeout(unsigned int _handle, double p, double g) {
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSGSelfGoverningTimeout(bool b) {
+int PolicyHelper::setSGSelfGoverningTimeout(bool b)
+{
 #define __METHOD__ "PolicyHelper::setSGSelfGoverningTimeout(double b)"
-	int gStatus=ICAFE_NORMAL;
-	int localStatus;
+    int gStatus=ICAFE_NORMAL;
+    int localStatus;
 
-	// Loop through all elements
-	for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
-		localStatus=setSGSelfGoverningTimeout((*itgs).getGroupHandle(),b);
-		if (localStatus !=ICAFE_NORMAL) {gStatus=localStatus;}
-	}
-	return gStatus;
+    // Loop through all elements
+    for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        localStatus=setSGSelfGoverningTimeout((*itgs).getGroupHandle(),b);
+        if (localStatus !=ICAFE_NORMAL) {
+            gStatus=localStatus;
+        }
+    }
+    return gStatus;
 #undef __METHOD__
 }
 
@@ -1200,30 +1299,31 @@ int PolicyHelper::setSGSelfGoverningTimeout(bool b) {
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSGSelfGoverningTimeout(unsigned int _gHandle, bool b){
+int PolicyHelper::setSGSelfGoverningTimeout(unsigned int _gHandle, bool b)
+{
 #define __METHOD__ "PolicyHelper::setSelfGoverningTimeout(unsigned int _handle, bool b)"
-	cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
-	cafeGroup_set_by_groupHandle::iterator it_groupHandle;
-	it_groupHandle = groupHandle_index.find(_gHandle);
-	if (it_groupHandle != groupHandle_index.end()) {
-		ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
-		ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
+    cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
+    cafeGroup_set_by_groupHandle::iterator it_groupHandle;
+    it_groupHandle = groupHandle_index.find(_gHandle);
+    if (it_groupHandle != groupHandle_index.end()) {
+        ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
+        ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
 
-		ctp.setSelfGoverningTimeout(b);
-		ctg.setSelfGoverningTimeout(b);
-		if(MUTEX)cafeMutex.lock();
-		groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
-		groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
-		if(MUTEX)cafeMutex.unlock();
-		//cout << __METHOD__ << " Setting group Handle " << _gHandle << " SG sef-gov policy to " << b << endl;
+        ctp.setSelfGoverningTimeout(b);
+        ctg.setSelfGoverningTimeout(b);
+        if(MUTEX)cafeMutex.lock();
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
+        if(MUTEX)cafeMutex.unlock();
+        //cout << __METHOD__ << " Setting group Handle " << _gHandle << " SG sef-gov policy to " << b << endl;
 
 
-	}
-	else {
-		cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
-		return ECAFE_INVALID_GROUP_HANDLE;
-	}
-	return ICAFE_NORMAL;
+    }
+    else {
+        cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
+        return ECAFE_INVALID_GROUP_HANDLE;
+    }
+    return ICAFE_NORMAL;
 
 #undef  __METHOD__
 }
@@ -1238,25 +1338,27 @@ int PolicyHelper::setSGSelfGoverningTimeout(unsigned int _gHandle, bool b){
  *  \param g output: bool for get operations
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::getSGSelfGoverningTimeout(unsigned int _gHandle, bool &p, bool &g){
+int PolicyHelper::getSGSelfGoverningTimeout(unsigned int _gHandle, bool &p, bool &g)
+{
 #define __METHOD__ "PolicyHelper::getSGSelfGoverningTimeout(unsigned int _gHandle, bool &p, bool &g)"
-	cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
-	cafeGroup_set_by_groupHandle::iterator it_groupHandle;
-	it_groupHandle = groupHandle_index.find(_gHandle);
-	if (it_groupHandle != groupHandle_index.end()) {
+    cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
+    cafeGroup_set_by_groupHandle::iterator it_groupHandle;
+    it_groupHandle = groupHandle_index.find(_gHandle);
+    if (it_groupHandle != groupHandle_index.end()) {
 
-		ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
-		ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
+        ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
+        ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
 
-		p=ctp.getSelfGoverningTimeout();
-		g=ctg.getSelfGoverningTimeout();
-	}
-	else {
-		p=false; g=false;
-		cafeStatus.report(ECAFE_INVALID_HANDLE);
-		return ECAFE_INVALID_HANDLE;
-	}
-	return ICAFE_NORMAL;
+        p=ctp.getSelfGoverningTimeout();
+        g=ctg.getSelfGoverningTimeout();
+    }
+    else {
+        p=false;
+        g=false;
+        cafeStatus.report(ECAFE_INVALID_HANDLE);
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
 #undef  __METHOD__
 }
 
@@ -1270,27 +1372,28 @@ int PolicyHelper::getSGSelfGoverningTimeout(unsigned int _gHandle, bool &p, bool
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSGSelfGoverningTimeoutPut(unsigned int _gHandle, bool b){
+int PolicyHelper::setSGSelfGoverningTimeoutPut(unsigned int _gHandle, bool b)
+{
 #define __METHOD__ "PolicyHelper::setSGSelfGoverningTimeoutPut(unsigned int _ghandle, bool b)"
 
-	cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
-	cafeGroup_set_by_groupHandle::iterator it_groupHandle;
-	it_groupHandle = groupHandle_index.find(_gHandle);
-	if (it_groupHandle != groupHandle_index.end()) {
+    cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
+    cafeGroup_set_by_groupHandle::iterator it_groupHandle;
+    it_groupHandle = groupHandle_index.find(_gHandle);
+    if (it_groupHandle != groupHandle_index.end()) {
 
-		ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
+        ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
 
-		ctp.setSelfGoverningTimeout(b);
-		if(MUTEX)cafeMutex.lock();
-		groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
-		if(MUTEX)cafeMutex.unlock();
+        ctp.setSelfGoverningTimeout(b);
+        if(MUTEX)cafeMutex.lock();
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
+        if(MUTEX)cafeMutex.unlock();
 
-	}
-	else {
-		cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
-		return ECAFE_INVALID_GROUP_HANDLE;
-	}
-	return ICAFE_NORMAL;
+    }
+    else {
+        cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
+        return ECAFE_INVALID_GROUP_HANDLE;
+    }
+    return ICAFE_NORMAL;
 
 #undef  __METHOD__
 }
@@ -1303,27 +1406,28 @@ int PolicyHelper::setSGSelfGoverningTimeoutPut(unsigned int _gHandle, bool b){
  *  \param b input: bool
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSGSelfGoverningTimeoutGet(unsigned int _gHandle, bool b){
+int PolicyHelper::setSGSelfGoverningTimeoutGet(unsigned int _gHandle, bool b)
+{
 #define __METHOD__ "PolicyHelper::setSGSelfGoverningTimeoutGet(unsigned int _gHandle, bool b)"
 
-	cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
-	cafeGroup_set_by_groupHandle::iterator it_groupHandle;
-	it_groupHandle = groupHandle_index.find(_gHandle);
-	if (it_groupHandle != groupHandle_index.end()) {
+    cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
+    cafeGroup_set_by_groupHandle::iterator it_groupHandle;
+    it_groupHandle = groupHandle_index.find(_gHandle);
+    if (it_groupHandle != groupHandle_index.end()) {
 
-		ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
+        ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
 
-		ctg.setSelfGoverningTimeout(b);
+        ctg.setSelfGoverningTimeout(b);
 
-		if(MUTEX)cafeMutex.lock();
-		groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
-		if(MUTEX)cafeMutex.unlock();
-	}
-	else {
-		cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
-		return ECAFE_INVALID_GROUP_HANDLE;
-	}
-	return ICAFE_NORMAL;
+        if(MUTEX)cafeMutex.lock();
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
+        if(MUTEX)cafeMutex.unlock();
+    }
+    else {
+        cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
+        return ECAFE_INVALID_GROUP_HANDLE;
+    }
+    return ICAFE_NORMAL;
 
 #undef  __METHOD__
 }
@@ -1335,11 +1439,13 @@ int PolicyHelper::setSGSelfGoverningTimeoutGet(unsigned int _gHandle, bool b){
  *  \param g: output: SG get timeout
  *  \return ICAFE_NORMAL
  */
-int PolicyHelper::getSGTimeoutMin(double & p, double & g) {
+int PolicyHelper::getSGTimeoutMin(double & p, double & g)
+{
 #define __METHOD__ "PolicyHelper::getSGTimeoutMin(double &p, double &g)"
 
-    double a=TIMEOUT_PEND_IO_MAX ; double b=TIMEOUT_PEND_IO_MAX ;
-		bool isFound=false;
+    double a=TIMEOUT_PEND_IO_MAX ;
+    double b=TIMEOUT_PEND_IO_MAX ;
+    bool isFound=false;
     // Loop through all elements
     for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
 
@@ -1348,16 +1454,17 @@ int PolicyHelper::getSGTimeoutMin(double & p, double & g) {
 
         a=std::min(a,ctp.getTimeout());
         b=std::min(b,ctg.getTimeout());
-    
-		isFound=true;
+
+        isFound=true;
     }
     if (isFound) {
-    	p=a; g=b;
-		}
-		else {
-		  p=DEFAULT_TIMEOUT_SG_PEND_IO;
-			g=DEFAULT_TIMEOUT_SG_PEND_IO;		
-		}
+        p=a;
+        g=b;
+    }
+    else {
+        p=DEFAULT_TIMEOUT_SG_PEND_IO;
+        g=DEFAULT_TIMEOUT_SG_PEND_IO;
+    }
 
     return ICAFE_NORMAL;
 #undef __METHOD__
@@ -1368,13 +1475,15 @@ int PolicyHelper::getSGTimeoutMin(double & p, double & g) {
  *  \brief Allows user to retrieve minimum timeout for put/get operations
  *  \param p: output: SG put timeout
  *  \param g: output: SG get timeout
- *  \return ICAFE_NORMAL 
+ *  \return ICAFE_NORMAL
  */
-int PolicyHelper::getSGTimeoutMax(double & p, double & g) {
+int PolicyHelper::getSGTimeoutMax(double & p, double & g)
+{
 #define __METHOD__ "PolicyHelper::getSGTimeoutMin(double &p, double &g)"
 
-    double a=TIMEOUT_PEND_IO_MIN ; double b=TIMEOUT_PEND_IO_MIN;
-		bool isFound=false;
+    double a=TIMEOUT_PEND_IO_MIN ;
+    double b=TIMEOUT_PEND_IO_MIN;
+    bool isFound=false;
     // Loop through all elements
     for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
 
@@ -1384,16 +1493,17 @@ int PolicyHelper::getSGTimeoutMax(double & p, double & g) {
         a=std::max(a,ctp.getTimeout());
         b=std::max(b,ctg.getTimeout());
 
-				isFound=true;
+        isFound=true;
     }
     if (isFound) {
-    	p=a; g=b;
-		}
-		else {
-		  p=DEFAULT_TIMEOUT_SG_PEND_IO;
-			g=DEFAULT_TIMEOUT_SG_PEND_IO;		
-		}
-		
+        p=a;
+        g=b;
+    }
+    else {
+        p=DEFAULT_TIMEOUT_SG_PEND_IO;
+        g=DEFAULT_TIMEOUT_SG_PEND_IO;
+    }
+
     return ICAFE_NORMAL;
 #undef __METHOD__
 }
@@ -1406,7 +1516,8 @@ int PolicyHelper::getSGTimeoutMax(double & p, double & g) {
  *  for all group handles
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSGTimeoutToDefault() {
+int PolicyHelper::setSGTimeoutToDefault()
+{
 #define __METHOD__ "PolicyHelper::setSGTimeoutToDefault()"
 
     int gStatus=ICAFE_NORMAL;
@@ -1415,7 +1526,9 @@ int PolicyHelper::setSGTimeoutToDefault() {
     // Loop through all elements
     for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
         localStatus=setSGTimeoutToDefault((*itgs).getGroupHandle());
-        if (localStatus !=ICAFE_NORMAL) {gStatus=localStatus;}
+        if (localStatus !=ICAFE_NORMAL) {
+            gStatus=localStatus;
+        }
     }
     return gStatus;
 #undef __METHOD__
@@ -1429,25 +1542,30 @@ int PolicyHelper::setSGTimeoutToDefault() {
  *  \param  _gHandle input: ConduitGroup object reference
  *  \return ICAFE_NORMAL or ECAFE_INVALID_HANDLE
  */
-int PolicyHelper::setSGTimeoutToDefault(unsigned int _gHandle) {
+int PolicyHelper::setSGTimeoutToDefault(unsigned int _gHandle)
+{
 #define __METHOD__ "PolicyHelper::setSGTimeoutToDefault(unsigned int _gHandle)"
-  
-		cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
-		cafeGroup_set_by_groupHandle::iterator it_groupHandle;
-		it_groupHandle = groupHandle_index.find(_gHandle);
-		if (it_groupHandle != groupHandle_index.end()) {  
+
+    cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
+    cafeGroup_set_by_groupHandle::iterator it_groupHandle;
+    it_groupHandle = groupHandle_index.find(_gHandle);
+    if (it_groupHandle != groupHandle_index.end()) {
 
         ChannelTimeoutPolicy ctp=(*it_groupHandle).getChannelTimeoutPolicySGPut();
         ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
-				
-				double a=(double) NULL, b= (double) NULL;
+
+        double a=(double) NULL, b= (double) NULL;
         a=ctp.setTimeoutToDefault();
         b=ctg.setTimeoutToDefault();
 
-        if(MUTEX){cafeMutex.lock();}
-            groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
-            groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
-        if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
     }
     else {
         cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);
@@ -1467,7 +1585,8 @@ int PolicyHelper::setSGTimeoutToDefault(unsigned int _gHandle) {
  *  \brief Prints timeout for SG put/get operations
  *  \return ICAFE_NORMAL
  */
-int PolicyHelper::printSGTimeout() {
+int PolicyHelper::printSGTimeout()
+{
 #define __METHOD__ "PolicyHelper::printSGTimeout()"
 
 
@@ -1486,7 +1605,7 @@ int PolicyHelper::printSGTimeout() {
 
         ChannelTimeoutPolicy ctp=(*itgs).getChannelTimeoutPolicySGPut();
         ChannelTimeoutPolicy ctg=(*itgs).getChannelTimeoutPolicySGGet();
-       
+
         printf("%5d %s %*s %6.3f %6.3f\n",  (*itgs).getGroupHandle(),(*itgs).groupName.c_str(),
                std::max((int) (pvstrl-(*itgs).groupName.length()),(int) 0),"",
                ctp.getTimeout(), ctg.getTimeout() ) ;
@@ -1502,7 +1621,8 @@ int PolicyHelper::printSGTimeout() {
  *  \param _gHandle input: handle to ConduitGroup Object
  *  \return ICAFE_NORMAL
  */
-int PolicyHelper::printSGTimeout(unsigned int _gHandle) {
+int PolicyHelper::printSGTimeout(unsigned int _gHandle)
+{
 #define __METHOD__ "PolicyHelper::printTimeout(unsigned int _handle)"
     cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
@@ -1543,7 +1663,8 @@ int PolicyHelper::printSGTimeout(unsigned int _gHandle) {
  *  \param g output: SG get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_GROUP_HANDLE
  */
-int PolicyHelper::getSGTimeout(unsigned int _gHandle, double & p, double & g) {
+int PolicyHelper::getSGTimeout(unsigned int _gHandle, double & p, double & g)
+{
 #define __METHOD__ "PolicyHelper::getSGTimeout(unsigned int _gHandle, double &p, double &g)"
     cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
@@ -1572,7 +1693,8 @@ int PolicyHelper::getSGTimeout(unsigned int _gHandle, double & p, double & g) {
  *  \param g input: SG get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_GROUP_HANDLE
  */
-int PolicyHelper::setSGTimeout(double p, double g) {
+int PolicyHelper::setSGTimeout(double p, double g)
+{
 #define __METHOD__ "PolicyHelper::setSGTimeout(double p, double g)"
 
     int gStatus=ICAFE_NORMAL;
@@ -1581,7 +1703,9 @@ int PolicyHelper::setSGTimeout(double p, double g) {
     // Loop through all elements
     for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
         localStatus=setSGTimeout((*itgs).getGroupHandle(),p,g);
-        if (localStatus !=ICAFE_NORMAL) {gStatus=localStatus;}
+        if (localStatus !=ICAFE_NORMAL) {
+            gStatus=localStatus;
+        }
     }
     return gStatus;
 #undef __METHOD__
@@ -1594,7 +1718,8 @@ int PolicyHelper::setSGTimeout(double p, double g) {
  *  \param g input: SG get timeout
  *  \return ICAFE_NORMAL or ECAFE_INVALID_GROUP_HANDLE
  */
-int PolicyHelper::setSGTimeout(unsigned int _gHandle, double p, double g) {
+int PolicyHelper::setSGTimeout(unsigned int _gHandle, double p, double g)
+{
 #define __METHOD__ "PolicyHelper::setSGTimeout(unsigned int _handle, double p, double g)"
     cafeGroup_set_by_groupHandle & groupHandle_index=gs.get<by_groupHandle>();
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
@@ -1605,8 +1730,12 @@ int PolicyHelper::setSGTimeout(unsigned int _gHandle, double p, double g) {
         ChannelTimeoutPolicy ctg=(*it_groupHandle).getChannelTimeoutPolicySGGet();
 
         double a=(double) NULL, b= (double) NULL;
-        if (p!=(double) NULL) {a=ctp.setTimeout(p);}
-        if (g!=(double) NULL) {b=ctg.setTimeout(g);}
+        if (p!=(double) NULL) {
+            a=ctp.setTimeout(p);
+        }
+        if (g!=(double) NULL) {
+            b=ctg.setTimeout(g);
+        }
 
         if (a != p || b != g) {
             cout << "------------------------------------------------------" << endl;
@@ -1616,18 +1745,22 @@ int PolicyHelper::setSGTimeout(unsigned int _gHandle, double p, double g) {
 
             if (a != p) {
                 cout << "Timeout Granted (Requested) for put operation = "
-                        << a << " (" << p <<")" <<endl;
+                     << a << " (" << p <<")" <<endl;
             }
             if (b != g) {
                 cout << "Timeout Granted (Requested) for get operation = "
-                        << b << " (" << g <<")" <<endl;
+                     << b << " (" << g <<")" <<endl;
             }
             cout << "------------------------------------------------------" << endl;
         }
-        if(MUTEX){cafeMutex.lock();}
-            groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
-            groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
-        if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGPut(ctp));
+        groupHandle_index.modify(it_groupHandle, change_channelTimeoutPolicySGGet(ctg));
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
     }
     else {
         cafeStatus.report(ECAFE_INVALID_GROUP_HANDLE);

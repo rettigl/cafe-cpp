@@ -7,8 +7,8 @@ void callbackHandlerMonitor( struct event_handler_args args)  {
 #define __METHOD__  "callbackHandlerMonitor"
 
     if (args.status !=ECA_NORMAL) {
-        cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
+        std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        std::cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << std::endl;
         return;
     }
 
@@ -20,7 +20,7 @@ void callbackHandlerMonitor( struct event_handler_args args)  {
     it_handle = handle_index.find((unsigned int)_handle);
 
     if (it_handle != handle_index.end()) {
-        //cout << (*it_handle).getPV() << " " << (*it_handle).getHandle() << endl;
+        //std::cout << (*it_handle).getPV() << " " << (*it_handle).getHandle() << std::endl;
         if(MUTEX){cafeMutex.lock();}
         handle_index.modify(it_handle, change_eventHandlerArgs   (args));
         if(MUTEX){cafeMutex.unlock();}
@@ -32,27 +32,27 @@ void callbackHandlerMonitor( struct event_handler_args args)  {
             PVDataHolder pvd(args.count);
             (*it_handle).getPVDataHolder(pvd);
             //pvd.print();
-            //cout << "val/D//= " << pvd.getAsString(0) << endl;
+            //std::cout << "val/D//= " << pvd.getAsString(0) << std::endl;
 
          }
          else if (args.type < DBR_PUT_ACKT) {
             PVCtrlHolder pvc(args.count);
             (*it_handle).getPVCtrlHolder(pvc);
             //pvc.print();
-            //cout << "val/C/= " << pvc.getAsString(0) << endl;
+            //std::cout << "val/C/= " << pvc.getAsString(0) << std::endl;
          }
 				 
 				  			
-			  //cout <<  "args.usr = " << (unsigned int) args.usr << endl;
-				//cout <<  "getUsrArgs() = " << (unsigned int) (*it_handle).getUsrArgs() << endl;
+			  //std::cout <<  "args.usr = " << (unsigned int) args.usr << std::endl;
+				//std::cout <<  "getUsrArgs() = " << (unsigned int) (*it_handle).getUsrArgs() << std::endl;
 				 
 				 
 				/* 
 				vector<MonitorPolicy> mpV = (*it_handle).getMonitorPolicyVector();
 										
 				for (int i=0; i<mpV.size(); ++i) {				
-			  	cout << " i " << i << endl;
-				  cout <<  mpV[i].getUserArgs() << endl;
+			  	std::cout << " i " << i << std::endl;
+				  std::cout <<  mpV[i].getUserArgs() << std::endl;
 					mpV[i].print();
 				}
 				*/
@@ -60,8 +60,8 @@ void callbackHandlerMonitor( struct event_handler_args args)  {
 		
     }
     else {
-        cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-        cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << endl;
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        std::cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << std::endl;
     }
 
 return;
@@ -77,8 +77,8 @@ void handlerPut( struct event_handler_args args)  {
 #define __METHOD__  "handlerPut"
 
     if (args.status !=ECA_NORMAL) {
-        cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-        cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        std::cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << std::endl;
         return;
     }
 
@@ -99,7 +99,7 @@ void handlerPut( struct event_handler_args args)  {
 
             handle_index.modify(it_handle, change_channelRequestStatusPut(channelRequestStatusPut));
 						
-						//cout << __METHOD__ << " WITH_CALLBACK_USER_SUPLLIED for PUT done " << (*it_handle).getChannelRequestStatusPut().getCallbackProgressKind() << endl;
+						//std::cout << __METHOD__ << " WITH_CALLBACK_USER_SUPLLIED for PUT done " << (*it_handle).getChannelRequestStatusPut().getCallbackProgressKind() << std::endl;
 
             if(MUTEX)cafeMutex.unlock();
 				
@@ -108,8 +108,8 @@ void handlerPut( struct event_handler_args args)  {
 						
         }
         else {
-       		 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-        	 cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << endl;
+       		 std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        	 std::cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << std::endl;
         }
 
 				
@@ -130,8 +130,8 @@ void handlerGet( struct event_handler_args args)  {
 #define __METHOD__  "handlerGet"
 
     if (args.status !=ECA_NORMAL) {
-        cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-        cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        std::cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << std::endl;
         return;
     }
 
@@ -151,7 +151,7 @@ void handlerGet( struct event_handler_args args)  {
 						if(MUTEX){cafeMutex.lock();}
             handle_index.modify(it_handle, change_eventHandlerArgs   (args));
 						handle_index.modify(it_handle, change_channelRequestStatusGet(channelRequestStatusGet));
-						//cout << __METHOD__ << " GET CALLBACK DONE " << (*it_handle).getChannelRequestStatusGet().getCallbackProgressKind() << endl;
+						//std::cout << __METHOD__ << " GET CALLBACK DONE " << (*it_handle).getChannelRequestStatusGet().getCallbackProgressKind() << std::endl;
 						if(MUTEX){cafeMutex.unlock();}
 						
 						
@@ -162,14 +162,14 @@ void handlerGet( struct event_handler_args args)  {
             	PVDataHolder pvd(args.count);
             	(*it_handle).getPVDataHolder(pvd);
             	//pvd.print();
-            	//cout << "val/D//= " << pvd.getAsString(0) << endl;
+            	//std::cout << "val/D//= " << pvd.getAsString(0) << std::endl;
 
          		}
          		else if (args.type < DBR_PUT_ACKT) {
             	PVCtrlHolder pvc(args.count);
             	(*it_handle).getPVCtrlHolder(pvc);
             	//pvc.print();
-            	//cout << "val/C/= " << pvc.getAsString(0) << endl;
+            	//std::cout << "val/C/= " << pvc.getAsString(0) << std::endl;
          		}
 				 
 						
@@ -177,8 +177,8 @@ void handlerGet( struct event_handler_args args)  {
     }
 		else {
 				
-        	  cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-        	  cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << endl;
+        	  std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        	  std::cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << std::endl;
     }
 
 

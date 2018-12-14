@@ -1,4 +1,13 @@
+# Temporary editor files #
+##########################
 *~
+
+# AFS temporary files #
+#######################
+.__afs*
+
+# Temporary (build) files #
+###########################
 *.bak
 aclocal.m4
 autom4te.cache
@@ -8,12 +17,23 @@ depcomp
 install-sh
 ltmain.sh
 m4
+makefile
 makefile.in
 missing
+
+# Archived files #
+##################
+include/*.*-*
+include/*.*.orig
+src/*.*-*
+src/*.*.orig
+# Compiled source #
+###################
 src/*.o
 src/*.lo
 src/*.la
 src/.deps/*
 src/.libs/*
+examples/cafeTest/*.*-
 doc
 

@@ -32,11 +32,10 @@ public:
     bool characters  (const QString& ch);
 
     std::vector<deviceCollection> deviceCollectionV;
-	
-		
+
+
 private:
-    enum
-    {
+    enum {
         NotWaiting,
         WaitingForDescription,
         WaitingForDevice,
@@ -44,8 +43,8 @@ private:
     } state;
 
     deviceCollection devCollection;
-		collectionMember cMember;
-   
+    collectionMember cMember;
+
     std::string      attributeName;
     static const QString& tagConfig;
     static const QString& tagGroup;

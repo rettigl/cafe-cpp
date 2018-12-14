@@ -16,18 +16,18 @@
 
 class collectionMember {
 public:
-	collectionMember():deviceName(""),devicePosition(0){};
-	virtual ~collectionMember(){};
-	std::string deviceName;
-	float devicePosition;	
+    collectionMember():deviceName(""),devicePosition(0) {};
+    virtual ~collectionMember() {};
+    std::string deviceName;
+    float devicePosition;
 };
 
 class deviceCollection {
     friend class Connect;
     friend class CAFE;
-		//if HAVE_LIBQTXML
+    //if HAVE_LIBQTXML
     friend class loadCollectionXMLParser;
-		//endif
+    //endif
 private:
     std::string name;
     std::string description;
@@ -36,22 +36,38 @@ private:
 
     Helper helper;
 public:
-    deviceCollection():description("collection of devices"){};
-    virtual ~deviceCollection(){};
+    deviceCollection():description("collection of devices") {};
+    virtual ~deviceCollection() {};
 
-    std::string getName() const {return name;};
-    std::string getDescription() const {return description;};
-    std::vector<collectionMember> getCMembers() const {return cMembers;};
-
-    std::vector<std::string> getAttributes() const {return attributes;};
-    std::vector<float> getPositions() { 
-    	std::vector<float> posV; posV.clear(); posV.reserve(cMembers.size());
-    	for (size_t i=0; i<cMembers.size(); ++i) {
-	    posV.push_back(cMembers[i].devicePosition);
-	};
-	return posV;
+    std::string getName() const
+    {
+        return name;
     };
-    float getPosition(const char * c) {
+    std::string getDescription() const
+    {
+        return description;
+    };
+    std::vector<collectionMember> getCMembers() const
+    {
+        return cMembers;
+    };
+
+    std::vector<std::string> getAttributes() const
+    {
+        return attributes;
+    };
+    std::vector<float> getPositions()
+    {
+        std::vector<float> posV;
+        posV.clear();
+        posV.reserve(cMembers.size());
+        for (size_t i=0; i<cMembers.size(); ++i) {
+            posV.push_back(cMembers[i].devicePosition);
+        };
+        return posV;
+    };
+    float getPosition(const char * c)
+    {
         char _c[PVNAME_SIZE];
         helper.removeLeadingAndTrailingSpaces(c, _c);
         for (size_t i=0; i<cMembers.size(); ++i) {
@@ -64,32 +80,41 @@ public:
         return -1;
     }
 
-    std::vector<std::string> getMembers() { 
-    	std::vector<std::string> memberV; memberV.clear(); memberV.reserve(cMembers.size());
-    	for (size_t i=0; i<cMembers.size(); ++i) {
-	    memberV.push_back(cMembers[i].deviceName);
-	};
-	return memberV;
+    std::vector<std::string> getMembers()
+    {
+        std::vector<std::string> memberV;
+        memberV.clear();
+        memberV.reserve(cMembers.size());
+        for (size_t i=0; i<cMembers.size(); ++i) {
+            memberV.push_back(cMembers[i].deviceName);
+        };
+        return memberV;
     };
 
-    unsigned int  getNCollectionMembers() const {return cMembers.size();};
-    unsigned int  getNAttribuites() const {return attributes.size();};
+    unsigned int  getNCollectionMembers() const
+    {
+        return cMembers.size();
+    };
+    unsigned int  getNAttribuites() const
+    {
+        return attributes.size();
+    };
 };
 
 
 class collectionInGroup {
-   //friend class loadGroupXMLParser;
+    //friend class loadGroupXMLParser;
 public:
-    collectionInGroup(){};
-    virtual ~collectionInGroup(){};
-        std::string id;
-        std::string attrib;       
+    collectionInGroup() {};
+    virtual ~collectionInGroup() {};
+    std::string id;
+    std::string attrib;
 };
 
 class deviceGroup {
-		//if HAVE_LIBQTXML
+    //if HAVE_LIBQTXML
     friend class loadGroupXMLParser;
-		//endif
+    //endif
 private:
     std::string id;
     std::string description;
@@ -98,16 +123,34 @@ private:
     std::vector<std::string> xmlMembers;
     std::vector<collectionInGroup> collections;
 public:
-    deviceGroup(){};
-    virtual ~deviceGroup(){};
+    deviceGroup() {};
+    virtual ~deviceGroup() {};
 
-    std::string getName() const {return id;};
-    std::string getID() const {return id;};
+    std::string getName() const
+    {
+        return id;
+    };
+    std::string getID() const
+    {
+        return id;
+    };
 
-    std::string getDescription() const {return description;};
-    std::vector<collectionMember> getCMembers() const {return members;};
-    std::vector<collectionInGroup> getCollections() const {return collections;};
-    std::vector<std::string>getXMLMembers() const {return xmlMembers;};
+    std::string getDescription() const
+    {
+        return description;
+    };
+    std::vector<collectionMember> getCMembers() const
+    {
+        return members;
+    };
+    std::vector<collectionInGroup> getCollections() const
+    {
+        return collections;
+    };
+    std::vector<std::string>getXMLMembers() const
+    {
+        return xmlMembers;
+    };
 };
 
 

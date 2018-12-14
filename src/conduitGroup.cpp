@@ -1,5 +1,5 @@
 ///
-/// \file    conduitGroup.cc
+/// \file    conduitGroup.cpp
 /// \author  Jan Chrin, PSI
 /// \date    November 2014
 /// \version CAFE 1.0.0
@@ -11,20 +11,24 @@
 //include <oldAccess.h>
 //include <Python.h>
 
+using namespace std;
+
 unsigned int ConduitGroup::groupHandleNext=0;
 
 /**
  *   ConduitGroup destructor \n
- *   Good place to clean up! 
+ *   Good place to clean up!
  */
-ConduitGroup::~ConduitGroup(void){
+ConduitGroup::~ConduitGroup(void)
+{
 };
 
 /**
  *   ConduitGroup constructor \n
  *
  */
-ConduitGroup::ConduitGroup(void){
+ConduitGroup::ConduitGroup(void)
+{
 };
 
 
@@ -37,7 +41,8 @@ ConduitGroup::ConduitGroup(void){
  *   \param _mHandle        handlt to Conduit object
  */
 ConduitGroup::ConduitGroup(const char * _groupName, ca_client_context * _ccc,  CA_SYNC_GID _groupID,
-                        unsigned int _nMember,   unsigned int * _mHandle){
+                           unsigned int _nMember,   unsigned int * _mHandle)
+{
 
     ccc 	= _ccc;
     groupName 	= _groupName;
@@ -49,7 +54,7 @@ ConduitGroup::ConduitGroup(const char * _groupName, ca_client_context * _ccc,  C
 
     channelTimeoutPolicySGGet.setTimeout(DEFAULT_TIMEOUT_SG_PEND_IO);
     channelTimeoutPolicySGPut.setTimeout(DEFAULT_TIMEOUT_SG_PEND_IO);
-    
+
     channelTimeoutPolicySGGet.setDefaultTimeout(DEFAULT_TIMEOUT_SG_PEND_IO);
     channelTimeoutPolicySGPut.setDefaultTimeout(DEFAULT_TIMEOUT_SG_PEND_IO);
 
@@ -71,7 +76,8 @@ ConduitGroup::ConduitGroup(const char * _groupName, ca_client_context * _ccc,  C
  *  Retrieves PV data through channel access into the CAFEConduit::dataBuffer
  *  \return ICAFE_NORMAL if OK
  */
-int ConduitGroup::get(void) const{
+int ConduitGroup::get(void) const
+{
 #define __METHOD__ "ConduitGroup::get(void) const"
 
 
@@ -88,10 +94,10 @@ int ConduitGroup::get(void) const{
                 //Returns ECA_NORMAL, ECA_BADSYNCGRP, ECA_BADCHID, ECA_BADCOUNT,
                 //ECA_BADTYPE, ECA_GETFAIL, or 192 if not connected!
                 mStatus[i]=ca_sg_array_get (groupID,
-                                (*it_handle).channelRequestMetaData.dbrDataType,
-                                (*it_handle).channelRequestMetaData.nelem,
-                                (*it_handle).channelRegalia.channelID,
-                                (*it_handle).dataBuffer);
+                                            (*it_handle).channelRequestMetaData.dbrDataType,
+                                            (*it_handle).channelRequestMetaData.nelem,
+                                            (*it_handle).channelRegalia.channelID,
+                                            (*it_handle).dataBuffer);
             }
         }
     } //for
@@ -99,15 +105,15 @@ int ConduitGroup::get(void) const{
 
     //returns ECA_NORMAL, ECA_TIMEOUT, ECA_EVDISALLOW, ECA_BADSYNCGRP
 
-	int groupStatus=ECA_NORMAL;
+    int groupStatus=ECA_NORMAL;
 
-	groupStatus=ca_sg_block(groupID,  channelTimeoutPolicySGGet.getTimeout() ); //timeout_sg_pend_io );
+    groupStatus=ca_sg_block(groupID,  channelTimeoutPolicySGGet.getTimeout() ); //timeout_sg_pend_io );
 
-	//Withdraw this test for now; not required
-	//while ( (ca_sg_test((*it_groupHandle).getGroupID()) == ECA_IOINPROGRESS
-	//       || gStatus == ECA_TIMEOUT) && channelTimeoutPolicySGGet.getSelfGoverningTimeout()
-	//                                && ntries<channelTimeoutPolicySGGet.getNtries()
-	//)
+    //Withdraw this test for now; not required
+    //while ( (ca_sg_test((*it_groupHandle).getGroupID()) == ECA_IOINPROGRESS
+    //       || gStatus == ECA_TIMEOUT) && channelTimeoutPolicySGGet.getSelfGoverningTimeout()
+    //                                && ntries<channelTimeoutPolicySGGet.getNtries()
+    //)
 
     if (groupStatus== ECA_TIMEOUT) {
         CAFEStatus cafeStatus;
@@ -121,7 +127,7 @@ int ConduitGroup::get(void) const{
         cafeStatus.report(groupStatus);
     }
 
-return groupStatus;
+    return groupStatus;
 #undef __METHOD__
 };
 
@@ -130,7 +136,8 @@ return groupStatus;
  *  Sets PV data from the Conduit::dataBuffer through channel access
  *  \return ICAFE_NORMAL if OK
  */
-int ConduitGroup::put(void) const  {
+int ConduitGroup::put(void) const
+{
 #define __METHOD__ "ConduitGroup::put(void) const"
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
@@ -146,10 +153,10 @@ int ConduitGroup::put(void) const  {
                 //Returns ECA_NORMAL, ECA_BADSYNCGRP, ECA_BADCHID, ECA_BADCOUNT,
                 //ECA_BADTYPE, ECA_GETFAIL, or 192 if not connected!
                 mStatus[i]=ca_sg_array_put (groupID,
-                                (*it_handle).channelRequestMetaPrimitive.dbrDataType,
-                                (*it_handle).channelRequestMetaPrimitive.nelem,
-                                (*it_handle).channelRegalia.channelID,
-                                (*it_handle).putBuffer);
+                                            (*it_handle).channelRequestMetaPrimitive.dbrDataType,
+                                            (*it_handle).channelRequestMetaPrimitive.nelem,
+                                            (*it_handle).channelRegalia.channelID,
+                                            (*it_handle).putBuffer);
 
             }
         }
@@ -158,36 +165,36 @@ int ConduitGroup::put(void) const  {
     //returns ECA_NORMAL, ECA_TIMEOUT, ECA_EVDISALLOW, ECA-BADSYNCGRP
 
 
-	int groupStatus=ECA_NORMAL;
+    int groupStatus=ECA_NORMAL;
 
-	groupStatus=ca_sg_block(groupID, channelTimeoutPolicySGPut.getTimeout() ); // timeout_sg_pend_io );
+    groupStatus=ca_sg_block(groupID, channelTimeoutPolicySGPut.getTimeout() ); // timeout_sg_pend_io );
 
 
-	// epics code for ca_sg_block
-	/*
-	ca_client_context *pcac;
-		int status = fetchClientContext ( &pcac );
-		if ( status == ECA_NORMAL ) {
-			CASG * pcasg;
-			{
-			epicsGuard < epicsMutex > guard ( pcac->mutex );
-			  pcasg = pcac->lookupCASG ( guard, groupID );
-			  if ( pcasg ) {
-				status = pcasg->block (
-					pcac->pCallbackGuard.get (), guard, channelTimeoutPolicySGPut.getTimeout()  );
-			  }
-			  else {
-				  status = ECA_BADSYNCGRP;
-			  }
-			}
-			if ( pcasg ) {
-				sync_group_reset ( *pcac, *pcasg );
-			}
-		}
-	*/
-	//ca_poll();
-	//ca_sg_test(groupID);
-	//sleep(1);
+    // epics code for ca_sg_block
+    /*
+    ca_client_context *pcac;
+    	int status = fetchClientContext ( &pcac );
+    	if ( status == ECA_NORMAL ) {
+    		CASG * pcasg;
+    		{
+    		epicsGuard < epicsMutex > guard ( pcac->mutex );
+    		  pcasg = pcac->lookupCASG ( guard, groupID );
+    		  if ( pcasg ) {
+    			status = pcasg->block (
+    				pcac->pCallbackGuard.get (), guard, channelTimeoutPolicySGPut.getTimeout()  );
+    		  }
+    		  else {
+    			  status = ECA_BADSYNCGRP;
+    		  }
+    		}
+    		if ( pcasg ) {
+    			sync_group_reset ( *pcac, *pcasg );
+    		}
+    	}
+    */
+    //ca_poll();
+    //ca_sg_test(groupID);
+    //sleep(1);
 
 
 
@@ -198,6 +205,6 @@ int ConduitGroup::put(void) const  {
     }
     //groupStatus is ECA_NORMAL even if one of the channels is disconnected
 
-return groupStatus;
+    return groupStatus;
 #undef __METHOD__
 };

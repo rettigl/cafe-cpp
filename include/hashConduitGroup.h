@@ -21,21 +21,21 @@ using boost::multi_index_container;
 // namespace multi-indexing of reference handles to CAFEConduit objects
 using namespace boost::multi_index;
 
-struct by_groupHandle{};
-struct by_groupID{};
-struct by_groupName{};
+struct by_groupHandle {};
+struct by_groupID {};
+struct by_groupName {};
 
 typedef multi_index_container<
-        ConduitGroup,
-		indexed_by<
-		ordered_unique<
-                tag<by_groupHandle>, BOOST_MULTI_INDEX_MEMBER(ConduitGroup, unsigned int, groupHandle)>,
-		ordered_non_unique<
-                tag<by_groupID>,     BOOST_MULTI_INDEX_MEMBER(ConduitGroup, CA_SYNC_GID, groupID)>,
-		ordered_non_unique<
-                tag<by_groupName>,   BOOST_MULTI_INDEX_MEMBER(ConduitGroup, std::string, groupName)>,
-                hashed_unique<member<ConduitGroup, unsigned int,  &ConduitGroup::groupHandle> >
-		>
+ConduitGroup,
+indexed_by<
+ordered_unique<
+tag<by_groupHandle>, BOOST_MULTI_INDEX_MEMBER(ConduitGroup, unsigned int, groupHandle)>,
+ordered_non_unique<
+tag<by_groupID>,     BOOST_MULTI_INDEX_MEMBER(ConduitGroup, CA_SYNC_GID, groupID)>,
+ordered_non_unique<
+tag<by_groupName>,   BOOST_MULTI_INDEX_MEMBER(ConduitGroup, std::string, groupName)>,
+hashed_unique<member<ConduitGroup, unsigned int,  &ConduitGroup::groupHandle> >
+>
 > cafeGroup_set;
 
 typedef cafeGroup_set::index<by_groupID>::type        cafeGroup_set_by_groupID;

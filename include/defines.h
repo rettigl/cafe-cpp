@@ -15,7 +15,7 @@
 
 #if (EPICS_MAJOR==3) && (EPICS_MINOR==14) && (EPICS_PATCH>=11)
 #define MASK_CTRL DBE_VALUE | DBE_LOG | DBE_ALARM | DBE_PROPERTY
-#elif (EPICS_MAJOR==3) && (EPICS_MINOR>14) 
+#elif (EPICS_MAJOR==3) && (EPICS_MINOR>14)
 #define MASK_CTRL DBE_VALUE | DBE_LOG | DBE_ALARM | DBE_PROPERTY
 #else
 #define MASK_CTRL DBE_VALUE | DBE_LOG | DBE_ALARM
@@ -27,7 +27,40 @@ const unsigned short ALARM_STATUS_STRING_LENGTH   = 22; // "NO_ALARM","READ","WR
 //"HIHI","HIGH","LOLO","LOW","STATE","COS","COMM","TIMEOUT","HWLIMIT","CALC","SCAN","LINK",
 //"SOFT","BAD_SUB","UDF","DISABLE","SIMM","READ_ACCESS","WRITE_ACCESS"
 
+struct alarmSeverityStruct {
+    short llsv;
+		short  lsv;
+		short  hsv;
+		short hhsv;
+};
 
+struct etsDatePrevious {
+    int year;
+    int mon;
+    int day;
+    int hour;
+    int min;
+    int sec;
+    unsigned long nsec;
+};
+
+struct etsDate {
+    int year;
+    int mon;
+    int day;
+    int hour;
+    int min;
+    int sec;
+    unsigned long nsec;
+		int wday;
+		int yday;
+		int isdst;
+};
+
+struct etsNorm {
+    unsigned int secPastEpoch;
+    unsigned int nsec;
+};
 /**
  *  Define pCallback \n
  */
@@ -46,13 +79,14 @@ const short PVGROUP_PSEUDO_SIZE=1024; //determines max size of groupNameEntry fo
 //List all possible deliminators; code will separate dev/attriby when first of this list is found;
 const std::string DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR=":";  //Only one deliminator
 
-typedef char pv_string_t[PVNAME_SIZE]; 
+typedef char pv_string_t[PVNAME_SIZE];
 
 /**
  *  Default configuration parameters. Recall that if pend_event is too short \n
  *  then create callback function will still be called after the specified period
  */
 const bool              DEFAULT_SELF_GOVERNING_TIMEOUT    = true;
+
 
 const double            DEFAULT_TIMEOUT_PEND_IO_WF        =  5.0;
 const double                    TIMEOUT_PEND_IO_MIN       =  0.0001;
@@ -65,16 +99,28 @@ const double                    PEND_IO_INCREMENT_TIME_MAX= 10.0;
 const double            DEFAULT_TIMEOUT_PEND_EVENT        =  0.4;
 const double            DEFAULT_TIMEOUT_PEND_IO           =  0.4;  // previously 3.0
 const double            DEFAULT_TIMEOUT_SG_PEND_EVENT     =  0.5; // plus nMember/NMEMBER_PER_SEC_SG_PEND_EVENT
-const double            NMEMBER_PER_SEC_SG_PEND_EVENT     =  400; // 
+const double            NMEMBER_PER_SEC_SG_PEND_EVENT     =  400; //
 const double            DEFAULT_TIMEOUT_SG_PEND_IO        =  5.0;
 
 // Otherwise too many large databuffers are created
 const unsigned int          MAX_NELEM_FOR_CTRL_BUFFER   = 8192;
 // Keep at 1, else becomes problematic when wf is made a syn. group member (ch disconnect occurs for STSACK cb)
-const unsigned int          MAX_NELEM_FOR_STSACK_BUFFER = 1;  
+const unsigned int          MAX_NELEM_FOR_STSACK_BUFFER = 1;
 const unsigned int  	DEFAULT_NELEM_FOR_CTRL_BUFFER     = 256; // if nelem exceeds above
 const unsigned int  	DEFAULT_NELEM_FOR_STSACK_BUFFER   = 1;   // if nelem exceeds above
 
 const unsigned short        MAX_NO_MONITORS_PER_CHANNEL = 4;   // Can't start more than 4; 1 is more usual.
+
+
+//For BSREAD
+const double					BSREAD_MAX_CONNECT_TIME       =   20; //20 seconds; typically 10 seconds is required
+const unsigned short  BSREAD_ZEROMQ_HIGH_WATER_MARK =    1;
+const short           BSREAD_ZEROMQ_TIMEOUT_MS      = 2000; //Can handle 10 Hz // -1 wait for ever
+
+const unsigned short  BSREAD_PREBLOB_BYTES          =   12; //No of bytes pre-pending the binary blob with metadata
+
+const std::string     SF_PULSE_ID_PV  = "SIN-TIMAST-EVG0:TX-PULSEID";
+const unsigned short  SF_PULSE_ID_BUFFER_SIZE       =   10;  //Size of map to store history of pulseIDs;
+
 
 #endif // DEFINES_H

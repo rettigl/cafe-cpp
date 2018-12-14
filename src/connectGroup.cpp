@@ -1,11 +1,11 @@
 ///
-/// \file    connectGroup.cc
+/// \file    connectGroup.cpp
 /// \author  Jan Chrin, PSI
 /// \date    Release: February 2015
 /// \version CAFE 1.0.0
 ///
-#include "connect.h"
-#include "conduitFriends.h"
+#include <connect.h>
+#include <conduitFriends.h>
 
 using namespace std;
 
@@ -14,19 +14,20 @@ using namespace std;
 template<typename A, typename B>
 std::pair<B,A> flip_pair(const std::pair<A,B> &p)
 {
-	return std::pair<B,A>(p.second, p.first);
+    return std::pair<B,A>(p.second, p.first);
 }
 
 
 template <typename A, typename B>
-std::multimap<B,A> flip_map(const std::map<A,B> & src) {
-	
-	std::multimap<B,A> dst;
-	
-  std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()),
-									flip_pair<A,B>);  
-	
-	return dst;	
+std::multimap<B,A> flip_map(const std::map<A,B> & src)
+{
+
+    std::multimap<B,A> dst;
+
+    std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()),
+                   flip_pair<A,B>);
+
+    return dst;
 }
 
 
@@ -40,7 +41,8 @@ std::multimap<B,A> flip_map(const std::map<A,B> & src) {
  * \param deviceListV input: vector list of strings that comprise the collection of devices
  * \return ICAFE_NORMAL
  */
-int Connect::collectionDefine(const char * collectionName, vector<string> deviceListV) {
+int Connect::collectionDefine(const char * collectionName, std::vector<std::string> deviceListV)
+{
     bool collectionExists = false;
     for (unsigned short i = 0; i < deviceCollectionV.size(); ++i) {
         if (strcmp(deviceCollectionV[i].name.c_str(), collectionName) == 0) {
@@ -49,14 +51,16 @@ int Connect::collectionDefine(const char * collectionName, vector<string> device
             break;
         }
     }
-    if (collectionExists) {return ECAFE_COLLECTION_PREV_DEF;}
-    deviceCollection dC; collectionMember cM;
+    if (collectionExists) {
+        return ECAFE_COLLECTION_PREV_DEF;
+    }
+    deviceCollection dC;
+    collectionMember cM;
     dC.name=collectionName;
 
     dC.cMembers.reserve(deviceListV.size());
 
-    for (size_t i=0; i<deviceListV.size(); ++i)
-    {
+    for (size_t i=0; i<deviceListV.size(); ++i) {
         cM.deviceName=deviceListV[i];
         dC.cMembers.push_back(cM);
     }
@@ -72,7 +76,8 @@ int Connect::collectionDefine(const char * collectionName, vector<string> device
  * \param deviceListV input: vector list of const char * that comprise the collection of devices
  * \return ICAFE_NORMAL
  */
-int Connect::collectionDefine(const char * collectionName, vector<const char *> deviceListV) {
+int Connect::collectionDefine(const char * collectionName, std::vector<const char *> deviceListV)
+{
     bool collectionExists = false;
     for (unsigned short i = 0; i < deviceCollectionV.size(); ++i) {
         if (strcmp(deviceCollectionV[i].name.c_str(), collectionName) == 0) {
@@ -81,14 +86,16 @@ int Connect::collectionDefine(const char * collectionName, vector<const char *> 
             break;
         }
     }
-    if (collectionExists) {return ECAFE_COLLECTION_PREV_DEF;}
-    deviceCollection dC; collectionMember cM;
+    if (collectionExists) {
+        return ECAFE_COLLECTION_PREV_DEF;
+    }
+    deviceCollection dC;
+    collectionMember cM;
     dC.name=collectionName;
 
     dC.cMembers.reserve(deviceListV.size());
 
-    for (size_t i=0; i<deviceListV.size(); ++i)
-    {
+    for (size_t i=0; i<deviceListV.size(); ++i) {
         cM.deviceName=deviceListV[i];
         dC.cMembers.push_back(cM);
     }
@@ -104,7 +111,8 @@ int Connect::collectionDefine(const char * collectionName, vector<const char *> 
  * \param deviceListLength input: size of deviceList array
  * \return ICAFE_NORMAL
  */
-int Connect::collectionDefine(const char * collectionName, pv_string_t * deviceList, unsigned int deviceListLength) {
+int Connect::collectionDefine(const char * collectionName, pv_string_t * deviceList, unsigned int deviceListLength)
+{
     bool collectionExists = false;
     for (unsigned short i = 0; i < deviceCollectionV.size(); ++i) {
         if (strcmp(deviceCollectionV[i].name.c_str(), collectionName) == 0) {
@@ -113,8 +121,11 @@ int Connect::collectionDefine(const char * collectionName, pv_string_t * deviceL
             break;
         }
     }
-    if (collectionExists) {return ECAFE_COLLECTION_PREV_DEF;}
-    deviceCollection dC; collectionMember cM;
+    if (collectionExists) {
+        return ECAFE_COLLECTION_PREV_DEF;
+    }
+    deviceCollection dC;
+    collectionMember cM;
     dC.name=collectionName;
 
     dC.cMembers.reserve(deviceListLength);
@@ -135,7 +146,8 @@ int Connect::collectionDefine(const char * collectionName, pv_string_t * deviceL
  * \param dC ouput: deviceCollection class
  * \return ICAFE_NORMAL else ECAFE_UNKNOWN_COLLECTION
  */
-int Connect::collectionFetch(const char * collectionName, deviceCollection &dC) {
+int Connect::collectionFetch(const char * collectionName, deviceCollection &dC)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
@@ -157,7 +169,8 @@ int Connect::collectionFetch(const char * collectionName, deviceCollection &dC) 
  * \param deviceListV ouput: vector of strings containing collection members
  * \return ICAFE_NORMAL else ECAFE_UNKNOWN_COLLECTION, ECAFE_EMPTY_COLLECTION
  */
-int Connect::collectionFetch(const char * collectionName, vector<string> &deviceListV) {
+int Connect::collectionFetch(const char * collectionName, std::vector<std::string> &deviceListV)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
@@ -172,7 +185,7 @@ int Connect::collectionFetch(const char * collectionName, vector<string> &device
                 return ECAFE_EMPTY_COLLECTION;
             }
             else {
-               return ICAFE_NORMAL;
+                return ICAFE_NORMAL;
             }
         }
     }
@@ -186,7 +199,8 @@ int Connect::collectionFetch(const char * collectionName, vector<string> &device
  * \param deviceListV ouput: vector of const char * containing collection members
  * \return ICAFE_NORMAL else ECAFE_UNKNOWN_COLLECTION, ECAFE_EMPTY_COLLECTION
  */
-int Connect::collectionFetch(const char * collectionName, vector<const char *> &deviceListV) {
+int Connect::collectionFetch(const char * collectionName, std::vector<const char *> &deviceListV)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
@@ -205,7 +219,7 @@ int Connect::collectionFetch(const char * collectionName, vector<const char *> &
                 return ECAFE_EMPTY_COLLECTION;
             }
             else {
-               return ICAFE_NORMAL;
+                return ICAFE_NORMAL;
             }
         }
     }
@@ -217,7 +231,8 @@ int Connect::collectionFetch(const char * collectionName, vector<const char *> &
  * \param collectionID input: collection name
  * \return trool or false
  */
-bool Connect::isCollection(const char * collectionID) {
+bool Connect::isCollection(const char * collectionID)
+{
     char _collectionID[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionID, _collectionID);
 
@@ -235,8 +250,9 @@ bool Connect::isCollection(const char * collectionID) {
  * \param groupID input: group name
  * \return true or false
  */
-bool Connect::isGroup(const char * groupID) {
-    char _groupID[PVNAME_SIZE];  
+bool Connect::isGroup(const char * groupID)
+{
+    char _groupID[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(groupID, _groupID);
     for (size_t i = 0; i < PVGroupV.size(); ++i) {
         if (strcmp(PVGroupV[i].name, (const char *) _groupID) == 0) {
@@ -252,7 +268,8 @@ bool Connect::isGroup(const char * groupID) {
  * \param groupNameV input: vector of groups
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF, ECAFE_UNKNOWN_GROUP
  */
-int Connect::groupCombine(const char * newGroupName, vector<char *> groupNameV) {
+int Connect::groupCombine(const char * newGroupName, std::vector<char *> groupNameV)
+{
 
     char _newGroupName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(newGroupName, _newGroupName);
@@ -267,12 +284,13 @@ int Connect::groupCombine(const char * newGroupName, vector<char *> groupNameV) 
     }
 
     bool groupExists  = false;
-    unsigned short nExisting=0; bool inputGroupExists=false;
+    unsigned short nExisting=0;
+    bool inputGroupExists=false;
     unsigned short * gIndex = new unsigned short[groupNameV.size()];
     unsigned int nElemInGroup=0;
 
 
-    for (unsigned short i = 0; i < PVGroupV.size(); ++i) {   
+    for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
         if (strcmp(PVGroupV[i].name, _newGroupName ) == 0) {
             cout << "REQUESTED NAME FOR GROUP " << _newGroupName << " ALREADY EXISTS!  GROUP COMBINE FAILED" << endl;
             groupExists  = true;
@@ -300,11 +318,11 @@ int Connect::groupCombine(const char * newGroupName, vector<char *> groupNameV) 
     }
 
     if (groupExists) {
-        delete gIndex;
+        delete []gIndex;
         return ECAFE_GROUP_PREV_DEF;
     }
     if (nExisting != groupNameV.size()) {
-        delete gIndex;
+        delete []gIndex;
         return ECAFE_UNKNOWN_GROUP;
     }
 
@@ -315,17 +333,17 @@ int Connect::groupCombine(const char * newGroupName, vector<char *> groupNameV) 
 
 
     unsigned int icount=0;
-    for (unsigned short j = 0; j < groupNameV.size(); ++j) {    
+    for (unsigned short j = 0; j < groupNameV.size(); ++j) {
         for (unsigned int i = 0; i < PVGroupV[gIndex[j]].npv; ++i) {
-           pvdata[icount]=PVGroupV[gIndex[j]].pvdata[i];          
-           pvGroup.memberMap.insert(icount,pvdata[icount].pv);
+            pvdata[icount]=PVGroupV[gIndex[j]].pvdata[i];
+            pvGroup.memberMap.insert(icount,pvdata[icount].pv);
             ++icount;
         }
     }
     pvGroup.pvdata = pvdata;
     PVGroupV.push_back(pvGroup);
 
-    delete gIndex;
+    delete [] gIndex;
     return ICAFE_NORMAL;
 }
 
@@ -339,18 +357,21 @@ int Connect::groupCombine(const char * newGroupName, vector<char *> groupNameV) 
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF, ECAFE_UNKNOWN_GROUP
  */
 int Connect::groupCombine(const char * newGroupName, const char * groupName1,
-                           const char * groupName2) { // PVGroup &pvGroup) {
+                          const char * groupName2)   // PVGroup &pvGroup) {
+{
 
     char _newGroupName[PVNAME_SIZE];
-    helper.removeLeadingAndTrailingSpaces(newGroupName, _newGroupName); 
+    helper.removeLeadingAndTrailingSpaces(newGroupName, _newGroupName);
     char _groupName1[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(groupName1, _groupName1);
     char _groupName2[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(groupName2, _groupName2);
 
     bool groupExists  = false;
-    bool groupExists1 = false; bool groupExists2 = false;
-    PVGroup g1; PVGroup g2;
+    bool groupExists1 = false;
+    bool groupExists2 = false;
+    PVGroup g1;
+    PVGroup g2;
 
     for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
         if (strcmp(PVGroupV[i].name, _newGroupName ) == 0) {
@@ -365,7 +386,9 @@ int Connect::groupCombine(const char * newGroupName, const char * groupName1,
             g2=PVGroupV[i];
             groupExists2 = true;
         }
-        if (groupExists && groupExists1 && groupExists2) {break;}
+        if (groupExists && groupExists1 && groupExists2) {
+            break;
+        }
     }
 
     if (!groupExists1) {
@@ -374,8 +397,12 @@ int Connect::groupCombine(const char * newGroupName, const char * groupName1,
     if (!groupExists2) {
         cout <<  "GROUP " << _groupName2 << " DOES NOT EXIST! GROUP COMBINE FAILED" << endl;
     }
-    if (groupExists) {return ECAFE_GROUP_PREV_DEF;}
-    else if (!groupExists1 || !groupExists2) {return ECAFE_UNKNOWN_GROUP;}
+    if (groupExists) {
+        return ECAFE_GROUP_PREV_DEF;
+    }
+    else if (!groupExists1 || !groupExists2) {
+        return ECAFE_UNKNOWN_GROUP;
+    }
 
     unsigned int nElemInGroup=g1.npv + g2.npv;
 
@@ -385,13 +412,13 @@ int Connect::groupCombine(const char * newGroupName, const char * groupName1,
     PVDataHolder * pvdata = new PVDataHolder[pvGroup.npv];
 
     for (unsigned int i=0; i<g1.npv; ++i ) {
-        pvdata[i] = g1.pvdata[i];      
+        pvdata[i] = g1.pvdata[i];
         pvGroup.memberMap.insert(i,pvdata[i].pv);
     }
 
     unsigned int icount=0;
     for (unsigned int i=g1.npv; i<(g1.npv+g2.npv); ++i ) {
-        pvdata[i]=  g2.pvdata[icount];        
+        pvdata[i]=  g2.pvdata[icount];
         pvGroup.memberMap.insert(i,pvdata[i].pv);
         ++icount;
     }
@@ -411,10 +438,13 @@ int Connect::groupCombine(const char * newGroupName, const char * groupName1,
  * \param attributeV input: vector of attributes (string)
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF, ECAFE_UNKNOWN_COLLECTION, ECAFE_EMPTY_COLLECTION
  */
-int Connect::groupDefine (const char * groupName, const char * collectionName, vector<string> attributeV) {
+int Connect::groupDefine (const char * groupName, const char * collectionName, std::vector<std::string> attributeV)
+{
     vector<string> deviceListV;
     int localStatus = collectionFetch(collectionName, deviceListV);
-    if (localStatus != ICAFE_NORMAL) {return localStatus;}
+    if (localStatus != ICAFE_NORMAL) {
+        return localStatus;
+    }
     return groupDefine(groupName, deviceListV, attributeV);
 }
 
@@ -426,10 +456,13 @@ int Connect::groupDefine (const char * groupName, const char * collectionName, v
  * \param attributeV input: vector of attributes (const char *)
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF, ECAFE_UNKNOWN_COLLECTION, ECAFE_EMPTY_COLLECTION
  */
-int Connect::groupDefine (const char * groupName, const char * collectionName, vector<const char*> attributeV){
+int Connect::groupDefine (const char * groupName, const char * collectionName, std::vector<const char*> attributeV)
+{
     vector<const char *> deviceListV;
     int localStatus = collectionFetch(collectionName, deviceListV);
-    if (localStatus != ICAFE_NORMAL) {return localStatus;}
+    if (localStatus != ICAFE_NORMAL) {
+        return localStatus;
+    }
     return groupDefine(groupName, deviceListV, attributeV);
 }
 
@@ -443,13 +476,16 @@ int Connect::groupDefine (const char * groupName, const char * collectionName, v
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF, ECAFE_UNKNOWN_COLLECTION, ECAFE_EMPTY_COLLECTION
  */
 int Connect::groupDefine (const char * groupName, const char * collectionName,
-                           pv_string_t * attributeArray, unsigned short attributeLength) {
+                          pv_string_t * attributeArray, unsigned short attributeLength)
+{
 
     vector<string> deviceListV;
-    vector<string> attributeListV;    
-    attributeListV.reserve(attributeLength);   
+    vector<string> attributeListV;
+    attributeListV.reserve(attributeLength);
     int localStatus = collectionFetch(collectionName, deviceListV);
-    if (localStatus != ICAFE_NORMAL) {return localStatus;}    
+    if (localStatus != ICAFE_NORMAL) {
+        return localStatus;
+    }
     attributeListV.insert(attributeListV.end(), &attributeArray[0], &attributeArray[attributeLength]);
     return groupDefine(groupName, deviceListV, attributeListV);
 }
@@ -465,7 +501,8 @@ int Connect::groupDefine (const char * groupName, const char * collectionName,
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF
  */
 int Connect::groupDefine(const char * groupName, pv_string_t * deviceArray, unsigned int nDevice,
-                          pv_string_t * attributeArray, unsigned short nAttribute) { // PVGroup &pvGroup) {
+                         pv_string_t * attributeArray, unsigned short nAttribute)   // PVGroup &pvGroup) {
+{
     std::string s="";
     //std::string deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
     unsigned int nElemInGroup=nDevice * nAttribute;
@@ -479,8 +516,8 @@ int Connect::groupDefine(const char * groupName, pv_string_t * deviceArray, unsi
         }
     }
     int status = groupDefine(groupName, pvArray, nElemInGroup); // pvGroup);
-		
-    delete pvArray;
+
+    delete []pvArray;
     return status;
 
 }
@@ -491,8 +528,9 @@ int Connect::groupDefine(const char * groupName, pv_string_t * deviceArray, unsi
  * \param attributeV input: vector of attributes (const char *)
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF
  */
-int Connect::groupDefine(const char * groupName, vector<const char *> deviceV,
-                          vector<const char *> attributeV){ // PVGroup &pvGroup) {
+int Connect::groupDefine(const char * groupName, std::vector<const char *> deviceV,
+                         std::vector<const char *> attributeV)  // PVGroup &pvGroup) {
+{
 
     std::string s="";
     //std::string deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
@@ -507,7 +545,7 @@ int Connect::groupDefine(const char * groupName, vector<const char *> deviceV,
         }
     }
     int status = groupDefine(groupName, pvArray, nElemInGroup); // pvGroup);
-    delete pvArray;
+    delete []pvArray;
     return status;
 }
 
@@ -518,8 +556,9 @@ int Connect::groupDefine(const char * groupName, vector<const char *> deviceV,
  * \param attributeV input: vector of attributes (strig)
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF
  */
-int Connect::groupDefine(const char * groupName, vector<string> deviceV, vector<string> attributeV) {
-                          //PVGroup &pvGroup) {
+int Connect::groupDefine(const char * groupName, std::vector<std::string> deviceV, std::vector<std::string> attributeV)
+{
+    //PVGroup &pvGroup) {
     std::string s="";
     //std::string deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
     unsigned int nElemInGroup=deviceV.size() * attributeV.size();
@@ -533,7 +572,7 @@ int Connect::groupDefine(const char * groupName, vector<string> deviceV, vector<
         }
     }
     int status = groupDefine(groupName, pvArray, nElemInGroup); // pvGroup);
-    delete pvArray;
+    delete []pvArray;
     return status;
 }
 
@@ -543,7 +582,8 @@ int Connect::groupDefine(const char * groupName, vector<string> deviceV, vector<
  * \param pvArrayV input: vector of process varaibles (string)
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF
  */
-int Connect::groupDefine(const char * groupName, vector<string> pvArrayV) { // PVGroup &pvGroup) {
+int Connect::groupDefine(const char * groupName, std::vector<std::string> pvArrayV)   // PVGroup &pvGroup) {
+{
 
     pv_string_t * pvArray = new pv_string_t [pvArrayV.size()];
 
@@ -551,7 +591,7 @@ int Connect::groupDefine(const char * groupName, vector<string> pvArrayV) { // P
         strcpy(pvArray[i], pvArrayV[i].c_str());
     }
     int status = groupDefine(groupName, pvArray,  pvArrayV.size()); // pvGroup);
-    delete pvArray;
+    delete []pvArray;
     return status;
 }
 
@@ -561,20 +601,21 @@ int Connect::groupDefine(const char * groupName, vector<string> pvArrayV) { // P
  * \param pvArrayV input: vector of process varaibles (const char *)
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF
  */
-int Connect::groupDefine(const char * groupName, vector<const char *> pvArrayV) {
+int Connect::groupDefine(const char * groupName, std::vector<const char *> pvArrayV)
+{
 
     pv_string_t * pvArray = new  pv_string_t [pvArrayV.size()];
 
     for (unsigned int i=0; i<pvArrayV.size(); ++i ) {
         strcpy(pvArray[i], pvArrayV[i]);
-    
-		}
+
+    }
 
     int status = groupDefine(groupName, pvArray,  pvArrayV.size()); // pvGroup);
-		
-		
-		
-    delete pvArray;
+
+
+
+    delete []pvArray;
     return status;
 
 }
@@ -587,7 +628,8 @@ int Connect::groupDefine(const char * groupName, vector<const char *> pvArrayV) 
  * \return ICAFE_NORMAL is all OK else, ECAFE_GROUP_PREV_DEF
  */
 int Connect::groupDefine(const char * groupName, pv_string_t * pvArray,
-                          unsigned int pvArrayLength) {
+                         unsigned int pvArrayLength)
+{
 
     bool groupExists = false;
     char _groupName[PVNAME_SIZE];
@@ -602,7 +644,9 @@ int Connect::groupDefine(const char * groupName, pv_string_t * pvArray,
         }
     }
 
-    if (groupExists) {return ECAFE_GROUP_PREV_DEF;}
+    if (groupExists) {
+        return ECAFE_GROUP_PREV_DEF;
+    }
 
     PVGroup pvGroup;
     strcpy(pvGroup.name, _groupName);
@@ -618,10 +662,10 @@ int Connect::groupDefine(const char * groupName, pv_string_t * pvArray,
 
         char _pv[PVNAME_SIZE];
         helper.removeLeadingAndTrailingSpaces(pvArray[i], _pv);
-				
-		
+
+
         strcpy(pvdata[i].pv,  _pv);
-			
+
 
 
         ChannelDeviceAttribute channelDeviceAttribute;
@@ -632,8 +676,8 @@ int Connect::groupDefine(const char * groupName, pv_string_t * pvArray,
         strcpy(pvdata[i].attrib, channelDeviceAttribute.getAttribute());
 
         pvGroup.memberMap.insert(i,pvdata[i].pv);
-				
-					
+
+
     }
 
     pvGroup.pvdata = pvdata;
@@ -645,34 +689,35 @@ int Connect::groupDefine(const char * groupName, pv_string_t * pvArray,
 
 
 
-vector<string> Connect::getFromGlobalChannelList(vector<string> searchList) {
+vector<std::string> Connect::getFromGlobalChannelList(std::vector<std::string> searchList)
+{
 
-	vector<string> retChannelList;
-	
-	retChannelList.clear();
-	retChannelList.reserve(200); 
-  
-	//cout << globalChannelList.size() << endl;
-  //cout << searchList.size() << endl;
-	
-	for (unsigned int i=0;   i < globalChannelList.size(); ++i) {
-		unsigned int ncount=0;
-		for (unsigned int j=0;   j < searchList.size(); ++j ) {
-	 	  std::size_t found = globalChannelList[i].find(searchList[j]);
-			if (found!=std::string::npos) {
-				++ncount;
-			}
-		}
-		//if (ncount > 0) cout << ncount << " " <<  searchList.size() << endl;
-		if (ncount==searchList.size()) {
-			retChannelList.push_back(globalChannelList[i]);
-		}
-	}
- 
-  //cout << retChannelList.size() << endl;
- 
-  return retChannelList;
-} 
+    vector<string> retChannelList;
+
+    retChannelList.clear();
+    retChannelList.reserve(200);
+
+    //cout << globalChannelList.size() << endl;
+    //cout << searchList.size() << endl;
+
+    for (unsigned int i=0;   i < globalChannelList.size(); ++i) {
+        unsigned int ncount=0;
+        for (unsigned int j=0;   j < searchList.size(); ++j ) {
+            std::size_t found = globalChannelList[i].find(searchList[j]);
+            if (found!=std::string::npos) {
+                ++ncount;
+            }
+        }
+        //if (ncount > 0) cout << ncount << " " <<  searchList.size() << endl;
+        if (ncount==searchList.size()) {
+            retChannelList.push_back(globalChannelList[i]);
+        }
+    }
+
+    //cout << retChannelList.size() << endl;
+
+    return retChannelList;
+}
 
 
 /**
@@ -681,160 +726,161 @@ method to be preceded by getV(v) and followed by e.g.getCachePVArrayNoWait(v, pv
  * \param handleArray input: array of handles
  * \return PVDataHolder *
  */
-PVDataHolder * Connect::getPVData(vector<unsigned int> handleArray) {
+PVDataHolder * Connect::getPVData(std::vector<unsigned int> handleArray)
+{
 #define __METHOD__ "CAFE::getPVData(vector<unsigned int> handleArray)"
 
-	// Check in vector already exists!
-	// showing contents:
-	bool  groupExists = false;
-	char _groupName[PVGROUP_PSEUDO_SIZE];
-	std::map<vector<unsigned int>,string>::iterator it = groupPseudoMap.begin();
-	//std::cout << "groupPseudoMap contains:\n";
-	for (it=groupPseudoMap.begin(); it!=groupPseudoMap.end(); ++it) {
-		//std::cout << (it->first)[0] << " => " << it->second << '\n';
-		if (it->first==handleArray) {
-			//cout << "MATCH FOUND GROUP EXISTS " << endl;
-			strcpy(_groupName,(it->second).c_str());
-			groupExists=true;
-			for (unsigned short i = 0; i < PVGroupPseudo.size(); ++i) {
-				if (strcmp(PVGroupPseudo[i].name, _groupName) == 0) {
-					//cout << "GROUP " << groupName << " ALREADY EXISTS " << endl;
-					return PVGroupPseudo[i].getPVData();
-				}
-			}
-			cout << __FILE__ << "//" << __METHOD__ << endl;
-			cout << "WARNING:: GROUP " << (it->second) << " NOT FOUND IN PVGROUPPSEUDO " << endl;
-			cout << "THIS WARNING SHOULD NOT APPEAR! " << endl;
-			break;
-		}
-	}
+    // Check in vector already exists!
+    // showing contents:
+    bool  groupExists = false;
+    char _groupName[PVGROUP_PSEUDO_SIZE];
+    std::map<vector<unsigned int>,string>::iterator it = groupPseudoMap.begin();
+    //std::cout << "groupPseudoMap contains:\n";
+    for (it=groupPseudoMap.begin(); it!=groupPseudoMap.end(); ++it) {
+        //std::cout << (it->first)[0] << " => " << it->second << '\n';
+        if (it->first==handleArray) {
+            //cout << "MATCH FOUND GROUP EXISTS " << endl;
+            strcpy(_groupName,(it->second).c_str());
+            groupExists=true;
+            for (unsigned short i = 0; i < PVGroupPseudo.size(); ++i) {
+                if (strcmp(PVGroupPseudo[i].name, _groupName) == 0) {
+                    //cout << "GROUP " << groupName << " ALREADY EXISTS " << endl;
+                    return PVGroupPseudo[i].getPVData();
+                }
+            }
+            cout << __FILE__ << "//" << __METHOD__ << endl;
+            cout << "WARNING:: GROUP " << (it->second) << " NOT FOUND IN PVGROUPPSEUDO " << endl;
+            cout << "THIS WARNING SHOULD NOT APPEAR! " << endl;
+            break;
+        }
+    }
 
-	status=ICAFE_NORMAL;
-	cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
-	cafeConduit_set_by_handle::iterator it_handle;
+    status=ICAFE_NORMAL;
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
 
-	std::stringstream converter;
-	std::stringstream converter1;
-	//std::stringstream converter2;
-	string sgn="g";
-	converter << handleArray.size();
-	sgn.append(converter.str());
-	sgn.append("h");
-	converter1 << handleArray[0];
-
-
-	unsigned int nseq=0;
-	for (unsigned int i=1; i<handleArray.size()-1; ++i) {
-
-		if(handleArray[i] != handleArray[i-1]+1) {
-			if(nseq>0) {
-				converter1 << "-";
-				converter1 << handleArray[i-1];
-				converter1 << "/";
-				converter1 << handleArray[i];
-			}
-			else {
-				converter1 << "/";
-				converter1 << handleArray[i];
-			}
-			nseq=0;
-		}
-		else {
-			nseq=nseq+1;
-		}
-	}
-
-	if (nseq==0) {
-		converter1 << "/";
-	}
-	else {
-		converter1 << "-";
-	}
-	converter1 << handleArray[handleArray.size()-1];
-
-	unsigned int minVal=min(converter1.str().size(),(size_t) (PVGROUP_PSEUDO_SIZE-sgn.size()-1));
-	sgn.append(converter1.str().substr(0,minVal));
-
-	//Example of GroupName
-	//g22h1-3/5/7/9-12/16/19/21/23/25/28/4/6/11-12/33/31/2
-	//g164h92-229/212-217/230-249
+    std::stringstream converter;
+    std::stringstream converter1;
+    //std::stringstream converter2;
+    string sgn="g";
+    converter << handleArray.size();
+    sgn.append(converter.str());
+    sgn.append("h");
+    converter1 << handleArray[0];
 
 
-	const char * groupName=sgn.c_str();
-	helper.removeLeadingAndTrailingSpacesPseudo(groupName, _groupName);
+    unsigned int nseq=0;
+    for (unsigned int i=1; i<handleArray.size()-1; ++i) {
 
-	for (unsigned short i = 0; i < PVGroupPseudo.size(); ++i) {
-		if (strcmp(PVGroupPseudo[i].name, _groupName) == 0) {
-			//cout << "GROUP " << groupName << " ALREADY EXISTS " << endl;
-			groupExists = true;
-			return PVGroupPseudo[i].getPVData();
-		}
-	}
+        if(handleArray[i] != handleArray[i-1]+1) {
+            if(nseq>0) {
+                converter1 << "-";
+                converter1 << handleArray[i-1];
+                converter1 << "/";
+                converter1 << handleArray[i];
+            }
+            else {
+                converter1 << "/";
+                converter1 << handleArray[i];
+            }
+            nseq=0;
+        }
+        else {
+            nseq=nseq+1;
+        }
+    }
 
+    if (nseq==0) {
+        converter1 << "/";
+    }
+    else {
+        converter1 << "-";
+    }
+    converter1 << handleArray[handleArray.size()-1];
 
-	PVGroup pvGroup;
-	strcpy(pvGroup.name, _groupName);
+    unsigned int minVal=min(converter1.str().size(),(size_t) (PVGROUP_PSEUDO_SIZE-sgn.size()-1));
+    sgn.append(converter1.str().substr(0,minVal));
 
-	pvGroup.npv = handleArray.size();
-	PVDataHolder * pvdata = new PVDataHolder[pvGroup.npv];
-
-	for (unsigned int iMember = 0; iMember < pvGroup.npv; ++iMember) {
-		bool hf=false;
-		//Fill PVDataUnit here
-		//char _pv[PVNAME_SIZE];
-		//helper.removeLeadingAndTrailingSpaces(pvArray[i], _pv);
-
-		it_handle = handle_index.find(handleArray[iMember]);
-
-		if (it_handle != handle_index.end()) {
-			hf=true;
-		}
-
-
-		if (!hf) {
-			pvdata[iMember].status=ECAFE_INVALID_HANDLE;
-			if(printErrorPolicy.getInvalidHandle()) {
-				cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-				cafeStatus.report(ECAFE_INVALID_HANDLE);
-				cout <<  "Invalid handle = " << handleArray[iMember]
-					   << " for member [" << iMember << "] " << endl;
-			}
-			continue;
-		}
-
-		pvdata[iMember].alarmStatus=-1;
-		pvdata[iMember].alarmSeverity=-1;
-		pvdata[iMember].ts.secPastEpoch=0;
-		pvdata[iMember].ts.nsec=0;
-		pvdata[iMember].status=ICAFE_NORMAL;
-
-		strcpy(pvdata[iMember].pv, ((*it_handle).pv).c_str());
-		//this sets size and nelem to 1 if not connected
-		pvdata[iMember].setNelem( (*it_handle).getChannelRegalia().getNelem() );
-
-		//set Device, Attribute for handle
-
-		(*it_handle).getPVDataHolder(pvdata[iMember]);
-
-		strcpy(pvdata[iMember].pv,  handleHelper.getPVFromHandle(handleArray[iMember]));
-
-		ChannelDeviceAttribute channelDeviceAttribute;
-		channelDeviceAttribute.init(pvdata[iMember].pv,deviceAttributeDeliminator);
-
-		strcpy(pvdata[iMember].device, channelDeviceAttribute.getDevice());
-		strcpy(pvdata[iMember].attrib, channelDeviceAttribute.getAttribute());
-
-		pvGroup.memberMap.insert(iMember,pvdata[iMember].pv);
-
-	}
+    //Example of GroupName
+    //g22h1-3/5/7/9-12/16/19/21/23/25/28/4/6/11-12/33/31/2
+    //g164h92-229/212-217/230-249
 
 
-	pvGroup.pvdata = pvdata;
-	PVGroupPseudo.push_back(pvGroup);
+    const char * groupName=sgn.c_str();
+    helper.removeLeadingAndTrailingSpacesPseudo(groupName, _groupName);
 
-	groupPseudoMap.insert( std::pair<vector<unsigned int>,string>(handleArray,sgn) );
+    for (unsigned short i = 0; i < PVGroupPseudo.size(); ++i) {
+        if (strcmp(PVGroupPseudo[i].name, _groupName) == 0) {
+            //cout << "GROUP " << groupName << " ALREADY EXISTS " << endl;
+            groupExists = true;
+            return PVGroupPseudo[i].getPVData();
+        }
+    }
 
-	return pvGroup.getPVData();
+
+    PVGroup pvGroup;
+    strcpy(pvGroup.name, _groupName);
+
+    pvGroup.npv = handleArray.size();
+    PVDataHolder * pvdata = new PVDataHolder[pvGroup.npv];
+
+    for (unsigned int iMember = 0; iMember < pvGroup.npv; ++iMember) {
+        bool hf=false;
+        //Fill PVDataUnit here
+        //char _pv[PVNAME_SIZE];
+        //helper.removeLeadingAndTrailingSpaces(pvArray[i], _pv);
+
+        it_handle = handle_index.find(handleArray[iMember]);
+
+        if (it_handle != handle_index.end()) {
+            hf=true;
+        }
+
+
+        if (!hf) {
+            pvdata[iMember].status=ECAFE_INVALID_HANDLE;
+            if(printErrorPolicy.getInvalidHandle()) {
+                cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+                cafeStatus.report(ECAFE_INVALID_HANDLE);
+                cout <<  "Invalid handle = " << handleArray[iMember]
+                     << " for member [" << iMember << "] " << endl;
+            }
+            continue;
+        }
+
+        pvdata[iMember].alarmStatus=-1;
+        pvdata[iMember].alarmSeverity=-1;
+        pvdata[iMember].ts.secPastEpoch=0;
+        pvdata[iMember].ts.nsec=0;
+        pvdata[iMember].status=ICAFE_NORMAL;
+
+        strcpy(pvdata[iMember].pv, ((*it_handle).pv).c_str());
+        //this sets size and nelem to 1 if not connected
+        pvdata[iMember].setNelem( (*it_handle).getChannelRegalia().getNelem() );
+
+        //set Device, Attribute for handle
+
+        (*it_handle).getPVDataHolder(pvdata[iMember]);
+
+        strcpy(pvdata[iMember].pv,  handleHelper.getPVFromHandle(handleArray[iMember]));
+
+        ChannelDeviceAttribute channelDeviceAttribute;
+        channelDeviceAttribute.init(pvdata[iMember].pv,deviceAttributeDeliminator);
+
+        strcpy(pvdata[iMember].device, channelDeviceAttribute.getDevice());
+        strcpy(pvdata[iMember].attrib, channelDeviceAttribute.getAttribute());
+
+        pvGroup.memberMap.insert(iMember,pvdata[iMember].pv);
+
+    }
+
+
+    pvGroup.pvdata = pvdata;
+    PVGroupPseudo.push_back(pvGroup);
+
+    groupPseudoMap.insert( std::pair<vector<unsigned int>,string>(handleArray,sgn) );
+
+    return pvGroup.getPVData();
 #undef __METHOD__
 }
 
@@ -842,13 +888,14 @@ PVDataHolder * Connect::getPVData(vector<unsigned int> handleArray) {
 
 
 /**
- * \brief Connect::groupList - lists all groups in global vector PVGroupV \n      
+ * \brief Connect::groupList - lists all groups in global vector PVGroupV \n
  * \param glist output: shared_ptr to array of group names (pv_string_t)
  * \param listLength: length of glist array
  * \return ICAFE_NORMAL
  */
 //int Connect::groupList(dbr_string_t * &glist, unsigned int &listLength) {
-int Connect::groupList(boost::shared_ptr<pv_string_t []> &glist, unsigned int &listLength) {
+int Connect::groupList(boost::shared_ptr<pv_string_t []> &glist, unsigned int &listLength)
+{
 
     listLength=PVGroupV.size();
     //glist = new dbr_string_t [listLength];
@@ -868,7 +915,8 @@ int Connect::groupList(boost::shared_ptr<pv_string_t []> &glist, unsigned int &l
  * \param glist output: vector of group names (string)
  * \return ICAFE_NORMAL
  */
-int Connect::groupList(vector<string> &glist) {
+int Connect::groupList(std::vector<std::string> &glist)
+{
 
     glist.clear();
     glist.reserve(PVGroupV.size());
@@ -890,12 +938,14 @@ int Connect::groupList(vector<string> &glist) {
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_GROUP
  */
 
-int Connect::groupMemberList(const char * groupName, boost::shared_ptr<pv_string_t []> &list, unsigned int &listLength) {
+int Connect::groupMemberList(const char * groupName, boost::shared_ptr<pv_string_t []> &list, unsigned int &listLength)
+{
 
     char _groupName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(groupName, _groupName);
 
-    bool groupExists  = false; listLength=0;
+    bool groupExists  = false;
+    listLength=0;
 
     for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
         if (strcmp(PVGroupV[i].name, _groupName ) == 0) {
@@ -912,7 +962,9 @@ int Connect::groupMemberList(const char * groupName, boost::shared_ptr<pv_string
         }
     }
 
-    if(!groupExists) {return ECAFE_UNKNOWN_GROUP;}
+    if(!groupExists) {
+        return ECAFE_UNKNOWN_GROUP;
+    }
     return ICAFE_NORMAL;
 }
 
@@ -951,18 +1003,19 @@ int Connect::groupMemberList(const char * groupName, dbr_string_t * &list, unsig
  * \param list output: vector of process variables (string)
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_GROUP
  */
-int Connect::groupMemberList(const char * groupName, vector<string> &list) {
+int Connect::groupMemberList(const char * groupName, std::vector<std::string> &list)
+{
 
     char _groupName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(groupName, _groupName);
 
     list.clear();
-    
+
     bool groupExists  = false;
 
     for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
         if (strcmp(PVGroupV[i].name, _groupName ) == 0) {
-						list.reserve(PVGroupV[i].npv);
+            list.reserve(PVGroupV[i].npv);
             for (unsigned int j=0; j< PVGroupV[i].npv; ++j) {
                 list.push_back(PVGroupV[i].pvdata[j].pv);
             }
@@ -972,7 +1025,9 @@ int Connect::groupMemberList(const char * groupName, vector<string> &list) {
         }
     }
 
-    if(!groupExists) {return ECAFE_UNKNOWN_GROUP;}
+    if(!groupExists) {
+        return ECAFE_UNKNOWN_GROUP;
+    }
     return ICAFE_NORMAL;
 }
 
@@ -982,7 +1037,8 @@ int Connect::groupMemberList(const char * groupName, vector<string> &list) {
  * \param pv input: (const char *) process variable
  * \return index of pvdata for pv within group; else -1 if error
  */
-int Connect::fetchIndexOfGroupMember(const char *groupName, const char * pv) {
+int Connect::fetchIndexOfGroupMember(const char *groupName, const char * pv)
+{
 
     bool groupExists=false;
 
@@ -1022,12 +1078,13 @@ int Connect::fetchIndexOfGroupMember(const char *groupName, const char * pv) {
 
 
 /**
- * \brief Connect::collectionList - lists all collection in global vector deviceCollectionV \n     
+ * \brief Connect::collectionList - lists all collection in global vector deviceCollectionV \n
  * \param clist output: array of collection names (pv_string_t)
  * \param listLength output: length of clist array
  * \return ICAFE_NORMAL
  */
-int Connect::collectionList(boost::shared_ptr<pv_string_t []> &clist,  unsigned int &listLength) {
+int Connect::collectionList(boost::shared_ptr<pv_string_t []> &clist,  unsigned int &listLength)
+{
 
     listLength=deviceCollectionV.size();
     //clist = new dbr_string_t [listLength];
@@ -1045,7 +1102,8 @@ int Connect::collectionList(boost::shared_ptr<pv_string_t []> &clist,  unsigned 
  * \param clist output: vector of collection names (string)
  * \return ICAFE_NORMAL
  */
-int Connect::collectionList(vector<string> &clist) {
+int Connect::collectionList(std::vector<std::string> &clist)
+{
 
     clist.clear();
     clist.reserve(deviceCollectionV.size());
@@ -1065,12 +1123,14 @@ int Connect::collectionList(vector<string> &clist) {
  * \param listLength: length of list array
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
-int Connect::collectionMemberList(const char * collectionName, boost::shared_ptr<pv_string_t []> &list, unsigned int &listLength) {
+int Connect::collectionMemberList(const char * collectionName, boost::shared_ptr<pv_string_t []> &list, unsigned int &listLength)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
 
-    bool collectionExists  = false; listLength=0;
+    bool collectionExists  = false;
+    listLength=0;
 
     for (unsigned short i = 0; i < deviceCollectionV.size(); ++i) {
         if (strcmp(deviceCollectionV[i].name.c_str(), _collectionName ) == 0) {
@@ -1087,7 +1147,9 @@ int Connect::collectionMemberList(const char * collectionName, boost::shared_ptr
         }
     }
 
-    if(!collectionExists) {return ECAFE_UNKNOWN_COLLECTION;}
+    if(!collectionExists) {
+        return ECAFE_UNKNOWN_COLLECTION;
+    }
     return ICAFE_NORMAL;
 }
 
@@ -1098,7 +1160,8 @@ int Connect::collectionMemberList(const char * collectionName, boost::shared_ptr
  * \param list output: vector of devices (string)
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
-int Connect::collectionMemberList(const char * collectionName, vector<string> &list) {
+int Connect::collectionMemberList(const char * collectionName, std::vector<std::string> &list)
+{
 
 
     char _collectionName[PVNAME_SIZE];
@@ -1122,7 +1185,9 @@ int Connect::collectionMemberList(const char * collectionName, vector<string> &l
         }
     }
 
-    if(!collectionExists) {return ECAFE_UNKNOWN_COLLECTION;}
+    if(!collectionExists) {
+        return ECAFE_UNKNOWN_COLLECTION;
+    }
     return ICAFE_NORMAL;
 }
 
@@ -1133,15 +1198,16 @@ int Connect::collectionMemberList(const char * collectionName, vector<string> &l
  * \param posDev output: multimap of devices (string) and their positions (float) - odered in position
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
-int Connect::devicePositionOrderedMultiMap(const char * collectionName, std::multimap<float, string> &posDev) {
+int Connect::devicePositionOrderedMultiMap(const char * collectionName, std::multimap<float, std::string> &posDev)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
 
     posDev.clear();
-  
-	  std::map<string, float> devPos;
-		devPos.clear();
+
+    std::map<string, float> devPos;
+    devPos.clear();
 
     bool collectionExists  = false;
 
@@ -1159,13 +1225,13 @@ int Connect::devicePositionOrderedMultiMap(const char * collectionName, std::mul
     }
 
     if(collectionExists)  {
-		 	posDev = flip_map(devPos);
-			return ICAFE_NORMAL;
-		}
+        posDev = flip_map(devPos);
+        return ICAFE_NORMAL;
+    }
     else {
-			return ECAFE_UNKNOWN_COLLECTION;
-		}
-		   
+        return ECAFE_UNKNOWN_COLLECTION;
+    }
+
 }
 
 
@@ -1176,13 +1242,14 @@ int Connect::devicePositionOrderedMultiMap(const char * collectionName, std::mul
  * \param posDev output: map of devices (string) and their positions (float) - not ordered
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
-int Connect::devicePositionMap(const char * collectionName, std::map<float, string> &posDev) {
+int Connect::devicePositionMap(const char * collectionName, std::map<float, std::string> &posDev)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
 
     posDev.clear();
-  
+
     bool collectionExists  = false;
 
     for (unsigned short i = 0; i < deviceCollectionV.size(); ++i) {
@@ -1190,7 +1257,7 @@ int Connect::devicePositionMap(const char * collectionName, std::map<float, stri
 
             vector<collectionMember> vc =  deviceCollectionV[i].getCMembers();
 
-            for (unsigned int j=0; j< vc.size(); ++j) {						 	  
+            for (unsigned int j=0; j< vc.size(); ++j) {
                 posDev.insert(std::make_pair(vc[j].devicePosition, vc[j].deviceName));
             }
             collectionExists  = true;
@@ -1198,13 +1265,13 @@ int Connect::devicePositionMap(const char * collectionName, std::map<float, stri
         }
     }
 
-    if(collectionExists)  {		 
-			return ICAFE_NORMAL;
-		}
+    if(collectionExists)  {
+        return ICAFE_NORMAL;
+    }
     else {
-			return ECAFE_UNKNOWN_COLLECTION;
-		}
-		   
+        return ECAFE_UNKNOWN_COLLECTION;
+    }
+
 }
 
 
@@ -1213,40 +1280,42 @@ int Connect::devicePositionMap(const char * collectionName, std::map<float, stri
 /**
  * \brief Connect::devicePositionV - returns a vector of devices and their positions
  * \param collectionName input: name of collection
- * \param dev output: vector of devices (string) 
- * \param pos output: vector of devices positions (float) 
+ * \param dev output: vector of devices (string)
+ * \param pos output: vector of devices positions (float)
  * \return ICAFE_NORMAL is all OK else, ECAFE_UNKNOWN_COLLECTION
  */
-int Connect::devicePositionV(const char * collectionName, std::vector<string> &dev, std::vector<float> &pos) {
+int Connect::devicePositionV(const char * collectionName, std::vector<std::string> &dev, std::vector<float> &pos)
+{
 
     char _collectionName[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(collectionName, _collectionName);
 
-    pos.clear(); dev.clear();
-  
+    pos.clear();
+    dev.clear();
+
     bool collectionExists  = false;
 
     for (unsigned short i = 0; i < deviceCollectionV.size(); ++i) {
         if (strcmp(deviceCollectionV[i].name.c_str(), _collectionName ) == 0) {
 
             vector<collectionMember> vc =  deviceCollectionV[i].getCMembers();
-					
-            for (unsigned int j=0; j< vc.size(); ++j) {						 	  
+
+            for (unsigned int j=0; j< vc.size(); ++j) {
                 dev.push_back(vc[j].deviceName);
-								pos.push_back(vc[j].devicePosition);
+                pos.push_back(vc[j].devicePosition);
             }
             collectionExists  = true;
             break;
         }
     }
 
-    if(collectionExists)  {		 
-			return ICAFE_NORMAL;
-		}
+    if(collectionExists)  {
+        return ICAFE_NORMAL;
+    }
     else {
-			return ECAFE_UNKNOWN_COLLECTION;
-		}
-		   
+        return ECAFE_UNKNOWN_COLLECTION;
+    }
+
 }
 
 
@@ -1258,7 +1327,8 @@ int Connect::devicePositionV(const char * collectionName, std::vector<string> &d
  * \param  deviceName input: (const char *) device name
  * \return index of device in collection; else -1 if error
  */
-int Connect::fetchIndexOfCollectionMember(const char *collectionName, const char * deviceName) {
+int Connect::fetchIndexOfCollectionMember(const char *collectionName, const char * deviceName)
+{
 
     bool collectionExists=false;
 
@@ -1273,7 +1343,7 @@ int Connect::fetchIndexOfCollectionMember(const char *collectionName, const char
 
             vector<collectionMember> vc =  deviceCollectionV[i].getCMembers();
 
-            for (unsigned int j=0; j< vc.size(); ++j) {            
+            for (unsigned int j=0; j< vc.size(); ++j) {
                 if (strcmp(vc[j].deviceName.c_str(), _deviceName) == 0) {
                     return j;
                 }
@@ -1313,15 +1383,14 @@ int Connect::fetchIndexOfCollectionMember(const char *collectionName, const char
  *  \return status ECA_NORMAL if OK
  */
 int Connect::groupOpen(PVGroup &pvgroup, unsigned int &groupHandle)
-        throw (CAFEException_groupOpen) {
+throw (CAFEException_groupOpen)
+{
 #define __METHOD__ "Connect::groupOpen(PVGroup, &groupHandle) "
 
     return (pvgroup.getName(), groupHandle);
 
 #undef __METHOD__
 }
-
-
 
 
 /**
@@ -1333,23 +1402,23 @@ int Connect::groupOpen(PVGroup &pvgroup, unsigned int &groupHandle)
  *  \return status ECA_NORMAL if OK
  */
 int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
-                    throw (CAFEException_groupOpen) {
+throw (CAFEException_groupOpen)
+{
 #define __METHOD__ "Connect::groupOpen(groupName, &groupHandle) "
 
     // Determine ca-client context
     ca_client_context * ccc = ca_current_context();
 
     if (ccc == NULL) {
-        try{
-			status=Connect::init();     // ca_enable_preemptive_callback
-
+        try {
+            status=Connect::init();     // ca_enable_preemptive_callback
         }
-        catch(CAFEException_init){
+        catch(CAFEException_init) {
             //status will be ECA_ALLOCMEM
 
             CAFEException_group e;
             e = exceptionsHelper.prepareCAFEException_group((char *) groupName, 0,
-                                        ECA_ALLOCMEM,__METHOD__, __LINE__);
+                    ECA_ALLOCMEM,__METHOD__, __LINE__);
             CAFEException_groupOpen badgrp;
             badgrp.groupEx=e;
             throw(badgrp);
@@ -1378,7 +1447,7 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
     unsigned short iIdx=0;
 
     for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
-        if (strcmp(PVGroupV[i].name, groupName) == 0) {         
+        if (strcmp(PVGroupV[i].name, groupName) == 0) {
             pvgroup = PVGroupV[i];
             groupExists = true;
             iIdx=i;
@@ -1386,7 +1455,7 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
         }
     }
 
-    if (!groupExists) {      
+    if (!groupExists) {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cafeStatus.report(ECAFE_UNKNOWN_GROUP);
         return ECAFE_UNKNOWN_GROUP;
@@ -1403,7 +1472,7 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
     for (unsigned int i = 0; i < nMember; ++i) {
 
         char _pv[60];
-        strcpy( _pv , pvgroup.pvdata[i].pv);
+        strcpy( _pv, pvgroup.pvdata[i].pv);
         //char * _pv = pvgroup.pvdata[i].pv;
         unsigned int iNow = i;
 
@@ -1415,15 +1484,14 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
             if (strcmp(pvgroup.pvdata[iPrevious].pv, _pv) == 0) {
                 cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cout << "WARNING: PV " << _pv << " AT INDEX [" << iNow << "] " \
-								        "ALREADY EXISTS with handle " << memberHandle[iPrevious] 
-										 << " AT INDEX [" << iPrevious << "] "<<  endl;
+                     "ALREADY EXISTS with handle " << memberHandle[iPrevious]
+                     << " AT INDEX [" << iPrevious << "] "<<  endl;
                 cout << "WARNING: PV ADDED TO GROUP BUT IS ASSIGNED TO PREVIOUS HANDLE " << endl;
                 pvAlreadyExistsWithinGroup = true;
                 memberHandle[iNow] = memberHandle[iPrevious];
                 break;
             }
-         }
-
+        }
 
 
         //Do not create new handle if pv already exists withing this group
@@ -1433,7 +1501,8 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
 
                 createHandleWithinGroup(_pv, ccc, memberHandle[i]);
 
-            } catch (CAFEException_pv e) {
+            }
+            catch (CAFEException_pv e) {
 
                 cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cout << "Handle               : " << e.handle << endl;
@@ -1443,7 +1512,7 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
                 cout << "CANNOT ADD PV TO GROUP SINCE UNIQUE ID ALREADY EXISTS " << endl;
                 CAFEException_group ge;
                 ge = exceptionsHelper.prepareCAFEException_group((char *) groupName, 0,
-                                           ECAFE_HASH_UNIQUEID_EXISTS,__METHOD__, __LINE__);
+                        ECAFE_HASH_UNIQUEID_EXISTS,__METHOD__, __LINE__);
                 CAFEException_groupOpen badgrp;
                 badgrp.groupEx=ge;
                 throw(badgrp);
@@ -1461,9 +1530,13 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
 
     std::pair<cafeGroup_set::iterator, bool> p;
 
-    if(MUTEX){cafeMutex.lock();}  //lock
+    if(MUTEX) {
+        cafeMutex.lock();   //lock
+    }
     p = gs.insert(ConduitGroup(groupName, ccc, groupID, nMember, memberHandle));
-    if(MUTEX){cafeMutex.unlock();}  //unlock
+    if(MUTEX) {
+        cafeMutex.unlock();   //unlock
+    }
 
 
     // p.second true insert success
@@ -1473,7 +1546,7 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
 
         CAFEException_group e;
         e = exceptionsHelper.prepareCAFEException_group((char *) groupName, 0,
-                                   ECAFE_HASH_UNIQUEID_EXISTS,__METHOD__, __LINE__);
+                ECAFE_HASH_UNIQUEID_EXISTS,__METHOD__, __LINE__);
         CAFEException_groupOpen badgrp;
         badgrp.groupEx=e;
         throw(badgrp);
@@ -1482,7 +1555,6 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
     }
 
     groupHandle = (*(p.first)).getGroupHandle();
-
 
     pvgroup.groupHandle=groupHandle;
 
@@ -1496,87 +1568,87 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
 
         if (it_handle != handle_index.end()) {
             //Change group handle
-            if(MUTEX){cafeMutex.lock();}
+            if(MUTEX) {
+                cafeMutex.lock();
+            }
             handle_index.modify((it_handle), change_groupHandle(groupHandle));
-            if(MUTEX){cafeMutex.unlock();}
+            if(MUTEX) {
+                cafeMutex.unlock();
+            }
         }
     }
 
     //What is the POLICY!??
     //To Flush or to Pend this is the question!
-    if (channelOpenGroupPolicy.getWhenToFlushSendBuffer()==FLUSH_AFTER_EACH_GROUP_CREATION)
-    {
-			  //Set timeout to a value that depends on the no of members: 1200 takes 3.5 seconds
-				double extraTime=nMember/NMEMBER_PER_SEC_SG_PEND_EVENT;
-				//if ( (DEFAULT_TIMEOUT_SG_PEND_EVENT + extraTime) > channelOpenGroupPolicy.getTimeout() ) {
-				if ( (channelOpenGroupPolicy.getDefaultTimeout() + extraTime) > channelOpenGroupPolicy.getTimeout() ) {
-					channelOpenGroupPolicy.setTimeout(channelOpenGroupPolicy.getDefaultTimeout()+ extraTime);
-				}
-				
-							
-				
-            using namespace boost::posix_time;
-            ptime timeStart(microsec_clock::local_time());
+    if (channelOpenGroupPolicy.getWhenToFlushSendBuffer()==FLUSH_AFTER_EACH_GROUP_CREATION) {
+        //Set timeout to a value that depends on the no of members: 1200 takes 3.5 seconds
+        double extraTime=nMember/NMEMBER_PER_SEC_SG_PEND_EVENT;
+        //if ( (DEFAULT_TIMEOUT_SG_PEND_EVENT + extraTime) > channelOpenGroupPolicy.getTimeout() ) {
+        if ( (channelOpenGroupPolicy.getDefaultTimeout() + extraTime) > channelOpenGroupPolicy.getTimeout() ) {
+            channelOpenGroupPolicy.setTimeout(channelOpenGroupPolicy.getDefaultTimeout()+ extraTime);
+        }
 
-            double  timeElapsed=0;
-            unsigned int  nPoll=0;	
-				
-				
-            channelOpenGroupPolicy.flushSendBufferNow();
-						
-						bool allConnected=true;						
-            for (unsigned int i = 0; i < nMember; ++i) {
-              it_handle = handle_index.find(memberHandle[i]);
-              if (it_handle != handle_index.end()) {
-							  if (!(*it_handle).isConnected()) {		
-									allConnected=false;						
+        using namespace boost::posix_time;
+        ptime timeStart(microsec_clock::local_time());
+
+        double  timeElapsed=0;
+        unsigned int  nPoll=0;
+
+        channelOpenGroupPolicy.flushSendBufferNow();
+
+        bool allConnected=true;
+        for (unsigned int i = 0; i < nMember; ++i) {
+            it_handle = handle_index.find(memberHandle[i]);
+            if (it_handle != handle_index.end()) {
+                if (!(*it_handle).isConnected()) {
+                    allConnected=false;
                 }
-              }
             }
-								
-					  ptime timeEnd(microsec_clock::local_time());
+        }
+
+        ptime timeEnd(microsec_clock::local_time());
+        time_duration duration(timeEnd-timeStart);
+        timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+        while ( !allConnected && timeElapsed <= channelOpenGroupPolicy.getTimeout()) {
+
+#if HAVE_BOOST_THREAD
+            boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
+#else
+#if HAVE_LINUX
+            usleep(1000);
+#endif
+#endif
+
+            ++nPoll;
+
+            allConnected=true;
+            for (unsigned int i = 0; i < nMember; ++i) {
+                it_handle = handle_index.find(memberHandle[i]);
+                if (it_handle != handle_index.end()) {
+                    if (!(*it_handle).isConnected()) {
+                        allConnected=false;
+                    }
+                }
+            }
+
+            ptime timeEnd(microsec_clock::local_time());
             time_duration duration(timeEnd-timeStart);
             timeElapsed= (double) duration.total_microseconds()/1000000.0;
 
-            while ( !allConnected && timeElapsed <= channelOpenGroupPolicy.getTimeout()){	
-									
-                #if HAVE_BOOST_THREAD
-                  boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
-                #else
-                  #if HAVE_LINUX
-                  usleep(1000);
-                  #endif
-                #endif
-								
-                ++nPoll;
-								
-								allConnected=true;								
-                for (unsigned int i = 0; i < nMember; ++i) {
-                  it_handle = handle_index.find(memberHandle[i]);
-                  if (it_handle != handle_index.end()) {
-							      if (!(*it_handle).isConnected()) {		
-									    allConnected=false;						
-                    }
-                  }
-                }
+        }
 
-                ptime timeEnd(microsec_clock::local_time());
-                time_duration duration(timeEnd-timeStart);
-                timeElapsed= (double) duration.total_microseconds()/1000000.0;
-							
-            }
-							
-						/*
-						if (allConnected)  {
-								cout << groupName << " // is all connected //" << endl;
-						} 					        
-						else {
-								cout << groupName << " // is not all connected //" << endl;
-						}
-						cout << "timeElapsed for open " << timeElapsed << " nPoll = " << nPoll << endl;
-						*/
-				
-				
+        /*
+        if (allConnected)  {
+        		cout << groupName << " // is all connected //" << endl;
+        }
+        else {
+        		cout << groupName << " // is not all connected //" << endl;
+        }
+        cout << "timeElapsed for open " << timeElapsed << " nPoll = " << nPoll << endl;
+        */
+
+
     }
 
     //memHandle must not be deleted; allocated memory for use elsewhere
@@ -1594,35 +1666,36 @@ int Connect::groupOpen(const char *groupName, unsigned int &groupHandle)
  * All Conduit handles are erased.
  * \return ICAFE_NORMAL if all OK
  */
-int Connect::groupClose() {
+int Connect::groupClose()
+{
 #define __METHOD__ "Connect::groupClose() "
 
     long gStatus=ICAFE_NORMAL;
     long _status=ICAFE_NORMAL;
 
     vector<PVGroup> m_pvgroup;
-		m_pvgroup.clear();
+    m_pvgroup.clear();
 
     m_pvgroup.reserve(PVGroupV.size());
     std::copy(PVGroupV.begin(), PVGroupV.end(), std::back_inserter(m_pvgroup));
 
-		unsigned int groupH=0;
+    unsigned int groupH=0;
 
     //cout << " PVGroupV.size() " << PVGroupV.size() << endl;
-		//cout << " m_pvgroup.size() " <<  m_pvgroup.size() << endl;
+    //cout << " m_pvgroup.size() " <<  m_pvgroup.size() << endl;
 
-		//PVGroupV members do not know about groupHandles 
-		for (size_t i=0; i<m_pvgroup.size(); ++i) {
-	
-	     groupH=handleHelper.getGroupHandleFromGroupName(m_pvgroup[i].name);
-	   
-		   //cout << "Close group " << m_pvgroup[i].name << " with handle " << groupH << endl;
-		  _status=groupClose(groupH);
-			 if (_status!=ICAFE_NORMAL && gStatus==ICAFE_NORMAL) {
-				gStatus=_status;
-			 }
-			
-		}//for
+    //PVGroupV members do not know about groupHandles
+    for (size_t i=0; i<m_pvgroup.size(); ++i) {
+
+        groupH=handleHelper.getGroupHandleFromGroupName(m_pvgroup[i].name);
+
+        //cout << "Close group " << m_pvgroup[i].name << " with handle " << groupH << endl;
+        _status=groupClose(groupH);
+        if (_status!=ICAFE_NORMAL && gStatus==ICAFE_NORMAL) {
+            gStatus=_status;
+        }
+
+    }//for
 
     m_pvgroup.erase( m_pvgroup.begin(),  m_pvgroup.end());
 
@@ -1640,10 +1713,11 @@ int Connect::groupClose() {
  * \param  groupHandle input
  * \return ICAFE_NORMAL if all OK
  */
-int Connect::groupClose(unsigned int groupHandle) {
+int Connect::groupClose(unsigned int groupHandle)
+{
 #define __METHOD__ "Connect::groupClose(groupHandle) "
 
-	
+
     cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
 
@@ -1653,33 +1727,38 @@ int Connect::groupClose(unsigned int groupHandle) {
 
     if (it_groupHandle != groupHandle_index.end()) {
 
-       //this combines instructions into one single message
+        //this combines instructions into one single message
 
         closeHandles((*it_groupHandle).mHandle, (*it_groupHandle).getNMember());
 
         //Delete group
-        if(MUTEX){cafeMutex.lock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
         ca_sg_delete((*it_groupHandle).groupID);
-        if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
         //Now erase groupHandle
         gs.erase(it_groupHandle);
 
-    } else {
+    }
+    else {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
-		
-		
-		//Remove from PVGroup Vector
-		//WARNING
-		//PVGroupV members do not know about groupHandles 
-		for (size_t i=0; i<PVGroupV.size(); ++i) {
-	
-		  if (PVGroupV[i].name==groupName) {	
-			//if ( PVGroupV[i].groupHandle==groupHandle) {//wrong!			 
-				PVGroupV.erase (PVGroupV.begin()+i) ;
-				break;
-			}
-		}
+
+
+    //Remove from PVGroup Vector
+    //WARNING
+    //PVGroupV members do not know about groupHandles
+    for (size_t i=0; i<PVGroupV.size(); ++i) {
+
+        if (PVGroupV[i].name==groupName) {
+            //if ( PVGroupV[i].groupHandle==groupHandle) {//wrong!
+            PVGroupV.erase (PVGroupV.begin()+i) ;
+            break;
+        }
+    }
     return ICAFE_NORMAL;
 #undef __METHOD__
 }
@@ -1690,20 +1769,25 @@ int Connect::groupClose(unsigned int groupHandle) {
  * All Groupconduit handles are erased
  * \return ICAFE_NORMAL if all OK
  */
-int Connect::groupHandleErase() {
+int Connect::groupHandleErase()
+{
 #define __METHOD__ "Connect::groupHandleErase() "
 
 
-	if(MUTEX){cafeMutex.lock();}
+    if(MUTEX) {
+        cafeMutex.lock();
+    }
 
-	for (itgs = gs.begin(); itgs != gs.end(); ) {
-			gs.erase(itgs++);
+    for (itgs = gs.begin(); itgs != gs.end(); ) {
+        gs.erase(itgs++);
 
-	}//for
+    }//for
 
-	if(MUTEX){cafeMutex.unlock();}
+    if(MUTEX) {
+        cafeMutex.unlock();
+    }
 
-	return ICAFE_NORMAL;
+    return ICAFE_NORMAL;
 #undef __METHOD__
 }
 
@@ -1715,24 +1799,28 @@ int Connect::groupHandleErase() {
  * \param  ccc input: ca_client_context *
  * \return ICAFE_NORMAL always
  */
-int Connect::groupHandleErase(ca_client_context * ccc) {
+int Connect::groupHandleErase(ca_client_context * ccc)
+{
 #define __METHOD__ "Connect::groupHandleErase(ca_client_context *) "
 
-	if(MUTEX){cafeMutex.lock();}
+    if(MUTEX) {
+        cafeMutex.lock();
+    }
 
-	for (itgs = gs.begin(); itgs != gs.end(); ) {
-		if ( ((*itgs).getClientContext() == ccc))
-		{
-			gs.erase(itgs++);
-		}
-		else {
-			++itgs;
-		}
-	}//for
+    for (itgs = gs.begin(); itgs != gs.end(); ) {
+        if ( ((*itgs).getClientContext() == ccc)) {
+            gs.erase(itgs++);
+        }
+        else {
+            ++itgs;
+        }
+    }//for
 
-	if(MUTEX){cafeMutex.unlock();}
+    if(MUTEX) {
+        cafeMutex.unlock();
+    }
 
-	return ICAFE_NORMAL;
+    return ICAFE_NORMAL;
 
 #undef __METHOD__
 }
@@ -1748,7 +1836,8 @@ int Connect::groupHandleErase(ca_client_context * ccc) {
  *  \return status ECA_NORMAL if all OK else ECA_BADTYPE, ECA_STRTOBIG, ECA_ALLOCMEM
  *
  */
-int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chid &pCh) {
+int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chid &pCh)
+{
 #define __METHOD__ "Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chid &pCh)"
 
 
@@ -1760,7 +1849,7 @@ int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chi
     if (it_handle != handle_index.end()) {
 
         status = ca_create_channel(pv, channelCreatePolicy.getHandler(), (void *) (long long) _handle,
-                      channelCreatePolicy.getPriority(), &pCh);
+                                   channelCreatePolicy.getPriority(), &pCh);
 
         if(pCh!=NULL) {
             //Install the access rights state change callback handler
@@ -1768,40 +1857,48 @@ int Connect::createChannelWithinGroup(unsigned int _handle, const char * pv, chi
             if(ADD_EXCEPTION_EVENT==true) {
                 ca_add_exception_event(callbackHandlerException, (void*) (long long) _handle);
             }
-            if(MUTEX){cafeMutex.lock();}   //lock
+            if(MUTEX) {
+                cafeMutex.lock();   //lock
+            }
             handle_index.modify(it_handle, change_channelID (pCh) );
-            if(MUTEX){cafeMutex.unlock();} //unlock
+            if(MUTEX) {
+                cafeMutex.unlock();   //unlock
+            }
         }
 
         if (status != ECA_NORMAL) {
             cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " ca_create_channel failed: " << endl;
-						if (status == ECA_EVDISALLOW) {
-               cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " inappropriate function " << endl;
-						}
+            if (status == ECA_EVDISALLOW) {
+                cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " inappropriate function " << endl;
+            }
             cafeStatus.report(status);
 
-            if(MUTEX){cafeMutex.lock();}  //lock
+            if(MUTEX) {
+                cafeMutex.lock();   //lock
+            }
             handle_index.modify(it_handle, change_status (status) );
-            if(MUTEX){cafeMutex.unlock();} //unlock
+            if(MUTEX) {
+                cafeMutex.unlock();   //unlock
+            }
             return (int)  status;
         }
 
         // Peculiar if true
-				/*
+        /*
         if (status == ECA_EVDISALLOW) {
-            cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " inappropriate function " << endl;
-            cafeStatus.report(status);
-            if(MUTEX){cafeMutex.lock();}  //lock
-            handle_index.modify(it_handle, change_status (status) );
-            if(MUTEX){cafeMutex.unlock();} //unlock
+        cout << __FILE__ << "/" << __LINE__ << "/"<< __METHOD__ << " inappropriate function " << endl;
+        cafeStatus.report(status);
+        if(MUTEX){cafeMutex.lock();}  //lock
+        handle_index.modify(it_handle, change_status (status) );
+        if(MUTEX){cafeMutex.unlock();} //unlock
         }
-				*/
+        */
     }
     else {
         return ECAFE_INVALID_HANDLE;
     }
 
-return (int) status;
+    return (int) status;
 
 #undef __METHOD__
 }
@@ -1816,91 +1913,100 @@ return (int) status;
  * \return status
  */
 int Connect::createHandleWithinGroup(const char  * pv, ca_client_context * ccc,
-                unsigned int & _handle) throw (CAFEException_pv) {
+                                     unsigned int & _handle) throw (CAFEException_pv)
+{
 #define __METHOD__ "Connect::createHandleCreateWithinGroup"
 
 
 
-        // create channel
-        chid pCh = NULL;
-        std::pair<cafeConduit_set::iterator, bool> p;
+    // create channel
+    chid pCh = NULL;
+    std::pair<cafeConduit_set::iterator, bool> p;
 
 
-        if(MUTEX){cafeMutex.lock();}  //lock
+    if(MUTEX) {
+        cafeMutex.lock();   //lock
+    }
 
-        p = cs.insert(Conduit(pv, ccc, 
-				channelRequestPolicyMasterPut, channelRequestPolicyMasterGet, 
-		    channelGetActionWhenMonitorPolicyMaster, pyCafeFlag));
+    p = cs.insert(Conduit(pv, ccc,
+                          channelRequestPolicyMasterPut, channelRequestPolicyMasterGet,
+                          channelGetActionWhenMonitorPolicyMaster, pyCafeFlag));
 
-        if(MUTEX){cafeMutex.unlock();}  //unlock
+    if(MUTEX) {
+        cafeMutex.unlock();   //unlock
+    }
 
-        // p.second true insert success
-        // p.second false insert failed as pair already exists
-        //has handle no exceeded limit
-        if (!(p.second)) {
-             cout << "HANDLE ALREADY IN USE! " << endl;
-             cout << "ISSUING NEW HANDLE FOR PV= " << pv << endl;
-             cout << "Recovering with next free handle which is " << handleHelper.getNextFreeHandle() << endl;
-             Conduit::handleNext=handleHelper.getNextFreeHandle()-1;
-             if(MUTEX){cafeMutex.lock();}  //lock
-             p = cs.insert(Conduit(pv, ccc, 
-						 channelRequestPolicyMasterPut, channelRequestPolicyMasterGet, 
-		         channelGetActionWhenMonitorPolicyMaster, pyCafeFlag));
-             if(MUTEX){cafeMutex.unlock();}  //unlock
+    // p.second true insert success
+    // p.second false insert failed as pair already exists
+    //has handle no exceeded limit
+    if (!(p.second)) {
+        cout << "HANDLE ALREADY IN USE! " << endl;
+        cout << "ISSUING NEW HANDLE FOR PV= " << pv << endl;
+        cout << "Recovering with next free handle which is " << handleHelper.getNextFreeHandle() << endl;
+        Conduit::handleNext=handleHelper.getNextFreeHandle()-1;
+        if(MUTEX) {
+            cafeMutex.lock();   //lock
         }
+        p = cs.insert(Conduit(pv, ccc,
+                              channelRequestPolicyMasterPut, channelRequestPolicyMasterGet,
+                              channelGetActionWhenMonitorPolicyMaster, pyCafeFlag));
+        if(MUTEX) {
+            cafeMutex.unlock();   //unlock
+        }
+    }
 
 
-        //Conduit cc = *(p.first);
+    //Conduit cc = *(p.first);
 
-        // The following should not happen as we do a pre-check in Connect::open
-        // p.second true insert success
-        // p.second false insert failed as pair already exists
+    // The following should not happen as we do a pre-check in Connect::open
+    // p.second true insert success
+    // p.second false insert failed as pair already exists
 
-        if (!(p.second)) {
+    if (!(p.second)) {
 
-            cout << " p SECOND - THROWING EXCEPTION FOR PV= " << pv << endl;
-            cout << (*(p.first)).pv.c_str()     << endl;
-            cout << (*(p.first)).getHandle()    << endl;
-            cout << (*(p.first)).getChannelID() << endl;
-            CAFEException_pv e;
-            e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(),
+        cout << " p SECOND - THROWING EXCEPTION FOR PV= " << pv << endl;
+        cout << (*(p.first)).pv.c_str()     << endl;
+        cout << (*(p.first)).getHandle()    << endl;
+        cout << (*(p.first)).getChannelID() << endl;
+        CAFEException_pv e;
+        e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(),
                 (*(p.first)).pvAlias.c_str(), (*(p.first)).getHandle(), (*(p.first)).getChannelID(),
-                                       ECAFE_HASH_UNIQUEID_EXISTS, __METHOD__, __LINE__);
-            throw (e);
-            return ECAFE_HASH_UNIQUEID_EXISTS;
-        }
+                ECAFE_HASH_UNIQUEID_EXISTS, __METHOD__, __LINE__);
+        throw (e);
+        return ECAFE_HASH_UNIQUEID_EXISTS;
+    }
 
 
-        _handle= (*(p.first)).getHandle();
+    _handle= (*(p.first)).getHandle();
 
 
 
-        status = createChannelWithinGroup(_handle, pv, pCh);
+    status = createChannelWithinGroup(_handle, pv, pCh);
 
-        // Possible errors from ca_create_channel: ECA_NORMAL, ECA_BADTYPE, ECA_STRTOBIG, ECA_ALLOCMEM
-        // Possible error from ca_pend_event: ECA_EVDISALLOW
+    // Possible errors from ca_create_channel: ECA_NORMAL, ECA_BADTYPE, ECA_STRTOBIG, ECA_ALLOCMEM
+    // Possible error from ca_pend_event: ECA_EVDISALLOW
 
-        //IF FAILED THROW EXCEPTION
-        if (status != ECA_NORMAL && status != ECA_TIMEOUT) {
-            Connect::close(_handle);
-            CAFEException_pv e;
-            e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(),
-                           (*(p.first)).pvAlias.c_str(), (*(p.first)).getHandle(),
-                           pCh, status, __METHOD__, __LINE__);
-            throw (e);
-            return status;
-        }
-        else if (pCh == NULL) {
-            Connect::close(_handle);
-            CAFEException_pv e;
-            e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(),
-                           (*(p.first)).pvAlias.c_str(), (*(p.first)).getHandle(),
-                           pCh, ECAFE_NULLCHID, __METHOD__, __LINE__);
-            throw (e);
-            return ECAFE_NULLCHID;
-        }
+    //IF FAILED THROW EXCEPTION
+    if (status != ECA_NORMAL && status != ECA_TIMEOUT) {
+        Connect::close(_handle);
+        CAFEException_pv e;
+        e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(),
+                (*(p.first)).pvAlias.c_str(), (*(p.first)).getHandle(),
+                pCh, status, __METHOD__, __LINE__);
+        throw (e);
+        return status;
+    }
+    else if (pCh == NULL) {
+        Connect::close(_handle);
+        CAFEException_pv e;
+        e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(),
+                (*(p.first)).pvAlias.c_str(), (*(p.first)).getHandle(),
+                pCh, ECAFE_NULLCHID, __METHOD__, __LINE__);
+        throw (e);
+        return ECAFE_NULLCHID;
+    }
 
-        return ICAFE_NORMAL;
+    return ICAFE_NORMAL;
 
 }
 
@@ -1908,126 +2014,128 @@ int Connect::createHandleWithinGroup(const char  * pv, ca_client_context * ccc,
 
 
 
- /**
-  *  \brief send the command to the ioc to open channels within all group(s).
-  *  \param _timeout input: max pend time to establish connections \n
-  */
-  void Connect::openGroupNowAndWait(double _timeout) {
-	  double dto = channelOpenGroupPolicy.getTimeout();
-	  channelOpenGroupPolicy.setTimeout(_timeout);
-	  		
-		//Time lapsed
-			
+/**
+ *  \brief send the command to the ioc to open channels within all group(s).
+ *  \param _timeout input: max pend time to establish connections \n
+ */
+void Connect::openGroupNowAndWait(double _timeout)
+{
+    double dto = channelOpenGroupPolicy.getTimeout();
+    channelOpenGroupPolicy.setTimeout(_timeout);
+
+    //Time lapsed
+
     using namespace boost::posix_time;
     ptime timeStart(microsec_clock::local_time());
 
     double  timeElapsed=0;
-    unsigned int  nPoll=0;	
-							 	     
-    channelOpenGroupPolicy.flushSendBufferNow(); 	
-		
-		ptime timeEnd(microsec_clock::local_time());
+    unsigned int  nPoll=0;
+
+    channelOpenGroupPolicy.flushSendBufferNow();
+
+    ptime timeEnd(microsec_clock::local_time());
     time_duration duration(timeEnd-timeStart);
     timeElapsed= (double) duration.total_microseconds()/1000000.0;
-		
 
-    while ( !handleHelper.allChannelsWithinGroupConnected() && (timeElapsed <= channelOpenGroupPolicy.getTimeout())){	
-									
-          #if HAVE_BOOST_THREAD
-            boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
-          #else
-            #if HAVE_LINUX
-              usleep(1000);
-            #endif
-          #endif
-								
-          ++nPoll;
 
-          ptime timeEnd(microsec_clock::local_time());
-          time_duration duration(timeEnd-timeStart);
-          timeElapsed= (double) duration.total_microseconds()/1000000.0;
-							
-     }
-				
-							
-						if ( handleHelper.allChannelsWithinGroupConnected() ) {
-								cout << " // all group members are connected //" << endl;
-						} 					        
-						else {
-								cout << " // not all group members are connected //" << endl;
-						}
-						cout << "timeElapsed for group open " << timeElapsed << " nPoll = " << nPoll << endl;
-						
-		
-		
-		//reset 
-		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
-		//channelOpenPolicy.setTimeoutToDefault();
-		channelOpenGroupPolicy.setTimeout(dto);
-		return;
-	} 
-	
+    while ( !handleHelper.allChannelsWithinGroupConnected() && (timeElapsed <= channelOpenGroupPolicy.getTimeout())) {
 
- /**
-  *  \brief send the command to the ioc to open channels within given group(s).
-	*  \param _timeout input: max pend time to establish connections \n
-	*  \param  gHandles input: vector of groups handles \n
-  */
-  void Connect::openGroupNowAndWaitForInputGroups(double _timeout, vector<unsigned int> gHandles) {
-	  double dto = channelOpenGroupPolicy.getTimeout();
-	  channelOpenGroupPolicy.setTimeout(_timeout);
-	  		
-		//Time lapsed
-			
+#if HAVE_BOOST_THREAD
+        boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
+#else
+#if HAVE_LINUX
+        usleep(1000);
+#endif
+#endif
+
+        ++nPoll;
+
+        ptime timeEnd(microsec_clock::local_time());
+        time_duration duration(timeEnd-timeStart);
+        timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+    }
+
+
+    if ( handleHelper.allChannelsWithinGroupConnected() ) {
+        cout << " // all group members are connected //" << endl;
+    }
+    else {
+        cout << " // not all group members are connected //" << endl;
+    }
+    cout << "timeElapsed for group open " << timeElapsed << " nPoll = " << nPoll << endl;
+
+
+
+    //reset
+    channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+    channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+    //channelOpenPolicy.setTimeoutToDefault();
+    channelOpenGroupPolicy.setTimeout(dto);
+    return;
+}
+
+
+/**
+ *  \brief send the command to the ioc to open channels within given group(s).
+*  \param _timeout input: max pend time to establish connections \n
+*  \param  gHandles input: vector of groups handles \n
+ */
+void Connect::openGroupNowAndWaitForInputGroups(double _timeout, std::vector<unsigned int> gHandles)
+{
+    double dto = channelOpenGroupPolicy.getTimeout();
+    channelOpenGroupPolicy.setTimeout(_timeout);
+
+    //Time lapsed
+
     using namespace boost::posix_time;
     ptime timeStart(microsec_clock::local_time());
 
     double  timeElapsed=0;
-    unsigned int  nPoll=0;	
-							 	     
-    channelOpenGroupPolicy.flushSendBufferNow(); 	
-		
-		ptime timeEnd(microsec_clock::local_time());
+    unsigned int  nPoll=0;
+
+    channelOpenGroupPolicy.flushSendBufferNow();
+
+    ptime timeEnd(microsec_clock::local_time());
     time_duration duration(timeEnd-timeStart);
     timeElapsed= (double) duration.total_microseconds()/1000000.0;
-		
 
-    while ( !handleHelper.allChannelsWithinGroupConnectedV(gHandles) && (timeElapsed <= channelOpenGroupPolicy.getTimeout())){	
-									
-          #if HAVE_BOOST_THREAD
-            boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
-          #else
-            #if HAVE_LINUX
-              usleep(1000);
-            #endif
-          #endif
-								
-          ++nPoll;
 
-          ptime timeEnd(microsec_clock::local_time());
-          time_duration duration(timeEnd-timeStart);
-          timeElapsed= (double) duration.total_microseconds()/1000000.0;
-							
-     }
-				
-							
-						if ( handleHelper.allChannelsWithinGroupConnectedV(gHandles) ) {
-								cout << " // all group members of all groups are connected //" << endl;
-						} 					        
-						else {
-								cout << " // not all group members of all groups are connected //" << endl;
-						}
-						cout << "timeElapsed for mulitple group open " << timeElapsed << " nPoll = " << nPoll << endl;
-						
-		
-		
-		//reset 
-		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
-		//channelOpenPolicy.setTimeoutToDefault();
-		channelOpenGroupPolicy.setTimeout(dto);
-		return;
-	} 
-	
+    while ( !handleHelper.allChannelsWithinGroupConnectedV(gHandles) && (timeElapsed <= channelOpenGroupPolicy.getTimeout())) {
+
+#if HAVE_BOOST_THREAD
+        boost::this_thread::sleep_for(boost::chrono::microseconds(1000));
+#else
+#if HAVE_LINUX
+        usleep(1000);
+#endif
+#endif
+
+        ++nPoll;
+
+        ptime timeEnd(microsec_clock::local_time());
+        time_duration duration(timeEnd-timeStart);
+        timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+    }
+
+
+    if ( handleHelper.allChannelsWithinGroupConnectedV(gHandles) ) {
+        cout << " // all group members of all groups are connected //" << endl;
+    }
+    else {
+        cout << " // not all group members of all groups are connected //" << endl;
+    }
+    cout << "timeElapsed for mulitple group open " << timeElapsed << " nPoll = " << nPoll << endl;
+
+
+
+    //reset
+    channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+    channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+    //channelOpenPolicy.setTimeoutToDefault();
+    channelOpenGroupPolicy.setTimeout(dto);
+    return;
+}
+
 

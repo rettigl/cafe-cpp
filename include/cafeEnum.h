@@ -17,17 +17,17 @@ namespace  CAFENUM {
  *  i.e. whether PRIMITIVE, STS, TIME, GR or CTRL
  */
 enum DBR_TYPE  {
-     DBR_PRIMITIVE,
-     DBR_PLAIN=DBR_PRIMITIVE,
-     DBR_STS,
-     DBR_TIME,
-     DBR_GR,
-     DBR_CTRL,
-     DBR_PUT, //DBR_PUT_ACKT and DBR_PUT_ACKS Write only - used from global alarm acknowledge.
-     DBR_STSACK, // is DBR_STSACK_STRING
-     DBR_CLASS,  // is DBR_CLASS_NAME,
-     DBR_NONE    // should not occur, but used internally within cafeVectors.h
- };
+    DBR_PRIMITIVE,
+    DBR_PLAIN=DBR_PRIMITIVE,
+    DBR_STS,
+    DBR_TIME,
+    DBR_GR,
+    DBR_CTRL,
+    DBR_PUT, //DBR_PUT_ACKT and DBR_PUT_ACKS Write only - used from global alarm acknowledge.
+    DBR_STSACK, // is DBR_STSACK_STRING
+    DBR_CLASS,  // is DBR_CLASS_NAME,
+    DBR_NONE    // should not occur, but used internally within cafeVectors.h
+};
 
 
 /**
@@ -71,7 +71,7 @@ enum ChannelServerDispatchPriority {
     CA_SERVER_DISPATCH_PRIORITY_VERYHIGH=CA_PRIORITY_MIN+98,
     CA_SERVER_DISPATCH_PRIORITY_MAX     =CA_PRIORITY_MAX
 
- };
+};
 
 
 /**
@@ -80,10 +80,10 @@ enum ChannelServerDispatchPriority {
  *  are never blocked
  */
 enum ChannelGetCacheWaitPolicyKind {
-	GET_CACHE_NO_CHECK=0,
-	GET_CACHE_NO_WAIT,
-	GET_CACHE_NOW     =GET_CACHE_NO_WAIT,
-	GET_CACHE_WAIT
+    GET_CACHE_NO_CHECK=0,
+    GET_CACHE_NO_WAIT,
+    GET_CACHE_NOW     =GET_CACHE_NO_WAIT,
+    GET_CACHE_WAIT
 };
 
 
@@ -94,7 +94,7 @@ enum ChannelGetCacheWaitPolicyKind {
  */
 enum ChannelGetActionWhenMonitorPolicyKind {
     GET_FROM_CACHE,
-	  GET_FROM_IOC
+    GET_FROM_IOC
 };
 
 /**
@@ -139,13 +139,13 @@ enum StatusMessageKind {
     FROM_PEND,
     FROM_CALLBACK,
     FROM_MESSAGE
-    };
-    
+};
+
 enum CallbackProgressKind {
     NOT_INITIATED,
     PENDING,
     COMPLETE
-    };
+};
 
 }; //namespace CAFENUM
 

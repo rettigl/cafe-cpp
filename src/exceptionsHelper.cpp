@@ -1,11 +1,13 @@
 ///
-/// \file    exceptionsHelper.cc
+/// \file    exceptionsHelper.cpp
 /// \author  Jan Chrin, PSI
 /// \date    Release, February 2015
 /// \version CAFE 1.0.0
 ///
 
 #include "exceptionsHelper.h"
+
+using namespace std;
 
 /**
  *  \brief Populates the CAFEException_pv struct; precedes throw(e)
@@ -19,8 +21,9 @@
  *  \return struct CAFEException_pv
  */
 CAFEException_pv ExceptionsHelper::prepareCAFEException_pv(const char *pv, const char *pvAlias,
-                                               unsigned int  handle, chid pCh, int  status,
-                                               const char * source, unsigned int  ln) {
+        unsigned int  handle, chid pCh, int  status,
+        const char * source, unsigned int  ln)
+{
 #define __METHOD__ "Connect::prepareCAFEException_pv"
 
     CAFEException_pv e;
@@ -65,25 +68,26 @@ CAFEException_pv ExceptionsHelper::prepareCAFEException_pv(const char *pv, const
  *  \brief Prints CAFEException_pv to std out
  *  \param e input: struct CAFEException
  */
-void ExceptionsHelper::printCAFEException_pv(CAFEException_pv & e) {
+void ExceptionsHelper::printCAFEException_pv(CAFEException_pv & e)
+{
 #define __METHOD__ "ExceptionsHelper::printCAFEException_pv"
 
-        cout << "------------------------------------" << endl;
-        cout << __METHOD__ << endl;
-	cout << "------------------------------------" << endl;
-        cout << "Handle               : " << e.handle << endl;
-        cout << "Process Variable (PV): " << e.pv << endl;
-        if ( strcmp(e.pv,e.pvAlias) ) {
+    cout << "------------------------------------" << endl;
+    cout << __METHOD__ << endl;
+    cout << "------------------------------------" << endl;
+    cout << "Handle               : " << e.handle << endl;
+    cout << "Process Variable (PV): " << e.pv << endl;
+    if ( strcmp(e.pv,e.pvAlias) ) {
         cout << "PV Alias             : " << e.pvAlias << endl;
-        }
-        cout << "PV Native Type       : " << e.dataTypeNative << " ("
-			<< e.dataTypeNativeText << ") " << endl;
-        cout << "Status Code          : " << e.statusCode << endl;
-        cout << "Status Message       : " << e.statusCodeText << endl;
-        cout << "Error Description    : " << e.statusMessage << endl;
-        cout << "Source Method/Line   : " << e.source << "/" << e.ln << endl;
-	cout << "------------------------------------" << endl;
-	return;
+    }
+    cout << "PV Native Type       : " << e.dataTypeNative << " ("
+         << e.dataTypeNativeText << ") " << endl;
+    cout << "Status Code          : " << e.statusCode << endl;
+    cout << "Status Message       : " << e.statusCodeText << endl;
+    cout << "Error Description    : " << e.statusMessage << endl;
+    cout << "Source Method/Line   : " << e.source << "/" << e.ln << endl;
+    cout << "------------------------------------" << endl;
+    return;
 
 #undef __METHOD__
 }
@@ -99,8 +103,9 @@ void ExceptionsHelper::printCAFEException_pv(CAFEException_pv & e) {
  *  \return struct CAFEException_group
  */
 CAFEException_group ExceptionsHelper::prepareCAFEException_group(char groupName[PVNAME_SIZE],
-                                               unsigned int  ghandle, int  status,
-                                               const char * source, unsigned int  ln) {
+        unsigned int  ghandle, int  status,
+        const char * source, unsigned int  ln)
+{
 #define __METHOD__ "Connect::prepareCAFEExceptionGroup"
 
     CAFEException_group e;

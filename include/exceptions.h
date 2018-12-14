@@ -8,20 +8,17 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-#include <exception> 
+#include <exception>
 #include <cstring>
 #include <defines.h>
 #include <cafeDataType.h>
 
-using namespace std;
-
 /**
  *  The CAFEException_pv struct for pv error reporting
  */
-struct CAFEException_pv
-{
+struct CAFEException_pv {
     char            pv     [PVNAME_SIZE];
-    char            pvAlias[PVNAME_SIZE]; 
+    char            pvAlias[PVNAME_SIZE];
     unsigned int    handle;
     CAFE_DATATYPE   dataTypeNative;
     const  char *   dataTypeNativeText;
@@ -30,14 +27,13 @@ struct CAFEException_pv
     const  char *   statusMessage;
     const  char *   source;
     unsigned int    ln;
-}; 
+};
 
 
 /**
  *  The CAFEException_group struct for group error reporting
  */
-struct CAFEException_group
-{
+struct CAFEException_group {
     char            groupName [PVNAME_SIZE];
     unsigned int    groupHandle;
     int             statusCode;
@@ -45,15 +41,14 @@ struct CAFEException_group
     const  char *   statusMessage;
     const  char *   source;
     unsigned int    ln;
-}; 
+};
 
 
 /**
  *  The CAFEException_open class for ca open error reporting
  */
-class CAFEException_open : public exception
-{
-    public:
+class CAFEException_open : public std::exception {
+public:
     virtual const char* what() const throw()
     {
         return "CAFEException_open exception: Could not establish link to pv";
@@ -65,14 +60,13 @@ class CAFEException_open : public exception
 /**
  *  The CAFEException_groupOpen class for ca group open error reporting
  */
-class CAFEException_groupOpen : public exception
-{
-    public:
+class CAFEException_groupOpen : public std::exception {
+public:
     virtual const char* what() const throw()
     {
         return "CAFEException_groupOpen exception: Could not establish link to group";
     };
-    
+
     CAFEException_group groupEx;
 };
 
@@ -80,22 +74,20 @@ class CAFEException_groupOpen : public exception
 /**
  *  The CAFEException_init
  */
-class CAFEException_init: public exception
-{
-    public:
+class CAFEException_init: public std::exception {
+public:
     virtual const char* what() const throw()
     {
         return "CAFEException_init exception: \nChannel Access Error: ECA_ALLOCMEM when calling ca_context_create";
     };
 };
-		  
+
 
 /**
  *  The CAFEException_allocBufferMem
  */
-class CAFEException_allocBufferMem: public exception
-{
-    public:
+class CAFEException_allocBufferMem: public std::exception {
+public:
     virtual const char* what() const throw()
     {
         return "CAFEException_allocBufferMem exception: \nCAFE ERROR: Cannot create space for pv data/ctrl buffer";

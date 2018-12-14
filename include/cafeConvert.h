@@ -13,9 +13,6 @@
 #include <cstdio>
 #include <boost/math/special_functions/fpclassify.hpp>
 
-using namespace std;
-
-
 /**
  * CAFEConvert Template \n
  * CTYPE is the input data type \n
@@ -27,20 +24,20 @@ using namespace std;
  * method getAsChar  () converts CTYPE to char   \n
  * method getAsLong  () converts CTYPE to int   \n
  * method getAsString() converts CTYPE to string \n
- * 
+ *
  */
 template <class CTYPE> class CAFEConvert {
 private:
-  CTYPE returnVal[1];	
+    CTYPE returnVal[1];
 public:
-   CAFEConvert (unsigned int nelem){};
-   CAFEConvert (){};
-  ~CAFEConvert (){};
-   CTYPE * get(unsigned int index, CAFE_DATATYPE dt, CAFE_DATATYPE_UNION_SEQ val);
-   CTYPE * getString(unsigned int index, CAFE_DATATYPE dt, CAFE_DATATYPE_UNION_SEQ val);
-   CTYPE * getStringFromEnum(unsigned int index, unsigned int noStr, CAFE_DATATYPE_UNION_SEQ val, char stig[MAX_ENUM_STATES][MAX_ENUM_STRING_SIZE]);
-   CTYPE * get(CAFE_DATATYPE dt, CAFE_DATATYPE_UNION val);
-   CTYPE * getString(CAFE_DATATYPE dt, CAFE_DATATYPE_UNION val);
+    CAFEConvert (unsigned int nelem) {};
+    CAFEConvert () {};
+    ~CAFEConvert () {};
+    CTYPE * get(unsigned int index, CAFE_DATATYPE dt, CAFE_DATATYPE_UNION_SEQ val);
+    CTYPE * getString(unsigned int index, CAFE_DATATYPE dt, CAFE_DATATYPE_UNION_SEQ val);
+    CTYPE * getStringFromEnum(unsigned int index, unsigned int noStr, CAFE_DATATYPE_UNION_SEQ val, char stig[MAX_ENUM_STATES][MAX_ENUM_STRING_SIZE]);
+    CTYPE * get(CAFE_DATATYPE dt, CAFE_DATATYPE_UNION val);
+    CTYPE * getString(CAFE_DATATYPE dt, CAFE_DATATYPE_UNION val);
 };
 
 
@@ -51,7 +48,7 @@ public:
  *  \return CTYPE
  */
 template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (CAFE_DATATYPE dt, CAFE_DATATYPE_UNION val)
- {
+{
 #define __METHOD__ "CAFEConvert<CTYPE>::get(dt, val)"
 
     // (boost::math::isnan) calls the Boost version of the isnan  macro
@@ -59,7 +56,7 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (CAFE_DATATYPE dt, CAFE_D
     // (brackets required) to avoid compiler error should isnan also be a native macro
 
     switch (dt) {
-        case CAFE_DOUBLE:
+    case CAFE_DOUBLE:
         if ( (boost::math::isnan)((CTYPE) val.d) ) {
             returnVal[0]= (CTYPE) val.d;
         }
@@ -67,57 +64,58 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (CAFE_DATATYPE dt, CAFE_D
             returnVal[0]= (CTYPE) 0;
         }
         break;
-        case CAFE_FLOAT:
+    case CAFE_FLOAT:
         if ( (boost::math::isnan)((CTYPE) val.f) ) {
             returnVal[0]= (CTYPE) val.f;
-        } else {
+        }
+        else {
             returnVal[0]= 0;
         }
         break;
-        case CAFE_LONG:       
-            returnVal[0]= (CTYPE) val.l;
+    case CAFE_LONG:
+        returnVal[0]= (CTYPE) val.l;
         break;
-        case CAFE_SHORT:
-            returnVal[0]= (CTYPE) val.s;
+    case CAFE_SHORT:
+        returnVal[0]= (CTYPE) val.s;
         break;
-        case CAFE_ENUM:
-            returnVal[0]= (CTYPE) val.us;
+    case CAFE_ENUM:
+        returnVal[0]= (CTYPE) val.us;
         break;
-        case CAFE_CHAR:
-            returnVal[0]= (CTYPE) val.ch;
+    case CAFE_CHAR:
+        returnVal[0]= (CTYPE) val.ch;
         break;
-        case CAFE_STRING:
-            returnVal[0]= (CTYPE) strtod( val.str,  NULL);
+    case CAFE_STRING:
+        returnVal[0]= (CTYPE) strtod( val.str,  NULL);
         break;
-        case CAFE_TYPENOTCONN:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        <<  " CAFE_TYPENOTCONN: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
-            break;
-        case CAFE_NO_ACCESS:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        << " CAFE_NO_ACCESS: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
+    case CAFE_TYPENOTCONN:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        <<  " CAFE_TYPENOTCONN: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
         break;
-        case CAFE_INVALID_DATATYPE:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
+    case CAFE_NO_ACCESS:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        << " CAFE_NO_ACCESS: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
         break;
-        case CAFE_NOT_REQUESTED:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-             //       << " CAFE_NOT_REQUESTED: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
+    case CAFE_INVALID_DATATYPE:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
         break;
-        case CAFE_NOT_SHOWN:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
+    case CAFE_NOT_REQUESTED:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //       << " CAFE_NOT_REQUESTED: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
         break;
-        default:
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-                    << " CAFE INTERNAL ERROR: Unknown dataType: " << dt << " " << endl;
-            returnVal[0]=0;
+    case CAFE_NOT_SHOWN:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
+        break;
+    default:
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+                  << " CAFE INTERNAL ERROR: Unknown dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
         break;
     }
 
@@ -134,65 +132,65 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (CAFE_DATATYPE dt, CAFE_D
  *  \return CTYPE
  */
 template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (unsigned int index, CAFE_DATATYPE dt, CAFE_DATATYPE_UNION_SEQ val)
- {
+{
 #define __METHOD__ "CAFEConvert<CTYPE>::get(index, dt, val[])"
 
     switch (dt) {
-	case CAFE_DOUBLE:
-            returnVal[0]= (CTYPE) val[index].d;
-	break;
-	case CAFE_FLOAT:		
-            returnVal[0]= (CTYPE) val[index].f;
-	break;
-	case CAFE_LONG:	
-            returnVal[0]= (CTYPE) val[index].l;
-	break;
-	case CAFE_SHORT:		
-            returnVal[0]= (CTYPE) val[index].s;
-	break;
-        case CAFE_ENUM:
-            returnVal[0]= (CTYPE) val[index].us;
+    case CAFE_DOUBLE:
+        returnVal[0]= (CTYPE) val[index].d;
         break;
-	case CAFE_CHAR:		
-            returnVal[0]= (CTYPE) val[index].ch;
-	break;
-        case CAFE_STRING:	    
-            returnVal[0]= (CTYPE) strtod( val[index].str,  NULL);
-	break;	
-        case CAFE_TYPENOTCONN:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        <<  " CAFE_TYPENOTCONN: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
-            break;
-	case CAFE_NO_ACCESS:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        << " CAFE_NO_ACCESS: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
-	break;				
-	case CAFE_INVALID_DATATYPE:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
-	break;	
-	case CAFE_NOT_REQUESTED:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-             //       << " CAFE_NOT_REQUESTED: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
-	break;				
-	case CAFE_NOT_SHOWN:
-            //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-            //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << endl;
-            returnVal[0]=0;
-	break;		
-	default:
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
-                    << " CAFE INTERNAL ERROR: Unknown dataType: " << dt << " " << endl;
-            returnVal[0]=0;
+    case CAFE_FLOAT:
+        returnVal[0]= (CTYPE) val[index].f;
+        break;
+    case CAFE_LONG:
+        returnVal[0]= (CTYPE) val[index].l;
+        break;
+    case CAFE_SHORT:
+        returnVal[0]= (CTYPE) val[index].s;
+        break;
+    case CAFE_ENUM:
+        returnVal[0]= (CTYPE) val[index].us;
+        break;
+    case CAFE_CHAR:
+        returnVal[0]= (CTYPE) val[index].ch;
+        break;
+    case CAFE_STRING:
+        returnVal[0]= (CTYPE) strtod( val[index].str,  NULL);
+        break;
+    case CAFE_TYPENOTCONN:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        <<  " CAFE_TYPENOTCONN: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
+        break;
+    case CAFE_NO_ACCESS:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        << " CAFE_NO_ACCESS: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
+        break;
+    case CAFE_INVALID_DATATYPE:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
+        break;
+    case CAFE_NOT_REQUESTED:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //       << " CAFE_NOT_REQUESTED: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
+        break;
+    case CAFE_NOT_SHOWN:
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+        //        << " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
+        break;
+    default:
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__
+                  << " CAFE INTERNAL ERROR: Unknown dataType: " << dt << " " << std::endl;
+        returnVal[0]=0;
         break;
     }
 
     return (CTYPE *) returnVal;
-	
+
 #undef __METHOD__
 };
 
@@ -208,46 +206,46 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (unsigned int index, CAFE
  *  \return CTYPE
  */
 template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getStringFromEnum (unsigned int index,  unsigned int noStr,  CAFE_DATATYPE_UNION_SEQ val,
-                char stig[MAX_ENUM_STATES][MAX_ENUM_STRING_SIZE])
-{ 
+        char stig[MAX_ENUM_STATES][MAX_ENUM_STRING_SIZE])
+{
 #define __METHOD__ 	"CAFEConvert<CTYPE>::getStringFromEnum(indx, noStr, val, stig)"
-	
-		
-	unsigned int noEmptyStrings=0; 
-	//Check for empty strings:
-	for (unsigned int j=0; j<noStr; ++j) {
-		if (strcmp(stig[j],"")==0) {
-				++noEmptyStrings;
-		}
-	}
-	
-	if (noStr==noEmptyStrings) {
-		cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-		cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
-		cout << "BADLY CONFIGURED EPICS RECORD. " << endl;
-	}
-									
-								
-	if (index < noStr && noStr!=noEmptyStrings) {
-		sprintf(returnVal[0], "%s", stig[val[index].us] );
-	}
-	else {
-	  sprintf(returnVal[0], "%d", val[index].us );
-		if (  val[index].us>= noStr) {
-				cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-				cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
-				cout << "VALUE (unsigned short) = " <<  val[index].us << endl;
-				cout << "NO OF ENUMERATED STRINGS = " << noStr << " WITH VALUES: " << endl;
-				for (unsigned int j=0; j<noStr; ++j) {
-						cout << stig[j] << " ["  <<j << "]  ";
-				}
-				cout << endl;
-		}
-	}
-	
-	return (CTYPE *) returnVal;
-		
-#undef __METHOD__	
+
+
+    unsigned int noEmptyStrings=0;
+    //Check for empty strings:
+    for (unsigned int j=0; j<noStr; ++j) {
+        if (strcmp(stig[j],"")==0) {
+            ++noEmptyStrings;
+        }
+    }
+
+    if (noStr==noEmptyStrings) {
+        std::cout << "*** WARNING FROM " << __METHOD__ << " *** " << std::endl;
+        std::cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << std::endl;
+        std::cout << "BADLY CONFIGURED EPICS RECORD. " << std::endl;
+    }
+
+
+    if (index < noStr && noStr!=noEmptyStrings) {
+        sprintf(returnVal[0], "%s", stig[val[index].us] );
+    }
+    else {
+        sprintf(returnVal[0], "%d", val[index].us );
+        if (  val[index].us>= noStr) {
+            std::cout << "*** WARNING FROM " << __METHOD__ << " *** " << std::endl;
+            std::cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << std::endl;
+            std::cout << "VALUE (unsigned short) = " <<  val[index].us << std::endl;
+            std::cout << "NO OF ENUMERATED STRINGS = " << noStr << " WITH VALUES: " << std::endl;
+            for (unsigned int j=0; j<noStr; ++j) {
+                std::cout << stig[j] << " ["  <<j << "]  ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    return (CTYPE *) returnVal;
+
+#undef __METHOD__
 };
 
 /**
@@ -258,13 +256,13 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getStringFromEnum (unsigned i
  *  \return CTYPE
  */
 template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getString (unsigned int index,  CAFE_DATATYPE dt, CAFE_DATATYPE_UNION_SEQ val)
-{ 
+{
 #define __METHOD__  "CAFEConvert<CTYPE>::getString(nelem, dt, val[])"
-  	     
+
     switch (dt) {
     case CAFE_STRING:
         sprintf(returnVal[0], "%s",  val[index].str);
-        break;  
+        break;
     case CAFE_CHAR:
         sprintf(returnVal[0], "%u",  val[index].ch);
         break;
@@ -284,39 +282,39 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getString (unsigned int index
         sprintf(returnVal[0], "%u",  val[index].us);
         break;
     case CAFE_TYPENOTCONN:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__  << endl;
-        //cout << " ERROR CAFE_TYPENOTCONN: dataType: " << dt  << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__  << std::endl;
+        //std::cout << " ERROR CAFE_TYPENOTCONN: dataType: " << dt  << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); //CAFE_TYPENOTCONN");
         break;
     case CAFE_NO_ACCESS:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout << " CAFE_NO_ACCESS: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout << " CAFE_NO_ACCESS: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); //"CAFE_NO_ACCESS");
-        break; 
+        break;
     case CAFE_INVALID_DATATYPE:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<<  " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<<  " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); //"CAFE_INVALID_DATATYPE");
         break;
     case CAFE_NOT_REQUESTED:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<< " CAFE_NOT_REQUESTED: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<< " CAFE_NOT_REQUESTED: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",   "0"); //"");
         break;
     case CAFE_NOT_SHOWN:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<< " CAFE_NOT_SHOWN: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<< " CAFE_NOT_SHOWN: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); // "CAFE_NOT_SHOWN");
         break;
     default:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<< " CAFE INTERNAL ERROR: Unknown dataType: "<< dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<< " CAFE INTERNAL ERROR: Unknown dataType: "<< dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0");// "Unknown dataType");
         break;
 
     }
-	
-return (CTYPE *) returnVal;
+
+    return (CTYPE *) returnVal;
 
 #undef __METHOD__
 };
@@ -354,39 +352,39 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getString (CAFE_DATATYPE dt, 
         sprintf(returnVal[0], "%u",  val.us);
         break;
     case CAFE_TYPENOTCONN:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__  << endl;
-        //cout << " ERROR CAFE_TYPENOTCONN: dataType: " << dt  << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__  << std::endl;
+        //std::cout << " ERROR CAFE_TYPENOTCONN: dataType: " << dt  << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); //CAFE_TYPENOTCONN");
         break;
     case CAFE_NO_ACCESS:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout << " CAFE_NO_ACCESS: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout << " CAFE_NO_ACCESS: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); //"CAFE_NO_ACCESS");
         break;
     case CAFE_INVALID_DATATYPE:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<<  " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<<  " CAFE_INVALID_DATATYPE: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); //"CAFE_INVALID_DATATYPE");
         break;
     case CAFE_NOT_REQUESTED:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<< " CAFE_NOT_REQUESTED: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<< " CAFE_NOT_REQUESTED: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",   "0"); //"");
         break;
     case CAFE_NOT_SHOWN:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<< " CAFE_NOT_SHOWN: dataType: " << dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<< " CAFE_NOT_SHOWN: dataType: " << dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0"); // "CAFE_NOT_SHOWN");
         break;
     default:
-        //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        //cout<< " CAFE INTERNAL ERROR: Unknown dataType: "<< dt << " " << endl;
+        //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+        //std::cout<< " CAFE INTERNAL ERROR: Unknown dataType: "<< dt << " " << std::endl;
         sprintf(returnVal[0], "%s",  "0");// "Unknown dataType");
         break;
 
     }
 
-return (CTYPE *) returnVal;
+    return (CTYPE *) returnVal;
 
 #undef __METHOD__
 };

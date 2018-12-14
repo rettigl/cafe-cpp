@@ -25,9 +25,8 @@ export CAFE_EPICS_V_MAJOR=$EBMAJ
 export CAFE_EPICS_V_MINOR=$EBMIN
 export CAFE_EPICS_V_PATCH=$EBPAT
 
-#--enable-boost --with-boost=/afs/psi.ch/intranet/Controls/BD/deps/boost_1_57_0 \
 
-CAFE_VERSION=cafe-noqt-1.5.0-final-1
+CAFE_VERSION=cafe-noqt-1.8.0
 
 
 ./configure \

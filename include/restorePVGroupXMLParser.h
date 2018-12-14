@@ -22,24 +22,23 @@ class restorePVGroupXMLParser : public QXmlDefaultHandler {
 public:
     restorePVGroupXMLParser();
     virtual ~restorePVGroupXMLParser();
-		
+
     bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
     bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
     bool characters(const QString& ch);
-		
+
     PVGroup group;
 private:
-    enum
-    {
-    	NotWaiting,
+    enum {
+        NotWaiting,
         WaitingForConfig,
         WaitingForNPV,
         WaitingForGroup,
-    	WaitingForDescription,
-    	WaitingForStatusGroup,
+        WaitingForDescription,
+        WaitingForStatusGroup,
         WaitingForMember,
-    	WaitingForName,
-    	WaitingForNelem,
+        WaitingForName,
+        WaitingForNelem,
         WaitingForStatus,
         WaitingForRule,
         WaitingForVal,
@@ -58,12 +57,12 @@ private:
     const static QString& tagStatusGroup;
     const static QString& tagMember;
     const static QString& tagName;
-    const static QString& tagNelem;   
+    const static QString& tagNelem;
     const static QString& tagStatus;
     const static QString& tagRule;
     const static QString& tagVal;
     const static QString& tagSettable;
-		
+
 };
 
 

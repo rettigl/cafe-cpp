@@ -1,5 +1,5 @@
 ///
-/// \file    connectCallbacks.cc
+/// \file    connectCallbacks.cpp
 /// \author  Jan Chrin, PSI
 /// \date    Release: February 2015
 /// \version CAFE 1.0.0
@@ -25,7 +25,8 @@ extern epicsMutex cafeMutex;
  *  - whenever the access rights of a connected channel changes \n
  *   \param args output: access_rights_handler_args parameters \n
  */
-void Connect::callbackHandlerAccessRights(struct access_rights_handler_args args) {
+void Connect::callbackHandlerAccessRights(struct access_rights_handler_args args)
+{
 #define __METHOD__ "Connect::callbackHandlerAccessRights"
 
     //Note: At first connection the no of elements is unknown!
@@ -40,9 +41,13 @@ void Connect::callbackHandlerAccessRights(struct access_rights_handler_args args
     it_handle = handle_index.find((unsigned int) _handle);
 
     if (it_handle != handle_index.end()) {
-        if(MUTEX){cafeMutex.lock();}
+        if(MUTEX) {
+            cafeMutex.lock();
+        }
         handle_index.modify(it_handle, change_accessRightsHandlerArgs(args));
-        if(MUTEX){cafeMutex.unlock();}
+        if(MUTEX) {
+            cafeMutex.unlock();
+        }
     }
 
     return;
@@ -57,14 +62,15 @@ void Connect::callbackHandlerAccessRights(struct access_rights_handler_args args
  *   \param args output: exception_handler_args parameters \n
  *
  */
-void Connect::callbackHandlerException(struct exception_handler_args args) {
+void Connect::callbackHandlerException(struct exception_handler_args args)
+{
 #define __METHOD__ "Connect::callbackHandlerException"
 
-   // This routine is called on disconnect before the connection handler
-   // cout << "-------------------------------------------------------------" << endl;
-   // cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-   // cout << "Warning: Virtual circuit disconnect" << endl;
-   // cout << "Exception Handler Args has status = " << args.stat << endl;
+    // This routine is called on disconnect before the connection handler
+    // cout << "-------------------------------------------------------------" << endl;
+    // cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+    // cout << "Warning: Virtual circuit disconnect" << endl;
+    // cout << "Exception Handler Args has status = " << args.stat << endl;
 
     unsigned int  _handle=0;
 
@@ -73,21 +79,21 @@ void Connect::callbackHandlerException(struct exception_handler_args args) {
 
 
     if (args.chid) {
-        strcpy(pName , ca_name(args.chid));
+        strcpy(pName, ca_name(args.chid));
         _handle = (unsigned long) ca_puser(args.chid);
         sprintf(buf,
-         "%s with request handle=%d, channel=%s, op=%ld, datatype=%s, count=%ld. %s",
-         args.ctx, (unsigned int) _handle, pName, args.op, dbr_type_to_text (args.type), args.count,
-         "Possibly an IOC has been switched off or is rebooting.");
+                "%s with request handle=%d, channel=%s, op=%ld, datatype=%s, count=%ld. %s",
+                args.ctx, (unsigned int) _handle, pName, args.op, dbr_type_to_text (args.type), args.count,
+                "Possibly an IOC has been switched off or is rebooting.");
 
     }
     // This case is more usual(!)
     else {
-        strcpy(pName , "unknown");
+        strcpy(pName, "unknown");
         sprintf(buf,
-        "%s with channel=%s, op=%ld, datatype=%s, count=%ld. %s",
-         args.ctx, pName, args.op, dbr_type_to_text (args.type), args.count,
-         "Possibly an IOC has been switched off or is rebooting.\n");
+                "%s with channel=%s, op=%ld, datatype=%s, count=%ld. %s",
+                args.ctx, pName, args.op, dbr_type_to_text (args.type), args.count,
+                "Possibly an IOC has been switched off or is rebooting.\n");
     }
 
     ca_signal (args.stat, buf);

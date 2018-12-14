@@ -1,5 +1,5 @@
 ///
-/// \file    cafeXML.cc
+/// \file    cafeXML.cpp
 /// \author  Jan Chrin, PSI
 /// \date    November 2014
 /// \version CAFE 1.0.0
@@ -8,20 +8,19 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
-#include "cafe.h"
+#include <cafe.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
+#include <loadCollectionXMLParser.h>
+#include <loadGroupXMLParser.h>
+#include <restorePVGroupXMLParser.h>
 
-
-#include "loadCollectionXMLParser.h"
-#include "loadGroupXMLParser.h"
-#include "restorePVGroupXMLParser.h"
 
 #if HAVE_LIBQTXML
 
-
+using namespace std;
 using namespace boost::posix_time;
 
 /**
@@ -30,8 +29,9 @@ using namespace boost::posix_time;
  *  \param collectionFile input: name of collection file
  *  \return ICAFE_NORMAL if OK else ECAFE_LOAD_COLLECTION;
  */
-int  CAFE::loadCollectionsFromXML(const char * collectionFile) {
-    #define __METHOD__ "CAFE::loadCollectionsFromXML(char * collectionFile)"
+int  CAFE::loadCollectionsFromXML(const char * collectionFile)
+{
+#define __METHOD__ "CAFE::loadCollectionsFromXML(char * collectionFile)"
 
     //First check for existence of file in current directory
     //before searching in CAFE_XML_PATH
@@ -45,7 +45,7 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile) {
         std::string envS;
         char * env = getenv("CAFE_XML_PATH");
         env == NULL ? envS=std::string(".") : envS=std::string(env);
-		envS.append("/"); //("/Collections/");
+        envS.append("/"); //("/Collections/");
         envS.append(collectionFile);
 
         file = new QFile(envS.c_str());
@@ -54,15 +54,15 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile) {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "envS=" << envS << endl;
             cout << "COLLECTION FILE " << collectionFile << " NOT FOUND " << endl;
-						cout << "IN THE CURRENT (OR GIVEN) DIRECTORY" << endl;
-					if (env != NULL) {
-						cout << "NOR IN CAFE_XML_PATH/=" << endl;
-						cout << env << endl;
-					}
-					else {
-						cout << "OPTIONAL ENVIRONMENT VARIABLE CAFE_XML_PATH IS UNDEFINED" << endl;
-					}
-			delete file;
+            cout << "IN THE CURRENT (OR GIVEN) DIRECTORY" << endl;
+            if (env != NULL) {
+                cout << "NOR IN CAFE_XML_PATH/=" << endl;
+                cout << env << endl;
+            }
+            else {
+                cout << "OPTIONAL ENVIRONMENT VARIABLE CAFE_XML_PATH IS UNDEFINED" << endl;
+            }
+            delete file;
             return ECAFE_LOAD_COLLECTION;
         }
     }
@@ -84,10 +84,10 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile) {
         return ECAFE_LOAD_COLLECTION;
     }
     deviceCollectionV=handler.deviceCollectionV;
-		
-		//cout << deviceCollectionV[0].getCMembers()[0].devicePosition << endl;
-		//cout << deviceCollectionV[1].getCMembers()[0].devicePosition << endl;
-		
+
+    //cout << deviceCollectionV[0].getCMembers()[0].devicePosition << endl;
+    //cout << deviceCollectionV[1].getCMembers()[0].devicePosition << endl;
+
     return ICAFE_NORMAL;
 
 #undef __METHOD__
@@ -101,7 +101,8 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile) {
  *  \param groupFile input: name of group file
  *  \return ICAFE_NORMAL if OK else ECAFE_LOAD_GROUP;
  */
-int  CAFE::loadGroupsFromXML     (const char * groupFile) {
+int  CAFE::loadGroupsFromXML     (const char * groupFile)
+{
 #define __METHOD__ "CAFE::loadGroupsFromXML(char * groupFile)"
 
     int  localStatus=ICAFE_NORMAL;
@@ -114,7 +115,7 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile) {
         std::string envS;
         char * env = getenv("CAFE_XML_PATH");
         env == NULL ? envS=std::string(".") : envS=std::string(env);
-				envS.append("/"); //envS.append("/Groups/");
+        envS.append("/"); //envS.append("/Groups/");
         envS.append(groupFile);
 
         file = new QFile(envS.c_str());
@@ -122,16 +123,16 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile) {
         if (!file->exists()) {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "GROUP FILE " << groupFile << " NOT FOUND " << endl;
-			cout << "NEITHER IN THE CURRENT (OR GIVEN) DIRECTORY" << endl;
+            cout << "NEITHER IN THE CURRENT (OR GIVEN) DIRECTORY" << endl;
 
-			if (env != NULL) {
-						cout << "NOR IN CAFE_XML_PATH/=" << endl;
-						cout << env << endl;
-			}
-			else {
-						cout << "OPTIONAL ENVIRONMENT VARIABLE CAFE_XML_PATH IS UNDEFINED" << endl;
-			}
-			delete file;
+            if (env != NULL) {
+                cout << "NOR IN CAFE_XML_PATH/=" << endl;
+                cout << env << endl;
+            }
+            else {
+                cout << "OPTIONAL ENVIRONMENT VARIABLE CAFE_XML_PATH IS UNDEFINED" << endl;
+            }
+            delete file;
 
             return ECAFE_LOAD_GROUP;
         }
@@ -157,7 +158,7 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile) {
 
 
     for (std::vector<deviceGroup>::const_iterator group=handler.groups.begin();
-                group!=handler.groups.end();++group) {
+            group!=handler.groups.end(); ++group) {
 
         if(isGroup((char *)(*group).getName().c_str())) {
 
@@ -171,12 +172,14 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile) {
         }
 
         PVGroup pg;
-        vector<std::string> pvList; pvList.clear();
+        vector<std::string> pvList;
+        pvList.clear();
         strcpy(pg.name,(*group).getName().c_str());
 
 
         //Loop round all collections;
-        vector<collectionInGroup> cg; cg.clear();
+        vector<collectionInGroup> cg;
+        cg.clear();
 
         cg=(*group).getCollections();
 
@@ -235,7 +238,8 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile) {
  *  \param snapshotFile input: char * snapshotFile
  *  \return ICAFE_NORMAL if OK else first ECAFE/ICAFE error encountered
  */
-int  CAFE::restoreFromXML     (const char * snapshotFile) {
+int  CAFE::restoreFromXML     (const char * snapshotFile)
+{
 #define __METHOD__ "CAFE::restoreFromXML(char * snapshotFile)"
 
     int  localStatus=ICAFE_NORMAL;
@@ -346,13 +350,7 @@ int  CAFE::restoreFromXML     (const char * snapshotFile) {
     return localStatus;
 #undef __METHOD__
 }
-
 #endif
-
-
-
-
-
 
 
 /**
@@ -362,7 +360,8 @@ int  CAFE::restoreFromXML     (const char * snapshotFile) {
  *  \param pg input: PVGroup pg
  *  \return ICAFE_NORMAL if OK else first ECAFE/ICAFE error encountered
  */
-int  CAFE::snapshot2XML (PVGroup pg) {
+int  CAFE::snapshot2XML (PVGroup pg)
+{
 #define __METHOD__ "CAFE::snapshot2XML(PVGroup pg)"
 
     std::string s="<cafe:config>\n";
@@ -372,20 +371,20 @@ int  CAFE::snapshot2XML (PVGroup pg) {
 
     s.append(gname);
     s.append("\">\n");
-    char sBuffer[60]; char sBufferNPV[60];
+    char sBuffer[60];
+    char sBufferNPV[60];
 
     int  overallStatus=groupGet(pg.getGroupHandle(),pg);
     PVDataHolder * pvd = pg.getPVData();
 
-    unsigned int  hl=0;
-
     s.append("<cafe:npv> ");
-    sprintf(sBufferNPV,"%d", pg.npv);
+    sprintf(sBufferNPV,"%u", pg.npv);
     s.append(sBufferNPV);
     s.append(" </cafe:npv>\n");
 
     //First determine maximum pv size
-    unsigned short maxL=0; string sn="";
+    unsigned short maxL=0;
+    std::string sn="";
     for (unsigned int  j=0; j<pg.getNPV(); ++j) {
         sn=pvd[j].getPV();
         if(sn.size() > maxL) maxL=sn.size()+0;
@@ -402,17 +401,20 @@ int  CAFE::snapshot2XML (PVGroup pg) {
         s.append(" </cafe:nelem><cafe:val> ");
 
         for (unsigned int  i=0; i<pvd[j].getNelem(); ++i) {
-            s.append(pvd[j].getAsString(i));   s.append(" ");
+            s.append(pvd[j].getAsString(i));
+            s.append(" ");
         }
         s.append("</cafe:val><cafe:settable> ");
 
-        hl=getHandleHelper().getHandleFromPVWithinGroup(pvd[j].getPV(), pg.getGroupHandle() );
+        unsigned int hl=getHandleHelper().getHandleFromPVWithinGroup(pvd[j].getPV(), pg.getGroupHandle() );
 
         ChannelRegalia cr;
         getInfo().getChannelRegalia(hl, cr);
 
         if ( cr.getWriteAccess() ) {
-            s.append("true");} else {
+            s.append("true");
+        }
+        else {
             s.append("false");
         }
 
@@ -441,13 +443,13 @@ int  CAFE::snapshot2XML (PVGroup pg) {
     fsname.append(pg.getName());
     char s1[255];
     sprintf(s1,"_%d_%d_%d_%d:%d:%d", (1900 + ltm->tm_year),(1+ltm->tm_mon),
-              ltm->tm_mday,ltm->tm_hour,ltm->tm_min,ltm->tm_sec );
+            ltm->tm_mday,ltm->tm_hour,ltm->tm_min,ltm->tm_sec );
     fsname.append(s1);
     fsname.append(".xml");
 
 
-    ofstream myfile;
-    myfile.open (fsname.c_str(), ios::out);
+    std::ofstream myfile;
+    myfile.open (fsname.c_str(), std::ios::out);
     myfile << s;
     myfile.close();
 
@@ -466,12 +468,13 @@ int  CAFE::snapshot2XML (PVGroup pg) {
  *  \param fileName input: filename to which PVGroup data is written
  *  \return ICAFE_NORMAL if OK else first ECAFE/ICAFE error encountered
  */
-void CAFE::openGroupXMLFile(string fileName) {
-    ofstream myfile;
-    myfile.open (fileName.c_str(), ios::out);
-		std::string s="<cafe:config>\n";
-	  myfile << s;
-		return myfile.close();
+void CAFE::openGroupXMLFile(std::string fileName)
+{
+    std::ofstream myfile;
+    myfile.open (fileName.c_str(), std::ios::out);
+    std::string s="<cafe:config>\n";
+    myfile << s;
+    return myfile.close();
 }
 
 
@@ -481,12 +484,13 @@ void CAFE::openGroupXMLFile(string fileName) {
  *  \param fileName input: filename to which PVGroup data is written
  *  \return ICAFE_NORMAL if OK else first ECAFE/ICAFE error encountered
  */
-void CAFE::closeGroupXMLFile(string fileName) {
- 		ofstream myfile;
-    myfile.open (fileName.c_str(), ios::app);
-		std::string s="</cafe:config>\n";
-	  myfile << s;
-		return  myfile.close();
+void CAFE::closeGroupXMLFile(std::string fileName)
+{
+    std::ofstream myfile;
+    myfile.open (fileName.c_str(), std::ios::app);
+    std::string s="</cafe:config>\n";
+    myfile << s;
+    return  myfile.close();
 }
 
 
@@ -498,39 +502,33 @@ void CAFE::closeGroupXMLFile(string fileName) {
  *  \param fileName input: filename to which PVGroup data is written
  *  \return ICAFE_NORMAL if OK else first ECAFE/ICAFE error encountered
  */
-int  CAFE::group2XML (const char * grpName, string fileName) {
+int  CAFE::group2XML (const char * grpName, std::string fileName)
+{
 #define __METHOD__ "CAFE::group2XML(const char *grpName, ofstream myfile)"
 
-    ofstream myfile;
-    myfile.open (fileName.c_str(), ios::app);
+    std::ofstream myfile;
+    myfile.open (fileName.c_str(), std::ios::app);
 
     std::string s= "\n  <cafe:group id=\"" ;
-		std::string gname=grpName;
-		s.append(gname); s.append("\">\n");
+    std::string gname=grpName;
+    s.append(gname);
+    s.append("\">\n");
 
-		vector<string> lg;
-		lg.clear();
+    std::vector<std::string> lg;
+    lg.clear();
 
-		int status=CAFE::groupMemberList(grpName, lg);
+    int status=CAFE::groupMemberList(grpName, lg);
 
 
-		for (int j=0; j<lg.size(); ++j) {
-		 	s.append("    <cafe:member> <cafe:name>  ");
-			s.append(lg[j]);
-			s.append("  </cafe:name> </cafe:member>\n");
-		}
-		s.append("  </cafe:group>\n");
+    for (int j=0; j<lg.size(); ++j) {
+        s.append("    <cafe:member> <cafe:name>  ");
+        s.append(lg[j]);
+        s.append("  </cafe:name> </cafe:member>\n");
+    }
+    s.append("  </cafe:group>\n");
 
     myfile << s;
-		myfile.close();
+    myfile.close();
     return status;
 #undef __METHOD__
 }
-
-
-
-
-
-
-
-

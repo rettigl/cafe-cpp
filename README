@@ -1,3 +1,11 @@
+##
+autogen_rel_py3.sh       ==>  generates library for use from within python and C++
+autogen_rel_py3_noqt.sh  ==>  generates library for use from within python and C++ (remove Qt4 dependency if xml not required)
+autogen_rel_noqt.sh   ==>  generates library for building a mex file (remove Qt4 dependence as matlab requires Qt5)
+autogen_rel.sh        ==>  normal c++ release
+
+##
+
 ## --------------------------------------------------------------------------
 ## autogen.sh
 ##

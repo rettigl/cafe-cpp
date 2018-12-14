@@ -1,5 +1,5 @@
 ///
-/// \file    enumStrings.cc
+/// \file    enumStrings.cpp
 /// \author  Modified by Jan Chrin, PSI from Astari's C++11 version \n
 ///          Using boost::begin() boost::end() for C++
 /// \date    Release, February 2015
@@ -13,21 +13,18 @@
 
 
 template<typename T>
-struct enumStrings
-{
+struct enumStrings {
     static char const* data[];
 };
 
 template<typename T>
-struct enumRefHolder
-{
+struct enumRefHolder {
     T& enumVal;
     enumRefHolder(T& enumVal): enumVal(enumVal) {}
 };
 
 template<typename T>
-struct enumConstRefHolder
-{
+struct enumConstRefHolder {
     T const& enumVal;
     enumConstRefHolder(T const& enumVal): enumVal(enumVal) {}
 };
@@ -42,7 +39,7 @@ std::ostream& operator<<(std::ostream& str, enumConstRefHolder<T> const& data)
     }
     else {
         return str << "ERROR: enumStrings.h reports data.enumVal= " << data.enumVal
-                << " DOES NOT HAVE A STRING EQUIVALENT!";
+               << " DOES NOT HAVE A STRING EQUIVALENT!";
     }
 }
 
@@ -62,28 +59,33 @@ std::istream& operator>>(std::istream& str, enumRefHolder<T> const& data)
     //if (find != end)
 
     if ( std::find( boost::begin(enumStrings<T>::data),  boost::end( enumStrings<T>::data), value) !=
-            boost::end( enumStrings<T>::data))
-        {
+            boost::end( enumStrings<T>::data)) {
         //data.enumVal = static_cast<T>(std::distance(begin, find));
         data.enumVal = static_cast<T>(std::distance(boost::begin(enumStrings<T>::data),
-            std::find (boost::begin(enumStrings<T>::data), boost::end(enumStrings<T>::data), value ) ));
+                                      std::find (boost::begin(enumStrings<T>::data), boost::end(enumStrings<T>::data), value ) ));
     }
 
 
     if (data.enumVal > boost::size( enumStrings<T>::data) ) {
 
         std::cout << "ERROR: enumStrings.h reports data.enumVal = " << data.enumVal
-                << " is out of enum range = " << boost::size( enumStrings<T>::data) << std::endl;
+                  << " is out of enum range = " << boost::size( enumStrings<T>::data) << std::endl;
     }
 
     return str;
 }
 
 template<typename T>
-enumConstRefHolder<T>  enumToString(T const& e) {return enumConstRefHolder<T>(e);}
+enumConstRefHolder<T>  enumToString(T const& e)
+{
+    return enumConstRefHolder<T>(e);
+}
 
 template<typename T>
-enumRefHolder<T>       enumFromString(T& e)     {return enumRefHolder<T>(e);}
+enumRefHolder<T>       enumFromString(T& e)
+{
+    return enumRefHolder<T>(e);
+}
 
 
 

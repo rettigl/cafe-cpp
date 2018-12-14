@@ -10,7 +10,7 @@ include_HEADERS = cafe.h cafeCache.h cafeConvert.h cafeDataType.h cafeDataTypeHe
                   enumStrings.h granules.h handleHelper.h hashConduit.h helper.h instant.h instant.cpp \
                   loadCollectionXMLParser.h loadGroupXMLParser.h methodCallbacks.h policies.h policyHelper.h \
                   PVCtrlHolder.h PVDataHolder.h PVGroup.h PVHolder.h statusCodes.h transpose.h \
-				  conduitGroup.h hashConduitGroup.h restorePVGroupXMLParser.h
+				  conduitGroup.h hashConduitGroup.h restorePVGroupXMLParser.h tmDateMap.h
 
 
 

@@ -33,10 +33,10 @@ public:
 
     template <class CTYPE> friend class Instant;
     friend class CAFE;
-    Granules(){};
+    Granules() {};
 
 private:
-	HandleHelper helper;
+    HandleHelper helper;
     CAFEStatus cafeStatus;
 
     ChannelRequestDataTypePolicy  channelRequestDataTypePolicy;
@@ -74,7 +74,7 @@ private:
     int  channelExecuteGet      (const unsigned int); //report status
     int  channelExecuteGetNoWait(const unsigned int); //report status
 
-	  int  waitForManyGetEvents(const unsigned int * handleArray,  unsigned int arrayLength, map<unsigned int, int> & bundleResponse);
+    int  waitForManyGetEvents(const unsigned int * handleArray,  unsigned int arrayLength, std::map<unsigned int, int> & bundleResponse);
 
     int  waitForGetEvent     (const unsigned int, double);
     bool isGetCallbackDone   (const unsigned int  _handle);

@@ -19,19 +19,18 @@
 #include <cafeEnum.h>
 #include <defines.h>
 
-class Helper
-{ 
-  public:
-  Helper(){};	  
+class Helper {
+public:
+    Helper() {};
 
-  void          removeLeadingAndTrailingSpacesDbrString(const char * _pv, char pvStripped[MAX_STRING_SIZE]);
-  void          removeLeadingAndTrailingSpacesPseudo(const char * _pv, char pvStripped[PVGROUP_PSEUDO_SIZE]);
-  void          removeLeadingAndTrailingSpaces(const char * _pv, char pvStripped[PVNAME_SIZE]);
-  unsigned int  convertToUniqueNumber(const char * pv, ca_client_context * ccc, unsigned int  ghs);
-  unsigned int  convertToUniqueNumber(const char * pv, ca_client_context * ccc);
-  CAFENUM::DBR_TYPE convertToCAFEDbrTypeClass(const chtype _chtype) const;
+    void          removeLeadingAndTrailingSpacesDbrString(const char * _pv, char pvStripped[MAX_STRING_SIZE]);
+    void          removeLeadingAndTrailingSpacesPseudo(const char * _pv, char pvStripped[PVGROUP_PSEUDO_SIZE]);
+    void          removeLeadingAndTrailingSpaces(const char * _pv, char pvStripped[PVNAME_SIZE]);
+    unsigned int  convertToUniqueNumber(const char * pv, ca_client_context * ccc, unsigned int  ghs);
+    unsigned int  convertToUniqueNumber(const char * pv, ca_client_context * ccc);
+    CAFENUM::DBR_TYPE convertToCAFEDbrTypeClass(const chtype _chtype) const;
 
-  std::string   concatToString(dbr_char_t * inChar, unsigned int nChar);
+    std::string   concatToString(dbr_char_t * inChar, unsigned int nChar);
 };
 
 #endif // HELPER_H

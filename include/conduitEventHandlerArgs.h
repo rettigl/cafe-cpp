@@ -17,33 +17,34 @@
  *   Friend to Conduit/CAFEGroup permitting the event_handler_args.dbr data from callback fn
  *   to be recorded in hash table
  */
-struct change_eventHandlerArgs
-{
+struct change_eventHandlerArgs {
 #define __METHOD__ "change_eventHandlerArgs"
     change_eventHandlerArgs (const struct event_handler_args & new_eventHandlerArgs) :
-            new_eventHandlerArgs(new_eventHandlerArgs){}
+        new_eventHandlerArgs(new_eventHandlerArgs) {}
 
-    void operator() (Conduit& c) {
-		
-		
+    void operator() (Conduit& c)
+    {
 
- 				c.status= new_eventHandlerArgs.status;
+		
+        
+		
+        c.status= new_eventHandlerArgs.status;
         if(c.status!=ECA_NORMAL) return;
 
         Helper helper;
 
         chtype requestedT= new_eventHandlerArgs.type%DBR_STS_STRING;
         chtype bufferType= new_eventHandlerArgs.type; //default
-				//Fill with what actually came back!
+        //Fill with what actually came back!
         //Let is do comparison!
         CAFENUM::DBR_TYPE dbrTypeClass=helper.convertToCAFEDbrTypeClass(new_eventHandlerArgs.type);
 
 
 
         c.usrArgs = new_eventHandlerArgs.usr;
-				c.dataType= requestedT;
-				c.dbrDataType= bufferType;
-				c.cafeDbrType= dbrTypeClass;
+        c.dataType= requestedT;
+        c.dbrDataType= bufferType;
+        c.cafeDbrType= dbrTypeClass;
 
         c.hasNewData=true; //flag used by getMonitorAction for CAFE extensions!
 
@@ -55,12 +56,12 @@ struct change_eventHandlerArgs
             bufferType = dbf_type_to_DBR_CTRL(requestedT);
         }
         else if (new_eventHandlerArgs.type < (LAST_BUFFER_TYPE+1)) {
-           // keep default
+            // keep default
         }
         else {
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-            cout << "CAFE INTERNAL FUNNY: UNKNOWN event_handler_args.type= "
-                    <<  new_eventHandlerArgs.type << endl;
+            std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+            std::cout << "CAFE INTERNAL FUNNY: UNKNOWN event_handler_args.type= "
+                      <<  new_eventHandlerArgs.type << std::endl;
         }
 
         // A safety check that the buffer size is indeed large enough to hold the data
@@ -68,10 +69,9 @@ struct change_eventHandlerArgs
         unsigned int nrequired  = dbr_size_n(bufferType, new_eventHandlerArgs.count);
         unsigned int navailable = nrequired;
 
-        
 
-        switch(dbrTypeClass)
-        {
+
+        switch(dbrTypeClass) {
         case CAFENUM::DBR_STSACK:
             navailable =   c.channelRequestMetaSTSACK.byteSize;
             c.channelRequestMetaSTSACK.nelem        =  new_eventHandlerArgs.count;
@@ -84,19 +84,19 @@ struct change_eventHandlerArgs
         case CAFENUM::DBR_STS:
         case CAFENUM::DBR_TIME:
             navailable =   c.channelRequestMetaData.byteSize; //
-						
-					
-        
-            c.channelRequestMetaData.nelem        =  new_eventHandlerArgs.count;            
+
+
+
+            c.channelRequestMetaData.nelem        =  new_eventHandlerArgs.count;
             c.channelRequestMetaData.dataType     =  requestedT;
             c.channelRequestMetaData.dbrDataType  =  new_eventHandlerArgs.type;
             c.channelRequestMetaData.cafeDbrType  =  dbrTypeClass;
             c.channelRequestMetaData.usrArg       =  new_eventHandlerArgs.usr; //c.channelRequestMetaDataClient.usrArg;
-						
-						//Do this check here already
+
+            //Do this check here already
             if (nrequired > navailable) {
                 c.channelRequestMetaData.byteSize     =  nrequired;
-								
+
             }
             break;
         case CAFENUM::DBR_GR:
@@ -116,41 +116,40 @@ struct change_eventHandlerArgs
         case CAFENUM::DBR_NONE:
             break;
         default:
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-            cout << "CAFE INTERNAL FUNNY: UNKNOWN CAFENUM::DBR_TYPE= " <<  dbrTypeClass  << endl;
+            std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+            std::cout << "CAFE INTERNAL FUNNY: UNKNOWN CAFENUM::DBR_TYPE= " <<  dbrTypeClass  << std::endl;
             break;
         }
 
-				
-			
+
+
 
         if (nrequired > navailable) {
 
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-            cout << "CHANGE OF BUFFER SIZE: FROM " << navailable << " bytes TO " << nrequired << " bytes" << endl;
-            cout << "Channel-" << c.pv << " ca-name=" << ca_name(new_eventHandlerArgs.chid)
-                    << " type="  <<  new_eventHandlerArgs.type
-                    << " type="  << dbr_type_to_text(new_eventHandlerArgs.type) << endl;
+            std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+            std::cout << "CHANGE OF BUFFER SIZE: FROM " << navailable << " bytes TO " << nrequired << " bytes" << std::endl;
+            std::cout << "Channel-" << c.pv << " ca-name=" << ca_name(new_eventHandlerArgs.chid)
+                      << " type="  <<  new_eventHandlerArgs.type
+                      << " type="  << dbr_type_to_text(new_eventHandlerArgs.type) << std::endl;
 
             //check DataBuffers
-            switch(dbrTypeClass)
-            {
+            switch(dbrTypeClass) {
             case CAFENUM::DBR_STSACK: //value is of type dbr_string_t
 
                 if (c.stsackBuffer!=NULL)  {
                     free(c.stsackBuffer);
                 }
                 else {
-                    cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-                    cout << "CAFE INTERNAL FUNNY: HOW CAN stsackBuffer NOT ALREADY EXIST?" << endl;
-                    cout << "CREATING stsackBuffer " << endl;
+                    std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+                    std::cout << "CAFE INTERNAL FUNNY: HOW CAN stsackBuffer NOT ALREADY EXIST?" << std::endl;
+                    std::cout << "CREATING stsackBuffer " << std::endl;
                 }
 
                 c.stsackBuffer = (db_access_val *) malloc (nrequired);
 
 
-                if (c.stsackBuffer==NULL){
-                    cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
+                if (c.stsackBuffer==NULL) {
+                    std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
                     printf ("Exiting CAFE");
                     exit(0);
@@ -167,7 +166,7 @@ struct change_eventHandlerArgs
             case CAFENUM::DBR_TIME:
 
                 // Check that buffer is large enough! Do not expect this part ever to be invoked
-                if (c.dataBuffer != NULL){
+                if (c.dataBuffer != NULL) {
 
                     // Only re-allocate buffer if the number of native elements has increased without the
                     // the callback function first being called. i.e. nelemNative was changed on the fly!
@@ -176,15 +175,15 @@ struct change_eventHandlerArgs
                     free(c.dataBuffer);
                 }
                 else {
-                    cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-                    cout << "CAFE INTERNAL FUNNY: HOW CAN dataBuffer NOT ALREADY EXIST?" << endl;
-                    cout << "CREATING dataBuffer " << endl;
+                    std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+                    std::cout << "CAFE INTERNAL FUNNY: HOW CAN dataBuffer NOT ALREADY EXIST?" << std::endl;
+                    std::cout << "CREATING dataBuffer " << std::endl;
                 }
 
                 c.dataBuffer = (db_access_val *) malloc (nrequired);
 
-                if (c.dataBuffer==NULL){
-                    cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
+                if (c.dataBuffer==NULL) {
+                    std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
                     printf ("Exiting CAFE");
                     exit(0);
@@ -197,7 +196,7 @@ struct change_eventHandlerArgs
             case CAFENUM::DBR_CTRL:
 
                 // Check that buffer is large enough! Do not expect this part ever to be invoked
-                if (c.ctrlBuffer != NULL){
+                if (c.ctrlBuffer != NULL) {
 
                     // Only re-allocate buffer if the number of native elements has increased without the
                     // the callback function first being called. i.e. nelemNative was changed on the fly!
@@ -206,15 +205,15 @@ struct change_eventHandlerArgs
                     free(c.ctrlBuffer);
                 }
                 else {
-                    cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-                    cout << "CAFE INTERNAL FUNNY: HOW CAN dataBuffer NOT ALREADY EXIST?" << endl;
-                    cout << "CREATING dataBuffer " << endl;
+                    std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+                    std::cout << "CAFE INTERNAL FUNNY: HOW CAN dataBuffer NOT ALREADY EXIST?" << std::endl;
+                    std::cout << "CREATING dataBuffer " << std::endl;
                 }
 
                 c.ctrlBuffer = (db_access_val *) malloc (nrequired);
 
-                if (c.ctrlBuffer==NULL){
-                    cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
+                if (c.ctrlBuffer==NULL) {
+                    std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
                     printf ("Exiting CAFE");
                     exit(0);
@@ -241,8 +240,7 @@ struct change_eventHandlerArgs
             }
         }
 
-        switch(dbrTypeClass)
-        {
+        switch(dbrTypeClass) {
         case CAFENUM::DBR_PRIMITIVE:
             //c.hasAlarmStatus  =false;
             //c.hasAlarmSeverity=false;
@@ -268,42 +266,41 @@ struct change_eventHandlerArgs
             //c.hasValue        =true;
             break;
         case CAFENUM::DBR_CTRL:
-           // c.hasAlarmStatus  =true;
-           // c.hasAlarmSeverity=true;
-           // c.hasTimeStamp    =false;
-           // c.hasValue        =true;
+            // c.hasAlarmStatus  =true;
+            // c.hasAlarmSeverity=true;
+            // c.hasTimeStamp    =false;
+            // c.hasValue        =true;
             break;
         case CAFENUM::DBR_STSACK:
-           // c.hasAlarmStatus  =true;
-           // c.hasAlarmSeverity=true;
-           // c.hasTimeStamp    =false;
-           // c.hasValue        =true;
+            // c.hasAlarmStatus  =true;
+            // c.hasAlarmSeverity=true;
+            // c.hasTimeStamp    =false;
+            // c.hasValue        =true;
             break;
         case CAFENUM::DBR_CLASS:
-           // c.hasAlarmStatus  =false;
-           // c.hasAlarmSeverity=false;
-           // c.hasTimeStamp    =false;
-           // c.hasValue        =false;
+            // c.hasAlarmStatus  =false;
+            // c.hasAlarmSeverity=false;
+            // c.hasTimeStamp    =false;
+            // c.hasValue        =false;
             break;
         case CAFENUM::DBR_PUT:
             break;
         case CAFENUM::DBR_NONE:
         default:
-           // c.hasAlarmStatus  =false;
-           // c.hasAlarmSeverity=false;
-           // c.hasTimeStamp    =false;
-           // c.hasValue        =false;
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-            cout << "CAFE INTERNAL ERROR. Datatype not catered for: "
-                  << dbf_type_to_text(new_eventHandlerArgs.type) << endl;
-            cout << new_eventHandlerArgs.type << endl;
+            // c.hasAlarmStatus  =false;
+            // c.hasAlarmSeverity=false;
+            // c.hasTimeStamp    =false;
+            // c.hasValue        =false;
+            std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+            std::cout << "CAFE INTERNAL ERROR. Datatype not catered for: "
+                      << dbf_type_to_text(new_eventHandlerArgs.type) << std::endl;
+            std::cout << new_eventHandlerArgs.type << std::endl;
             break;
         }
 
         //Now fill buffers
 
-        switch(new_eventHandlerArgs.type)
-        {
+        switch(new_eventHandlerArgs.type) {
         case DBR_DOUBLE: //6
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
@@ -342,8 +339,8 @@ struct change_eventHandlerArgs
         case DBR_STRING: // 0
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
-                strcpy ((*(&((c.dataBuffer)->strval)+i)) ,
-                    (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->strval)+i)) );
+                strcpy ((*(&((c.dataBuffer)->strval)+i)),
+                        (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->strval)+i)) );
             }
             break;
 
@@ -382,7 +379,7 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->sfltval.value)+i))
-                        =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->sfltval.value)+i));
+                    =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->sfltval.value)+i));
             }
 
             (*(&((c.dataBuffer)->sfltval.status))) = ((struct dbr_sts_float *) new_eventHandlerArgs.dbr)->status;
@@ -397,7 +394,7 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->slngval.value)+i))
-                        = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->slngval.value)+i));
+                    = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->slngval.value)+i));
             }
 
             (*(&((c.dataBuffer)->slngval.status))) = ((struct dbr_sts_long *) new_eventHandlerArgs.dbr)->status;
@@ -412,7 +409,7 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->sshrtval.value)+i))
-                        = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->sshrtval.value)+i));
+                    = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->sshrtval.value)+i));
             }
             (*(&((c.dataBuffer)->sshrtval.status))) = ((struct dbr_sts_short *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.dataBuffer)->sshrtval.severity))) = ((struct dbr_sts_short *) new_eventHandlerArgs.dbr)->severity;
@@ -424,7 +421,7 @@ struct change_eventHandlerArgs
         case DBR_STS_STRING: // 7
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
-                strcpy ((*(&((c.dataBuffer)->sstrval.value)+i)) ,
+                strcpy ((*(&((c.dataBuffer)->sstrval.value)+i)),
                         (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->sstrval.value)+i)) );
             }
             (*(&((c.dataBuffer)->sstrval.status))) = ((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
@@ -439,7 +436,7 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->senmval.value)+i))
-                        = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->senmval.value)+i));
+                    = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->senmval.value)+i));
             }
             (*(&((c.dataBuffer)->senmval.status))) = ((struct dbr_sts_enum *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.dataBuffer)->senmval.severity))) = ((struct dbr_sts_enum *) new_eventHandlerArgs.dbr)->severity;
@@ -451,24 +448,24 @@ struct change_eventHandlerArgs
 
         case DBR_STS_CHAR: // 11
 
-             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->schrval.value)+i))
-                        = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->schrval.value)+i));
-             }
+                    = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->schrval.value)+i));
+            }
 
-             (*(&((c.dataBuffer)->schrval.status))) = ((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->status;
-             (*(&((c.dataBuffer)->schrval.severity))) = ((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->severity;
+            (*(&((c.dataBuffer)->schrval.status))) = ((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->status;
+            (*(&((c.dataBuffer)->schrval.severity))) = ((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->severity;
 
-             c.alarmStatus  =((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->status;
-             c.alarmSeverity=((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->severity;
+            c.alarmStatus  =((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->status;
+            c.alarmSeverity=((struct dbr_sts_char *) new_eventHandlerArgs.dbr)->severity;
 
-             break;
+            break;
 
         case DBR_TIME_DOUBLE: // 20
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->tdblval.value)+i))
-                        = (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->tdblval.value)+i));
+                    = (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->tdblval.value)+i));
             }
 
             (*(&((c.dataBuffer)->tdblval.status))) = ((struct dbr_time_double *) new_eventHandlerArgs.dbr)->status;
@@ -479,6 +476,7 @@ struct change_eventHandlerArgs
             c.alarmSeverity=((struct dbr_time_double *) new_eventHandlerArgs.dbr)->severity;
             c.ts =((struct dbr_time_double *) new_eventHandlerArgs.dbr)->stamp;
 
+
             break;
 
         case DBR_TIME_FLOAT: //16
@@ -486,7 +484,7 @@ struct change_eventHandlerArgs
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
 
                 (*(&((c.dataBuffer)->tfltval.value)+i))
-                        =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->tfltval.value)+i));
+                    =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->tfltval.value)+i));
 
 
             }
@@ -505,7 +503,7 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->tlngval.value)+i))
-                        = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->tlngval.value)+i));
+                    = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->tlngval.value)+i));
             }
 
             (*(&((c.dataBuffer)->tlngval.status)))   = ((struct dbr_time_long *) new_eventHandlerArgs.dbr)->status;
@@ -520,7 +518,7 @@ struct change_eventHandlerArgs
         case DBR_TIME_SHORT:
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->tshrtval.value)+i))
-                        = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tshrtval.value)+i));
+                    = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tshrtval.value)+i));
             }
 
             (*(&((c.dataBuffer)->tshrtval.status))) = ((struct dbr_time_short *) new_eventHandlerArgs.dbr)->status;
@@ -536,26 +534,26 @@ struct change_eventHandlerArgs
         case DBR_TIME_STRING: //14
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
-                strcpy ((*(&((c.dataBuffer)->tstrval.value)+i)) ,
+                strcpy ((*(&((c.dataBuffer)->tstrval.value)+i)),
                         (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tstrval.value)+i)) );
             }
 
 
-           (*(&((c.dataBuffer)->tstrval.status))) = ((struct dbr_time_string *) new_eventHandlerArgs.dbr)->status;
-           (*(&((c.dataBuffer)->tstrval.severity))) = ((struct dbr_time_string *) new_eventHandlerArgs.dbr)->severity;
-           (*(&((c.dataBuffer)->tstrval.stamp))) = ((struct dbr_time_string *) new_eventHandlerArgs.dbr)->stamp;
+            (*(&((c.dataBuffer)->tstrval.status))) = ((struct dbr_time_string *) new_eventHandlerArgs.dbr)->status;
+            (*(&((c.dataBuffer)->tstrval.severity))) = ((struct dbr_time_string *) new_eventHandlerArgs.dbr)->severity;
+            (*(&((c.dataBuffer)->tstrval.stamp))) = ((struct dbr_time_string *) new_eventHandlerArgs.dbr)->stamp;
 
-           c.alarmStatus  =((struct dbr_time_string *) new_eventHandlerArgs.dbr)->status;
-           c.alarmSeverity=((struct dbr_time_string *) new_eventHandlerArgs.dbr)->severity;
-           c.ts           =((struct dbr_time_string *) new_eventHandlerArgs.dbr)->stamp;
+            c.alarmStatus  =((struct dbr_time_string *) new_eventHandlerArgs.dbr)->status;
+            c.alarmSeverity=((struct dbr_time_string *) new_eventHandlerArgs.dbr)->severity;
+            c.ts           =((struct dbr_time_string *) new_eventHandlerArgs.dbr)->stamp;
 
-           break;
+            break;
 
         case DBR_TIME_ENUM: //17
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->tenmval.value)+i))
-                        = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tenmval.value)+i));
+                    = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tenmval.value)+i));
             }
 
 
@@ -573,7 +571,7 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.dataBuffer)->tchrval.value)+i))
-                        = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tchrval.value)+i));
+                    = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tchrval.value)+i));
 
             }
             (*(&((c.dataBuffer)->tchrval.status))) = ((struct dbr_time_char *) new_eventHandlerArgs.dbr)->status;
@@ -589,36 +587,36 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->cdblval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cdblval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cdblval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->cdblval.status)))    =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->cdblval.severity)))  =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->severity;
             (*(&((c.ctrlBuffer)->cdblval.precision))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->precision;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->precision;
             (*(&((c.ctrlBuffer)->cdblval.RISC_pad0))) =
-                    (dbr_short_t) ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
+                (dbr_short_t) ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
             memcpy((*(&((c.ctrlBuffer)->cdblval.units))),
                    &(((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->units),
                    sizeof(char[MAX_UNITS_SIZE]));
             (*(&((c.ctrlBuffer)->cdblval.upper_disp_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->cdblval.lower_disp_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->cdblval.upper_alarm_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->cdblval.upper_warning_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->cdblval.lower_warning_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->cdblval.lower_alarm_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
             (*(&((c.ctrlBuffer)->cdblval.upper_ctrl_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
             (*(&((c.ctrlBuffer)->cdblval.lower_ctrl_limit))) =
-                    ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
+                ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
 
             break;
 
@@ -626,13 +624,13 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->clngval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->clngval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->clngval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->clngval.status)))   =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->clngval.severity))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_ctrl_long does not have the precision member
             // struct dbr_ctrl_long does not have the RISC_pad member
@@ -641,21 +639,21 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->clngval.upper_disp_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->clngval.lower_disp_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->clngval.upper_alarm_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->clngval.upper_warning_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->clngval.lower_warning_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->clngval.lower_alarm_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
             (*(&((c.ctrlBuffer)->clngval.upper_ctrl_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
             (*(&((c.ctrlBuffer)->clngval.lower_ctrl_limit))) =
-                    ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
+                ((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
 
             //c.alarmStatus  =((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_ctrl_long *) new_eventHandlerArgs.dbr)->severity;
@@ -667,13 +665,13 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->gchrval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cchrval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cchrval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->cchrval.status)))   =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->cchrval.severity))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_ctrl_char does not have the precision member
             // struct dbr_ctrl_char does not have the RISC_pad member
@@ -682,23 +680,23 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->cchrval.upper_disp_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->cchrval.lower_disp_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->cchrval.upper_alarm_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->cchrval.upper_warning_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->cchrval.lower_warning_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->cchrval.lower_alarm_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
             (*(&((c.ctrlBuffer)->cchrval.upper_ctrl_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
             (*(&((c.ctrlBuffer)->cchrval.lower_ctrl_limit))) =
-                    ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
+                ((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
 
-           // c.alarmStatus  =((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->status;
+            // c.alarmStatus  =((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_ctrl_char *) new_eventHandlerArgs.dbr)->severity;
 
             break;
@@ -706,22 +704,22 @@ struct change_eventHandlerArgs
 
         case DBR_CTRL_ENUM: //31
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i){
+            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->cenmval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cenmval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cenmval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->cenmval.status)))   =
-                    ((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->cenmval.severity))) =
-                    ((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_ctrl_enum does not have the precision member
             // struct dbr_ctrl_enum does not have the RISC_pad member
             // struct dbr_ctrl_enum does not have the disp/alarm/warning/ctrl _limits
 
             (*(&((c.ctrlBuffer)->cenmval.no_str)))   =
-                    ((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->no_str;
+                ((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->no_str;
 
             memcpy( (*(&((c.ctrlBuffer)->cenmval.strs))),
                     &(((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->strs),
@@ -730,10 +728,10 @@ struct change_eventHandlerArgs
 
 
             memcpy(c.channelEnumStrings.options, &(((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->strs),
-                        sizeof(c.channelEnumStrings.options));
+                   sizeof(c.channelEnumStrings.options));
             c.channelEnumStrings.noOptions=((struct dbr_ctrl_enum *) new_eventHandlerArgs.dbr)->no_str;
-            //cout << "=====================" << c.channelEnumStrings.noOptions << endl;
-            //for (int i=0; i<c.channelEnumStrings.noOptions; ++i) cout << c.channelEnumStrings.options[i] << endl;
+            //std::cout << "=====================" << c.channelEnumStrings.noOptions << std::endl;
+            //for (int i=0; i<c.channelEnumStrings.noOptions; ++i) std::cout << c.channelEnumStrings.options[i] << std::endl;
 
             break;
 
@@ -742,17 +740,17 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->cfltval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cfltval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cfltval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->cfltval.status)))   =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->cfltval.severity))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->severity;
 
 
             (*(&((c.ctrlBuffer)->cfltval.precision))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->precision;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->precision;
             (*(&((c.ctrlBuffer)->cfltval.RISC_pad))) = (dbr_short_t)
                     ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->RISC_pad; //dbr_short_t
 
@@ -761,21 +759,21 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->cfltval.upper_disp_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->cfltval.lower_disp_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->cfltval.upper_alarm_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->cfltval.upper_warning_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->cfltval.lower_warning_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->cfltval.lower_alarm_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
             (*(&((c.ctrlBuffer)->cfltval.upper_ctrl_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
             (*(&((c.ctrlBuffer)->cfltval.lower_ctrl_limit))) =
-                    ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
+                ((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
 
 
             //c.alarmStatus  =((struct dbr_ctrl_float *) new_eventHandlerArgs.dbr)->status;
@@ -788,13 +786,13 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->gshrtval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cshrtval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cshrtval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->cshrtval.status)))   =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->cshrtval.severity))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_ctrl_short does not have the precision member
             // struct dbr_ctrl_short does not have the RISC_pad member
@@ -803,21 +801,21 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->cshrtval.upper_disp_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->cshrtval.lower_disp_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->cshrtval.upper_alarm_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->cshrtval.upper_warning_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->cshrtval.lower_warning_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->cshrtval.lower_alarm_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
             (*(&((c.ctrlBuffer)->cshrtval.upper_ctrl_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->upper_ctrl_limit;
             (*(&((c.ctrlBuffer)->cshrtval.lower_ctrl_limit))) =
-                    ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
+                ((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->lower_ctrl_limit;
 
 
             //c.alarmStatus  =((struct dbr_ctrl_short *) new_eventHandlerArgs.dbr)->status;
@@ -828,15 +826,15 @@ struct change_eventHandlerArgs
 
         case DBR_CTRL_STRING: //28
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i){
+            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 strcpy( (*(&((c.ctrlBuffer)->cstrval.value)+i)),
                         (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cstrval.value)+i)));
             }
 
             (*(&((c.ctrlBuffer)->cstrval.status)))   =
-                    ((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->cstrval.severity))) =
-                    ((struct dbr_sts_short *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_sts_short *) new_eventHandlerArgs.dbr)->severity;
 
             //c.alarmStatus  =((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->severity;
@@ -847,36 +845,36 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->gdblval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gdblval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gdblval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->gdblval.status)))    =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->gdblval.severity)))  =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->severity;
 
             (*(&((c.ctrlBuffer)->gdblval.precision))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->precision;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->precision;
 
             (*(&((c.ctrlBuffer)->gdblval.RISC_pad0))) =
-                    (dbr_short_t) ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
+                (dbr_short_t) ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
 
             memcpy((*(&((c.ctrlBuffer)->gdblval.units))),
                    &(((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->units),
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->gdblval.upper_disp_limit))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->gdblval.lower_disp_limit))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->gdblval.upper_alarm_limit))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->gdblval.upper_warning_limit))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->gdblval.lower_warning_limit))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->gdblval.lower_alarm_limit))) =
-                    ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
 
             //c.alarmStatus  =((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_gr_double *) new_eventHandlerArgs.dbr)->severity;
@@ -887,13 +885,13 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->glngval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->glngval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->glngval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->glngval.status)))   =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->glngval.severity))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_gr_long does not have the precision member
             // struct dbr_gr_long does not have the RISC_pad member
@@ -902,17 +900,17 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->glngval.upper_disp_limit))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->glngval.lower_disp_limit))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->glngval.upper_alarm_limit))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->glngval.upper_warning_limit))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->glngval.lower_warning_limit))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->glngval.lower_alarm_limit))) =
-                    ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
 
             //c.alarmStatus  =((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_gr_long *) new_eventHandlerArgs.dbr)->severity;
@@ -924,13 +922,13 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->gchrval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gchrval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gchrval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->gchrval.status)))   =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->gchrval.severity))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_gr_char does not have the precision member
             // struct dbr_gr_char does not have the RISC_pad member
@@ -939,17 +937,17 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->gchrval.upper_disp_limit))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->gchrval.lower_disp_limit))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->gchrval.upper_alarm_limit))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->gchrval.upper_warning_limit))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->gchrval.lower_warning_limit))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->gchrval.lower_alarm_limit))) =
-                    ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
 
             //c.alarmStatus  =((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_gr_char *) new_eventHandlerArgs.dbr)->severity;
@@ -959,35 +957,35 @@ struct change_eventHandlerArgs
 
         case DBR_GR_ENUM: //24
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i){
+            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->genmval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->genmval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->genmval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->genmval.status)))   =
-                    ((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->genmval.severity))) =
-                    ((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_gr_enum does not have the precision member
             // struct dbr_gr_enum does not have the RISC_pad member
             // struct dbr_gr_enum does not have the disp/alarm/warning/ctrl _limits
 
             (*(&((c.ctrlBuffer)->genmval.no_str)))   =
-                    ((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->no_str;
+                ((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->no_str;
 
             memcpy( (*(&((c.ctrlBuffer)->genmval.strs))),
                     &(((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->strs),
                     sizeof(char)*MAX_ENUM_STRING_SIZE*MAX_ENUM_STATES) ;
 
-           // c.alarmStatus  =((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->status;
+            // c.alarmStatus  =((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->severity;
 
             memcpy(c.channelEnumStrings.options, &(((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->strs),
-                        sizeof(c.channelEnumStrings.options));
+                   sizeof(c.channelEnumStrings.options));
             c.channelEnumStrings.noOptions=((struct dbr_gr_enum *) new_eventHandlerArgs.dbr)->no_str;
-            //cout << "=====================" << c.channelEnumStrings.noOptions << endl;
-            //for (int i=0; i<c.channelEnumStrings.noOptions; ++i) cout << c.channelEnumStrings.options[i] << endl;
+            //std::cout << "=====================" << c.channelEnumStrings.noOptions << std::endl;
+            //for (int i=0; i<c.channelEnumStrings.noOptions; ++i) std::cout << c.channelEnumStrings.options[i] << std::endl;
 
             break;
 
@@ -996,39 +994,39 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->gfltval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gfltval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gfltval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->gfltval.status)))   =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->gfltval.severity))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->severity;
 
 
             (*(&((c.ctrlBuffer)->gfltval.precision))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->precision;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->precision;
             (*(&((c.ctrlBuffer)->gfltval.RISC_pad0))) =
-                    (dbr_short_t) ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
+                (dbr_short_t) ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
 
             memcpy((*(&((c.ctrlBuffer)->gfltval.units))),
                    &(((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->units),
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->gfltval.upper_disp_limit))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->gfltval.lower_disp_limit))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->gfltval.upper_alarm_limit))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->gfltval.upper_warning_limit))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->gfltval.lower_warning_limit))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->gfltval.lower_alarm_limit))) =
-                    ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
 
 
-           // c.alarmStatus  =((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->status;
+            // c.alarmStatus  =((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_gr_float *) new_eventHandlerArgs.dbr)->severity;
 
             break;
@@ -1038,13 +1036,13 @@ struct change_eventHandlerArgs
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 (*(&((c.ctrlBuffer)->gshrtval.value)+i)) =
-                        (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gshrtval.value)+i));
+                    (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gshrtval.value)+i));
             }
 
             (*(&((c.ctrlBuffer)->gshrtval.status)))   =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->gshrtval.severity))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->severity;
 
             // struct dbr_gr_short does not have the precision member
             // struct dbr_gr_short does not have the RISC_pad member
@@ -1053,17 +1051,17 @@ struct change_eventHandlerArgs
                    sizeof(char[MAX_UNITS_SIZE]));
 
             (*(&((c.ctrlBuffer)->gshrtval.upper_disp_limit))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->upper_disp_limit;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->gshrtval.lower_disp_limit))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->lower_disp_limit;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->lower_disp_limit;
             (*(&((c.ctrlBuffer)->gshrtval.upper_alarm_limit))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->upper_alarm_limit;
             (*(&((c.ctrlBuffer)->gshrtval.upper_warning_limit))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->upper_warning_limit;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->upper_warning_limit;
             (*(&((c.ctrlBuffer)->gshrtval.lower_warning_limit))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->lower_warning_limit;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->lower_warning_limit;
             (*(&((c.ctrlBuffer)->gshrtval.lower_alarm_limit))) =
-                    ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
+                ((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->lower_alarm_limit;
 
             // c.alarmStatus  =((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->status;
             // c.alarmSeverity=((struct dbr_gr_short *) new_eventHandlerArgs.dbr)->severity;
@@ -1073,15 +1071,15 @@ struct change_eventHandlerArgs
 
         case DBR_GR_STRING: //21
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i){
+            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
                 strcpy( (*(&((c.ctrlBuffer)->gstrval.value)+i)),
                         (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gstrval.value)+i)));
             }
 
             (*(&((c.ctrlBuffer)->gstrval.status)))   =
-                    ((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
+                ((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.ctrlBuffer)->gstrval.severity))) =
-                    ((struct dbr_sts_short *) new_eventHandlerArgs.dbr)->severity;
+                ((struct dbr_sts_short *) new_eventHandlerArgs.dbr)->severity;
 
             // c.alarmStatus  =((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
             // c.alarmSeverity=((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->severity;
@@ -1090,27 +1088,27 @@ struct change_eventHandlerArgs
 
         case DBR_STSACK_STRING: // 37
 
-            // cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
+            // std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
 
 
-            // cout << "no of events = " << new_eventHandlerArgs.count << endl;
-            // cout << "Is databuffer large enough? " << endl;
+            // std::cout << "no of events = " << new_eventHandlerArgs.count << std::endl;
+            // std::cout << "Is databuffer large enough? " << std::endl;
             // Need to cast as (struct dbr_stsack_string *) rather than (union db_access_val *)
             //
 
             //CHECK BUFFER SIZE!!!
 
-            // cout <<  "VALUE (struct) = " <<
+            // std::cout <<  "VALUE (struct) = " <<
             //        (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+0))
-            //        << endl;
+            //        << std::endl;
 
             for (long i=0; i<new_eventHandlerArgs.count; ++i) {
-                  strcpy ((*(&((c.stsackBuffer)->sastrval.value)+i)) ,
-                    (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+i)) );
-                  //cout << " VAL  " << (*(&((c.stsackBuffer)->sastrval.value)+i)) << " [" << i << "] ";
+                strcpy ((*(&((c.stsackBuffer)->sastrval.value)+i)),
+                        (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+i)) );
+                //std::cout << " VAL  " << (*(&((c.stsackBuffer)->sastrval.value)+i)) << " [" << i << "] ";
             }
 
-            //cout << endl;
+            //std::cout << std::endl;
 
             (*(&((c.stsackBuffer)->sastrval.status)))   = (dbr_ushort_t) ((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->status;
             (*(&((c.stsackBuffer)->sastrval.severity))) = (dbr_ushort_t) ((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->severity;
@@ -1118,19 +1116,19 @@ struct change_eventHandlerArgs
 
 
 
-            //cout << "Value STSACK " <<  (*(&((c.stsackBuffer)->sastrval.value)+0)) << endl;
-            //cout << "Value STSACK " <<  (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+0))<< endl;
-            //cout << "ALARM STATUS  " <<  (*(&((c.stsackBuffer)->sastrval.status))) << endl;
-            //cout << "ALARM SEVERITY " <<  (*(&((c.stsackBuffer)->sastrval.severity))) << endl;
+            //std::cout << "Value STSACK " <<  (*(&((c.stsackBuffer)->sastrval.value)+0)) << std::endl;
+            //std::cout << "Value STSACK " <<  (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+0))<< std::endl;
+            //std::cout << "ALARM STATUS  " <<  (*(&((c.stsackBuffer)->sastrval.status))) << std::endl;
+            //std::cout << "ALARM SEVERITY " <<  (*(&((c.stsackBuffer)->sastrval.severity))) << std::endl;
 
-            //cout << "VAL ACKT " <<  (dbr_ushort_t) ( (struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->ackt << endl;
+            //std::cout << "VAL ACKT " <<  (dbr_ushort_t) ( (struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->ackt << std::endl;
 
-            //cout << "VAL ACKS " <<  (dbr_ushort_t)  ( (struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->acks << endl;
+            //std::cout << "VAL ACKS " <<  (dbr_ushort_t)  ( (struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->acks << std::endl;
 
 
 
-           // c.alarmStatus  =((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->status;
-           // c.alarmSeverity=((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->severity;
+            // c.alarmStatus  =((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->status;
+            // c.alarmSeverity=((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->severity;
 
 
             break;
@@ -1144,39 +1142,41 @@ struct change_eventHandlerArgs
             // (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->classname)+0)) );
 
 
-            // cout << "Value CLASSNAME " <<  strlen((*(&((c.dataBuffer)->classname)+0)) )<< endl;
-            // cout << "Value CLASSNAME " <<  ((*(&((c.dataBuffer)->classname)+0)) )<< endl;
-            // cout << "Value CLASSNAME " <<   strlen((*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->classname)+0)))<< "/"<<endl;
+            // std::cout << "Value CLASSNAME " <<  strlen((*(&((c.dataBuffer)->classname)+0)) )<< std::endl;
+            // std::cout << "Value CLASSNAME " <<  ((*(&((c.dataBuffer)->classname)+0)) )<< std::endl;
+            // std::cout << "Value CLASSNAME " <<   strlen((*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->classname)+0)))<< "/"<<std::endl;
 
 
             ///strcpy( c.className, (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->classname)+0)));
             strcpy( c.channelRegalia.className,
                     (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->classname)+0)));
 
-            //cout << "ClassName=" << c.channelRegalia.className << endl;
+            //std::cout << "ClassName=" << c.channelRegalia.className << std::endl;
 
             break;
 
 
         default:
-            cout << "CAFE INTERNAL ERROR: This line should never appear! " << endl;
-            cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-            cout << "Method does not support this DBR_TYPE: "
-                 << dbr_type_to_text(new_eventHandlerArgs.type) << endl;
+            std::cout << "CAFE INTERNAL ERROR: This line should never appear! " << std::endl;
+            std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+            std::cout << "Method does not support this DBR_TYPE: "
+                      << dbr_type_to_text(new_eventHandlerArgs.type) << std::endl;
 
             //break;
 
         } //switch
 
 
-		//Do this to prevent overflow error in epicsTime time(ts) routines!
-		//This bad number can occur in timeouts
-		if(c.ts.nsec>1000000000) {c.ts.nsec=0;}
+        //Do this to prevent overflow error in epicsTime time(ts) routines!
+        //This bad number can occur in timeouts
+        if(c.ts.nsec>1000000000) {
+            c.ts.nsec=0;
+        }
 
-		
+
     } // void
-		
-		
+
+
 
 private:
     event_handler_args new_eventHandlerArgs;

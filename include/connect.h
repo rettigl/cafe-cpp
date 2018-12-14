@@ -35,611 +35,875 @@
 
 
 
-class Connect
-{ 	  
-  protected:
-  int  status;
-  CAFEStatus cafeStatus;
-  CAFEStatusSeverity cafeStatusSeverity;
- 
-  CAFEGlobalAlarmSeverity  epicsAlarmSeverity;
-	CAFEGlobalAlarmCondition epicsAlarmStatus;
- 
- 
-  cafeConduit_set::iterator itcs;
-  cafeGroup_set::iterator itgs;
+class Connect {
+protected:
+    int  status;
+    CAFEStatus cafeStatus;
+    CAFEStatusSeverity cafeStatusSeverity;
 
-  CAFEDataTypeCode cafeDataTypeCode;
+    CAFEGlobalAlarmSeverity  epicsAlarmSeverity;
+    CAFEGlobalAlarmCondition epicsAlarmStatus;
 
-  ExceptionsHelper exceptionsHelper;
 
-  
-	
-  PolicyHelper policyHelper;
-  HandleHelper handleHelper;
-  Helper helper;
+    cafeConduit_set::iterator itcs;
+    cafeGroup_set::iterator itgs;
 
-  std::string deviceAttributeDeliminator;
+    CAFEDataTypeCode cafeDataTypeCode;
 
-  bool pyCafeFlag;
+    ExceptionsHelper exceptionsHelper;
 
-  //connectCallbacks.cc
-  static void callbackHandlerAccessRights(struct access_rights_handler_args args);
 
-  static void callbackHandlerException   (struct exception_handler_args     args);
 
-  //connect.cpp
-  int  createChannel(unsigned int  handle, const char * pv, chid &pCh);
-	int  createHandle(const char * pv, ca_client_context * ccc, unsigned int  &handle)
-  //int  createHandle(const char * pv, ca_client_context * ccc, ChannelRequestPolicy channelRequestPolicyPut, unsigned int  &handle)
-          throw (CAFEException_pv);
+    PolicyHelper policyHelper;
+    HandleHelper handleHelper;
+    Helper helper;
 
-  int  contextDestroy();
-  int  contextDestroy(ca_client_context * cctLocal);
+    std::string deviceAttributeDeliminator;
 
-  unsigned short epicsVersion(unsigned short & major, unsigned short & minor, unsigned short & patch);
+    bool pyCafeFlag;
 
-  //group functions
+    //connectCallbacks.cc
+    static void callbackHandlerAccessRights(struct access_rights_handler_args args);
 
-  int  createChannelWithinGroup(unsigned int  handle, const char * pv, chid &pCh);
-  int  createHandleWithinGroup(const char  * pv, ca_client_context * ccc, unsigned int  & _handle)
-          throw (CAFEException_pv);
+    static void callbackHandlerException   (struct exception_handler_args     args);
 
-  public:
-	
-	
-  Connect(){
+    //connect.cpp
+    int  createChannel(unsigned int  handle, const char * pv, chid &pCh);
+    int  createHandle(const char * pv, ca_client_context * ccc, unsigned int  &handle)
+    //int  createHandle(const char * pv, ca_client_context * ccc, ChannelRequestPolicy channelRequestPolicyPut, unsigned int  &handle)
+    throw (CAFEException_pv);
 
-    channelMonitorPolicy.setPolicy(
-       (ChannelWhenToFlushSendBufferPolicyKind) CAFENUM::FLUSH_AFTER_EACH_CHANNEL_SUBSCRIPTION,
-		CAFENUM::WITH_FLUSH_IO, DEFAULT_TIMEOUT_PEND_IO);
+    int  contextDestroy();
+    int  contextDestroy(ca_client_context * cctLocal);
 
-    channelOpenGroupPolicy.setPolicy(
-                                     CAFENUM::FLUSH_AFTER_EACH_GROUP_CREATION,
-																		 CAFENUM::WITH_POLL, DEFAULT_TIMEOUT_SG_PEND_EVENT);
-                                     //CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_SG_PEND_EVENT);
+    unsigned short epicsVersion(unsigned short & major, unsigned short & minor, unsigned short & patch);
 
-    channelOpenPolicy.setPolicy(
-                                CAFENUM::FLUSH_AFTER_EACH_CHANNEL_CREATION,
-																CAFENUM::WITH_POLL, DEFAULT_TIMEOUT_PEND_EVENT);													
-                                //CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_PEND_EVENT);
-																
-		channelClosePolicy.setPolicy(
-                                CAFENUM::FLUSH_AFTER_EACH_CHANNEL_CREATION,
-                                CAFENUM::WITH_PEND_IO, DEFAULT_TIMEOUT_PEND_IO);														
+    //group functions
 
-    deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
-		
+    int  createChannelWithinGroup(unsigned int  handle, const char * pv, chid &pCh);
+    int  createHandleWithinGroup(const char  * pv, ca_client_context * ccc, unsigned int  & _handle)
+    throw (CAFEException_pv);
+
+public:
+
+
+    Connect()
+    {
+
+        channelMonitorPolicy.setPolicy(
+            (ChannelWhenToFlushSendBufferPolicyKind) CAFENUM::FLUSH_AFTER_EACH_CHANNEL_SUBSCRIPTION,
+            CAFENUM::WITH_FLUSH_IO, DEFAULT_TIMEOUT_PEND_IO);
+
+        channelOpenGroupPolicy.setPolicy(
+            CAFENUM::FLUSH_AFTER_EACH_GROUP_CREATION,
+            CAFENUM::WITH_POLL, DEFAULT_TIMEOUT_SG_PEND_EVENT);
+        //CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_SG_PEND_EVENT);
+
+        channelOpenPolicy.setPolicy(
+            CAFENUM::FLUSH_AFTER_EACH_CHANNEL_CREATION,
+            CAFENUM::WITH_POLL, DEFAULT_TIMEOUT_PEND_EVENT);
+        //CAFENUM::WITH_PEND_EVENT, DEFAULT_TIMEOUT_PEND_EVENT);
+
+        channelClosePolicy.setPolicy(
+            CAFENUM::FLUSH_AFTER_EACH_CHANNEL_CREATION,
+            CAFENUM::WITH_PEND_IO, DEFAULT_TIMEOUT_PEND_IO);
+
+        deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
+
 #if HAVE_PYTHON_H
-    pyCafeFlag=true;
+        pyCafeFlag=true;
 #else
-		pyCafeFlag=false;		
-#endif	 
-  };
+        pyCafeFlag=false;
+#endif
+    };
 
-  //these need to be public
+    //these need to be public
 
-  PrintErrorPolicy printErrorPolicy;
+    PrintErrorPolicy printErrorPolicy;
 
-  ChannelCreatePolicy channelCreatePolicy;
+    ChannelCreatePolicy channelCreatePolicy;
 
-  ChannelOpenPolicy channelOpenPolicy;
-  ChannelOpenPolicy channelClosePolicy; //can also use for close
-  ChannelOpenPolicy channelMonitorPolicy;
-  ChannelOpenPolicy channelOpenGroupPolicy;
-	
-	
-  //28 May 2017
-  ChannelRequestPolicy channelRequestPolicyMasterPut;
-	ChannelRequestPolicy channelRequestPolicyMasterGet;
-	ChannelRequestPolicy channelRequestPolicyMasterGetCtrl;
-	ChannelGetActionWhenMonitorPolicy channelGetActionWhenMonitorPolicyMaster;
-
-  //ChannelOpenPolicy getChannelOpenPolicy(){return channelOpenPolicy;}
-  //ChannelOpenPolicy getChannelClosePolicy(){return channelClosePolicy;}
-  //ChannelOpenPolicy getChannelMonitorPolicy(){return channelMonitorPolicy;}
-  //ChannelOpenPolicy getChannelOpenGroupPolicy(){return channelOpenGroupPolicy;}
-
-  HandleHelper getHandleHelper()    {return handleHelper;}
-  HandleHelper getInfo()    {return handleHelper;}
-  PolicyHelper getPolicyHelper()  {return policyHelper;}
-  PolicyHelper getPolicy()  {return policyHelper;}
-
-  unsigned int getNelemClient(unsigned int h){ return handleHelper.getNelemClient(h);}
-  unsigned int getNelemNative(unsigned int h){ return handleHelper.getNelemNative(h);}
-  unsigned int getNelemRequest(unsigned int h){ return handleHelper.getNelemRequest(h);}
-
-  int  getStatus() {return status;}
-
-  CAFEStatus          getCafeStatus() {return cafeStatus;}
-	CAFEStatusSeverity  getCafeStatusSeverity() {return cafeStatusSeverity;}
-	
-	CAFEGlobalAlarmCondition   getEpicsAlarmStatus() {return epicsAlarmStatus;}
-  CAFEGlobalAlarmCondition   getEpicsAlarmCondition() {return epicsAlarmStatus;}
-	CAFEGlobalAlarmSeverity    getEpicsAlarmSeverity() {return epicsAlarmSeverity;}
-	
-	int flushNow() {return ca_flush_io();}
-	
-	int _ca_flush_io(){return ca_flush_io();}
-	int _ca_poll(){return ca_poll();}
-	int _ca_pend_io(double t){return ca_pend_io(t);}
-	int _ca_pend_event(double t){return ca_pend_event(t);}
-	
-  //connect.cc
-	bool setPyCafe(bool b){return pyCafeFlag=b;};
-	bool getPyCafe(){return pyCafeFlag;} ;
-  int  init() throw (CAFEException_init);
-  int  init(ca_preemptive_callback_select select)  throw (CAFEException_init);
-
-  //std::string
-  int  open(const string pvS, unsigned int  &handle) throw (CAFEException_open){
-      try { open (pvS.c_str(), handle);} catch(CAFEException_open &e) {throw e;};
-  }
-  int  open(const string pvS, const std::string pvAliasS, unsigned int  &handle)
-          throw (CAFEException_open){
-      try { open (pvS.c_str(), pvAliasS.c_str(), handle);} catch(CAFEException_open &e) {throw e;};
-  }
-  int  open(const string *pvArrayS, unsigned int *handleArray, const unsigned int nHandles)
-          throw (CAFEException_open);
-
-  //const char *pv
-  int  open(const char *pv, unsigned int  &handle) throw (CAFEException_open);
-  int  open(const char *pv, const char *pvAlias, unsigned int  &handle)
-          throw (CAFEException_open);
-
-  int  open(const char **pvArray, unsigned int *handleArray, const unsigned int nHandles)
-          throw (CAFEException_open);
-  int  open(vector<const char *>, vector<unsigned int> &) throw (CAFEException_open);
-  int  open(vector<string>, vector<unsigned int> &) throw (CAFEException_open);
-
-  int  openV(vector<string> s, vector<unsigned int> &i) throw (CAFEException_open)
-  {return open(s,i); };
-
-  
-//################################################################################	
-
-  	
-	void openGroupPrepare(){
-		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
-		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
-		return;	
-	}
-						
-	void openGroupNowAndWait(double _timeout);
-	
-	void openGroupNowAndWaitForInputGroups(double _timeout, vector<unsigned int> gHandles);
-	
-	
-	//Pends for default amount of time
-  void openGroupNow() {	
-	  openGroupNowAndWait(channelOpenGroupPolicy.getTimeout());		
-		return;
-	} 
-	
-	
-	//Same as above - change nanmin convetnion	
-	void groupOpenPrepare(){
-		channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
-		channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
-		return;	
-	}
-						
-	void groupOpenNowAndWait(double _timeout) { openGroupNowAndWait(_timeout); return; };
-	void groupOpenNowAndWait(double _timeout, vector<unsigned int> gH) 
-	   { openGroupNowAndWaitForInputGroups(_timeout, gH); return; };
-	
-	//Pends for default amount of time
-  void groupOpenNow() {	
-	  openGroupNowAndWait(channelOpenGroupPolicy.getTimeout());		
-		return;
-	} 
-	
-	
-	
-  //-------------------------------------------------------------------------
-  void openMonitorPrepare(){
-  	channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
-	  channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);	  
-		return;
-	}	
-
-	void openMonitorNow(){
-		channelMonitorPolicy.flushSendBufferNow();
-		//reset
-		channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);	
-		return;
-	}
-	
-	void openMonitorNowAndWait(double _timeout){
-		channelMonitorPolicy.setTimeout(_timeout);	 
-		channelMonitorPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
-		channelMonitorPolicy.flushSendBufferNow();		
-		//reset
-		channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);		
-		return;
-  }
-  //------------------------------------------------------------------------
+    ChannelOpenPolicy channelOpenPolicy;
+    ChannelOpenPolicy channelClosePolicy; //can also use for close
+    ChannelOpenPolicy channelMonitorPolicy;
+    ChannelOpenPolicy channelOpenGroupPolicy;
 
 
-	double setOpenDefaultPendTime(double _timeout){
-		return channelOpenPolicy.setDefaultTimeout(_timeout);
-	}
-	
-	double getOpenDefaultPendTime(){
-		return channelOpenPolicy.getDefaultTimeout();
-	}
+    //28 May 2017
+    ChannelRequestPolicy channelRequestPolicyMasterPut;
+    ChannelRequestPolicy channelRequestPolicyMasterGet;
+    ChannelRequestPolicy channelRequestPolicyMasterGetCtrl;
+    ChannelGetActionWhenMonitorPolicy channelGetActionWhenMonitorPolicyMaster;
 
-  //------------------------------------------------------------------------
-  void openPrepare() {
-     channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
-		 channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
-		 return;
-	} 
-	
-	//Same as openPrepare
-	void openNoWait(){
-		channelOpenPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);		
-		channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
-		return;
-	}
-		
-	//Pends for a maximimum of timeout seconds
-  void openNowAndWait(double _timeout);
-	 
-	
-	//Pends for default amount of time
-  void openNow() {	
-	  openNowAndWait(channelOpenPolicy.getTimeout());
-		/*
-	  channelOpenPolicy.flushSendBufferNow();
-		//reset
-		channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
-		channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
-		*/
-		return;
-	} 
+    //ChannelOpenPolicy getChannelOpenPolicy(){return channelOpenPolicy;}
+    //ChannelOpenPolicy getChannelClosePolicy(){return channelClosePolicy;}
+    //ChannelOpenPolicy getChannelMonitorPolicy(){return channelMonitorPolicy;}
+    //ChannelOpenPolicy getChannelOpenGroupPolicy(){return channelOpenGroupPolicy;}
+
+    HandleHelper getHandleHelper()
+    {
+        return handleHelper;
+    }
+    HandleHelper getInfo()
+    {
+        return handleHelper;
+    }
+    PolicyHelper getPolicyHelper()
+    {
+        return policyHelper;
+    }
+    PolicyHelper getPolicy()
+    {
+        return policyHelper;
+    }
+
+    unsigned int getNelemClient(unsigned int h)
+    {
+        return handleHelper.getNelemClient(h);
+    }
+    unsigned int getNelemNative(unsigned int h)
+    {
+        return handleHelper.getNelemNative(h);
+    }
+    unsigned int getNelemRequest(unsigned int h)
+    {
+        return handleHelper.getNelemRequest(h);
+    }
+
+    int  getStatus()
+    {
+        return status;
+    }
+
+    CAFEStatus          getCafeStatus()
+    {
+        return cafeStatus;
+    }
+    CAFEStatusSeverity  getCafeStatusSeverity()
+    {
+        return cafeStatusSeverity;
+    }
+
+    CAFEGlobalAlarmCondition   getEpicsAlarmStatus()
+    {
+        return epicsAlarmStatus;
+    }
+    CAFEGlobalAlarmCondition   getEpicsAlarmCondition()
+    {
+        return epicsAlarmStatus;
+    }
+    CAFEGlobalAlarmSeverity    getEpicsAlarmSeverity()
+    {
+        return epicsAlarmSeverity;
+    }
+
+    int flushNow()
+    {
+        return ca_flush_io();
+    }
+
+    int _ca_flush_io()
+    {
+        return ca_flush_io();
+    }
+    int _ca_poll()
+    {
+        return ca_poll();
+    }
+    int _ca_pend_io(double t)
+    {
+        return ca_pend_io(t);
+    }
+    int _ca_pend_event(double t)
+    {
+        return ca_pend_event(t);
+    }
+
+    //connect.cc
+    bool setPyCafe(bool b)
+    {
+        return pyCafeFlag=b;
+    };
+    bool getPyCafe()
+    {
+        return pyCafeFlag;
+    } ;
+    int  init() throw (CAFEException_init);
+    int  init(ca_preemptive_callback_select select)  throw (CAFEException_init);
+
+    //std::string
+    int  open(const std::string pvS, unsigned int  &handle) throw (CAFEException_open)
+    {
+
+        try {
+            open (pvS.c_str(), handle);
+        }
+        catch(CAFEException_open &e) {
+            throw e;
+        };
+    }
+    int  open(const std::string pvS, const std::string pvAliasS, unsigned int  &handle)
+    throw (CAFEException_open)
+    {
+        try {
+            open (pvS.c_str(), pvAliasS.c_str(), handle);
+        }
+        catch(CAFEException_open &e) {
+            throw e;
+        };
+    }
+    int  open(const std::string *pvArrayS, unsigned int *handleArray, const unsigned int nHandles)
+    throw (CAFEException_open);
+
+    //const char *pv
+    int  open(const char *pv, unsigned int  &handle) throw (CAFEException_open);
+    int  open(const char *pv, const char *pvAlias, unsigned int  &handle)
+    throw (CAFEException_open);
+
+    int  open(const char **pvArray, unsigned int *handleArray, const unsigned int nHandles)
+    throw (CAFEException_open);
+    int  open(std::vector<const char *>, std::vector<unsigned int> &) throw (CAFEException_open);
+    int  open(std::vector<std::string>, std::vector<unsigned int> &) throw (CAFEException_open);
+
+    int  openV(std::vector<std::string> s, std::vector<unsigned int> &i) throw (CAFEException_open)
+    {
+        return open(s,i);
+    };
+
+
+
+//################################################################################
+
+
+    void openGroupPrepare()
+    {
+        channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+        channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+        return;
+    }
+
+    void openGroupNowAndWait(double _timeout);
+
+    void openGroupNowAndWaitForInputGroups(double _timeout, std::vector<unsigned int> gHandles);
+
+
+    //Pends for default amount of time
+    void openGroupNow()
+    {
+        openGroupNowAndWait(channelOpenGroupPolicy.getTimeout());
+        return;
+    }
+
+
+    //Same as above - change nanmin convetnion
+    void groupOpenPrepare()
+    {
+        channelOpenGroupPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+        channelOpenGroupPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+        return;
+    }
+
+    void groupOpenNowAndWait(double _timeout)
+    {
+        openGroupNowAndWait(_timeout);
+        return;
+    };
+    void groupOpenNowAndWait(double _timeout, std::vector<unsigned int> gH)
+    {
+        openGroupNowAndWaitForInputGroups(_timeout, gH);
+        return;
+    };
+
+    //Pends for default amount of time
+    void groupOpenNow()
+    {
+        openGroupNowAndWait(channelOpenGroupPolicy.getTimeout());
+        return;
+    }
+
+
+
+    //-------------------------------------------------------------------------
+    void openMonitorPrepare()
+    {
+        channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+        channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);
+        return;
+    }
+
+    void openMonitorNow()
+    {
+        channelMonitorPolicy.flushSendBufferNow();
+        //reset
+        channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+        channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);
+        return;
+    }
+
+    void openMonitorNowAndWait(double _timeout)
+    {
+        channelMonitorPolicy.setTimeout(_timeout);
+        channelMonitorPolicy.setFlushSendBufferKind(WITH_PEND_EVENT);
+        channelMonitorPolicy.flushSendBufferNow();
+        //reset
+        channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+        channelMonitorPolicy.setFlushSendBufferKind(WITH_FLUSH_IO);
+        return;
+    }
+    //------------------------------------------------------------------------
+
+
+    double setOpenDefaultPendTime(double _timeout)
+    {
+        return channelOpenPolicy.setDefaultTimeout(_timeout);
+    }
+
+    double getOpenDefaultPendTime()
+    {
+        return channelOpenPolicy.getDefaultTimeout();
+    }
+
+    //------------------------------------------------------------------------
+    void openPrepare()
+    {
+        channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+        channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+        return;
+    }
+
+    //Same as openPrepare
+    void openNoWait()
+    {
+        channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+        channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
+        return;
+    }
+
+    //Pends for a maximimum of timeout seconds
+    void openNowAndWait(double _timeout);
+
+
+    //Pends for default amount of time
+    void openNow()
+    {
+        openNowAndWait(channelOpenPolicy.getTimeout());
+        /*
+        channelOpenPolicy.flushSendBufferNow();
+        //reset
+        channelOpenPolicy.setWhenToFlushSendBuffer(FLUSH_NOW);
+        channelOpenPolicy.setFlushSendBufferKind(WITH_POLL); //PEND_EVENT);
+        */
+        return;
+    }
 
 //-------------------------------------------------------------------------
 
+
+    bool initCallbackComplete(std::vector<unsigned int> hV)
+    {
+        return initCallbackComplete(&hV[0], hV.size());
+    }
+
+    bool initCallbackComplete(unsigned int * hArray, unsigned int nelem);
+
+
+
+    //#################################################################################
+
+    unsigned int  printHandle(unsigned int  h)
+    {
+        return handleHelper.printHandle(h);
+    };
+    unsigned int  printHandles(void)
+    {
+        return handleHelper.printHandles();
+    };
+    unsigned int  printDisconnectedHandles(void)
+    {
+        return handleHelper.printDisconnectedHandles();
+    };
+    unsigned int  getDisconnectedHandles(std::vector<unsigned int> &dhV, std::vector<std::string> &pvV)
+    {
+        return handleHelper.getDisconnectedHandles(dhV, pvV);
+    };
+
+
+    void printCAFEException_pv(CAFEException_pv & e)
+    {
+        exceptionsHelper.printCAFEException_pv(e);
+    };
+
+
+    //closeChannel(s) only close within a context
+    int  closeChannels(unsigned int * handleArray, unsigned int nHandles);
+    int  closeChannels(std::vector<unsigned int> v)
+    {
+
+        //unsigned int * handleArray = new unsigned int[v.size()];
+        //int status= closeChannels(handleArray, v.size());
+        //delete [] handleArray;
+        //return status;
+        return closeChannels(&v[0], v.size());
+    };
+    int  closeChannelsV(std::vector<unsigned int> v)
+    {
+        //unsigned int * handleArray = new unsigned int[v.size()];
+        //int status= closeChannels(handleArray, v.size());
+        //delete [] handleArray;
+        //return status;
+        return closeChannels(&v[0], v.size());
+    };
+   
+
+    int  close(unsigned int  handle);
+    int  closeChannel(unsigned int  handle)
+    {
+        return close(handle);
+    };
+    int  closeChannels();
+    int  closeChannels(ca_client_context * cctLocal);
+    int  close()
+    {
+        return closeChannels();
+    };
+
+    //closeHandle(s) close regardless of context
+    int  closeHandlesV(std::vector<unsigned int> v)
+    {
+        return closeHandles(&v[0], v.size());
+    }
+    int  closeHandles (std::vector<unsigned int> v)
+    {
+        return closeHandles(&v[0], v.size());
+    }
+
+
+    int  closeHandles(unsigned int * handleArray, unsigned int nHandles);
+    int  closeHandle(unsigned int  handle);
+    int  closeHandles();
+
+    //Close Channel Keep Handle
+    int  closeChannelKeepHandle(unsigned int  handle);
+    int  closeChannelsKeepHandles(unsigned int  * handleArray,  unsigned int nHandles);
+    int  closeChannelsKeepHandlesV(std::vector<unsigned int> v)
+    {
+        return closeChannelsKeepHandles(&v[0], v.size());
+    }
+    int  closeChannelsKeepHandles (std::vector<unsigned int> v)
+    {
+        return closeChannelsKeepHandles(&v[0], v.size());
+    }
+
+    // Monitors
+    int  monitorStart(unsigned int  handle, MonitorPolicy &mp);
+    int  monitorStart(unsigned int  handle, unsigned int  & monitorID);
+    int  monitorStart(unsigned int  handle)
+    {
+        unsigned int monitorID;
+        return monitorStart(handle, monitorID);
+    }
+
+    int monitorPulseID();
+    int monitorStopPulseID();
+
+    int  monitorStop (unsigned int  handle, MonitorPolicy mp);
+    int  monitorStop (unsigned int  handle, unsigned int  monitorID);
+    int  monitorStopWithID (unsigned int  handle, unsigned int  monitorID)
+    {
+        return monitorStop(handle, monitorID);
+    }
+    int  monitorStop (unsigned int  handle); //stop all monitors for this handle
+    int  monitorStop ();
+    int  monitorStopAll ()
+    {
+        return monitorStop();
+    };
+    int  monitorStop (ca_client_context * ccc);
+
+    // Monitors for arrays and vectors
+    int  monitorStart(unsigned int  * handleArray, unsigned int  nelem)
+    {
+        int * statusArray = new int[nelem];
+        MonitorPolicy * mpV = new MonitorPolicy[nelem];
+        status = monitorStart (handleArray, nelem, statusArray, mpV);
+        delete [] statusArray;
+        delete [] mpV;
+        return status;
+    }
+
+    int  monitorStart(unsigned int  * handleArray, unsigned int  nelem, int  *statusArray,
+                      MonitorPolicy * mpV);
+    int  monitorStart(unsigned int  * handleArray, unsigned int  nelem, int  *statusArray,
+                      unsigned int  * monitorIDArray);
+    int  monitorStart(std::vector<unsigned int> handleV, std::vector<int> &statusV,
+                      std::vector<MonitorPolicy> &mpV);
+    int  monitorStart(std::vector<unsigned int> handleV, std::vector<int> &statusV,
+                      std::vector<unsigned int> &monitorIDV);
+    int  monitorStop (unsigned int  * handleArray, unsigned int  nelem, int  *statusArray);
+    int  monitorStop (std::vector<unsigned int> handleV, std::vector<int> &statusV);
+
+    int  monitorStop(unsigned int  * handleArray, unsigned int  nelem)
+    {
+        int * statusArray = new int[nelem];
+        status = monitorStop (handleArray, nelem, statusArray);
+        delete [] statusArray;
+        return status;
+    }
+
+
+    MonitorPolicy * createMonitorPolicyArray(const unsigned int nmp)
+    {
+        MonitorPolicy * mpArray = new MonitorPolicy[nmp];
+        return mpArray;
+    }
+
+    int  terminate();
+    int  terminate(ca_client_context * cctLocal);
+
+    unsigned int getHandleFromPV(const char * pv)
+    {
+        return handleHelper.getHandleFromPV(pv);
+    }
+    const char * getPVFromHandle(unsigned int handle)
+    {
+        return handleHelper.getPVFromHandle(handle);
+    }
+
+
+
+    unsigned int getHandleFromPVWithinGroup(const char * pv, unsigned int grh)
+    {
+        return handleHelper.getHandleFromPVWithinGroup(pv, grh);
+    }
+
+
+    bool isEnum(unsigned int handle)
+    {
+        return handleHelper.isEnum(handle);
+    }
+
+    bool isValid(unsigned int handle)
+    {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+            if ((*itcs).getHandle()==handle) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool allChannelsConnected()
+    {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+            if (!(*itcs).isConnected()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isConnected(unsigned int handle)
+    {
+        return isChannelConnected(handle);
+    }
+
+    bool isChannelConnected(unsigned int handle)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
+            return (*it_handle).isConnected();
+        }
+        else {
+            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            return false;
+        }
+    }
+		
+		
+		
+		
+    int  getChannelInfo(unsigned int handle, ChannelRegalia & channelInfo)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
+            channelInfo=(*it_handle).getChannelRegalia();
+            return ICAFE_NORMAL;
+        }
+        else {
+            return ECAFE_INVALID_HANDLE;
+        }
+    };
 	
-	bool initCallbackComplete(vector<unsigned int> hV) {
-		return initCallbackComplete(&hV[0], hV.size());
-	}
-	
-	bool initCallbackComplete(unsigned int * hArray, unsigned int nelem);
-
-	
-	
-	//#################################################################################			
-
-  unsigned int  printHandle(unsigned int  h){return handleHelper.printHandle(h);};
-  unsigned int  printHandles(void){return handleHelper.printHandles();};
-  unsigned int  printDisconnectedHandles(void){return handleHelper.printDisconnectedHandles();};
-  unsigned int  getDisconnectedHandles(vector<unsigned int> &dhV, vector<string> &pvV)
-	{return handleHelper.getDisconnectedHandles(dhV, pvV);};
+    chid getChannelID(unsigned int handle)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
+            return (*it_handle).getChannelID();
+        }
+        else {
+            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            return NULL;
+        }
+    }
 
 
-  void printCAFEException_pv(CAFEException_pv & e){exceptionsHelper.printCAFEException_pv(e);};
-  
-	
+    ca_client_context * getClientContext(const char * pvname)
+    {
+        return handleHelper.getContextFromPV(pvname);
+    }
 
-	
-  //closeChannel(s) only close within a context
-	int  closeChannels(unsigned int * handleArray, unsigned int nHandles);
-	int  closeChannels(vector<unsigned int> v){
-	
-	  //unsigned int * handleArray = new unsigned int[v.size()];
-		//int status= closeChannels(handleArray, v.size());
-		//delete [] handleArray;
-	  //return status;
-		return closeChannels(&v[0], v.size());
-	};
-  int  closeChannelsV(vector<unsigned int> v){
-	  //unsigned int * handleArray = new unsigned int[v.size()];
-		//int status= closeChannels(handleArray, v.size());
-		//delete [] handleArray;		
-	  //return status;
-		return closeChannels(&v[0], v.size());
-	};
-	
-	
-  int  close(unsigned int  handle);
-  int  closeChannel(unsigned int  handle){return close(handle);};
-  int  closeChannels();
-  int  closeChannels(ca_client_context * cctLocal);
-  int  close(){return closeChannels();};
-  
-  //closeHandle(s) close regardless of context
-	int  closeHandlesV(vector<unsigned int> v){ return closeHandles(&v[0], v.size());}
-	int  closeHandles (vector<unsigned int> v){ return closeHandles(&v[0], v.size());}
-	
-	
-  int  closeHandles(unsigned int * handleArray, unsigned int nHandles);
-  int  closeHandle(unsigned int  handle);
-  int  closeHandles();
-	
-	//Close Channel Keep Handle
-	int  closeChannelKeepHandle(unsigned int  handle);
-	int  closeChannelsKeepHandles(unsigned int  * handleArray,  unsigned int nHandles);
-	int  closeChannelsKeepHandlesV(vector<unsigned int> v){ return closeChannelsKeepHandles(&v[0], v.size());}
-	int  closeChannelsKeepHandles (vector<unsigned int> v){ return closeChannelsKeepHandles(&v[0], v.size());}	
- 
-  // Monitors
-  int  monitorStart(unsigned int  handle, MonitorPolicy &mp);
-  int  monitorStart(unsigned int  handle, unsigned int  & monitorID);
-  int  monitorStart(unsigned int  handle) {
-      unsigned int monitorID; return monitorStart(handle, monitorID);
-  }
+    ca_client_context * getClientContext(unsigned int handle)
+    {
+        return handleHelper.getContextFromHandle(handle);
+    }
 
-  int  monitorStop (unsigned int  handle, MonitorPolicy mp);
-  int  monitorStop (unsigned int  handle, unsigned int  monitorID);
-  int  monitorStopWithID (unsigned int  handle, unsigned int  monitorID){
-      return monitorStop(handle, monitorID);}
-  int  monitorStop (unsigned int  handle); //stop all monitors for this handle
-  int  monitorStop ();
-  int  monitorStopAll (){return monitorStop();};
-  int  monitorStop (ca_client_context * ccc);
+    int attachContext(ca_client_context *ccc)
+    {
+        if (ccc != NULL) {
+            return ca_attach_context(ccc);
+        }
+        else {
+            return ECAFE_NULLCONTEXT;
+        }
+    }
 
-  // Monitors for arrays and vectors
-  int  monitorStart(unsigned int  * handleArray, unsigned int  nelem) {
-      int * statusArray = new int[nelem];
-      MonitorPolicy * mpV = new MonitorPolicy[nelem];
-      status = monitorStart (handleArray, nelem, statusArray, mpV);
-      delete [] statusArray; delete [] mpV;
-      return status;
-  }
+    int attachContextByPVName(const char * pvname)
+    {
+        ca_client_context * ccc=getClientContext(pvname);
+        if (ccc != NULL) {
+            return ca_attach_context(ccc);
+        }
+        else {
+            return ECAFE_NULLCONTEXT;
+        }
+    }
 
-  int  monitorStart(unsigned int  * handleArray, unsigned int  nelem, int  *statusArray,
-                    MonitorPolicy * mpV);
-  int  monitorStart(unsigned int  * handleArray, unsigned int  nelem, int  *statusArray,
-                    unsigned int  * monitorIDArray);
-  int  monitorStart(vector<unsigned int> handleV, vector<int> &statusV,
-                    vector<MonitorPolicy> &mpV);
-  int  monitorStart(vector<unsigned int> handleV, vector<int> &statusV,
-                    vector<unsigned int> &monitorIDV);
-  int  monitorStop (unsigned int  * handleArray, unsigned int  nelem, int  *statusArray);
-  int  monitorStop (vector<unsigned int> handleV, vector<int> &statusV);
+    int attachContextByHandle(unsigned int handle)
+    {
+        ca_client_context * ccc=getClientContext(handle);
+        if (ccc != NULL) {
+            return ca_attach_context(ccc);
+        }
+        else {
+            return ECAFE_NULLCONTEXT;
+        }
+    }
 
-  int  monitorStop(unsigned int  * handleArray, unsigned int  nelem) {
-      int * statusArray = new int[nelem];
-      status = monitorStop (handleArray, nelem, statusArray);
-      delete [] statusArray;
-      return status;			
-  }
+    //Add these methods for QCafe
+    int updateAccessRead(unsigned int handle, int ar)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
 
+            if ( (*it_handle).getAccessRead() != ar ) {
+                if(MUTEX) {
+                    cafeMutex.lock();
+                }
+                handle_index.modify(it_handle, change_accessRead(ar));
+                if(MUTEX) {
+                    cafeMutex.unlock();
+                }
+            }
+            return ICAFE_NORMAL;
+        }
+        else {
+            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            return ECAFE_INVALID_HANDLE;
+        }
+    }
 
-  MonitorPolicy * createMonitorPolicyArray(const unsigned int nmp) {
-		MonitorPolicy * mpArray = new MonitorPolicy[nmp];
-		return mpArray;		
-	}
+    int updateAccessWrite(unsigned int handle, int aw)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
+            if ( (*it_handle).getAccessWrite() != aw ) {
+                if(MUTEX) {
+                    cafeMutex.lock();
+                }
+                handle_index.modify(it_handle, change_accessWrite(aw));
+                if(MUTEX) {
+                    cafeMutex.unlock();
+                }
+            }
+            return ICAFE_NORMAL;
+        }
+        else {
+            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            return ECAFE_INVALID_HANDLE;
+        }
+    }
 
-  int  terminate();
-  int  terminate(ca_client_context * cctLocal);
- 
-  unsigned int getHandleFromPV(const char * pv) {return handleHelper.getHandleFromPV(pv); }
-  const char * getPVFromHandle(unsigned int handle){
-      return handleHelper.getPVFromHandle(handle);
-  }
+    bool getReadAccess(unsigned int handle)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
+            return (bool) (*it_handle).getAccessRead();
+        }
+        else {
+            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            return false;
+        }
+    }
 
+    bool getWriteAccess(unsigned int handle)
+    {
+        cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+        cafeConduit_set_by_handle::iterator it_handle;
+        it_handle = handle_index.find(handle);
+        if (it_handle != handle_index.end()) {
+            return (bool) (*it_handle).getAccessWrite();
+        }
+        else {
+            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            return false;
+        }
+    }
 
+    void printStatusMessage(int status)
+    {
+        std::string s =  getCafeStatus().csi.message(status);
+        std::string c =  getCafeStatus().csc.message(status);
+        printf("%s\n",c.c_str());
+        printf("%s\n",s.c_str());
+    }
 
-  unsigned int getHandleFromPVWithinGroup(const char * pv, unsigned int grh) {
-	  return handleHelper.getHandleFromPVWithinGroup(pv, grh); }
-
-
-  bool isEnum(unsigned int handle) {return handleHelper.isEnum(handle);}
-
-  bool isValid(unsigned int handle) { for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
-    {if ((*itcs).getHandle()==handle) {return true;}} return false;}
-
-  bool allChannelsConnected() { for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
-      {if (!(*itcs).isConnected()) {return false;}} return true;}
-			
-  bool isConnected(unsigned int handle) {
-      return isChannelConnected(handle);
-  }
-	
-  bool isChannelConnected(unsigned int handle){cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-        cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {return (*it_handle).isConnected();}
-        else {std::cout<< "Input handle " << handle << " does not exists! " << std::endl; return false;}}
-  int  getChannelInfo(unsigned int handle, ChannelRegalia & channelInfo){
-      cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-      cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-      if (it_handle != handle_index.end()) {channelInfo=(*it_handle).getChannelRegalia(); return ICAFE_NORMAL;}
-      else {return ECAFE_INVALID_HANDLE;}
-  };	
-  chid getChannelID(unsigned int handle){cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-      cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-      if (it_handle != handle_index.end()) {return (*it_handle).getChannelID();}
-      else {std::cout<< "Input handle " << handle << " does not exists! " << std::endl; return NULL;}}
+    int  printStatus(unsigned int handle, int  status);
+    int  printStatusIfError(unsigned int handle, int  status);
+    int  printStatus(unsigned int * handleArray, unsigned int  nelem, int  * statusArray);
+    int  printStatusIfError(unsigned int * handleArray, unsigned int  nelem, int  * statusArray);
+    int  printStatus(std::vector<unsigned int> handleV, std::vector<int> statusV);
+    int  printStatusIfError(std::vector<unsigned int> handleV, std::vector<int> statusV);
 
 
-  ca_client_context * getClientContext(const char * pvname){
-       return handleHelper.getContextFromPV(pvname);
-  }
+    int  printStatus(const char *pv, int  status);
+    int  printStatusIfError(const char *pv, int  status);
+    int  printStatus(const char * pvArray, unsigned int  nelem, int  * statusArray);
+    int  printStatusIfError(const char * pvArray, unsigned int  nelem, int  * statusArray);
+    int  printStatus(std::vector<std::string> pvV, std::vector<int> statusV);
+    int  printStatusIfError(std::vector<std::string> pvV, std::vector<int> statusV);
 
-  ca_client_context * getClientContext(unsigned int handle){
-       return handleHelper.getContextFromHandle(handle);
-  }
+    int  setPVAlias(unsigned int handle, const char * pv) throw (CAFEException_open);
 
-  int attachContext(ca_client_context *ccc){
-      if (ccc != NULL) {
-        return ca_attach_context(ccc);
-    } else { return ECAFE_NULLCONTEXT;}
-  }
+    // GROUP FUNCTIONS
 
-  int attachContextByPVName(const char * pvname){
-      ca_client_context * ccc=getClientContext(pvname);
-      if (ccc != NULL) {
-        return ca_attach_context(ccc);
-    } else { return ECAFE_NULLCONTEXT;}
-  }
+    PVDataHolder * getPVData(std::vector <unsigned int> handleArray);
 
-  int attachContextByHandle(unsigned int handle){
-      ca_client_context * ccc=getClientContext(handle);
-      if (ccc != NULL) {
-        return ca_attach_context(ccc);
-    } else { return ECAFE_NULLCONTEXT;}
-  }
-
-  //Add these methods for QCafe
-  int updateAccessRead(unsigned int handle, int ar) {cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-      cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-      if (it_handle != handle_index.end()) {
-
-          if ( (*it_handle).getAccessRead() != ar ) {
-              if(MUTEX){cafeMutex.lock();}
-              handle_index.modify(it_handle, change_accessRead(ar));
-              if(MUTEX){cafeMutex.unlock();}
-          }
-          return ICAFE_NORMAL;}
-      else {std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
-          return ECAFE_INVALID_HANDLE;}
-  }
-
-  int updateAccessWrite(unsigned int handle, int aw) {cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-      cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-      if (it_handle != handle_index.end()) {
-          if ( (*it_handle).getAccessWrite() != aw ) {
-              if(MUTEX){cafeMutex.lock();}
-              handle_index.modify(it_handle, change_accessWrite(aw));
-              if(MUTEX){cafeMutex.unlock();}
-          }
-          return ICAFE_NORMAL;}
-      else {std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
-          return ECAFE_INVALID_HANDLE;}
-  }
-
-  bool getReadAccess(unsigned int handle){cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-      cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-      if (it_handle != handle_index.end()) {return (bool) (*it_handle).getAccessRead();}
-      else {std::cout<< "Input handle " << handle << " does not exists! " << std::endl; return false;}}
-
-  bool getWriteAccess(unsigned int handle){cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
-      cafeConduit_set_by_handle::iterator it_handle; it_handle = handle_index.find(handle);
-      if (it_handle != handle_index.end()) {return (bool) (*it_handle).getAccessWrite();}
-      else {std::cout<< "Input handle " << handle << " does not exists! " << std::endl; return false;}}
-
-  void printStatusMessage(int status) {
-      string s =  getCafeStatus().csi.message(status);
-      string c =  getCafeStatus().csc.message(status);
-      printf("%s\n",c.c_str());
-      printf("%s\n",s.c_str());
-  }
-
-  int  printStatus(unsigned int handle, int  status);
-  int  printStatusIfError(unsigned int handle, int  status);
-  int  printStatus(unsigned int * handleArray, unsigned int  nelem, int  * statusArray);
-  int  printStatusIfError(unsigned int * handleArray, unsigned int  nelem, int  * statusArray);
-  int  printStatus(vector<unsigned int> handleV, vector<int> statusV);
-  int  printStatusIfError(vector<unsigned int> handleV, vector<int> statusV);
+    int  collectionDefine(const char * collectionName, std::vector<std::string> deviceV);
+    int  collectionDefine(const char * collectionName, std::vector<const char *> deviceV);
+    int  collectionDefine(const char * collectionName, pv_string_t * deviceArray, unsigned int  deviceLength);
+    int  collectionFetch(const char * collectionName, std::vector<std::string> &deviceListV);
+    int  collectionFetch(const char * collectionName, std::vector<const char *> &deviceListV);
+    int  collectionFetch(const char * collectionName,deviceCollection &dC);
+    std::vector<deviceCollection> getCollections() const
+    {
+        return deviceCollectionV;
+    };
 
 
-  int  printStatus(const char *pv, int  status);
-  int  printStatusIfError(const char *pv, int  status);
-  int  printStatus(const char * pvArray, unsigned int  nelem, int  * statusArray);
-  int  printStatusIfError(const char * pvArray, unsigned int  nelem, int  * statusArray);
-  int  printStatus(vector<string> pvV, vector<int> statusV);
-  int  printStatusIfError(vector<string> pvV, vector<int> statusV);
+    //To do: Add shared_ptr for this method to ensure memory release
+    int  collectionMemberList(const char * collectionName, boost::shared_ptr<pv_string_t []> &list, unsigned int  &listLength);
+    //int  collectionMemberList(const char * collectionName, dbr_string_t * &list, unsigned int  &listLength);
 
-  int  setPVAlias(unsigned int handle, const char * pv) throw (CAFEException_open);
+    //To do: Add shared_ptr for this method to ensure memory release
+    int  collectionList      (boost::shared_ptr<pv_string_t []> &clist, unsigned int  &listLength);
+    //int  collectionList      (dbr_string_t * &clist, unsigned int  &listLength);
 
-  // GROUP FUNCTIONS
+    int  collectionMemberList(const char * collectionName, std::vector<std::string> &list);
+    int  collectionList      (std::vector<std::string> &clist);
 
-  PVDataHolder * getPVData(vector <unsigned int> handleArray);
-
-  int  collectionDefine(const char * collectionName, vector<string> deviceV);
-  int  collectionDefine(const char * collectionName, vector<const char *> deviceV);
-  int  collectionDefine(const char * collectionName, pv_string_t * deviceArray, unsigned int  deviceLength);
-  int  collectionFetch(const char * collectionName, vector<string> &deviceListV);
-  int  collectionFetch(const char * collectionName, vector<const char *> &deviceListV);
-  int  collectionFetch(const char * collectionName,deviceCollection &dC);
-  vector<deviceCollection> getCollections() const {return deviceCollectionV;};
+    int  devicePositionOrderedMultiMap(const char * collectionName, std::multimap<float, std::string> &posDev);
+    int  devicePositionMap(const char * collectionName, std::map<float, std::string> &posDev);
+    int  devicePositionV(const char * collectionName, std::vector<std::string> &dev, std::vector<float> &pos);
 
 
-  //To do: Add shared_ptr for this method to ensure memory release
-  int  collectionMemberList(const char * collectionName, boost::shared_ptr<pv_string_t []> &list, unsigned int  &listLength);
-  //int  collectionMemberList(const char * collectionName, dbr_string_t * &list, unsigned int  &listLength);
+    int  fetchIndexOfCollectionMember(const char *collectionName, const char * deviceName);
 
-  //To do: Add shared_ptr for this method to ensure memory release
-  int  collectionList      (boost::shared_ptr<pv_string_t []> &clist, unsigned int  &listLength);
-  //int  collectionList      (dbr_string_t * &clist, unsigned int  &listLength);
+    bool isGroup(const char *);
+    bool isCollection(const char *);
 
-  int  collectionMemberList(const char * collectionName, vector<string> &list);
-  int  collectionList      (vector<string> &clist);
-
-	int  devicePositionOrderedMultiMap(const char * collectionName, std::multimap<float, string> &posDev);
-	int  devicePositionMap(const char * collectionName, std::map<float, string> &posDev);
-  int  devicePositionV(const char * collectionName, std::vector<string> &dev, std::vector<float> &pos);
+    int  groupOpen(const char *pv,   unsigned int  &groupHandle) throw (CAFEException_groupOpen);
+    int  groupOpen(PVGroup &pvgroup, unsigned int  &groupHandle) throw (CAFEException_groupOpen);
 
 
-  int  fetchIndexOfCollectionMember(const char *collectionName, const char * deviceName);
+    int  groupClose(unsigned int  groupHandle);
+    int  groupClose();
+    int  groupCloseAll()
+    {
+        return groupClose();
+    };
+    int  groupHandleErase();
+    int  groupHandleErase(ca_client_context *ccc);
 
-  bool isGroup(const char *);
-  bool isCollection(const char *);
-
-  int  groupOpen(const char *pv,   unsigned int  &groupHandle) throw (CAFEException_groupOpen);
-  int  groupOpen(PVGroup &pvgroup, unsigned int  &groupHandle) throw (CAFEException_groupOpen);
-
-
-  int  groupClose(unsigned int  groupHandle);
-	int  groupClose();
-	int  groupCloseAll(){return groupClose(); };
-  int  groupHandleErase();
-  int  groupHandleErase(ca_client_context *ccc);
-
-  int  groupCombine(const char * newGroupName, const char * groupName1,
-                            const char * groupName2);  // PVGroup &pvGroup);
-  int  groupCombine(const char * newGroupName, vector<char *> groupName);// PVGroup &pvGroup);
+    int  groupCombine(const char * newGroupName, const char * groupName1,
+                      const char * groupName2);  // PVGroup &pvGroup);
+    int  groupCombine(const char * newGroupName, std::vector<char *> groupName);// PVGroup &pvGroup);
 
 
-  vector<string> generateChannelList(vector<string> inputStringV) {
-		return  getFromGlobalChannelList(inputStringV);
-	}
- 
-  vector<string> getFromGlobalChannelList(vector<string>);
+    std::vector<std::string> generateChannelList(std::vector<std::string> inputStringV)
+    {
+        return  getFromGlobalChannelList(inputStringV);
+    }
+
+    std::vector<std::string> getFromGlobalChannelList(std::vector<std::string>);
 
 
-  int  groupDefine (const char * groupName, const char * collectionName, vector<string> attributeV);
-  int  groupDefine (const char * groupName, const char * collectionName, vector<const char*> attributeV);
-  int  groupDefine (const char * groupName, const char * collectionName,
-                    pv_string_t * attributeArray, unsigned short attributeLength);
-  int  groupDefine (const char * groupName, const char * collectionName, pv_string_t  attribute){
-     pv_string_t aA[1]; strcpy(aA[0], attribute);
-     return groupDefine(groupName, collectionName, aA, 1);
-  }
+    int  groupDefine (const char * groupName, const char * collectionName, std::vector<std::string> attributeV);
+    int  groupDefine (const char * groupName, const char * collectionName, std::vector<const char*> attributeV);
+    int  groupDefine (const char * groupName, const char * collectionName,
+                      pv_string_t * attributeArray, unsigned short attributeLength);
+    int  groupDefine (const char * groupName, const char * collectionName, pv_string_t  attribute)
+    {
+        pv_string_t aA[1];
+        strcpy(aA[0], attribute);
+        return groupDefine(groupName, collectionName, aA, 1);
+    }
 
-  int  groupDefine (const char * groupName, vector<string> deviceV, vector<string> attributeV);// PVGroup &pvGroup);
-  int  groupDefine (const char * groupName, vector<const char *> deviceV, vector<const char*> attributeV);
-                    //PVGroup &pvGroup);
-  int  groupDefine (const char * groupName, pv_string_t * deviceArray, unsigned int  deviceLength,
-                    pv_string_t * attributeArray, unsigned short attributeLength); //
+    int  groupDefine (const char * groupName, std::vector<std::string> deviceV, std::vector<std::string> attributeV);// PVGroup &pvGroup);
+    int  groupDefine (const char * groupName, std::vector<const char *> deviceV, std::vector<const char*> attributeV);
+    //PVGroup &pvGroup);
+    int  groupDefine (const char * groupName, pv_string_t * deviceArray, unsigned int  deviceLength,
+                      pv_string_t * attributeArray, unsigned short attributeLength); //
 
-  int  groupDefine (const char * groupName, vector<string> pvArrayV); // PVGroup &pvGroup);
-  int  groupDefine (const char * groupName, vector<const char *> pvArrayV); // PVGroup &pvGroup);
-  int  groupDefine (const char * groupName, pv_string_t * pvArray, unsigned int  pvArrayLength);
-                            //PVGroup &pvGroup);
+    int  groupDefine (const char * groupName, std::vector<std::string> pvArrayV); // PVGroup &pvGroup);
+    int  groupDefine (const char * groupName, std::vector<const char *> pvArrayV); // PVGroup &pvGroup);
+    int  groupDefine (const char * groupName, pv_string_t * pvArray, unsigned int  pvArrayLength);
+    //PVGroup &pvGroup);
 
-  //To do: Add shared_ptr for this method to ensure memory release
+    //To do: Add shared_ptr for this method to ensure memory release
 
-  int  groupMemberList(const char * groupName, boost::shared_ptr<pv_string_t []> &list, unsigned int &listLength);
-  //int  groupMemberList(const char * groupName, dbr_string_t * &list, unsigned int  &listLength);
+    int  groupMemberList(const char * groupName, boost::shared_ptr<pv_string_t []> &list, unsigned int &listLength);
+    //int  groupMemberList(const char * groupName, dbr_string_t * &list, unsigned int  &listLength);
 
-  int  groupList      (boost::shared_ptr<pv_string_t []> &glist, unsigned int  &listLength);
-  //int  groupList      (dbr_string_t * &glist, unsigned int  &listLength);
+    int  groupList      (boost::shared_ptr<pv_string_t []> &glist, unsigned int  &listLength);
+    //int  groupList      (dbr_string_t * &glist, unsigned int  &listLength);
 
-  int  groupMemberList(const char * groupName, vector<string> &list);
+    int  groupMemberList(const char * groupName, std::vector<std::string> &list);
 
-  int  groupList      (vector<string> &glist);
+    int  groupList      (std::vector<std::string> &glist);
 
-  int  fetchIndexOfGroupMember(const char *groupName, const char * pv);
+    int  fetchIndexOfGroupMember(const char *groupName, const char * pv);
 
-  void setDeviceAttributeDeliminator(std::string d) {deviceAttributeDeliminator=d;};
-  std::string getDeviceAttributeDeliminator() const {return deviceAttributeDeliminator;};
-	
+    void setDeviceAttributeDeliminator(std::string d)
+    {
+        deviceAttributeDeliminator=d;
+    };
+    std::string getDeviceAttributeDeliminator() const
+    {
+        return deviceAttributeDeliminator;
+    };
+
 
 };
 

@@ -25,9 +25,7 @@ export CAFE_EPICS_V_MAJOR=$EBMAJ
 export CAFE_EPICS_V_MINOR=$EBMIN
 export CAFE_EPICS_V_PATCH=$EBPAT
  
-
-CAFE_VERSION=cafe-1.5.0-final-2
-
+CAFE_VERSION=cafe-1.8.0-gcc-6.3.0
 
 ./configure \
     --prefix=/opt/gfa/cafe/cpp/${CAFE_VERSION} \

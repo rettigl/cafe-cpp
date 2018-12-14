@@ -18,28 +18,27 @@
 
 class loadGroupXMLParser : public QXmlDefaultHandler {
 public:
-	loadGroupXMLParser();
-	virtual ~loadGroupXMLParser();
+    loadGroupXMLParser();
+    virtual ~loadGroupXMLParser();
     bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
     bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
     bool characters(const QString& ch);
 
     std::vector<deviceGroup> groups;
 private:
-    enum
-    {
-    	NotWaiting,
-    	WaitingForDescription,
-    	WaitingForStatusGroup,
+    enum {
+        NotWaiting,
+        WaitingForDescription,
+        WaitingForStatusGroup,
         WaitingForMember,
-    	WaitingForName,
-    	WaitingForNelem,
-    	WaitingForStatus,
-    	WaitingForRule,
-    	WaitingForDataType,
-    	WaitingForId,
-    	WaitingForAttrib,
-    	WaitingForCollectiveType
+        WaitingForName,
+        WaitingForNelem,
+        WaitingForStatus,
+        WaitingForRule,
+        WaitingForDataType,
+        WaitingForId,
+        WaitingForAttrib,
+        WaitingForCollectiveType
     } state;
     deviceGroup group;
     //collectionMember member;
