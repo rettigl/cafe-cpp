@@ -7,7 +7,7 @@
 
 
 
-#include "loadGroupXMLParser.h"
+#include <loadGroupXMLParser.h>
 #if HAVE_LIBQTXML
 
 #include <stdio.h>

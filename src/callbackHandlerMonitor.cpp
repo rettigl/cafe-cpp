@@ -6,13 +6,13 @@
 ///
 
 #include <cadef.h>
-#include "global.h"
-#include "policies.h"
-#include "conduitFriends.h"
-#include "conduitConnectionHandlerArgs.h"
-#include "conduitEventHandlerArgs.h"
-#include "methodCallbacks.h"
-#include "granules.h"
+#include <global.h>
+#include <policies.h>
+#include <conduitFriends.h>
+#include <conduitConnectionHandlerArgs.h>
+#include <conduitEventHandlerArgs.h>
+#include <methodCallbacks.h>
+#include <granules.h>
 
 
 using namespace std;

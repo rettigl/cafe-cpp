@@ -12,7 +12,7 @@
 #ifndef RESTOREPVGROUPXMLPARSER_H
 #define RESTOREPVGROUPXMLPARSER_H
 
-#include "PVGroup.h"
+#include <PVGroup.h>
 
 
 #include <QtXml/QXmlDefaultHandler>

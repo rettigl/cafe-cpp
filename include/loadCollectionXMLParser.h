@@ -13,7 +13,7 @@
 #ifndef LOADCOLLECTIONXMLPARSER_H
 #define LOADCOLLECTIONXMLPARSER_H
 
-#include "deviceCollection.h"
+#include <deviceCollection.h>
 
 #include <QtXml/QXmlDefaultHandler>
 

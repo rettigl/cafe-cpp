@@ -57,8 +57,8 @@ public:
 
     etsNorm _etsNorm;
     etsDate _etsDate;
-		TMwdayText   tmDay;
-		TMmonthpText tmMonth;
+    TMwdayText   tmDay;
+    TMmonthpText tmMonth;
 
     int  checkConsistency();
     int  checkConsistency(unsigned int  _handle);
@@ -139,10 +139,10 @@ public:
         _etsDate.sec = local.ansi_tm.tm_sec;
 
         _etsDate.nsec = (unsigned long) ts.nsec;
-				
-				_etsDate.wday  = local.ansi_tm.tm_wday;
-				_etsDate.yday  = local.ansi_tm.tm_yday;
-				_etsDate.isdst = local.ansi_tm.tm_isdst;
+
+        _etsDate.wday  = local.ansi_tm.tm_wday;
+        _etsDate.yday  = local.ansi_tm.tm_yday;
+        _etsDate.isdst = local.ansi_tm.tm_isdst;
 
         return _etsDate;
     }
@@ -158,11 +158,11 @@ public:
         _etsDate.min = local.ansi_tm.tm_min;
         _etsDate.sec = local.ansi_tm.tm_sec;
         _etsDate.nsec = (unsigned long) ts.nsec;
-				
-				_etsDate.wday  = local.ansi_tm.tm_wday;
-				_etsDate.yday  = local.ansi_tm.tm_yday;
-				_etsDate.isdst = local.ansi_tm.tm_isdst;
-				
+
+        _etsDate.wday  = local.ansi_tm.tm_wday;
+        _etsDate.yday  = local.ansi_tm.tm_yday;
+        _etsDate.isdst = local.ansi_tm.tm_isdst;
+
         return _etsDate;
     }
 
@@ -181,11 +181,11 @@ public:
         _etsDate.min = local.ansi_tm.tm_min;
         _etsDate.sec = local.ansi_tm.tm_sec;
         _etsDate.nsec = (unsigned long) ts.nsec;
-				
-				_etsDate.wday  = local.ansi_tm.tm_wday;
-				_etsDate.yday  = local.ansi_tm.tm_yday;
-				_etsDate.isdst = local.ansi_tm.tm_isdst;
-				
+
+        _etsDate.wday  = local.ansi_tm.tm_wday;
+        _etsDate.yday  = local.ansi_tm.tm_yday;
+        _etsDate.isdst = local.ansi_tm.tm_isdst;
+
         return _etsDate;
     }
 
@@ -204,32 +204,32 @@ public:
         _etsDate.min = local->tm_min;
         _etsDate.sec = local->tm_sec;
         _etsDate.nsec = (unsigned long) ts.nsec;
-				
-				_etsDate.wday  = local->tm_wday;
-				_etsDate.yday  = local->tm_yday;
-				_etsDate.isdst = local->tm_isdst;
-				
+
+        _etsDate.wday  = local->tm_wday;
+        _etsDate.yday  = local->tm_yday;
+        _etsDate.isdst = local->tm_isdst;
+
         return _etsDate;
     }
 
 
-		std::string etsDateAsString(etsNorm ts) {
-		
+    std::string etsDateAsString(etsNorm ts) {
+
         time_t t= ts.secPastEpoch;
 
         struct tm * local;
         local=localtime(&t);
-				char buf[40];
-				strftime (buf,80,"%b %d, %Y %T.",local);
-				std::string date=(std::string) buf;
-				char buft[10];
-				sprintf(buft,"%d",ts.nsec);
-				date.append((std::string) buft);
-				
-			
-				return date;
-		
-		}
+        char buf[40];
+        strftime (buf,80,"%b %d, %Y %T.",local);
+        std::string date=(std::string) buf;
+        char buft[10];
+        sprintf(buft,"%u",ts.nsec);
+        date.append((std::string) buft);
+
+
+        return date;
+
+    }
 
 
     //Deprecated!!! 

@@ -679,26 +679,26 @@ public:
     {
         bool has=false;
 # if (EPICS_MAJOR==3 && EPICS_MINOR>=14 && EPICS_PATCH >=11)
-        mask & DBE_PROPERTY ? has=true : has=false;
+        (mask & DBE_PROPERTY) ? has=true : has=false;
 # endif
         return has;
     }; //8
     bool maskHasDBE_VALUE() const
     {
         bool has=false;
-        mask & DBE_VALUE ? has=true : has=false;
+        (mask & DBE_VALUE) ? has=true : has=false;
         return has;
     }; //4
     bool maskHasDBE_LOG() const
     {
         bool has=false;
-        mask & DBE_LOG ? has=true : has=false;
+        (mask & DBE_LOG) ? has=true : has=false;
         return has;
     }; //2
     bool maskHasDBE_ALARM() const
     {
         bool has=false;
-        mask & DBE_ALARM ? has=true : has=false;
+        (mask & DBE_ALARM) ? has=true : has=false;
         return has;
     }; //1
     pCallback getHandler() const

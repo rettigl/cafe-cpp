@@ -420,7 +420,7 @@ public:
 
 };
 
-#include "instant.cpp"
+#include <instant.cpp>
 
 #endif // INSTANT_H
 

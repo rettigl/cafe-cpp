@@ -9,11 +9,11 @@
 #define POLICYHELPER_H
 
 #include <cadef.h>
-#include "helper.h"
-#include "defines.h"
-#include "hashConduit.h"
-#include "hashConduitGroup.h"
-#include "conduitFriends.h"
+#include <helper.h>
+#include <defines.h>
+#include <hashConduit.h>
+#include <hashConduitGroup.h>
+#include <conduitFriends.h>
 
 class PolicyHelper : Helper {
 private:

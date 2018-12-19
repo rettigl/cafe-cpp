@@ -10,8 +10,8 @@
 #define CAFEENUMSTRINGS_H
 
 
-#include "cafeEnum.h"
-#include "enumStrings.h"
+#include <cafeEnum.h>
+#include <enumStrings.h>
 
 template<> char const * enumStrings<CAFENUM::ChannelWaitForResponsePolicyKind>::data[]
     = {"CAFENUM::WAIT", "CAFENUM::NO_WAIT"};

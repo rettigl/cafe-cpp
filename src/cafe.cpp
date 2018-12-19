@@ -1527,7 +1527,7 @@ int CAFE::getWFAsStringCache(unsigned int handle, std::string & psWF)
     it_handle = handle_index.find(handle);
 
     if (it_handle != handle_index.end()) {
-        unsigned int c=(*it_handle).getChannelRequestMetaDataClient().getNelem();
+        //unsigned int c=(*it_handle).getChannelRequestMetaDataClient().getNelem();
         unsigned int n=(*it_handle).getChannelRegalia().getNelem();
         unsigned int r =min( (*it_handle).getChannelRequestMetaData().getNelemCache(),
                              ((*it_handle).getChannelRequestMetaData().getNelem()-(*it_handle).getChannelRequestMetaData().getOffset()) ) ;
@@ -3993,10 +3993,41 @@ int CAFE::getAllChannelInfo(unsigned int handle, ChannelRegalia & channelInfo, P
  *  \brief Supplment all handles with Severity levels and Desc information. 
  *  If PV has a special field (DESC, HHSV HSV etc..) then do not supplement
  *  \return ICAFE_NORMAL
+ *
+int CAFE::supplementHandles(std::vector<unsigned int> hV)
+{
+#define __METHOD__ "CAFE::supplementHandles(vector<unsigned int>)"
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
+    int overallStatus=ICAFE_NORMAL;
+    for (unsigned int i=0; i<hV.size(); ++i) {
+        it_handle = handle_index.find(hV[i]);
+        if (it_handle != handle_index.end()) {
+           
+        }
+        else {
+            overallStatus=ECAFE_INVALID_HANDLE;          
+        }
+    }
+    return overallStatus;
+
+    return ICAFE_NORMAL;
+#undef __METHOD__
+}
+
+*/
+
+
+
+/**
+ *  \brief Supplment all handles with Severity levels and Desc information. 
+ *  If PV has a special field (DESC, HHSV HSV etc..) then do not supplement
+ *  \return ICAFE_NORMAL
  */
 int CAFE::supplementHandles()
 {
-#define __METHOD__ "CAFE::supplementHandlesV()"
+#define __METHOD__ "CAFE::supplementHandles()"
+
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
 		std::vector<std::string> pvV;
@@ -4171,173 +4202,173 @@ int CAFE::supplementHandlesV(std::vector<unsigned int> hV)
 
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-		std::vector<std::string> pvV;
-		std::vector<std::string> pvAsGivenV;
-		std::vector<std::string>  pvsToClose;
-		std::vector<unsigned int> allHandles;
-		std::vector<std::string>  allPVs;
-		
-		std::size_t found; 
-		std::size_t foundField;
-		std::string field=""; std::string pv=""; std::string pvDevAttrib="";
-		
-	  std::vector<std::string> specialFields;  
-		specialFields.reserve(5);
-		specialFields.push_back( (char *) "DESC"); 
-		specialFields.push_back( (char *) "HHSV"); 
-		specialFields.push_back( (char *) "HSV"); 
-		specialFields.push_back( (char *) "LSV"); 
-		specialFields.push_back( (char *) "LLSV");
-				
-		std::vector<std::string> pvContainer; pvContainer.reserve(5);
-		
-		unsigned int localHandle=0;
-		int status=ICAFE_NORMAL;
-		int overallStatus=ICAFE_NORMAL;
-	
-	  
+    std::vector<std::string> pvV;
+    std::vector<std::string> pvAsGivenV;
+    std::vector<std::string>  pvsToClose;
+    std::vector<unsigned int> allHandles;
+    std::vector<std::string>  allPVs;
+
+    std::size_t found;
+    std::size_t foundField;
+    std::string field=""; std::string pv=""; std::string pvDevAttrib="";
+
+    std::vector<std::string> specialFields;
+    specialFields.reserve(5);
+    specialFields.push_back( (char *) "DESC");
+    specialFields.push_back( (char *) "HHSV");
+    specialFields.push_back( (char *) "HSV");
+    specialFields.push_back( (char *) "LSV");
+    specialFields.push_back( (char *) "LLSV");
+
+    std::vector<std::string> pvContainer; pvContainer.reserve(5);
+
+    unsigned int localHandle=0;
+    int status=ICAFE_NORMAL;
+    int overallStatus=ICAFE_NORMAL;
+
+
     for (unsigned int i=0; i<hV.size(); ++i) {
 
         it_handle = handle_index.find(hV[i]);
-		
-		    if (it_handle != handle_index.end()) {
-		
-				    pv=(*it_handle).getPV();			
-				    pvDevAttrib=pv;
-		
-				    field="";
-				
-				    found = pv.find(".");
-						
+
+        if (it_handle != handle_index.end()) {
+
+            pv=(*it_handle).getPV();
+            pvDevAttrib=pv;
+
+            field="";
+
+            found = pv.find(".");
+
             if (found != std::string::npos) {
                 field=pv.substr(found, pv.size()-1);
-										
-						    //DO NOT SUPPLEMENT CONDUIT OBJECT FOR PVS WITH SPECIAL FIELDS 
-						    bool breakFlag=false;
-											
-						    for (int j=0; j<specialFields.size(); ++j) {
-						        foundField=field.find(specialFields[j]);
-							      if (foundField != std::string::npos) {
-							          breakFlag=true;
-									      break;
-							      }						
-						    }
-																						
-						    //std::cout << "field = " << field << std::endl;
-						    //std::cout << "pv.substr = " << pv.substr(0,found) << std::endl;	
-						    if (breakFlag) {
-						        std::cout << "This pv is not supplemented = " << pv << std::endl;	
-						        continue;
-						    }		
-						
-						    if  ( (*it_handle).hasDescription() && (*it_handle).hasAlarmSeverityStruct() ) {
-						        std::cout << "This pv has already been supplemented = " << pv << std::endl;	 
-						        continue;
-						    }
-									
-						    pvDevAttrib=pv.substr(0,found);
-						    pvV.push_back(pvDevAttrib);
+
+                //DO NOT SUPPLEMENT CONDUIT OBJECT FOR PVS WITH SPECIAL FIELDS
+                bool breakFlag=false;
+
+                for (int j=0; j<specialFields.size(); ++j) {
+                    foundField=field.find(specialFields[j]);
+                    if (foundField != std::string::npos) {
+                        breakFlag=true;
+                        break;
+                    }
+                }
+
+                //std::cout << "field = " << field << std::endl;
+                //std::cout << "pv.substr = " << pv.substr(0,found) << std::endl;
+                if (breakFlag) {
+                    std::cout << "This pv is not supplemented = " << pv << std::endl;
+                    continue;
+                }
+
+                if  ( (*it_handle).hasDescription() && (*it_handle).hasAlarmSeverityStruct() ) {
+                    std::cout << "This pv has already been supplemented = " << pv << std::endl;
+                    continue;
+                }
+
+                pvDevAttrib=pv.substr(0,found);
+                pvV.push_back(pvDevAttrib);
             }
-		        else {		
-				   	    pvV.push_back(pv);
-				    }
-	
-				    pvAsGivenV.push_back(pv);
-				    pvContainer.clear();						
+            else {
+                pvV.push_back(pv);
+            }
+
+            pvAsGivenV.push_back(pv);
+            pvContainer.clear();
             for (int j=0; j<specialFields.size(); ++j) {
-						    std::string pvS=pvDevAttrib; pvS.append((char *)"."); pvS.append(specialFields[j]);
-					      pvContainer.push_back(pvS); 
-				    }
-				    //Check if already open -if yes do not add to pvHandlestoOpenAndClose
-				    for (int i=0; i<pvContainer.size(); ++i) {
-						    localHandle= handleHelper.getHandleFromPV(pvContainer[i].c_str());
-					      if (localHandle == 0 ) {
-                    pvsToClose.push_back(pvContainer[i]); 
-								    allPVs.push_back(pvContainer[i]);								
-						    }
-						    else {
-								    //pvHandlesAlreadyExisiting.insert(pvContainer[i]);
-								    allPVs.push_back(pvContainer[i]);	 	
-						    }								 
-				    }		
-				}
-				else {
+                std::string pvS=pvDevAttrib; pvS.append((char *)"."); pvS.append(specialFields[j]);
+                pvContainer.push_back(pvS);
+            }
+            //Check if already open -if yes do not add to pvHandlestoOpenAndClose
+            for (int k=0; k<pvContainer.size(); ++k) {
+                localHandle= handleHelper.getHandleFromPV(pvContainer[k].c_str());
+                if (localHandle == 0 ) {
+                    pvsToClose.push_back(pvContainer[k]);
+                    allPVs.push_back(pvContainer[k]);
+                }
+                else {
+                    //pvHandlesAlreadyExisiting.insert(pvContainer[k]);
+                    allPVs.push_back(pvContainer[k]);
+                }
+            }
+        }
+        else {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << hV[i] << " either never existed or no longer exists " << endl;
             overallStatus=ECAFE_INVALID_HANDLE;
         }
-									       
+
     }//for
-		
-		CAFE::openPrepare();
-		try {
-        CAFE::open(allPVs, 	allHandles);
-		}
-		catch(CAFEException_open &e) {
-		    return e.pvEx.statusCode;
-		}			
-		CAFE::openNowAndWait(2.0);
-		
-		//CAFE::printHandles();
-		
-		//Get Asyn No Blocking
-		std::vector<int> allStatus;
-		std::vector<int> vRB; vRB.reserve(allHandles.size());
-		overallStatus=CAFE::get(allHandles, allStatus);
-		
-		status=CAFE::waitForBundledEvents(allHandles, vRB);
-		 
-		if (status != ICAFE_NORMAL) { overallStatus=status;}
-		
-		for (int i=0; i<pvV.size(); ++i) {
-			  pvContainer.clear();						
+
+    CAFE::openPrepare();
+    try {
+        CAFE::open(allPVs, allHandles);
+    }
+    catch(CAFEException_open &e) {
+        return e.pvEx.statusCode;
+    }
+    CAFE::openNowAndWait(2.0);
+
+    //CAFE::printHandles();
+
+    //Get Asyn No Blocking
+    std::vector<int> allStatus;
+    std::vector<int> vRB; vRB.reserve(allHandles.size());
+    overallStatus=CAFE::get(allHandles, allStatus);
+
+    status=CAFE::waitForBundledEvents(allHandles, vRB);
+
+    if (status != ICAFE_NORMAL) { overallStatus=status;}
+
+    for (int i=0; i<pvV.size(); ++i) {
+        pvContainer.clear();
         for (int j=0; j<specialFields.size(); ++j) {
-				    std::string pvS=pvV[i]; pvS.append((char *)"."); pvS.append(specialFields[j]);
-				    pvContainer.push_back(pvS); 
-				}
-				alarmSeverityStruct	ass;
-				std::string desc="";
-				CAFE::getCache(pvContainer[0].c_str(), desc);						
-				CAFE::getCache(pvContainer[1].c_str(), ass.hhsv);		
-				CAFE::getCache(pvContainer[2].c_str(), ass.hsv);
-				CAFE::getCache(pvContainer[3].c_str(), ass.lsv);		
-				CAFE::getCache(pvContainer[4].c_str(), ass.llsv);
-				std::cout << i  << " " << pvContainer[0] << " " << desc << std::endl;
-				std::cout << i  << " " << pvContainer[1] << " " << ass.hhsv << std::endl; 
-				std::cout << i  << " " << pvContainer[2] << " " << ass.hsv  << std::endl;
-				std::cout << i  << " " << pvContainer[3] << " " << ass.lsv  << std::endl;		
-				std::cout << i  << " " << pvContainer[4] << " " << ass.llsv << std::endl;
-			
+            std::string pvS=pvV[i]; pvS.append((char *)"."); pvS.append(specialFields[j]);
+            pvContainer.push_back(pvS);
+        }
+        alarmSeverityStruct ass;
+        std::string desc="";
+        CAFE::getCache(pvContainer[0].c_str(), desc);
+        CAFE::getCache(pvContainer[1].c_str(), ass.hhsv);
+        CAFE::getCache(pvContainer[2].c_str(), ass.hsv);
+        CAFE::getCache(pvContainer[3].c_str(), ass.lsv);
+        CAFE::getCache(pvContainer[4].c_str(), ass.llsv);
+        std::cout << i  << " " << pvContainer[0] << " " << desc << std::endl;
+        std::cout << i  << " " << pvContainer[1] << " " << ass.hhsv << std::endl;
+        std::cout << i  << " " << pvContainer[2] << " " << ass.hsv  << std::endl;
+        std::cout << i  << " " << pvContainer[3] << " " << ass.lsv  << std::endl;
+        std::cout << i  << " " << pvContainer[4] << " " << ass.llsv << std::endl;
+
         it_handle = handle_index.find(handleHelper.getHandleFromPV(pvAsGivenV[i].c_str()));
         if (it_handle != handle_index.end()) {
-           
+
             if(MUTEX) {
-                 cafeMutex.lock();
-            }; 
+                cafeMutex.lock();
+            };
             handle_index.modify(it_handle, change_supplementHandle(ass,desc));
             if(MUTEX) {
-                 cafeMutex.unlock();
-            }; 
+                cafeMutex.unlock();
+            };
         }
         else {
             std::cout << __METHOD__ << " INVALID HANDLE " <<std::endl;
         }
-		}
-		
-		CAFE::openPrepare();
-		for (int i=0; i < pvsToClose.size(); ++i) {
-		    CAFE::close(handleHelper.getHandleFromPV(pvsToClose[i].c_str()));
-		}
-		CAFE::flushNow();
-			
-		//CAFE::printHandles();
-		for (int i=0; i<pvAsGivenV.size(); ++i) {
-		    std::string desc="";
-		    handleHelper.getDescription( handleHelper.getHandleFromPV(pvAsGivenV[i].c_str()), desc);
-		    std::cout << i << " DESC=" << desc << " for pv= " << pvAsGivenV[i].c_str() << std::endl;
-		}
-		
+    }
+
+    CAFE::openPrepare();
+    for (int i=0; i < pvsToClose.size(); ++i) {
+        CAFE::close(handleHelper.getHandleFromPV(pvsToClose[i].c_str()));
+    }
+    CAFE::flushNow();
+
+    //CAFE::printHandles();
+    for (int i=0; i<pvAsGivenV.size(); ++i) {
+        std::string desc="";
+        handleHelper.getDescription( handleHelper.getHandleFromPV(pvAsGivenV[i].c_str()), desc);
+        std::cout << i << " DESC=" << desc << " for pv= " << pvAsGivenV[i].c_str() << std::endl;
+    }
+
     return ICAFE_NORMAL;
 #undef __METHOD__
 }

@@ -6,10 +6,10 @@
 /// \version CAFE 1.0.0
 
 
-#include "enumStrings.h"
-#include "defines.h"
-#include "policies.h"
-#include "cafeEnum.h"
+#include <enumStrings.h>
+#include <defines.h>
+#include <policies.h>
+#include <cafeEnum.h>
 
 
 template<typename T>

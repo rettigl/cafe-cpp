@@ -4,11 +4,8 @@
 /// \date    Release: February 2015
 /// \version CAFE 1.0.0
 
-//include "connect.h"
-//include "conduit.h"
-//#include "cafeConduitFriends.h"
 
-#include "helper.h"
+#include <helper.h>
 
 
 using namespace std;

@@ -4,9 +4,9 @@
 /// \date    Release: February 2015
 /// \version CAFE 1.0.0
 
-#include "conduitEventHandlerArgs.h"
-#include "methodCallbacks.h"
-#include "connect.h"
+#include <conduitEventHandlerArgs.h>
+#include <methodCallbacks.h>
+#include <connect.h>
 
 using namespace std;
 

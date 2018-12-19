@@ -7,7 +7,7 @@
 
 
 
-#include "restorePVGroupXMLParser.h"
+#include <restorePVGroupXMLParser.h>
 
 
 #if HAVE_LIBQTXML

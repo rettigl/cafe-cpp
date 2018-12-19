@@ -5,8 +5,8 @@
 /// \version CAFE 1.0.0
 ///
 
-#include "connect.h"
-#include "conduitFriends.h"
+#include <connect.h>
+#include <conduitFriends.h>
 
 extern cafeConduit_set cs;
 extern bool MUTEX;
@@ -82,7 +82,7 @@ void Connect::callbackHandlerException(struct exception_handler_args args)
         strcpy(pName, ca_name(args.chid));
         _handle = (unsigned long) ca_puser(args.chid);
         sprintf(buf,
-                "%s with request handle=%d, channel=%s, op=%ld, datatype=%s, count=%ld. %s",
+                "%s with request handle=%u, channel=%s, op=%ld, datatype=%s, count=%ld. %s",
                 args.ctx, (unsigned int) _handle, pName, args.op, dbr_type_to_text (args.type), args.count,
                 "Possibly an IOC has been switched off or is rebooting.");
 

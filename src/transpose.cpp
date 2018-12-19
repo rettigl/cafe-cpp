@@ -8,7 +8,7 @@
 #ifndef TRANSPOSE_CC
 #define TRANSPOSE_CC
 
-#include "transpose.h"
+#include <transpose.h>
 
 using namespace std;
 
@@ -106,8 +106,6 @@ int  Transpose<dbr_string_t>::putString
             noStrings           = ((struct dbr_ctrl_enum *) dataEnum)->no_str;
 
             memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
-
-
 
 
             for (unsigned int  i=0; i<nelem; ++i) {
@@ -690,58 +688,49 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_ENUM:
-            for (unsigned int  i=0; i<nelem; ++i) {
-                //Special treatment of ENUM: Transform VAL to String equivalent
-                dataEnum   =   (dbr_ctrl_enum *)  (*it_handle).getCtrlBuffer();
-                noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
+        {
+            //Special treatment of ENUM: Transform VAL to String equivalent
+            dataEnum   =   (dbr_ctrl_enum *)  (*it_handle).getCtrlBuffer();
+            noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
 
-                memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
+            memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
 
-
-
-
-                unsigned int noEmptyStrings=0;
-                //Check for empty strings:
-                for (unsigned int j=0; j<noStrings; ++j) {
-                    if (strcmp(stig[j],"")==0) {
-                        ++noEmptyStrings;
-                    }
+            unsigned int noEmptyStrings=0;
+            //Check for empty strings:
+            for (unsigned int j=0; j<noStrings; ++j) {
+                if (strcmp(stig[j],"")==0) {
+                    ++noEmptyStrings;
                 }
-                if (noStrings==noEmptyStrings) {
-                    cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-                    cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
-                    cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
-                    cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
-                }
-
-
-                for (unsigned int  i=0; i<nelem; ++i) {
-                    if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
-                        sprintf(val[i], "%s", stig[(*(&((PVDataL)->tenmval.value)+i+offset))] );
-                    }
-                    else {
-                        sprintf(val[i], "%d", (*(&((PVDataL)->tenmval.value)+i+offset)) );
-                        if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) >=  noStrings) ) {
-                            cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-                            cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
-                            cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->tenmval.value)+i+offset)) << endl;
-                            cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
-                            for (unsigned int j=0; j<noStrings; ++j) {
-                                cout << stig[j] << " ["  <<j << "]  ";
-                            }
-                            cout << endl;
-                        }
-                    }
-                }
-
-
-                //if native DataType is ENUM then overwrite call Enum method and then convert to string!
-                //for (unsigned int  i=0; i<nelem; ++i) {
-                //    sprintf(val[i], "%s", stig[(*(&((PVDataL)->enmval)+i+offset))] );
-                // }
             }
-            break;
+            if (noStrings==noEmptyStrings) {
+                cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
+                cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
+                cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
+                cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
+            }
 
+
+            for (unsigned int  i=0; i<nelem; ++i) {
+                if ( ((*(&((PVDataL)->enmval)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
+                    sprintf(val[i], "%s", stig[(*(&((PVDataL)->enmval)+i+offset))] );
+                }
+                else {
+                    sprintf(val[i], "%d", (*(&((PVDataL)->enmval)+i+offset)) );
+                    if ( ((*(&((PVDataL)->enmval)+i+offset)) >=  noStrings) ) {
+                        cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
+                        cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
+                        cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->enmval)+i+offset)) << endl;
+                        cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
+                        for (unsigned int j=0; j<noStrings; ++j) {
+                            cout << stig[j] << " ["  <<j << "]  ";
+                        }
+                        cout << endl;
+                    }
+                }
+            }
+            
+            break;
+        } 
         case DBR_STRING:
             memcpy( val, &(&((PVDataL)->strval))[offset],  sizeof(dbr_string_t)*nelem) ;
             break;
@@ -788,58 +777,49 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_STS_ENUM:
-            for (unsigned int  i=0; i<nelem; ++i) {
-                //Special treatment of ENUM: Transform VAL to String equivalent
-                dataEnum   =   (dbr_ctrl_enum *) (*it_handle).getCtrlBuffer();
-                noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
-                memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig)) ;
+        {  
+            //Special treatment of ENUM: Transform VAL to String equivalent
+            dataEnum   =   (dbr_ctrl_enum *) (*it_handle).getCtrlBuffer();
+            noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
+            memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig)) ;
 
-
-
-                unsigned int noEmptyStrings=0;
-                //Check for empty strings:
-                for (unsigned int j=0; j<noStrings; ++j) {
-                    if (strcmp(stig[j],"")==0) {
-                        ++noEmptyStrings;
-                    }
+            unsigned int noEmptyStrings=0;
+            //Check for empty strings:
+            for (unsigned int j=0; j<noStrings; ++j) {
+                if (strcmp(stig[j],"")==0) {
+                    ++noEmptyStrings;
                 }
-                if (noStrings==noEmptyStrings) {
-                    cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-                    cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
-                    cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
-                    cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
-                }
-
-                for (unsigned int  i=0; i<nelem; ++i) {
-                    if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
-                        sprintf(val[i], "%s", stig[(*(&((PVDataL)->tenmval.value)+i+offset))] );
-                    }
-                    else {
-                        sprintf(val[i], "%d", (*(&((PVDataL)->tenmval.value)+i+offset)) );
-                        if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) >=  noStrings) ) {
-                            cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-                            cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
-                            cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->tenmval.value)+i+offset)) << endl;
-                            cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
-                            for (unsigned int j=0; j<noStrings; ++j) {
-                                cout << stig[j] << " ["  <<j << "]  ";
-                            }
-                            cout << endl;
-                        }
-                    }
-                }
-
-
-
-                //if native DataType is ENUM then overwrite call Enum method and then convert to string!
-                //for (unsigned int  i=0; i<nelem; ++i) {
-                //    sprintf(val[i], "%s", stig[(*(&((PVDataL)->senmval.value)+i+offset))] );
-                //}
             }
+            if (noStrings==noEmptyStrings) {
+                cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
+                cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
+                cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
+                cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
+            }
+
+            for (unsigned int  i=0; i<nelem; ++i) {
+                if ( ((*(&((PVDataL)->senmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
+                    sprintf(val[i], "%s", stig[(*(&((PVDataL)->senmval.value)+i+offset))] );
+                }
+                else {
+                    sprintf(val[i], "%d", (*(&((PVDataL)->senmval.value)+i+offset)) );
+                    if ( ((*(&((PVDataL)->senmval.value)+i+offset)) >=  noStrings) ) {
+                        cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
+                        cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
+                        cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->senmval.value)+i+offset)) << endl;
+                        cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
+                        for (unsigned int j=0; j<noStrings; ++j) {
+                            cout << stig[j] << " ["  <<j << "]  ";
+                        }
+                        cout << endl;
+                    }
+                }
+            }
+            
             alarmStatus   = ((struct dbr_sts_enum *) PVDataL)->status;
             alarmSeverity = ((struct dbr_sts_enum *) PVDataL)->severity;
             break;
-
+        }
         case DBR_STS_STRING:
             for (unsigned int  i=0; i<nelem; ++i) {
                 strcpy(val[i],   (*(&((PVDataL)->sstrval.value)+i+offset))) ;
@@ -853,7 +833,6 @@ int  Transpose<dbr_string_t>::get(
             for (unsigned int  i=0; i<nelem; ++i) {
                 sprintf(val[i], "%u", (*(&((PVDataL)->tchrval.value)+i+offset)));
             }
-            //cout << "TRANSPOSE " << val[0] << endl;
             ts            = ((struct dbr_time_char *) PVDataL)->stamp;
             alarmStatus   = ((struct dbr_time_char *) PVDataL)->status;
             alarmSeverity = ((struct dbr_time_char *) PVDataL)->severity;
@@ -899,56 +878,56 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_TIME_ENUM:
-            for (unsigned int  i=0; i<nelem; ++i) {
+        { 
 
-                //Special treatment of ENUM: Transform VAL to String equivalent
-                dataEnum   =   (dbr_ctrl_enum *) (*it_handle).getCtrlBuffer();
+            //Special treatment of ENUM: Transform VAL to String equivalent
+            dataEnum   =   (dbr_ctrl_enum *) (*it_handle).getCtrlBuffer();
 
-                noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
+            noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
 
-                memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
+            memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
 
-                //if native DataType is ENUM then overwrite call Enum method and then convert to string!
-                //Check data type
-                //cout << "Classname " << (*it_handle).getChannelRegalia().getClassName() << endl;
+            //if native DataType is ENUM then overwrite call Enum method and then convert to string!
+            //Check data type
+            //cout << "Classname " << (*it_handle).getChannelRegalia().getClassName() << endl;
 
-                unsigned int noEmptyStrings=0;
-                //Check for empty strings:
-                for (unsigned int j=0; j<noStrings; ++j) {
-                    if (strcmp(stig[j],"")==0) {
-                        ++noEmptyStrings;
-                    }
-                }
-                if (noStrings==noEmptyStrings) {
-                    cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-                    cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
-                    cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
-                    cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
-                }
-
-                for (unsigned int  i=0; i<nelem; ++i) {
-                    if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
-                        sprintf(val[i], "%s", stig[(*(&((PVDataL)->tenmval.value)+i+offset))] );
-                    }
-                    else {
-                        sprintf(val[i], "%d", (*(&((PVDataL)->tenmval.value)+i+offset)) );
-                        if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) >=  noStrings) ) {
-                            cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
-                            cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
-                            cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->tenmval.value)+i+offset)) << endl;
-                            cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
-                            for (unsigned int j=0; j<noStrings; ++j) {
-                                cout << stig[j] << " ["  <<j << "]  ";
-                            }
-                            cout << endl;
-                        }
-                    }
+            unsigned int noEmptyStrings=0;
+            //Check for empty strings:
+            for (unsigned int j=0; j<noStrings; ++j) {
+                if (strcmp(stig[j],"")==0) {
+                    ++noEmptyStrings;
                 }
             }
+            if (noStrings==noEmptyStrings) {
+                cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
+                cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
+                cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
+                cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
+            }
+
+            for (unsigned int  i=0; i<nelem; ++i) {
+                if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
+                    sprintf(val[i], "%s", stig[(*(&((PVDataL)->tenmval.value)+i+offset))] );
+                }
+                else {
+                    sprintf(val[i], "%d", (*(&((PVDataL)->tenmval.value)+i+offset)) );
+                    if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) >=  noStrings) ) {
+                        cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
+                        cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
+                        cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->tenmval.value)+i+offset)) << endl;
+                        cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
+                        for (unsigned int j=0; j<noStrings; ++j) {
+                            cout << stig[j] << " ["  <<j << "]  ";
+                        }
+                        cout << endl;
+                    }
+                }
+            }      
             ts            = ((struct dbr_time_enum *) PVDataL)->stamp;
             alarmStatus   = ((struct dbr_time_enum *) PVDataL)->status;
             alarmSeverity = ((struct dbr_time_enum *) PVDataL)->severity;
             break;
+        } 
 
         case DBR_TIME_STRING:
             for (unsigned int  i=0; i<nelem; ++i) {
