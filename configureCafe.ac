@@ -1,0 +1,446 @@
+## CAFE (Channel Access interFacE)
+## Author: Jan Chrin, GFA, PSI 
+## 
+## configure.ac is processed by autoconf 
+##
+## output: configure.in file for building the cafe library 
+## 
+
+#  Standard macros
+AC_PREREQ(2.63)
+AC_COPYRIGHT([CAFE,Jan Chrin, 2013])
+AC_INIT([CAFE], [1.12.5], [Bug reports to: jan.chrin@psi.ch])
+
+AC_CONFIG_AUX_DIR(./)
+
+AC_CONFIG_MACRO_DIR([m4])
+m4_pattern_allow([AC_CONFIG_MACRO])
+
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([./include/cafe.h])
+
+AC_LANG_CPLUSPLUS
+
+AC_CONFIG_HEADER([./include/config.h:./include/config.in])
+AC_PROG_CXX
+
+
+LT_PREREQ([2.4.6])
+#LT_PREREQ([2.2.6]) 
+LT_INIT
+
+
+# library creation
+AC_PROG_LIBTOOL
+AM_PROG_LIBTOOL
+
+AC_LANG([C++])
+
+AC_DEFINE_UNQUOTED(HAVE_LINUX, 1, [linux dependency (sleep)])  
+#else c++11
+CPPFLAGS=" -fexceptions -fPIC -std=c++1z"
+
+# provide include directories
+AC_SUBST([CAFE_CPPFLAGS], '-I$(top_srcdir)/include ')
+
+##---------------------------------------------------------------------------
+##-- EPICS -- path and options
+##
+EPICS_PREFIX=""
+EPICS_INCL_PATH=""
+EPICS_LIB_PATH=""
+
+## Add epics release  
+EPICS_MAJOR_DEFAULT="3"
+EPICS_MINOR_DEFAULT="14"
+EPICS_PATCH_DEFAULT="12"
+
+EPICS_MAJOR_REL=${EPICS_MAJOR_DEFAULT}
+EPICS_MINOR_REL=${EPICS_MINOR_DEFAULT}
+EPICS_PATCH_REL=${EPICS_PATCH_DEFAULT}
+  
+#overwrite default with actual if determined
+if test "${CAFE_EPICS_V_MAJOR}" != ""; then
+  EPICS_MAJOR_REL=${CAFE_EPICS_V_MAJOR} 
+fi
+if test "${CAFE_EPICS_V_MINOR}" != ""; then
+  EPICS_MINOR_REL=${CAFE_EPICS_V_MINOR}
+fi
+if test "${CAFE_EPICS_V_PATCH}" != ""; then
+  EPICS_PATCH_REL=${CAFE_EPICS_V_PATCH} 
+fi
+
+
+## Host Arch
+if test "${HOST_ARCH}" == ""; then
+  HOST_ARCH=Linux 
+  #echo ${EPICS_HOST_ARCH} | grep -c 'SL6' 
+  #echo ${EPICS_HOST_ARCH} | grep -c 'darwin'   
+  if test ${CAFE_HOST_FLAG_DARWIN} == 1; then
+    HOST_ARCH=Darwin  
+  fi
+  echo "HOST_ARCH="${HOST_ARCH}
+fi
+
+
+
+AC_ARG_ENABLE(
+  [epics],
+  AC_HELP_STRING([--enable-epics],
+                 [enable epics use [default=no]]),
+  [HAVE_EPICS=true],
+  [HAVE_EPICS=false])
+
+AC_ARG_WITH(
+  epics,
+  AC_HELP_STRING(
+    [--with-epics location of EPICS],
+    [prefix where the epics libraries and include files are to be found]),
+    [HAVE_EPICS=true
+     EPICS_PREFIX=$withval
+     EPICS_INCL_PATH="-I"${EPICS_PREFIX}"/include/ -I"${EPICS_PREFIX}"/include/os/"${HOST_ARCH}
+     EPICS_LIB_PATH=${EPICS_PREFIX}"/lib/"${EPICS_HOST_ARCH}])
+
+#echo "TEST ", $EPICS_LIB_PATH
+##
+##-- end EPICS -- path and options
+##---------------------------------------------------------------------------
+
+##===========================================================================
+##== Check for header files and libraries.
+##===========================================================================
+
+##---------------------------------------------------------------------------
+##-- EPICS -- check header files and libs
+##
+AC_LANG_PUSH([C++])
+
+if test $HAVE_EPICS == true; then
+
+  # Change flags: if all tests are successfull, accept these changes; if
+  # the tests are not successfull, use the old flags.
+  if test "${EPICS_PREFIX}" != "" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${EPICS_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${EPICS_LIB_PATH}" -Wl,-rpath,"${EPICS_LIB_PATH}
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_HEADERS(
+      [cadef.h],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(cadef.h not not found!)],
+      [])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_HEADERS(
+      [epicsTypes.h],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(epicsTypes.h not found!)],
+      [])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_LIB(ca,[main],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(libca either not found or not operational!)])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_LIB(Com,[main],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(libCom either not found or not operational!)])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_LIB(dl,[main],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(libdl either not found or not operational!)])
+  fi
+
+  # If all checks are OK we add rlog to the CXXFLAGS.
+  if test x$HAVE_EPICS != xtrue ; then
+
+    if test "${EPICS_PREFIX}" != "" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+    fi   
+  fi
+    
+  echo "LDFLAGS__> $LDFLAGS "
+  
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_EPICS, ${EPICS_MAJOR_REL}.${EPICS_MINOR_REL}.${EPICS_PATCH_REL},[epics version])
+    AC_DEFINE_UNQUOTED(EPICS_MAJOR,${EPICS_MAJOR_REL}, [epics major release])
+    AC_DEFINE_UNQUOTED(EPICS_MINOR,${EPICS_MINOR_REL}, [epics minor release])
+    AC_DEFINE_UNQUOTED(EPICS_PATCH,${EPICS_PATCH_REL}, [epics patch release])
+  fi
+fi
+
+AC_LANG_POP
+
+##
+##-- end EPICS -- check header files and libs
+##---------------------------------------------------------------------------
+
+
+##---------------------------------------------------------------------------
+##-- BOOST -- path and options - 
+##-- Boost libraries are mainly header-only, i.e. they consist of header files
+##-- containing templates and inline functions, and require no separately-compiled
+##-- library binaries or special treatment when linking
+##
+BOOST_PREFIX=""
+BOOST_INCL_PATH=""
+BOOST_LIB_PATH=""
+BOOST_OPTION=""
+
+AC_ARG_ENABLE(
+  [boost-inc],
+  AC_HELP_STRING([--enable-boost-inc],
+                 [enable boost use [default=no]]),
+    [HAVE_BOOST_=true],
+    [HAVE_BOOST_=false])
+
+AC_ARG_WITH(
+  boost-inc,
+  AC_HELP_STRING([--with-boost-inc = location of BOOST],
+                 [prefix giving the boost base directory]),
+   [HAVE_BOOST_=true
+    BOOST_PREFIX=$withval
+    BOOST_INCL_PATH="-I"${BOOST_PREFIX}"/boost -I"${BOOST_PREFIX}
+   ])
+  
+AC_ARG_ENABLE(
+  [boost-lib],
+  AC_HELP_STRING([--enable-boost-lib],
+                 [enable boost lib use [default=no]]),
+  [HAVE_BOOST_LIB_=true],
+  [HAVE_BOOST_LIB_=false])
+
+AC_ARG_WITH(
+  boost-lib,
+  AC_HELP_STRING([--with-boost-lib = location of BOOST],
+                 [prefix giving the boost base directory]),
+   [HAVE_BOOST_LIB=true   
+    BOOST_LIB_PATH=$withval
+   ])
+
+##
+##-- end BOOST -- path and options
+##---------------------------------------------------------
+
+
+##---------------------------------------------------------------------------
+##-- BOOST -- check header files (and lib if selected) only
+##
+AC_LANG_PUSH([C++])
+ 
+if test $HAVE_BOOST_LIB_ == true ; then
+ 
+  TEMP_LDFLAGS=${LDFLAGS}
+  LDFLAGS=${LDFLAGS}" -L"${BOOST_LIB_PATH}"  -Wl,-rpath,"${BOOST_LIB_PATH}
+  #echo ${BOOST_LIB_PATH}
+  #echo ${LDFLAGS}
+
+  if test x$HAVE_BOOST_LIB_ == xtrue ; then
+    AC_CHECK_LIB(boost_thread,[main],
+      [],
+      [HAVE_BOOST_LIB=false
+       AC_MSG_WARN(boost_thread not found!)])
+  fi
+
+  # If all checks are OK we add boost lib version to the FLAGS.
+  if test x$HAVE_BOOST_LIB_ != xtrue ; then            
+    LDFLAGS=${TEMP_LDFLAGS}
+  fi
+
+  if test x$HAVE_BOOST_LIB_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_BOOST_THREAD, 1, [boost thread library])  
+  fi
+fi
+
+
+if test $HAVE_BOOST_ == true ; then
+
+  # Change flags: if all tests are successful, accept these additions, 
+  # else use the old flags.
+  if test "${BOOST_PREFIX}" != "" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${BOOST_INCL_PATH}
+    echo ${BOOST_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  if test x$HAVE_BOOST_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [multi_index_container.hpp],
+      [HAVE_BOOST_=true],
+      [HAVE_BOOST_=false
+      AC_MSG_WARN(multi_index_container.hpp not found!)],
+      [])
+  fi
+
+  if test x$HAVE_BOOST_ != xtrue ; then
+    if test "${BOOST_PREFIX}" != "" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      echo ${CPPFLAGS}
+    fi
+  fi
+
+  if test x$HAVE_BOOST_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_BOOST, 1, [Availability of boost])
+  fi
+fi
+
+AC_LANG_POP
+
+##
+##-- end BOOST-- check header files only
+##-----------------------------
+
+
+##---------------------------------------------------------------------------
+##-- Qt4 -- path and options
+##
+QT4_PREFIX=""
+QT4_INCL_PATH=""
+QT4_LIB_PATH=""
+
+AC_ARG_ENABLE(
+  [qt4-inc],
+  AC_HELP_STRING([--enable-qt4-inc],
+                 [enable Qt version 4 use [default=no]]),
+  [HAVE_QT4_=true],
+  [HAVE_QT4_=false])
+    
+    
+AC_ARG_ENABLE(
+  [qt4-lib],
+  AC_HELP_STRING([--enable-qt4-lib],
+                 [enable Qt version 4 use [default=no]]),
+  [HAVE_QT4_=true],
+  [HAVE_QT4_=false])
+
+#Only if enable flag is set
+if test $HAVE_QT4_ == true ; then
+
+  AC_ARG_WITH(
+    qt4-inc,
+    AC_HELP_STRING([--with-qt4-inc=PREFIX],
+      [prefix, parent directory where the Qt version 4 library is installed]),
+    [HAVE_QT4_=true
+     QT4_PREFIX=$withval   
+     QT4_INCL_PATH=${QT4_INCL_PATH}" -I"${QT4_PREFIX}   
+     QT4_INCL_PATH=${QT4_INCL_PATH}" -I"${QT4_PREFIX}"/QtCore "     
+     QT4_INCL_PATH=${QT4_INCL_PATH}" -I"${QT4_PREFIX}"/QtXml "   
+    ])
+       
+  AC_ARG_WITH(
+    qt4-lib,
+    AC_HELP_STRING([--with-qt4-lib=PREFIX],
+      [prefix, parent directory where the Qt version 4 library is installed]),
+    [HAVE_QT4_=true
+     QT4_LIB_PATH=$withval
+     QT4_LIB_PATH=${QT4_LIB_PATH}
+    ])
+    
+fi
+    
+##
+##---------------------------------------------------------------------------
+
+
+
+##---------------------------------------------------------------------------
+##-- Qt version 4 -- check header files and libs
+##
+AC_LANG_PUSH([C++])
+
+if test $HAVE_QT4_ == true ; then
+
+  # Change flags: if all tests are successfull, accept this changes; if
+  # the tests are not successfull, use the old flags.
+  if test "${QT4_PREFIX}" != "" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${QT4_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${QT4_LIB_PATH}"  -Wl,-rpath,"${QT4_LIB_PATH}
+  fi
+
+  if test x$HAVE_QT4_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [qxml.h],
+      [HAVE_QT4_=true],
+      [HAVE_QT4_=false
+       AC_MSG_WARN(qxml.h not found!)],
+      [])
+  fi
+
+  if test x$HAVE_QT4_ == xtrue ; then
+    AC_CHECK_LIB(QtCore,[main],
+      [],
+      [HAVE_QT4_=false
+       AC_MSG_WARN(libQtCore not found!)])
+  fi
+
+  if test x$HAVE_QT4_ == xtrue ; then
+    AC_CHECK_LIB(QtXml,[main],
+      [],
+      [HAVE_QT4=false
+       AC_MSG_WARN(libQtXml not found!)])
+  fi
+
+  # If all checks are OK we add Qt version 4 to the FLAGS.
+  if test x$HAVE_QT4_ != xtrue ; then
+
+    if test "${QT4_PREFIX}" != "" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+    fi
+
+  fi
+
+  if test x$HAVE_QT4_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_QT4, 1,[Availability of Qt version 4 confirmed])
+  fi
+fi
+
+AC_LANG_POP
+
+##
+##-- end QT4 -- check header files and libs
+
+
+CPPFLAGS=$CPPFLAGS
+echo "REPORTING -> current CPPFLAGS = "$CPPFLAGS
+LDFLAGS=$LDFLAGS
+echo "REPORTING -> current LDFLAGS = "$LDFLAGS
+
+##
+##-- end  Check
+##--
+
+HAVE_PYCAFE_EXT_=false
+
+# Generate makefiles
+
+AC_SUBST(AM_CPPFLAGS, $CPPFLAGS)
+AC_SUBST(AM_LDFLAGS, $LDFLAGS)
+
+AM_CONDITIONAL(HAVE_PYTHON_, test x$HAVE_PYTHON_ == xtrue)
+AM_CONDITIONAL(HAVE_PYCAFE_EXT_, test x$HAVE_PYCAFE_EXT_ == xtrue)
+AM_CONDITIONAL(HAVE_ZEROMQ_, test x$HAVE_ZEROMQ_ == xtrue)
+
+AC_CONFIG_FILES([makefile
+		src/makefile
+		include/makefile])
+
+AC_OUTPUT

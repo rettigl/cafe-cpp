@@ -19,7 +19,8 @@
 #include <cafeEnum.h>
 #include <defines.h>
 
-class Helper {
+class Helper
+{
 public:
     Helper() {};
 

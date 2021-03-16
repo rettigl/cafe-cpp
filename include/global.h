@@ -40,7 +40,7 @@ extern unsigned long nCBs;
 
 extern bool callbackLiveFlag;
 
-extern bool	SF_WITH_PULSE_ID;
+extern bool SF_WITH_PULSE_ID;
 
 
 #endif // GLOBAL_H

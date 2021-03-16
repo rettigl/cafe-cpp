@@ -34,13 +34,21 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
-#am__append_1 = PyCafe_api.h
-#am__append_2 = PyCafe.h 
+#am__append_1 = zbsread.h zbsHash.h zbsdtHelper.h zbsDataHolders.h \
+#                   bitshuffle/bitshuffle_core.h bitshuffle/bitshuffle.h bitshuffle/iochain.h \
+#		   bitshuffle/bitshuffle_internals.h 									
+
+#bitshuffle/bshuf_h5filter.h 
+#am__append_2 = PyCafe_api.h
+#am__append_3 = PyCafe.h 
 subdir = include
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/makefile.am \
 	$(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -49,7 +57,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 SOURCES =
 DIST_SOURCES =
-am__include_HEADERS_DIST = cafe.h cafeCache.h cafeConvert.h \
+am__include_HEADERS_DIST = config.h cafe.h cafeCache.h cafeConvert.h \
 	cafeDataType.h cafeDataTypeHelper.h cafeEnum.h \
 	cafeEnumStrings.h cafeRoast.h cafeVectors.h cafeXML.h \
 	caopCodes.h channelRegalia.h conduit.h \
@@ -61,7 +69,10 @@ am__include_HEADERS_DIST = cafe.h cafeCache.h cafeConvert.h \
 	methodCallbacks.h policies.h policyHelper.h PVCtrlHolder.h \
 	PVDataHolder.h PVGroup.h PVHolder.h statusCodes.h transpose.h \
 	conduitGroup.h hashConduitGroup.h restorePVGroupXMLParser.h \
-	tmDateMap.h PyCafe_api.h PyCafe.h
+	tmDateMap.h zbsread.h zbsHash.h zbsdtHelper.h zbsDataHolders.h \
+	bitshuffle/bitshuffle_core.h bitshuffle/bitshuffle.h \
+	bitshuffle/iochain.h bitshuffle/bitshuffle_internals.h \
+	PyCafe_api.h PyCafe.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -90,26 +101,27 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run aclocal-1.11
 AMTAR = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run tar
-AM_CPPFLAGS =  -fexceptions -fPIC -Wno-deprecated -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/usr/include/QtCore  -I/usr/include/QtXml 
-AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/usr/lib64  -Wl,-rpath,/usr/lib64
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include
+AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoheader
 AUTOMAKE = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run automake-1.11
 AWK = gawk
 CAFE_CPPFLAGS = -I$(top_srcdir)/include 
-CC = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/gcc
+CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -Wno-deprecated -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/usr/include/QtCore  -I/usr/include/QtXml 
-CXX = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/g++
-CXXCPP = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/g++ -E
+CPP = /opt/psi/Programming/gcc/6.3.0/bin/gcc -E
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include
+CXX = /opt/psi/Programming/gcc/6.3.0/bin/g++
+CXXCPP = /opt/psi/Programming/gcc/6.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
+DLLTOOL = false
 DSYMUTIL = 
 DUMPBIN = 
 ECHO_C = 
@@ -125,14 +137,16 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/usr/lib64  -Wl,-rpath,/usr/lib64
+LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64
 LIBOBJS = 
-LIBS = -lQtXml -lQtCore 
+LIBS = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
+LT_SYS_LIBRARY_PATH = 
 MAKEINFO = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run makeinfo
+MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -143,21 +157,22 @@ OTOOL64 =
 PACKAGE = cafe
 PACKAGE_BUGREPORT = Bug reports to: jan.chrin@psi.ch
 PACKAGE_NAME = CAFE
-PACKAGE_STRING = CAFE 1.8.0
+PACKAGE_STRING = CAFE 1.12.5
 PACKAGE_TARNAME = cafe
-PACKAGE_VERSION = 1.8.0
+PACKAGE_VERSION = 1.12.5
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.8.0
+VERSION = 1.12.5
 abs_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/include
 abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/include
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_top_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
-ac_ct_CC = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/gcc
+ac_ct_AR = ar
+ac_ct_CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
 ac_ct_CXX = 
 ac_ct_DUMPBIN = 
 am__include = include
@@ -186,16 +201,15 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.8.0-gcc-6.3.0/lib
+libdir = /opt/gfa/cafe/cpp/cafe-noqt-1.12.5-gcc-6.3.0/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
-lt_ECHO = echo
 mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.8.0-gcc-6.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-noqt-1.12.5-gcc-6.3.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -206,9 +220,10 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-include_HEADERS = cafe.h cafeCache.h cafeConvert.h cafeDataType.h \
-	cafeDataTypeHelper.h cafeEnum.h cafeEnumStrings.h cafeRoast.h \
-	cafeVectors.h cafeXML.h caopCodes.h channelRegalia.h conduit.h \
+include_HEADERS = config.h cafe.h cafeCache.h cafeConvert.h \
+	cafeDataType.h cafeDataTypeHelper.h cafeEnum.h \
+	cafeEnumStrings.h cafeRoast.h cafeVectors.h cafeXML.h \
+	caopCodes.h channelRegalia.h conduit.h \
 	conduitConnectionHandlerArgs.h conduitEventHandlerArgs.h \
 	conduitFriends.h connect.h defines.h deviceCollection.h \
 	exceptions.h exceptionsHelper.h global.h enumStrings.h \
@@ -217,7 +232,7 @@ include_HEADERS = cafe.h cafeCache.h cafeConvert.h cafeDataType.h \
 	methodCallbacks.h policies.h policyHelper.h PVCtrlHolder.h \
 	PVDataHolder.h PVGroup.h PVHolder.h statusCodes.h transpose.h \
 	conduitGroup.h hashConduitGroup.h restorePVGroupXMLParser.h \
-	tmDateMap.h $(am__append_1) $(am__append_2)
+	tmDateMap.h $(am__append_1) $(am__append_2) $(am__append_3)
 all: all-am
 
 .SUFFIXES:
@@ -473,10 +488,6 @@ uninstall-am: uninstall-includeHEADERS
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am tags uninstall uninstall-am uninstall-includeHEADERS
 
-
-#if HAVE_ZEROMQ
-#include_HEADERS += cafeService.h zhelpers.h
-#endif
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

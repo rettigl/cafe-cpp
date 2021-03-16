@@ -13,31 +13,31 @@
 #include <config.h>
 #include <cadef.h>
 
-
 #include <channelRegalia.h>
 #include <PVDataHolder.h>
 #include <PVCtrlHolder.h>
 #include <policies.h>
 #include <deque>
 
-#if HAVE_PYTHON_H
 
+#if HAVE_PYTHON_H
 #if HAVE_PYCAFE_EXT
 #include <Python.h> //required for PyCafe.h
 #include <PyCafe.h>
 #else
 #include <PyCafe_api.h>
 #endif
-
 #endif
 
+using namespace boost::posix_time;
 
 /**
  *   Principal constructor has:\n
  *   \param _pv         process variable
  *   \param _ccc        ca_client_context
  */
-class Conduit {
+class Conduit
+{
 public:
     friend struct change_alarmStatus;
     friend struct change_alarmSeverity;
@@ -48,7 +48,7 @@ public:
     friend struct change_accessWrite;
 
     friend struct change_beamEventNo;
-
+ 
     friend struct change_channelDeviceAttribute;
     friend struct change_channelID;
     friend struct change_channelRegalia;
@@ -99,6 +99,9 @@ public:
     friend struct change_monitorAction;
     friend struct change_monitorActionClear;
     friend struct change_monitorActionErase;
+
+    friend struct change_monitorPolicy;
+
     friend struct change_monitorPolicyErase;
     friend struct change_monitorPolicyInsert;
 
@@ -108,11 +111,23 @@ public:
     //friend struct change_rule;
 
     friend struct change_pvAlias;
+#if HAVE_PYTHON_H
+    friend struct change_pyOpenCallbackFlag;
+#endif
+
     friend struct change_status;
 
     friend struct change_supplementHandle;
-
+    friend struct change_supplementDescription;
+    friend struct change_supplementAlarmSeverity;
     friend struct change_usrArgs;
+
+    friend struct change_widgetInsert;
+    friend struct change_widgetErase;
+ 
+    friend struct change_pyGetCallbackFn;
+    friend struct change_pyPutCallbackFn;
+    friend struct change_pyConnectCallbackFn;
 
     friend struct free_dataBuffers;
 
@@ -141,20 +156,19 @@ private:
     union db_access_val * putBuffer;
     union db_access_val * stsackBuffer;
 
+    //struct connection_handler_args connectionHandlerArgs;
+    //struct event_handler_args eventHandlerArgs;
+
     short alarmStatus;
     short alarmSeverity;
     epicsTimeStamp ts;
 
     //New Oct. 2018
     std::string desc;
-    //short hhsv;
-    //short hsv;
-    //short lsv;
-    //short llsv;
-    alarmSeverityStruct aSevStruct;
-		bool hasDesc;
-		bool hasAlarmSevStruct;
 
+    alarmSeverityStruct aSevStruct;
+    bool hasDesc;
+    bool hasAlarmSevStruct;
 
     void * usrArgs; //Filled in conduitEventHandlerArgs.h; used by getUsrArgsAsUInt in CyCafe
 
@@ -164,7 +178,7 @@ private:
 
     //Reserved
     unsigned long long  beamEventNo;
-
+  
     std:: deque<PVDataHolder> dequePulseID;
 
     std::map<unsigned long long, PVDataHolder> mapPulseID;
@@ -217,11 +231,23 @@ private:
     ChannelRequestMetaData  channelRequestMetaSTSACK;//  (CAFENUM::DBR_TYPE DBR_STSACK);//1
     ChannelRequestMetaData  channelRequestMetaPrimitive; //Put operations
 
-#if HAVE_PYTHON_H
-    void * PyEventHandler() const;
-    void * PyEventHandler(unsigned int) const;
-    void * PyDataEventHandler() const;
-    void * PyCtrlEventHandler() const;
+#if HAVE_PYTHON_H   
+    //void * PyEventHandler() const;
+    //void * PyEventHandler(unsigned int) const;
+    //void * PyDataEventHandler() const;
+    //void * PyCtrlEventHandler() const;
+
+    void * CyEventHandler() const;
+    void * CyDataEventHandler() const;
+    void * CyCtrlEventHandler() const;
+
+    bool   pyOpenCallbackFlag;
+
+    void * pyGetCallbackFn;
+    void * pyPutCallbackFn;
+    void * pyConnectCallbackFn;
+    std::vector<void *> pyConnectCallbackVector;
+
 #endif
 
     int  putWithCallback(pCallback callbackHandlerPut) const;
@@ -240,6 +266,8 @@ private:
     //map<unsigned long,MonitorPolicy> lump;
     //map<unsigned long,MonitorPolicy>::iterator ilump;
 
+
+
     ////MonitorPolicy mpBase;
     std::vector<MonitorPolicy> mpV;
     std::vector<MonitorPolicy> mpInWaitingV;
@@ -249,12 +277,42 @@ private:
 
     std::vector<std::string> monitorAction;
 
+    std::vector<void *> widgetV;
+
+
     bool hasNewData; // used by HandleHelper.getMonitorAction();
 
 public:
+
 #if HAVE_PYTHON_H
     void * PyGetHandler() const;
     void * PyPutHandler() const;
+    bool getPyOpenCallbackFlag() const
+    {
+        return pyOpenCallbackFlag;
+    }
+    //void * PyOpenHandler() const; //make public so that it can be called from a callback fn
+    void * PyConnectHandler() const; //make public so that it can be called from a callback fn
+   
+
+    void * getPyGetCallbackFn(void) const 
+    {
+        return pyGetCallbackFn;
+    };
+    void * getPyPutCallbackFn(void) const 
+    {
+        return pyPutCallbackFn;
+    };
+    void * getPyConnectCallbackFn(void) const 
+    {
+        return pyConnectCallbackFn;
+    };
+
+    std::vector<void *> getPyConnectCallbackVector(void) const 
+    {
+        return pyConnectCallbackVector;
+    };
+
 #endif
 
     Conduit(void );
@@ -277,18 +335,25 @@ public:
 
     int  status;
 
-
     friend std::ostream& operator<<(std::ostream& os, const Conduit& e)
     {
         os<< "handle="  << e.handle<<" pv=" << e.pv<<  std::endl;
         return os;
     };
 
+    //struct connection_handler_args  getConnectionHandlerArgs(void) const{
+    //  return connectionHandlerArgs;
+    //};
+
+   
+    //struct event_handler_args  getEventHandlerArgs(void) const {
+    //  return eventHandlerArgs;
+    //}; 
+
     bool getPyCafe() const
     {
         return pyCafeFlag;
     };
-
 
 
     bool operator<(const Conduit& c)const
@@ -305,6 +370,11 @@ public:
         return channelDeviceAttribute.getAttribute();
     };
 
+    const char * getClassName(void) const
+    {
+        return channelRegalia.className;
+    };
+
     const char * getHostName(void) const
     {
         return channelRegalia.hostName;
@@ -317,7 +387,7 @@ public:
     std::string getDescription(void) const
     {
         return desc;
-    } 
+    }
 
     epicsTimeStamp getTimeStamp(void) const
     {
@@ -349,44 +419,64 @@ public:
     }
     alarmSeverityStruct getAlarmSeverityStruct(void) const
     {
-        return aSevStruct;     
+        return aSevStruct;
     }
-		
-		bool hasDescription(void) const
-		{
-		    return hasDesc;
-		}
-		
-		bool hasAlarmSeverityStruct(void) const
-		{
-		    return hasAlarmSevStruct;
-		}
-		
+
+    bool hasDescription(void) const
+    {
+        return hasDesc;
+    }
+
+    bool hasAlarmSeverityStruct(void) const
+    {
+        return hasAlarmSevStruct;
+    }
+
     bool hasAlarmSeverity(void) const
     {
-        if (aSevStruct.hhsv>SEV_NO_ALARM && aSevStruct.hhsv<=SEV_INVALID)      {return true;}
-        else if (aSevStruct.hsv>SEV_NO_ALARM && aSevStruct.hsv<=SEV_INVALID)   {return true;}
-        else if (aSevStruct.lsv>SEV_NO_ALARM && aSevStruct.lsv<=SEV_INVALID)   {return true;}
-        else if (aSevStruct.llsv>SEV_NO_ALARM && aSevStruct.llsv<=SEV_INVALID) {return true;}
+        if (!hasAlarmSevStruct)
+        {
+            return false;
+        }
+        if (aSevStruct.hhsv>SEV_NO_ALARM && aSevStruct.hhsv<=SEV_INVALID)
+        {
+            return true;
+        }
+        else if (aSevStruct.hsv>SEV_NO_ALARM && aSevStruct.hsv<=SEV_INVALID)
+        {
+            return true;
+        }
+        else if (aSevStruct.lsv>SEV_NO_ALARM && aSevStruct.lsv<=SEV_INVALID)
+        {
+            return true;
+        }
+        else if (aSevStruct.llsv>SEV_NO_ALARM && aSevStruct.llsv<=SEV_INVALID)
+        {
+            return true;
+        }
         return false;
     }
 
     std::string getAlarmStatusAsString(void) const
     {
-        if (alarmStatus>-1 && alarmStatus<ALARM_STATUS_STRING_LENGTH) {
+        if (alarmStatus>-1 && alarmStatus<ALARM_STATUS_STRING_LENGTH)
+        {
             return (std::string) epicsAlarmConditionStrings[alarmStatus];
         }
-        else {
+        else
+        {
             std::cout << "alarmStatusValue=" << alarmStatus << " is not within the valid range of 0-3!" << std::endl;
             return (std::string) "ALARM_UNKNOWN";
         }
     }
     std::string getAlarmSeverityAsString(void) const
     {
-        if (alarmSeverity>-1 && alarmSeverity<ALARM_SEVERITY_STRING_LENGTH) {
+        if (alarmSeverity>-1 && alarmSeverity<ALARM_SEVERITY_STRING_LENGTH)
+        {
             return (std::string) epicsAlarmSeverityStrings[alarmSeverity];
         }
-        else {
+        else
+        {
             std::cout << "alarmStatusSeverity=" << alarmSeverity << " is not within the valid range of 0-21!" << std::endl;
             return (std::string) "SEVERITY_UNKNOWN";
         }
@@ -411,6 +501,7 @@ public:
         return beamEventNo;
     };
 
+ 
     /*
     PVDataHolder getPVDataFromPulseID(unsigned long long globalPulseID) const {
     PVDataHolder pvd;
@@ -519,18 +610,20 @@ public:
 
     int  getPVDataHolder(PVDataHolder &) const ;
     int  getPVCtrlHolder(PVCtrlHolder &) const ;
-		
-		
-    std::string getUnits(void) const {
+
+
+    std::string getUnits(void) const
+    {
         PVCtrlHolder pvc;
         getPVCtrlHolder(pvc);
-	return pvc.getUnitsAsString();		
+        return pvc.getUnitsAsString();
     };
-		
-    short getPrecision(void) const {
+
+    short getPrecision(void) const
+    {
         PVCtrlHolder pvc;
         getPVCtrlHolder(pvc);
-        return pvc.getPrecision();		
+        return pvc.getPrecision();
     };
 
     //bool getRule(void) const {return rule;};
@@ -621,10 +714,38 @@ public:
     //ChannelRequestMetaDataRepository       getChannelRequestMetaPrimitiveRepository(void) const {return channelRequestMetaPrimitiveRepository;}; //1
 
     ////MonitorPolicy getMonitorPolicy(void) const {return mpBase;};
+
+
+    MonitorPolicy getMonitorPolicy(unsigned int monitor_id) const
+    {
+          
+        bool mpidFound=false;
+        
+        //Iterate
+        for (size_t i=0; i< mpV.size(); ++i)
+        {         
+	  if ( mpV[i].getID() == monitor_id)
+            {
+                mpidFound=true;
+                return mpV[i];                
+            }
+          
+        }
+
+        if (!mpidFound)
+        {
+	    std::cout << __FILE__ << "//" << __LINE__ << std::endl;
+	    std::cout << "getMonitorPolicyVector(monitor_id):  " << monitor_id << " NOT FOUND! " << std::endl;
+            std::cout << "Could not modify entry!" << std::endl;
+        }
+    };
+
     std::vector<MonitorPolicy> getMonitorPolicyVector(void) const
     {
         return mpV;
     };
+
+
     std::vector<MonitorPolicy> getMonitorPolicyInWaitingVector(void) const
     {
         return mpInWaitingV;
@@ -634,6 +755,12 @@ public:
     {
         return monitorAction;
     };
+
+    std::vector<void *> getWidgetV(void) const
+    {
+        return std::vector<void *>(widgetV);
+    };
+
     bool getHasNewData(void) const
     {
         return hasNewData;

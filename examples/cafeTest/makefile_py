@@ -9,18 +9,24 @@
 
 
 #CAFE version to link to
-CAFE_VERSION=pycafe-1.8.0-gcc-6.3.0
+CAFE_VERSION=pyzcafe-1.12.5-gcc-7.3.0
 
-
-PYTHON_INCLUDE=/opt/gfa/python-3.5/latest/include/python3.5m
-PYTHON_LIB=/opt/gfa/python-3.5/latest/lib
+PYTHON_INCLUDE=/opt/gfa/python-3.7/latest/include/python3.7m
+PYTHON_LIB=/opt/gfa/python-3.7/latest/lib
 
 EPICS_BASE=${EPICS}/base
 
 #CAFE project base
 CAFE_BASE=/opt/gfa/cafe
-CAFE_CPP_BASE=${CAFE_BASE}/python/python-3.5
+CAFE_CPP_BASE=${CAFE_BASE}/python/python-3.7
+
+CAFE_BASE=/afs/psi.ch/project/cafe/gitlab/CAFE/
+CAFE_CPP_BASE=${CAFE_BASE}
+CAFE_VERSION=cpp
+
 BOOST_BASE=${CAFE_BASE}/boost/boost_1_61_0/include
+
+
 
 
 INCLUDE_PATH += -I$(CAFE_CPP_BASE)/$(CAFE_VERSION)/include \
@@ -28,18 +34,15 @@ INCLUDE_PATH += -I$(CAFE_CPP_BASE)/$(CAFE_VERSION)/include \
  -I$(BOOST_BASE) \
  -I${PYTHON_INCLUDE}
  
-
- 
 LIB_DIR += -L$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
  -Wl,-rpath,$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
- -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
- -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
+ -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/src/.libs \
+ -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/src/.libs \
  -L$(PYTHON_LIB) -Wl,-rpath,$(PYTHON_LIB) 
 
 
-LIBS += -lcafe -lca -lCom -lpython3.5m
+LIBS += -lcafe -lca -lCom -lpython3.7m
  
-
 cafeTest: cafeTest.cc 
 	g++ cafeTest.cc -o cafeTest \
  	$(INCLUDE_PATH) $(LIB_DIR) $(LIBS)

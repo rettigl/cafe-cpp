@@ -13,7 +13,8 @@
 #include <cafeEnum.h>
 
 
-template <class CTYPE> class Instant {
+template <class CTYPE> class Instant
+{
 
 private:
     Transpose<dbr_string_t> renderString; // 0
@@ -150,16 +151,20 @@ public:
 
         status=ICAFE_NORMAL;
 
-        if (handleSet.size() != valSet.size() ) {
+        if (handleSet.size() != valSet.size() )
+        {
             return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
         }
 
-        for (size_t i=0; i< handleSet.size(); ++i) {
+        for (size_t i=0; i< handleSet.size(); ++i)
+        {
 
-            if (!helper.isChannelConnected(handleSet[i])) {
+            if (!helper.isChannelConnected(handleSet[i]))
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
-                if (!helper.isChannelConnected(handleSet[i])) {
+                if (!helper.isChannelConnected(handleSet[i]))
+                {
                     helper.printHandle(handleSet[i]);
                     status=helper.getStatus(handleSet[i]);
                 }
@@ -168,18 +173,22 @@ public:
         }
 
 
-        if (status!=ICAFE_NORMAL) {
+        if (status!=ICAFE_NORMAL)
+        {
             return status;
         }
 
-        if(printFlag) {
+        if(printFlag)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         }
 
 
-        if (printFlag) {
+        if (printFlag)
+        {
 
-            for (size_t i=0; i< handleSet.size(); ++i) {
+            for (size_t i=0; i< handleSet.size(); ++i)
+            {
 
                 std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet[i]) << " to " << valSet[i] << std::endl;
 
@@ -189,7 +198,8 @@ public:
         } //if
 
 
-        for (size_t i=0; i< handleSet.size(); ++i) {
+        for (size_t i=0; i< handleSet.size(); ++i)
+        {
 
 
 
@@ -200,9 +210,11 @@ public:
 
             nelemPrevious=helper.getNelemClient(handleSet[i]);
             //Check the number of elements requested?
-            if (nelemPrevious>1) {
+            if (nelemPrevious>1)
+            {
                 nelemRequestedCheck = helper.setNelem(handleSet[i],nelemRequested);
-                if (nelemRequestedCheck != nelemRequested) {
+                if (nelemRequestedCheck != nelemRequested)
+                {
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                               << nelemPrevious << std::endl;
@@ -232,7 +244,8 @@ public:
 
             status=set(handleSet[i], DBR_STRING, valSetA);
 
-            if (status!=ICAFE_NORMAL) {
+            if (status!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(status);
             }
@@ -244,9 +257,11 @@ public:
             nelemRequested=1;
             //Switch back to previous value
             //if (nelemPrevious>1) {
-            if(helper.getNelemRequest(handleSet[i])!= nelemPrevious) {
+            if(helper.getNelemRequest(handleSet[i])!= nelemPrevious)
+            {
                 nelemPreviousCheck= helper.setNelem(handleSet[i],nelemPrevious);
-                if (nelemPreviousCheck != nelemPrevious) {
+                if (nelemPreviousCheck != nelemPrevious)
+                {
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                               << nelemRequested << std::endl;
@@ -283,16 +298,19 @@ public:
         helper.removeLeadingAndTrailingSpaces(valSet.c_str(), valSetA[0]);
 
         status=Instant::set(handleSet, DBR_STRING, valSetA);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             status=Instant::get(handleSet, DBR_STRING, valGetA);
 
             valGet=valGetA[0];
         }
-        else {
+        else
+        {
             return status;
         }
 
-        if (strcmp(valSetA[0],valGetA[0])==0) {
+        if (strcmp(valSetA[0],valGetA[0])==0)
+        {
             return ICAFE_NORMAL;
         }
 
@@ -308,13 +326,16 @@ public:
         ins>>ind;
 
 
-        if ( !ous.fail()  && !ins.fail()) {
-            if (ind==oud) {
+        if ( !ous.fail()  && !ins.fail())
+        {
+            if (ind==oud)
+            {
                 return ICAFE_NORMAL;
             }
         }
         //Cater for enums that are refered to by their integer values in string format
-        else if (!ins.fail()) {
+        else if (!ins.fail())
+        {
             short enumval=-1;
 
             enumval=helper.getEnumFromString(handleSet, valGet);
@@ -324,7 +345,8 @@ public:
             std::stringstream ss;
             ss << enumval;
             valGet= ss.str();
-            if ((short)ind==enumval)  {
+            if ((short)ind==enumval)
+            {
                 return ICAFE_NORMAL;
             }
 
@@ -361,16 +383,19 @@ public:
         helper.removeLeadingAndTrailingSpaces(valSet, valSetA[0]);
 
         status=Instant::set(handleSet, DBR_STRING, valSetA);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             status=Instant::get(handleSet, DBR_STRING, valGetA);
 
             strcpy(valGet,valGetA[0]);
         }
-        else {
+        else
+        {
             return status;
         }
 
-        if (strcmp(valSetA[0],valGetA[0])==0) {
+        if (strcmp(valSetA[0],valGetA[0])==0)
+        {
             return ICAFE_NORMAL;
         }
 
@@ -386,13 +411,16 @@ public:
         ins.str(valSetA[0]);
         ins>>ind;
 
-        if ( !ous.fail()  && !ins.fail()) {
-            if (ind==oud) {
+        if ( !ous.fail()  && !ins.fail())
+        {
+            if (ind==oud)
+            {
                 return ICAFE_NORMAL;
             }
         }
         //Cater for enums that are refered to by their integer values in string format
-        else if (!ins.fail()) {
+        else if (!ins.fail())
+        {
             short enumval=-1;
 
             enumval=helper.getEnumFromString(handleSet, valGet);
@@ -402,7 +430,8 @@ public:
             ss << enumval;
             strcpy(valGet, ss.str().c_str());
 
-            if ((short) ind==enumval)  {
+            if ((short) ind==enumval)
+            {
                 return ICAFE_NORMAL;
             }
 

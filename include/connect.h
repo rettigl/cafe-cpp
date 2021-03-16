@@ -35,7 +35,8 @@
 
 
 
-class Connect {
+class Connect
+{
 protected:
     int  status;
     CAFEStatus cafeStatus;
@@ -68,10 +69,9 @@ protected:
     static void callbackHandlerException   (struct exception_handler_args     args);
 
     //connect.cpp
+     //int  createHandle(const char * pv, ca_client_context * ccc, ChannelRequestPolicy channelRequestPolicyPut, unsigned int  &handle)
     int  createChannel(unsigned int  handle, const char * pv, chid &pCh);
-    int  createHandle(const char * pv, ca_client_context * ccc, unsigned int  &handle)
-    //int  createHandle(const char * pv, ca_client_context * ccc, ChannelRequestPolicy channelRequestPolicyPut, unsigned int  &handle)
-    throw (CAFEException_pv);
+    int  createHandle(const char * pv, ca_client_context * ccc, unsigned int  &handle)  noexcept(false); // throw (CAFEException_pv);
 
     int  contextDestroy();
     int  contextDestroy(ca_client_context * cctLocal);
@@ -82,7 +82,7 @@ protected:
 
     int  createChannelWithinGroup(unsigned int  handle, const char * pv, chid &pCh);
     int  createHandleWithinGroup(const char  * pv, ca_client_context * ccc, unsigned int  & _handle)
-    throw (CAFEException_pv);
+      noexcept(false); //throw (CAFEException_pv);
 
 public:
 
@@ -212,11 +212,26 @@ public:
     }
     int _ca_pend_io(double t)
     {
-        return ca_pend_io(t);
+        double _t=DEFAULT_TIMEOUT_PEND_IO;
+        if (t<=0)
+        {
+            _t=0.4;
+            std::cout << "Illegal timeout value: " << t << " for _ca_pend_io(timeout) "<< std::endl;
+            std::cout << "Setting timeout to default value of " << _t << " seconds" << std::endl;
+            
+        }
+        return ca_pend_io(_t); //returns ECA_TIMEOUT if successful
     }
     int _ca_pend_event(double t)
     {
-        return ca_pend_event(t);
+        double _t=t;
+        if (t<=0)
+        {
+	    _t=DEFAULT_TIMEOUT_PEND_EVENT;
+            std::cout << "Illegal timeout value: " << t << " for _ca_pend_event(timeout) "<< std::endl;
+            std::cout << "Setting timeout to default vallue of " << _t << std::endl;
+        }
+        return ca_pend_event(_t); //returns ECA_TIMEOUT if successful
     }
 
     //connect.cc
@@ -224,48 +239,51 @@ public:
     {
         return pyCafeFlag=b;
     };
+
     bool getPyCafe()
     {
         return pyCafeFlag;
-    } ;
-    int  init() throw (CAFEException_init);
-    int  init(ca_preemptive_callback_select select)  throw (CAFEException_init);
+    };
+ 
+    int  init() noexcept(false); // throw (CAFEException_init);
+    int  init(ca_preemptive_callback_select select) noexcept(false); // throw (CAFEException_init);
 
     //std::string
-    int  open(const std::string pvS, unsigned int  &handle) throw (CAFEException_open)
+    int  open(const std::string pvS, unsigned int  &handle) noexcept(false) // throw (CAFEException_open)
     {
-
-        try {
-            open (pvS.c_str(), handle);
+        try
+        {
+            return open (pvS.c_str(), handle);
         }
-        catch(CAFEException_open &e) {
+        catch(CAFEException_open &e)
+        {
             throw e;
         };
     }
-    int  open(const std::string pvS, const std::string pvAliasS, unsigned int  &handle)
-    throw (CAFEException_open)
+    int  open(const std::string pvS, const std::string pvAliasS, unsigned int  &handle) 
+    noexcept(false) // throw (CAFEException_open)
     {
-        try {
-            open (pvS.c_str(), pvAliasS.c_str(), handle);
+        try
+        {
+            return open (pvS.c_str(), pvAliasS.c_str(), handle);
         }
-        catch(CAFEException_open &e) {
+        catch(CAFEException_open &e)
+        {
             throw e;
         };
     }
-    int  open(const std::string *pvArrayS, unsigned int *handleArray, const unsigned int nHandles)
-    throw (CAFEException_open);
+    int  open(const std::string *pvArrayS, unsigned int *handleArray, const unsigned int nHandles) noexcept(false); // throw (CAFEException_open);
 
     //const char *pv
-    int  open(const char *pv, unsigned int  &handle) throw (CAFEException_open);
-    int  open(const char *pv, const char *pvAlias, unsigned int  &handle)
-    throw (CAFEException_open);
+    int  open(const char *pv, unsigned int  &handle) noexcept(false); // throw (CAFEException_open);
+    int  open(const char *pv, const char *pvAlias, unsigned int  &handle) noexcept(false); // throw (CAFEException_open);
 
     int  open(const char **pvArray, unsigned int *handleArray, const unsigned int nHandles)
-    throw (CAFEException_open);
-    int  open(std::vector<const char *>, std::vector<unsigned int> &) throw (CAFEException_open);
-    int  open(std::vector<std::string>, std::vector<unsigned int> &) throw (CAFEException_open);
+      noexcept(false); // throw (CAFEException_open);
+    int  open(std::vector<const char *>, std::vector<unsigned int> &) noexcept(false); // throw (CAFEException_open);
+    int  open(std::vector<std::string>, std::vector<unsigned int> &) noexcept(false); // throw (CAFEException_open);
 
-    int  openV(std::vector<std::string> s, std::vector<unsigned int> &i) throw (CAFEException_open)
+    int  openV(std::vector<std::string> s, std::vector<unsigned int> &i) noexcept(false) // throw (CAFEException_open)
     {
         return open(s,i);
     };
@@ -382,6 +400,10 @@ public:
     //Pends for a maximimum of timeout seconds
     void openNowAndWait(double _timeout);
 
+    //Pends for a maximimum of timeout seconds
+    void openNowAndWaitHandles(unsigned int * handleArray, unsigned int nHandles, double _timeout);
+    //Pends for a maximimum of timeout seconds
+    void openNowAndWaitHandleV(std::vector<unsigned int> handleV, double _timeout);
 
     //Pends for default amount of time
     void openNow()
@@ -396,6 +418,24 @@ public:
         return;
     }
 
+
+    //Pends for default amount of time
+    void openNowHandles(unsigned int * handleArray, unsigned int nHandles)
+    {
+        openNowAndWaitHandles(handleArray, nHandles, channelOpenPolicy.getTimeout());
+
+        return;
+    }
+
+
+    //Pends for default amount of time
+    void openNowHandleV(std::vector<unsigned int> handleV)
+    {
+        openNowAndWaitHandleV(handleV, channelOpenPolicy.getTimeout());
+
+        return;
+    }
+
 //-------------------------------------------------------------------------
 
 
@@ -406,6 +446,17 @@ public:
 
     bool initCallbackComplete(unsigned int * hArray, unsigned int nelem);
 
+    bool initCallbackCompleteV(std::vector<unsigned int> hV)
+    {
+        return initCallbackComplete(&hV[0], hV.size());
+    }
+
+    bool initCallbackCompleteHandle(unsigned int handle)
+    {
+        unsigned int hArray[1];
+        hArray[0]=handle;
+        return initCallbackComplete(hArray, 1);
+    }
 
 
     //#################################################################################
@@ -453,7 +504,7 @@ public:
         //return status;
         return closeChannels(&v[0], v.size());
     };
-   
+
 
     int  close(unsigned int  handle);
     int  closeChannel(unsigned int  handle)
@@ -493,6 +544,29 @@ public:
     {
         return closeChannelsKeepHandles(&v[0], v.size());
     }
+    int  openChannelsWithHandles(unsigned int  * handleArray,  unsigned int nHandles);
+    int  openChannelsWithHandlesV(std::vector<unsigned int> v)
+    {
+        return openChannelsWithHandles(&v[0], v.size());
+    }
+    int  openChannelsWithHandles (std::vector<unsigned int> v)
+    {
+        return openChannelsWithHandles(&v[0], v.size());
+    }
+    int reconnect(std::vector<unsigned int> v) 
+    {
+         int status1 = closeChannelsKeepHandles(&v[0], v.size());
+        
+         openPrepare();
+         int status2 = openChannelsWithHandles(&v[0], v.size());
+	 openNowAndWaitHandles(&v[0], v.size(), channelOpenPolicy.getTimeout());
+	 
+	 if (status1 > status2) {
+	     return status1;
+	 } 	
+	 return status2;        
+    }
+ 
 
     // Monitors
     int  monitorStart(unsigned int  handle, MonitorPolicy &mp);
@@ -584,8 +658,10 @@ public:
 
     bool isValid(unsigned int handle)
     {
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if ((*itcs).getHandle()==handle) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if ((*itcs).getHandle()==handle)
+            {
                 return true;
             }
         }
@@ -594,8 +670,10 @@ public:
 
     bool allChannelsConnected()
     {
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if (!(*itcs).isConnected()) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if (!(*itcs).isConnected())
+            {
                 return false;
             }
         }
@@ -612,41 +690,47 @@ public:
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             return (*it_handle).isConnected();
         }
-        else {
+        else
+        {
             std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
             return false;
         }
     }
-		
-		
-		
-		
+
+
+
+
     int  getChannelInfo(unsigned int handle, ChannelRegalia & channelInfo)
     {
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             channelInfo=(*it_handle).getChannelRegalia();
             return ICAFE_NORMAL;
         }
-        else {
+        else
+        {
             return ECAFE_INVALID_HANDLE;
         }
     };
-	
+
     chid getChannelID(unsigned int handle)
     {
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             return (*it_handle).getChannelID();
         }
-        else {
+        else
+        {
             std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
             return NULL;
         }
@@ -665,10 +749,12 @@ public:
 
     int attachContext(ca_client_context *ccc)
     {
-        if (ccc != NULL) {
+        if (ccc != NULL)
+        {
             return ca_attach_context(ccc);
         }
-        else {
+        else
+        {
             return ECAFE_NULLCONTEXT;
         }
     }
@@ -676,10 +762,12 @@ public:
     int attachContextByPVName(const char * pvname)
     {
         ca_client_context * ccc=getClientContext(pvname);
-        if (ccc != NULL) {
+        if (ccc != NULL)
+        {
             return ca_attach_context(ccc);
         }
-        else {
+        else
+        {
             return ECAFE_NULLCONTEXT;
         }
     }
@@ -687,10 +775,12 @@ public:
     int attachContextByHandle(unsigned int handle)
     {
         ca_client_context * ccc=getClientContext(handle);
-        if (ccc != NULL) {
+        if (ccc != NULL)
+        {
             return ca_attach_context(ccc);
         }
-        else {
+        else
+        {
             return ECAFE_NULLCONTEXT;
         }
     }
@@ -701,20 +791,25 @@ public:
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
 
-            if ( (*it_handle).getAccessRead() != ar ) {
-                if(MUTEX) {
+            if ( (*it_handle).getAccessRead() != ar )
+            {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 handle_index.modify(it_handle, change_accessRead(ar));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
             }
             return ICAFE_NORMAL;
         }
-        else {
+        else
+        {
             std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
             return ECAFE_INVALID_HANDLE;
         }
@@ -725,19 +820,24 @@ public:
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
-            if ( (*it_handle).getAccessWrite() != aw ) {
-                if(MUTEX) {
+        if (it_handle != handle_index.end())
+        {
+            if ( (*it_handle).getAccessWrite() != aw )
+            {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 handle_index.modify(it_handle, change_accessWrite(aw));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
             }
             return ICAFE_NORMAL;
         }
-        else {
+        else
+        {
             std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
             return ECAFE_INVALID_HANDLE;
         }
@@ -748,10 +848,12 @@ public:
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             return (bool) (*it_handle).getAccessRead();
         }
-        else {
+        else
+        {
             std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
             return false;
         }
@@ -762,10 +864,12 @@ public:
         cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
         cafeConduit_set_by_handle::iterator it_handle;
         it_handle = handle_index.find(handle);
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             return (bool) (*it_handle).getAccessWrite();
         }
-        else {
+        else
+        {
             std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
             return false;
         }
@@ -794,7 +898,7 @@ public:
     int  printStatus(std::vector<std::string> pvV, std::vector<int> statusV);
     int  printStatusIfError(std::vector<std::string> pvV, std::vector<int> statusV);
 
-    int  setPVAlias(unsigned int handle, const char * pv) throw (CAFEException_open);
+    int  setPVAlias(unsigned int handle, const char * pv) noexcept(false); // throw (CAFEException_open);
 
     // GROUP FUNCTIONS
 
@@ -833,11 +937,27 @@ public:
     bool isGroup(const char *);
     bool isCollection(const char *);
 
-    int  groupOpen(const char *pv,   unsigned int  &groupHandle) throw (CAFEException_groupOpen);
-    int  groupOpen(PVGroup &pvgroup, unsigned int  &groupHandle) throw (CAFEException_groupOpen);
+    int  groupOpen(const char *pv,   unsigned int  &groupHandle) noexcept(false); // throw (CAFEException_groupOpen);
+    int  groupOpen(PVGroup &pvgroup, unsigned int  &groupHandle) noexcept(false); //  throw (CAFEException_groupOpen);
 
+    int groupOpenWithHandles(unsigned int groupHandle);
+    
+    
+    int groupClose(unsigned int groupHandle, bool keepGroupName) {
+        return Connect::groupClose(groupHandle, keepGroupName, false);
+    }
 
-    int  groupClose(unsigned int  groupHandle);
+    int groupClose(unsigned int groupHandle)
+    {
+        return Connect::groupClose(groupHandle, false, false);
+    };
+
+    int groupCloseKeepName(unsigned int  groupHandle, bool keepGroupName) {
+      return Connect::groupClose(groupHandle, keepGroupName, false);
+    }
+   
+    int  groupClose(unsigned int  groupHandle, bool keepGroupName, bool keepHandles);
+
     int  groupClose();
     int  groupCloseAll()
     {
@@ -858,6 +978,9 @@ public:
 
     std::vector<std::string> getFromGlobalChannelList(std::vector<std::string>);
 
+    int  groupDefineFromCollection (const char * groupName, const char * collectionName, std::vector<std::string> attributeV) {
+        return groupDefine (groupName, collectionName,  attributeV);
+    }
 
     int  groupDefine (const char * groupName, const char * collectionName, std::vector<std::string> attributeV);
     int  groupDefine (const char * groupName, const char * collectionName, std::vector<const char*> attributeV);

@@ -16,7 +16,8 @@
 * \brief This class is the holder of values associated with the
 * EPICS DBR_CTRL_(dataType) control structure of a given handle/pv
 */
-class PVCtrlHolder : public PVHolder {
+class PVCtrlHolder : public PVHolder
+{
 
     friend class CAFE;
     friend class Connect;
@@ -92,7 +93,8 @@ public:
 
         val.reset( new CAFE_DATATYPE_UNION[nelem] );
 
-        for (unsigned int  i=0; i<nelem; ++i) {
+        for (unsigned int  i=0; i<nelem; ++i)
+        {
             val[i].d=0.0;
         };
     };
@@ -112,7 +114,8 @@ public:
     {
         _nelem>0 ? nelem=_nelem : nelem=1;
 
-        if (_nelem>size) {
+        if (_nelem>size)
+        {
 
             size=_nelem;
 
@@ -131,27 +134,31 @@ public:
     {
         return units;
     }
+
     std::string getUnitsAsString()    const
     {
         return (std::string) units;
     }
+
+    /*Defined in PVHolder.h
     short getNoEnumStrings ()  const
     {
         return noStr;
     };
     char * getEnumString(short indx) const
     {
-        return (char *) strs[indx];
+      return (char *) strs[indx];
     };
-
-
+    */
+   
     std::vector<std::string>  getEnumStrings() const
     {
 
         std::vector<std::string> vEnumStrings;
 
         vEnumStrings.reserve(noStr>0?noStr:1);
-        for ( short i=0; i<noStr; ++i) {
+        for ( short i=0; i<noStr; ++i)
+        {
             vEnumStrings.push_back(strs[i]);
         }
         return vEnumStrings;
@@ -161,10 +168,12 @@ public:
     short getEnumFromString(std::string enumString)
     {
 
-        short returnValue=-1;
+        short returnValue=INVALID_ENUM_RETURN_VALUE;
 
-        for ( short i=0; i<noStr; ++i) {
-            if (strcmp(enumString.c_str(), strs[i])==0) {
+        for ( short i=0; i<noStr; ++i)
+        {
+            if (strcmp(enumString.c_str(), strs[i])==0)
+            {
                 return i;
             }
         }
@@ -173,19 +182,33 @@ public:
         char pvStripped[MAX_ENUM_STRING_SIZE];
         helper.removeLeadingAndTrailingSpaces((char *) enumString.c_str(), pvStripped);
 
-        for ( short i=0; i<noStr; ++i) {
-            if (strcmp(pvStripped, strs[i])==0) {
+        for ( short i=0; i<noStr; ++i)
+        {
+            if (strcmp(pvStripped, strs[i])==0)
+            {
                 return i;
             }
         }
-        std::cout << "*** WARNING FROM PvCtrlHolder.h ***" << std::endl;
-        std::cout << "*** Method getEnumFromString(string enumString) ***" << std::endl;
-        std::cout << "The given input string '" << enumString << "' was not recognized! "  << std::endl;
-        std::cout << "Valid values are: " << std::endl;
-        for ( short i=0; i<noStr; ++i) {
-            std::cout << i << ":" << strs[i] << std::endl;
-        }
 
+        if (dataType==CAFE_ENUM) {   
+            std::cout << "*** WARNING FROM PvCtrlHolder.h ***" << std::endl;
+            std::cout << "*** Method getEnumFromString(string enumString) ***" << std::endl;
+            std::cout << "The given input string '" << enumString << "' was not recognized! "  << std::endl;
+            if (noStr > 0) {
+                std::cout << "Valid values are: " << std::endl;       
+                for ( short i=0; i<noStr; ++i)
+                {
+                    std::cout << i << ":" << strs[i] << std::endl;
+                }
+            }
+        }
+        else
+	{ 
+            std::cout << "*** WARNING FROM PvCtrlHolder.h ***" << std::endl;
+            std::cout << "*** Method getEnumFromString(string enumString) ***" << std::endl;
+            std::cout << "Native DataType " << (CAFEDataTypeCode().asString((CAFE_DATATYPE) dataType)).c_str() 
+                      << " is not the enumerated type, DBF_ENUM " << std::endl;
+        }
 
         return returnValue;
 
@@ -194,26 +217,48 @@ public:
     std::string getStringFromEnum(unsigned short enumValue) const
     {
 
-        std::string returnValue="";
+        std::string returnValue=INVALID_ENUM_RETURN_STRING;
 
-        if (enumValue<noStr) {
+        if (enumValue<noStr)
+        {
             return (std::string) strs[enumValue];
         }
-        else   {
-            std::cout << "*** WARNING FROM PvCtrlHolder.h ***" << std::endl;
-            std::cout << "*** Method getStringFromEnum(unsigned short enumValue) ***" << std::endl;
-            std::cout << "The given input index " << enumValue << " exceeds the number of enum states " << noStr << std::endl;
-            std::cout << "Valid values are: " << std::endl;
-            for ( short i=0; i<noStr; ++i) {
-                std::cout << i << ":" << strs[i] << std::endl;
+        else
+        {
+	    if (dataType==CAFE_ENUM) { 
+
+                std::cout << "*** WARNING FROM PvCtrlHolder.h ***" << std::endl;
+                std::cout << "*** Method getStringFromEnum(unsigned short enumValue) ***" << std::endl;
+                std::cout << "The given input index [" << enumValue << "] exceeds the number of enum states " << noStr << std::endl;
+                if (noStr > 0)
+	        {
+                    std::cout << "Valid values are: " << std::endl;
+                    for ( short i=0; i<noStr; ++i)
+                    {
+                        std::cout << i << ":" << strs[i] << std::endl;
+                    }
+	        }
+            }
+            else
+	    { 
+                std::cout << "*** WARNING FROM PvCtrlHolder.h ***" << std::endl;
+                std::cout << "*** Method getStringFromEnum(unsigned short enumValue) ***" << std::endl;
+                std::cout << "Native DataType " << (CAFEDataTypeCode().asString((CAFE_DATATYPE) dataType)).c_str() 
+                          << " is not the enumerated type, DBF_ENUM " << std::endl;                        
             }
 
-            if (enumValue<MAX_ENUM_STATES)	{
+            return returnValue; 
+
+            /*
+            if (enumValue<MAX_ENUM_STATES)
+            {
                 return (std::string) strs[enumValue];
             }
-            else {
+            else
+            {
                 return returnValue;
             }
+            */
         }
     }
 
@@ -346,7 +391,8 @@ public:
         std::cout <<  "------------------------------------------" << std::endl;
         std::cout <<  "PVCtrlHolder:" << std::endl;
         std::cout <<  "processVariable= "  << pv << std::endl;
-        if (strcmp(pvAlias,pv)) {
+        if (strcmp(pvAlias,pv))
+        {
             std::cout <<  "pvAlias        = "  << pvAlias << std::endl;
         }
         std::cout <<  "device         = "  << device << std::endl;
@@ -354,7 +400,8 @@ public:
         std::cout <<  "dataType       = "  << cafeDataTypeCode.message(dataType).c_str()
                   << " (" << dataType << ") "  << std::endl;
         std::cout <<  "dbrTypeRequest = "  << dbr_type_to_text(dbrDataType)<< std::endl;
-        if (dataType!=CAFE_NO_ACCESS || dataType != CAFE_TYPENOTCONN) {
+        if (dataType!=CAFE_NO_ACCESS || dataType != CAFE_TYPENOTCONN)
+        {
             std::cout <<  "nelem          = "  << nelem << std::endl;
 
             //std::cout <<  "alarmStatus    = "  << alarmStatus << " [" <<  acond.asString(alarmStatus)<< "]" << std::endl;
@@ -377,66 +424,79 @@ public:
             std::cout <<  "RISC_Pad       = "  << (dbr_short_t) RISC_pad.f << std::endl;
                    }
                    */
-            if (dataType!=CAFE_ENUM) {
-                std::cout <<  "upperDispLimit = "  << getAsString(upperDispLimit)    << std::endl;
-                std::cout <<  "lowerDispLimit = "  << getAsString(lowerDispLimit)    << std::endl;
-                std::cout <<  "upperAlarmLimit= "  << getAsString(upperAlarmLimit)   << std::endl;
-                std::cout <<  "upperWarnLimit = "  << getAsString(upperWarningLimit) << std::endl;
-                std::cout <<  "lowerWarnLimit = "  << getAsString(lowerWarningLimit) << std::endl;
-                std::cout <<  "lowerAlarmLimit= "  << getAsString(lowerAlarmLimit)   << std::endl;
-                if(dbr_type_is_CTRL(dbrDataType)) {
-                    std::cout <<  "upperCtrlLimit = "  << getAsString(upperCtrlLimit)  << std::endl;
-                    std::cout <<  "lowerCtrlLimit = "  << getAsString(lowerCtrlLimit)  << std::endl;
-                }
+            //if (dataType!=CAFE_ENUM) {
+            std::cout <<  "upperDispLimit = "  << getAsString(upperDispLimit)    << std::endl;
+            std::cout <<  "lowerDispLimit = "  << getAsString(lowerDispLimit)    << std::endl;
+            std::cout <<  "upperAlarmLimit= "  << getAsString(upperAlarmLimit)   << std::endl;
+            std::cout <<  "upperWarnLimit = "  << getAsString(upperWarningLimit) << std::endl;
+            std::cout <<  "lowerWarnLimit = "  << getAsString(lowerWarningLimit) << std::endl;
+            std::cout <<  "lowerAlarmLimit= "  << getAsString(lowerAlarmLimit)   << std::endl;
+            if(dbr_type_is_CTRL(dbrDataType))
+            {
+                std::cout <<  "upperCtrlLimit = "  << getAsString(upperCtrlLimit)  << std::endl;
+                std::cout <<  "lowerCtrlLimit = "  << getAsString(lowerCtrlLimit)  << std::endl;
             }
-            else {
+            //}
+            //else {
+            if (dataType==CAFE_ENUM)
+            {
                 std::cout <<  "NoStr (ENUM)   = "  << noStr << std::endl;
                 std::cout <<  "strs  (ENUM)   = "  ;
-                for (short i=0; i< noStr; ++i) {
+                for (short i=0; i< noStr; ++i)
+                {
                     std::cout  << "{" << strs[i] << "} " ;
                 }
                 std::cout <<std::endl;
             }
 
             std::cout <<  "status         = "  << cafeStatusCode.message(status).c_str() << std::endl;
-            if(nelem>0) {
+            if(nelem>0)
+            {
                 std::cout <<  "value(s)       = "  ;
             }
 
-            switch (dataType) {
+            switch (dataType)
+            {
             case CAFE_STRING:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout << val[i].str << " [" << i << "] " ;
                 }
                 break;
             case CAFE_SHORT:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout << val[i].s   << " [" << i << "] " ;
                 }
                 break;
             case CAFE_FLOAT:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout << val[i].f   << " [" << i << "] " ;
                 }
                 break;
             case CAFE_ENUM:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout <<
                               getAsString(i) << " (" <<  val[i].us << ")"  << " [" << i << "] " ;
                 }
                 break;
             case CAFE_CHAR:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout << (unsigned short) val[i].ch  << " [" << i << "] " ;
                 }
                 break;
             case CAFE_LONG:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout << val[i].l   << " [" << i << "] " ;
                 }
                 break;
             case CAFE_DOUBLE:
-                for (unsigned int  i=0; i <nelemToPrint; ++i ) {
+                for (unsigned int  i=0; i <nelemToPrint; ++i )
+                {
                     std::cout << val[i].d   << " [" << i << "] " ;
                 }
                 break;

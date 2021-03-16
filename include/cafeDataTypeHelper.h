@@ -14,7 +14,8 @@
 #include <map>
 #include <cafeDataType.h>
 
-class CafeDataTypeHelper {
+class CafeDataTypeHelper
+{
 private:
     CAFE_DATATYPE_UNION cdu;
     CAFE_DATATYPE  dataType;

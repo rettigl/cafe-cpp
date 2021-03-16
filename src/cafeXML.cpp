@@ -13,15 +13,17 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
+using namespace std;
+using namespace boost::posix_time;
+
+
+
+//has config.h
 #include <loadCollectionXMLParser.h>
 #include <loadGroupXMLParser.h>
 #include <restorePVGroupXMLParser.h>
 
-
 #if HAVE_LIBQTXML
-
-using namespace std;
-using namespace boost::posix_time;
 
 /**
  *  \brief loadCollections from XML \n
@@ -33,6 +35,7 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile)
 {
 #define __METHOD__ "CAFE::loadCollectionsFromXML(char * collectionFile)"
 
+
     //First check for existence of file in current directory
     //before searching in CAFE_XML_PATH
 
@@ -40,7 +43,8 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile)
 
     file = new QFile(collectionFile);
 
-    if (!file->exists()) {
+    if (!file->exists())
+    {
 
         std::string envS;
         char * env = getenv("CAFE_XML_PATH");
@@ -50,23 +54,27 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile)
 
         file = new QFile(envS.c_str());
 
-        if (!file->exists()) {
+        if (!file->exists())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "envS=" << envS << endl;
             cout << "COLLECTION FILE " << collectionFile << " NOT FOUND " << endl;
             cout << "IN THE CURRENT (OR GIVEN) DIRECTORY" << endl;
-            if (env != NULL) {
+            if (env != NULL)
+            {
                 cout << "NOR IN CAFE_XML_PATH/=" << endl;
                 cout << env << endl;
             }
-            else {
+            else
+            {
                 cout << "OPTIONAL ENVIRONMENT VARIABLE CAFE_XML_PATH IS UNDEFINED" << endl;
             }
             delete file;
             return ECAFE_LOAD_COLLECTION;
         }
     }
-    else {
+    else
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << " COLLECTION LOADED FROM CURRENT (OR GIVEN) DIRECTORY" << endl;
     }
@@ -80,7 +88,8 @@ int  CAFE::loadCollectionsFromXML(const char * collectionFile)
 
     bool isOK = reader.parse(source);
 
-    if (!isOK) {
+    if (!isOK)
+    {
         return ECAFE_LOAD_COLLECTION;
     }
     deviceCollectionV=handler.deviceCollectionV;
@@ -110,7 +119,8 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
     QFile * file;
     file = new QFile(groupFile);
 
-    if (!file->exists()) {
+    if (!file->exists())
+    {
 
         std::string envS;
         char * env = getenv("CAFE_XML_PATH");
@@ -120,16 +130,19 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
 
         file = new QFile(envS.c_str());
 
-        if (!file->exists()) {
+        if (!file->exists())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "GROUP FILE " << groupFile << " NOT FOUND " << endl;
             cout << "NEITHER IN THE CURRENT (OR GIVEN) DIRECTORY" << endl;
 
-            if (env != NULL) {
+            if (env != NULL)
+            {
                 cout << "NOR IN CAFE_XML_PATH/=" << endl;
                 cout << env << endl;
             }
-            else {
+            else
+            {
                 cout << "OPTIONAL ENVIRONMENT VARIABLE CAFE_XML_PATH IS UNDEFINED" << endl;
             }
             delete file;
@@ -137,7 +150,8 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
             return ECAFE_LOAD_GROUP;
         }
     }
-    else {
+    else
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << " GROUPS LOADED FROM CURRENT (OR GIVEN) DIRECTORY" << endl;
     }
@@ -152,15 +166,18 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
 
     bool isOK = reader.parse(source);
 
-    if (!isOK) {
+    if (!isOK)
+    {
         return ECAFE_LOAD_GROUP;
     }
 
 
     for (std::vector<deviceGroup>::const_iterator group=handler.groups.begin();
-            group!=handler.groups.end(); ++group) {
+            group!=handler.groups.end(); ++group)
+    {
 
-        if(isGroup((char *)(*group).getName().c_str())) {
+        if(isGroup((char *)(*group).getName().c_str()))
+        {
 
             localStatus=ECAFE_GROUP_PREV_DEF;
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
@@ -183,10 +200,12 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
 
         cg=(*group).getCollections();
 
-        for (size_t i=0; i <cg.size(); ++i) {
+        for (size_t i=0; i <cg.size(); ++i)
+        {
             //cout << cg[i].id << " " << cg[i].attrib << " " <<  endl; //cg[i].collectiveType << endl;
 
-            if(!isCollection((char *)cg[i].id.c_str())) {
+            if(!isCollection((char *)cg[i].id.c_str()))
+            {
                 localStatus=ECAFE_UNKNOWN_COLLECTION;
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "FAILED TO LOAD COLLECTION WITH NAME(ID) " << cg[i].id << std::endl;
@@ -199,7 +218,8 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
             vector<string> members;
             collectionFetch((char *)cg[i].id.c_str(),members);
 
-            for(size_t j=0; j<members.size(); ++j) {
+            for(size_t j=0; j<members.size(); ++j)
+            {
                 string da=members[j] + deviceAttributeDeliminator +  cg[i].attrib;
                 pvList.push_back(da);
             }
@@ -209,21 +229,25 @@ int  CAFE::loadGroupsFromXML     (const char * groupFile)
         vector<string> cm= (*group).getXMLMembers();
 
 
-        for (size_t i=0; i <cm.size(); ++i) {
+        for (size_t i=0; i <cm.size(); ++i)
+        {
             pvList.push_back(cm[i]);
         }
 
-        if (pvList.size()>0 ) {
+        if (pvList.size()>0 )
+        {
             groupDefine((const char *) (*group).getName().c_str(), pvList);
 
         }
-        else {
+        else
+        {
             cout << "GROUP "  << (*group).getName().c_str()
                  <<  " NOT DEFINED AS IT HAS NO MEMBERS! " << endl;
         }
 
     }
     return ICAFE_NORMAL;
+
 #undef __METHOD__
 }
 
@@ -253,7 +277,8 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
     file = new QFile(snapshotFile);
 
 
-    if (!file->exists()) {
+    if (!file->exists())
+    {
 
         std::string envS;
         char * env = getenv("CAFE_SAR_PATH");
@@ -263,7 +288,8 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
 
         file = new QFile(envS.c_str());
 
-        if (!file->exists()) {
+        if (!file->exists())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "PVGROUP FILE " << snapshotFile << " NOT FOUND " << endl;
             cout << "NEITHER IN THE CURRENT (OR GIVEN) DIRECTORY NOR IN CAFE_SAR_PATH=" << envS << endl;
@@ -272,7 +298,8 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
 
         ssf=envS;
     }
-    else {
+    else
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << " PVGROUP LOADED FROM CURRENT (OR GIVEN) DIRECTORY" << endl;
     }
@@ -288,7 +315,8 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
 
     bool isOK = reader.parse(source);
 
-    if (!isOK) {
+    if (!isOK)
+    {
         return ECAFE_LOAD_GROUP;
     }
 
@@ -302,11 +330,14 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
 
     localStatus=groupOpen(pvg, gh);
 
-    if (localStatus != ICAFE_NORMAL) {
+    if (localStatus != ICAFE_NORMAL)
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "GROUP OPEN REPORTS FOLLOWING ERROR " << endl;
-        for (unsigned int  i=0; i<pvg.npv; ++i ) {
-            if(pvg.pvdata[i].status !=ICAFE_NORMAL) {
+        for (unsigned int  i=0; i<pvg.npv; ++i )
+        {
+            if(pvg.pvdata[i].status !=ICAFE_NORMAL)
+            {
                 pvg.pvdata[i].print();
             }
         }
@@ -325,7 +356,8 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
     QXmlInputSource source2(&file2);
     isOK = reader2.parse(source2);
 
-    if (!isOK) {
+    if (!isOK)
+    {
         return ECAFE_LOAD_GROUP;
     }
 
@@ -335,11 +367,14 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
 
     localStatus=groupSet(gh, pvg);
 
-    if (localStatus != ICAFE_NORMAL) {
+    if (localStatus != ICAFE_NORMAL)
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "GROUP SET REPORTS FOLLOWING ERROR " << endl;
-        for (unsigned int  i=0; i<pvg.npv; ++i ) {
-            if(pvg.pvdata[i].status !=ICAFE_NORMAL) {
+        for (unsigned int  i=0; i<pvg.npv; ++i )
+        {
+            if(pvg.pvdata[i].status !=ICAFE_NORMAL)
+            {
                 pvg.pvdata[i].print();
             }
         }
@@ -348,9 +383,11 @@ int  CAFE::restoreFromXML     (const char * snapshotFile)
     groupClose(gh);
 
     return localStatus;
+
 #undef __METHOD__
 }
-#endif
+
+#endif //HAVE_LIBATXML
 
 
 /**
@@ -385,11 +422,13 @@ int  CAFE::snapshot2XML (PVGroup pg)
     //First determine maximum pv size
     unsigned short maxL=0;
     std::string sn="";
-    for (unsigned int  j=0; j<pg.getNPV(); ++j) {
+    for (unsigned int  j=0; j<pg.getNPV(); ++j)
+    {
         sn=pvd[j].getPV();
         if(sn.size() > maxL) maxL=sn.size()+0;
     }
-    for (unsigned int  j=0; j<pg.getNPV(); ++j) {
+    for (unsigned int  j=0; j<pg.getNPV(); ++j)
+    {
         s.append("<cafe:member><cafe:name> ");
         s.append(pvd[j].getPV());
         sn=pvd[j].getPV();
@@ -400,7 +439,8 @@ int  CAFE::snapshot2XML (PVGroup pg)
         s.append(sBuffer);
         s.append(" </cafe:nelem><cafe:val> ");
 
-        for (unsigned int  i=0; i<pvd[j].getNelem(); ++i) {
+        for (unsigned int  i=0; i<pvd[j].getNelem(); ++i)
+        {
             s.append(pvd[j].getAsString(i));
             s.append(" ");
         }
@@ -411,10 +451,12 @@ int  CAFE::snapshot2XML (PVGroup pg)
         ChannelRegalia cr;
         getInfo().getChannelRegalia(hl, cr);
 
-        if ( cr.getWriteAccess() ) {
+        if ( cr.getWriteAccess() )
+        {
             s.append("true");
         }
-        else {
+        else
+        {
             s.append("false");
         }
 
@@ -520,7 +562,8 @@ int  CAFE::group2XML (const char * grpName, std::string fileName)
     int status=CAFE::groupMemberList(grpName, lg);
 
 
-    for (int j=0; j<lg.size(); ++j) {
+    for (unsigned int j=0; j<lg.size(); ++j)
+    {
         s.append("    <cafe:member> <cafe:name>  ");
         s.append(lg[j]);
         s.append("  </cafe:name> </cafe:member>\n");

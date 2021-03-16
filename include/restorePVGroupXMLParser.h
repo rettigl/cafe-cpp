@@ -5,20 +5,25 @@
 /// \version CAFE 1.0.0
 ///
 
-#include <config.h>
 
-#if HAVE_LIBQTXML
 
 #ifndef RESTOREPVGROUPXMLPARSER_H
 #define RESTOREPVGROUPXMLPARSER_H
 
+#include <config.h>
+
+#if HAVE_LIBQTXML
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
 #include <PVGroup.h>
 
+//include <QtXml/QXmlDefaultHandler>
+#include <QXmlDefaultHandler>
 
-#include <QtXml/QXmlDefaultHandler>
-
-
-class restorePVGroupXMLParser : public QXmlDefaultHandler {
+class restorePVGroupXMLParser : public QXmlDefaultHandler
+{
 public:
     restorePVGroupXMLParser();
     virtual ~restorePVGroupXMLParser();
@@ -29,7 +34,8 @@ public:
 
     PVGroup group;
 private:
-    enum {
+    enum
+    {
         NotWaiting,
         WaitingForConfig,
         WaitingForNPV,

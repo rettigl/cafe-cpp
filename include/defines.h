@@ -10,7 +10,6 @@
 #include <cadef.h>
 #include <iostream>
 
-
 #define EV      EPICSVERSION(HAVE_EPICS)
 
 #if (EPICS_MAJOR==3) && (EPICS_MINOR==14) && (EPICS_PATCH>=11)
@@ -27,14 +26,16 @@ const unsigned short ALARM_STATUS_STRING_LENGTH   = 22; // "NO_ALARM","READ","WR
 //"HIHI","HIGH","LOLO","LOW","STATE","COS","COMM","TIMEOUT","HWLIMIT","CALC","SCAN","LINK",
 //"SOFT","BAD_SUB","UDF","DISABLE","SIMM","READ_ACCESS","WRITE_ACCESS"
 
-struct alarmSeverityStruct {
+struct alarmSeverityStruct
+{
     short llsv;
-		short  lsv;
-		short  hsv;
-		short hhsv;
+    short  lsv;
+    short  hsv;
+    short hhsv;
 };
 
-struct etsDatePrevious {
+struct etsDatePrevious
+{
     int year;
     int mon;
     int day;
@@ -44,7 +45,8 @@ struct etsDatePrevious {
     unsigned long nsec;
 };
 
-struct etsDate {
+struct etsDate
+{
     int year;
     int mon;
     int day;
@@ -52,12 +54,13 @@ struct etsDate {
     int min;
     int sec;
     unsigned long nsec;
-		int wday;
-		int yday;
-		int isdst;
+    int wday;
+    int yday;
+    int isdst;
 };
 
-struct etsNorm {
+struct etsNorm
+{
     unsigned int secPastEpoch;
     unsigned int nsec;
 };
@@ -103,24 +106,28 @@ const double            NMEMBER_PER_SEC_SG_PEND_EVENT     =  400; //
 const double            DEFAULT_TIMEOUT_SG_PEND_IO        =  5.0;
 
 // Otherwise too many large databuffers are created
-const unsigned int          MAX_NELEM_FOR_CTRL_BUFFER   = 8192;
+const unsigned int          MAX_NELEM_FOR_CTRL_BUFFER   = 256; //8192;
 // Keep at 1, else becomes problematic when wf is made a syn. group member (ch disconnect occurs for STSACK cb)
 const unsigned int          MAX_NELEM_FOR_STSACK_BUFFER = 1;
-const unsigned int  	DEFAULT_NELEM_FOR_CTRL_BUFFER     = 256; // if nelem exceeds above
+const unsigned int  	DEFAULT_NELEM_FOR_CTRL_BUFFER     = 1; //256; // if nelem exceeds above
 const unsigned int  	DEFAULT_NELEM_FOR_STSACK_BUFFER   = 1;   // if nelem exceeds above
 
 const unsigned short        MAX_NO_MONITORS_PER_CHANNEL = 4;   // Can't start more than 4; 1 is more usual.
 
+const std::string     SYNCHRONOUS_GROUP_NAME_IN_BSDATAHOLDER = "gBS2CA"; 
+
+const std::string     INVALID_ENUM_RETURN_STRING = "invalid_enum_value"; 
+const short           INVALID_ENUM_RETURN_VALUE = -1;
 
 //For BSREAD
-const double					BSREAD_MAX_CONNECT_TIME       =   20; //20 seconds; typically 10 seconds is required
+const double	      BSREAD_MAX_CONNECT_TIME       =   15; //seconds; typically 10 seconds is required
 const unsigned short  BSREAD_ZEROMQ_HIGH_WATER_MARK =    1;
 const short           BSREAD_ZEROMQ_TIMEOUT_MS      = 2000; //Can handle 10 Hz // -1 wait for ever
 
 const unsigned short  BSREAD_PREBLOB_BYTES          =   12; //No of bytes pre-pending the binary blob with metadata
 
 const std::string     SF_PULSE_ID_PV  = "SIN-TIMAST-EVG0:TX-PULSEID";
-const unsigned short  SF_PULSE_ID_BUFFER_SIZE       =   10;  //Size of map to store history of pulseIDs;
+const unsigned short  SF_PULSE_ID_BUFFER_SIZE       =   100;  //Size of map to store history of pulseIDs;
 
 
 #endif // DEFINES_H

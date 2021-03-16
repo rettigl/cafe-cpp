@@ -10,13 +10,15 @@
 
 #include <cadef.h>
 
-namespace  CAFENUM {
+namespace  CAFENUM
+{
 
 /**
  *  Data request buffer types \n
  *  i.e. whether PRIMITIVE, STS, TIME, GR or CTRL
  */
-enum DBR_TYPE  {
+enum DBR_TYPE
+{
     DBR_PRIMITIVE,
     DBR_PLAIN=DBR_PRIMITIVE,
     DBR_STS,
@@ -33,7 +35,8 @@ enum DBR_TYPE  {
 /**
  *  Define enum type to flush io after creating channels
  */
-enum ChannelFlushSendBufferPolicyKind {
+enum ChannelFlushSendBufferPolicyKind
+{
     WITH_FLUSH_IO,
     WITH_PEND_IO,   // needs timeout duration
     WITH_PEND_EVENT, // needs timeout duration
@@ -44,7 +47,8 @@ enum ChannelFlushSendBufferPolicyKind {
 /**
  *  Define enum type defining when to flush io after creating channels
  */
-enum ChannelWhenToFlushSendBufferPolicyKind {
+enum ChannelWhenToFlushSendBufferPolicyKind
+{
     FLUSH_AUTOMATIC=0,
     FLUSH_NOW=FLUSH_AUTOMATIC,
     FLUSH_AFTER_EACH_CHANNEL_CREATION=FLUSH_NOW, // instantly
@@ -61,16 +65,16 @@ enum ChannelWhenToFlushSendBufferPolicyKind {
  *  an independent virtual circuit, and associated data structures, is
  *  created for each priority that is used on a particular server
  */
-enum ChannelServerDispatchPriority {
+enum ChannelServerDispatchPriority
+{
     CA_SERVER_DISPATCH_PRIORITY_MIN     =CA_PRIORITY_MIN, //0
-    CA_SERVER_DISPATCH_PRIORITY_VERYLOW =CA_PRIORITY_MIN+1,
-    CA_SERVER_DISPATCH_PRIORITY_DEFAULT =CA_PRIORITY_MAX, //CA_SERVER_DISPATCH_PRIORITY_VERYLOW, //1
+    CA_SERVER_DISPATCH_PRIORITY_VERYLOW =CA_PRIORITY_MIN+1, 
     CA_SERVER_DISPATCH_PRIORITY_LOW     =CA_PRIORITY_MIN+25,
     CA_SERVER_DISPATCH_PRIORITY_MED     =CA_PRIORITY_MIN+50,
     CA_SERVER_DISPATCH_PRIORITY_HIGH    =CA_PRIORITY_MIN+75,
     CA_SERVER_DISPATCH_PRIORITY_VERYHIGH=CA_PRIORITY_MIN+98,
-    CA_SERVER_DISPATCH_PRIORITY_MAX     =CA_PRIORITY_MAX
-
+    CA_SERVER_DISPATCH_PRIORITY_MAX     =CA_PRIORITY_MAX,
+    CA_SERVER_DISPATCH_PRIORITY_DEFAULT =CA_PRIORITY_MAX
 };
 
 
@@ -79,7 +83,8 @@ enum ChannelServerDispatchPriority {
  *  Meant for use within callbacks to ensure that cache operations
  *  are never blocked
  */
-enum ChannelGetCacheWaitPolicyKind {
+enum ChannelGetCacheWaitPolicyKind
+{
     GET_CACHE_NO_CHECK=0,
     GET_CACHE_NO_WAIT,
     GET_CACHE_NOW     =GET_CACHE_NO_WAIT,
@@ -92,7 +97,8 @@ enum ChannelGetCacheWaitPolicyKind {
  *  monitor is in place
  *
  */
-enum ChannelGetActionWhenMonitorPolicyKind {
+enum ChannelGetActionWhenMonitorPolicyKind
+{
     GET_FROM_CACHE,
     GET_FROM_IOC
 };
@@ -102,7 +108,8 @@ enum ChannelGetActionWhenMonitorPolicyKind {
  *  Blocking can be achieved with or without callback.
  *  Callback can further be supplied by the user
  */
-enum ChannelRequestPolicyKind {
+enum ChannelRequestPolicyKind
+{
     WITHOUT_CALLBACK,
     WITH_CALLBACK_DEFAULT,
     WITH_CALLBACK_USER_SUPPLIED
@@ -113,7 +120,8 @@ enum ChannelRequestPolicyKind {
  *  Enum type defining level of datatype conversion at the IOC
  *
  */
-enum ChannelRequestDataTypePolicyKind {
+enum ChannelRequestDataTypePolicyKind
+{
     NATIVE_DATATYPE,
     LOWEST_DATATYPE // The smaller in byte size of type requested and native datatype
 };
@@ -124,7 +132,8 @@ enum ChannelRequestDataTypePolicyKind {
  *  from a message sent with a callback, whether it be
  *  user supplied or the CAFE default.
  */
-enum ChannelWaitForResponsePolicyKind {
+enum ChannelWaitForResponsePolicyKind
+{
     BLOCKING=0,
     WAIT=BLOCKING,
     NON_BLOCKING=1,
@@ -132,7 +141,8 @@ enum ChannelWaitForResponsePolicyKind {
 };
 
 
-enum StatusMessageKind {
+enum StatusMessageKind
+{
     NO_MESSAGE,
     PRE_REQUEST,
     FROM_REQUEST,
@@ -141,7 +151,8 @@ enum StatusMessageKind {
     FROM_MESSAGE
 };
 
-enum CallbackProgressKind {
+enum CallbackProgressKind
+{
     NOT_INITIATED,
     PENDING,
     COMPLETE

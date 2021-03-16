@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 //include <config.h> //In the below!
 #include <methodCallbacks.h>
@@ -32,11 +33,13 @@
 //include <enumStrings.h>
 
 using namespace CAFENUM;
+using namespace boost::posix_time;
 
 /**
  *  Define Policy for printing messages
  */
-class PrintErrorPolicy {
+class PrintErrorPolicy
+{
 protected:
     bool invalidHandle;
     bool info;
@@ -88,15 +91,19 @@ public:
 
 
 /**
- *  Define Policy for creating channel; this just sets the priority level
+ *  Define Policy for creating channel; this also sets the priority level
  *  for dispatch within the server or network
  */
-class ChannelCreatePolicy {
+class ChannelCreatePolicy
+{
 private:
     unsigned short priority;
 
     //special method to find handle thru conduit_set iterator
     pCallbackConnection handler;
+    bool pyCallbackFlag; //enable pyCallback
+    void * pyConnectHandler;
+
 public:
     static void callbackHandlerCreate(struct connection_handler_args args);
     pCallbackConnection getHandler()
@@ -116,7 +123,27 @@ public:
         priority=std::min(p,(unsigned short) CA_SERVER_DISPATCH_PRIORITY_MAX);
         return priority;
     }
-    ChannelCreatePolicy():priority(CA_SERVER_DISPATCH_PRIORITY_DEFAULT),handler(callbackHandlerCreate) {};
+
+    void setPyConnectHandler(void * cythonConnectCallbackFn){
+        pyConnectHandler=cythonConnectCallbackFn;
+    }
+
+    void * getPyConnectHandler(){
+      return pyConnectHandler;
+    }
+
+    void setPyCallbackFlag(bool b)
+    {
+        pyCallbackFlag=b;
+    }
+    bool getPyCallbackFlag() const
+    {
+        return pyCallbackFlag;
+    }
+    ChannelCreatePolicy():priority(CA_SERVER_DISPATCH_PRIORITY_DEFAULT),
+                                   handler(callbackHandlerCreate),
+                                   pyCallbackFlag(false),
+                                   pyConnectHandler(NULL) {};
 };
 
 
@@ -124,7 +151,8 @@ public:
  *  Define Policy to open/close/monitor channels one-by-one
  *  or to accumulate messages for later dispatch
  */
-class ChannelOpenPolicy {
+class ChannelOpenPolicy
+{
 public:
 
     //Constructors
@@ -134,16 +162,20 @@ public:
     ChannelOpenPolicy(ChannelFlushSendBufferPolicyKind f,
                       ChannelWhenToFlushSendBufferPolicyKind w, double t)
     {
-        if (f>=WITH_PEND_EVENT && f<=WITH_POLL) {
+        if (f>=WITH_PEND_EVENT && f<=WITH_POLL)
+        {
             setFlushSendBufferKind(f);
         }
-        else {
+        else
+        {
             std::cout << f << " is an INVALID ChannelFlushSendBufferPolicyKind" << std::endl;
         }
-        if (w>=FLUSH_AFTER_EACH_CHANNEL_CREATION && w<=FLUSH_DESIGNATED_TO_CLIENT) {
+        if (w>=FLUSH_AFTER_EACH_CHANNEL_CREATION && w<=FLUSH_DESIGNATED_TO_CLIENT)
+        {
             setWhenToFlushSendBuffer(w);
         }
-        else {
+        else
+        {
             std::cout << w << " is an INVALID ChannelWhenToFlushSendBufferPolicyKind" << std::endl;
         }
         setTimeout(t), setDefaultTimeout(DEFAULT_TIMEOUT_PEND_EVENT);
@@ -157,7 +189,8 @@ private:
 public:
     void flushSendBufferNow()
     {
-        switch(flushKind) {
+        switch(flushKind)
+        {
         case WITH_PEND_EVENT:
             ca_pend_event(timeout);
             break;
@@ -198,20 +231,24 @@ public:
 
     void setFlushSendBufferKind(ChannelFlushSendBufferPolicyKind f)
     {
-        if (f>=WITH_FLUSH_IO && f<=WITH_POLL) {
+        if (f>=WITH_FLUSH_IO && f<=WITH_POLL)
+        {
             flushKind=f;
         }
-        else {
+        else
+        {
             std::cout << f << " is an INVALID ChannelFlushSendBufferPolicyKind" << std::endl;
         }
     };
 
     void setWhenToFlushSendBuffer(ChannelWhenToFlushSendBufferPolicyKind w)
     {
-        if (w>=FLUSH_AFTER_EACH_CHANNEL_CREATION && w<=FLUSH_DESIGNATED_TO_CLIENT) {
+        if (w>=FLUSH_AFTER_EACH_CHANNEL_CREATION && w<=FLUSH_DESIGNATED_TO_CLIENT)
+        {
             whenKind=w;
         }
-        else {
+        else
+        {
             std::cout << w << " is an INVALID ChannelWhenToFlushSendBufferPolicyKind" << std::endl;
         }
     };
@@ -219,11 +256,13 @@ public:
 
     double setTimeout(double t)
     {
-        if (t<0) {
+        if (t<0)
+        {
             std::cout << "CHANNELOPENPOLICY:setTimeout "  << t << " seconds is an illegal value!" << std::endl;
             return timeout;
         }
-        else if (t==0) {
+        else if (t==0)
+        {
             timeout=0.001;
             std::cout << "CHANNELOPENPOLICY:setTimeout  "  << " A value of zero would block the ioc for ever! "<< std::endl;
             std::cout << "CHANNELOPENPOLICY:setTimeout  "  << " Setting timeout to " << timeout << std::endl;
@@ -234,11 +273,13 @@ public:
 
     double setDefaultTimeout(double t)
     {
-        if (t<0) {
+        if (t<0)
+        {
             std::cout << "CHANNELOPENPOLICY:setDefaultTimeout "  << t << " seconds is an illegal value!" << std::endl;
             return defaultTimeout;
         }
-        else if (t==0) {
+        else if (t==0)
+        {
             defaultTimeout=0.001;
             std::cout << "CHANNELOPENPOLICY:setDefaultTimeout "  << " A value of zero would block the ioc for ever! "<< std::endl;
             std::cout << "CHANNELOPENPOLICY:setDefaultTimeout "  << " Setting timeout to " << defaultTimeout << std::endl;
@@ -254,16 +295,20 @@ public:
 
     void   setPolicy(ChannelWhenToFlushSendBufferPolicyKind w, ChannelFlushSendBufferPolicyKind f, double t)
     {
-        if (f>=WITH_FLUSH_IO && f<=WITH_POLL) {
+        if (f>=WITH_FLUSH_IO && f<=WITH_POLL)
+        {
             flushKind=f;
         }
-        else {
+        else
+        {
             std::cout << f << " is an INVALID ChannelFlushSendBufferPolicyKind" << std::endl;
         }
-        if (w>=FLUSH_AFTER_EACH_CHANNEL_CREATION && w<=FLUSH_DESIGNATED_TO_CLIENT) {
+        if (w>=FLUSH_AFTER_EACH_CHANNEL_CREATION && w<=FLUSH_DESIGNATED_TO_CLIENT)
+        {
             whenKind=w;
         }
-        else {
+        else
+        {
             std::cout << w << " is an INVALID ChannelWhenToFlushSendBufferPolicyKind" << std::endl;
         }
         timeout   =  t;
@@ -277,16 +322,19 @@ public:
 /**
  *  Define Policy to control datatype conversion for data transfer
  */
-class ChannelRequestDataTypePolicy {
+class ChannelRequestDataTypePolicy
+{
 private:
     CAFENUM::ChannelRequestDataTypePolicyKind requestKind;
 public:
     void setRequestKind(CAFENUM::ChannelRequestDataTypePolicyKind rk)
     {
-        if (rk>=CAFENUM::NATIVE_DATATYPE && rk<=CAFENUM::LOWEST_DATATYPE) {
+        if (rk>=CAFENUM::NATIVE_DATATYPE && rk<=CAFENUM::LOWEST_DATATYPE)
+        {
             requestKind=rk;
         }
-        else {
+        else
+        {
             std::cout << rk << " is an INVALID ChannelDataTypePolicyKind" << std::endl;
         }
     };
@@ -308,16 +356,19 @@ public:
 /**
  *  Define Policy to control wait/nowait strategy in getCache operations
  */
-class ChannelGetCacheWaitPolicy {
+class ChannelGetCacheWaitPolicy
+{
 private:
     CAFENUM::ChannelGetCacheWaitPolicyKind getCacheWaitKind;
 public:
     void setWaitKind(CAFENUM::ChannelGetCacheWaitPolicyKind wk)
     {
-        if (wk>=CAFENUM::GET_CACHE_NO_CHECK && wk<=CAFENUM::GET_CACHE_WAIT) {
+        if (wk>=CAFENUM::GET_CACHE_NO_CHECK && wk<=CAFENUM::GET_CACHE_WAIT)
+        {
             getCacheWaitKind=wk;
         }
-        else {
+        else
+        {
             std::cout << wk << " is an INVALID ChannelGetCacheWaitKind" << std::endl;
         }
     };
@@ -327,7 +378,7 @@ public:
         return getCacheWaitKind;
     }
     //Constructors
-    ChannelGetCacheWaitPolicy():getCacheWaitKind(CAFENUM::GET_CACHE_WAIT) {};
+    ChannelGetCacheWaitPolicy():getCacheWaitKind(CAFENUM::GET_CACHE_NO_CHECK) {};
     ChannelGetCacheWaitPolicy(CAFENUM::ChannelGetCacheWaitPolicyKind wk)
     {
         getCacheWaitKind=wk;
@@ -339,16 +390,19 @@ public:
 /**
  *  Define Policy to control whether the get operations targets the ioc or not when there is a monitor
  */
-class ChannelGetActionWhenMonitorPolicy {
+class ChannelGetActionWhenMonitorPolicy
+{
 private:
     CAFENUM::ChannelGetActionWhenMonitorPolicyKind getActionWhenMonitorKind;
 public:
     void setActionKind(CAFENUM::ChannelGetActionWhenMonitorPolicyKind ak)
     {
-        if (ak>=CAFENUM::GET_FROM_CACHE && ak<=CAFENUM::GET_FROM_IOC) {
+        if (ak>=CAFENUM::GET_FROM_CACHE && ak<=CAFENUM::GET_FROM_IOC)
+        {
             getActionWhenMonitorKind=ak;
         }
-        else {
+        else
+        {
             std::cout << ak << " is an INVALID ChannelGetActionWhenMonitorKind" << std::endl;
         }
     };
@@ -373,7 +427,8 @@ public:
  *  event of an ECA_TIMEOUT error; deltaTimeout gives the
  *  increment in timeout for each additional attempt.
  */
-class ChannelTimeoutPolicy {
+class ChannelTimeoutPolicy
+{
 private:
     bool   selfGoverningTimeout;
     double timeout;
@@ -440,7 +495,8 @@ public:
  *  Define Policy to get/set channels whether in blocking/non-blocking mode:
  *  Blocking can be achieved with or without callback
  */
-class ChannelRequestPolicy {
+class ChannelRequestPolicy
+{
 private:
 
     ChannelWhenToFlushSendBufferPolicyKind  whenKind;      // used for set
@@ -479,7 +535,8 @@ public:
 
     void setHandler(pCallback h)
     {
-        if (h!=NULL) {
+        if (h!=NULL)
+        {
             handler=h;
             methodKind=WITH_CALLBACK_USER_SUPPLIED;
         }
@@ -500,30 +557,36 @@ public:
 
     void setMethodKind(ChannelRequestPolicyKind m)
     {
-        if (m>=WITHOUT_CALLBACK && m<=WITH_CALLBACK_USER_SUPPLIED) {
+        if (m>=WITHOUT_CALLBACK && m<=WITH_CALLBACK_USER_SUPPLIED)
+        {
             methodKind=m;
         }
-        else {
+        else
+        {
             std::cout << m << " is an INVALID ChannelRequestPolicyKind" << std::endl;
         }
     };
 
     void setWhenToFlushSendBuffer(ChannelWhenToFlushSendBufferPolicyKind w)
     {
-        if (w>=FLUSH_AFTER_EACH_MESSAGE && w<=FLUSH_DESIGNATED_TO_CLIENT) {
+        if (w>=FLUSH_AFTER_EACH_MESSAGE && w<=FLUSH_DESIGNATED_TO_CLIENT)
+        {
             whenKind=w;
         }
-        else {
+        else
+        {
             std::cout << w << " is an INVALID ChannelWhenToFlushSendBufferPolicyKind" << std::endl;
         }
     };
 
     void setWaitKind(ChannelWaitForResponsePolicyKind r)
     {
-        if (r>=WAIT && r<=NO_WAIT) {
+        if (r>=WAIT && r<=NO_WAIT)
+        {
             waitKind=r;
         }
-        else {
+        else
+        {
             std::cout << r << " is an INVALID ChannelWaitForResponsePolicyKind" << std::endl;
         }
     };
@@ -537,32 +600,39 @@ public:
         ChannelWhenToFlushSendBufferPolicyKind w, ChannelWaitForResponsePolicyKind r,
         ChannelRequestPolicyKind m)
     {
-        if (w>=FLUSH_AFTER_EACH_MESSAGE && w<=FLUSH_DESIGNATED_TO_CLIENT) {
+        if (w>=FLUSH_AFTER_EACH_MESSAGE && w<=FLUSH_DESIGNATED_TO_CLIENT)
+        {
             whenKind=w;
         }
-        else {
+        else
+        {
             std::cout << "ERROR in setting ChannelRequestPolicy " << std::endl;
             std::cout << w << " is an INVALID ChannelWhenToFlushSendBufferPolicyKind" << std::endl;
             std::cout << "Sticking to default value ChannelWhenToFlushSendBufferPolicyKind=" << whenKind << std::endl;
         }
-        if (r>=WAIT && r<=NO_WAIT) {
+        if (r>=WAIT && r<=NO_WAIT)
+        {
             waitKind=r;
         }
-        else {
+        else
+        {
             std::cout << "ERROR in setting ChannelRequestPolicy " << std::endl;
             std::cout << r<< " is an INVALID ChannelWaitForResponsePolicyKind" << std::endl;
             std::cout << "Sticking to default value ChannelWaitForRespomsePolicyKind=" << waitKind << std::endl;
         }
-        if (m>=WITHOUT_CALLBACK && m<=WITH_CALLBACK_USER_SUPPLIED) {
+        if (m>=WITHOUT_CALLBACK && m<=WITH_CALLBACK_USER_SUPPLIED)
+        {
             methodKind=m;
         }
-        else {
+        else
+        {
             std::cout << "ERROR in setting ChannelRequestPolicy " << std::endl;
             std::cout << r<< " is an INVALID ChannelRequestPolicyKind" << std::endl;
             std::cout << "Sticking to default value ChannelRequestPolicyKind=" << methodKind << std::endl;
         }
 
-        if (methodKind==WITHOUT_CALLBACK && waitKind==NO_WAIT) {
+        if (methodKind==WITHOUT_CALLBACK && waitKind==NO_WAIT)
+        {
             std::cout << "WARNING when setting ChannelRequestPolicy " << std::endl;
             std::cout << "waitKind=NO_WAIT does not apply when methodKind=WITHOUT_CALLBACK " << std::endl;
 
@@ -580,10 +650,12 @@ public:
 
     ChannelRequestPolicy(ChannelRequestPolicyKind  b)
     {
-        if (b>=WITHOUT_CALLBACK && b<=WITH_CALLBACK_USER_SUPPLIED) {
+        if (b>=WITHOUT_CALLBACK && b<=WITH_CALLBACK_USER_SUPPLIED)
+        {
             methodKind=b;
         }
-        else {
+        else
+        {
             std::cout << b << " is anINVALID ChannelRequestPolicyKind" << std::endl;
         }
         handler=NULL;
@@ -613,7 +685,8 @@ public:
  *  The monitor is rather placed in a monitor_in_waiting
  *  pseudo-queue and only started upon connection
  */
-class MonitorPolicy {
+class MonitorPolicy
+{
     friend class Conduit;
     friend class Connect;
 private:
@@ -624,12 +697,14 @@ private:
     unsigned int  nelem;         //2
     //chid          channelID;     //3
     unsigned int  mask;          //4
-    pCallback     handler;//5
-    void *        userArgs;      //6
+    pCallback     handler;       //5
+    void *        cyCallback;
+    void *        userArgs;      //6 handle
     evid          eventID;       //output
     int           status;        //output
     unsigned int  id;
-
+    unsigned short notifyDeltaMilliSeconds; // Nov. 2020; push to Python Widgets 
+    ptime         lastUpdate;
 
     static void PyCallbackHandlerMonitorData(struct event_handler_args args); //pushes pvd,handle,pvname
     static void PyCallbackHandlerMonitor(struct event_handler_args args); //pushes handle
@@ -644,11 +719,14 @@ public:
         dbrDataType((CAFE_DATATYPE) CAFE_NOT_REQUESTED),
         cafeDbrType((CAFENUM::DBR_TYPE) CAFENUM::DBR_TIME),
         nelem(0), mask(DBE_VALUE | DBE_LOG | DBE_ALARM),
-        handler(callbackHandlerMonitor), userArgs(NULL), eventID(NULL),
-        status(ICAFE_NORMAL)
+        handler(callbackHandlerMonitor), cyCallback(NULL), 
+        userArgs(NULL), eventID(NULL), status(ICAFE_NORMAL),
+        notifyDeltaMilliSeconds(0)
     {
         ++idNext;
         id = idNext;
+        ptime timeNow(min_date_time);
+	lastUpdate = timeNow;
     };
     //Make public
     static void callbackHandlerMonitor(struct event_handler_args args);
@@ -701,6 +779,12 @@ public:
         (mask & DBE_ALARM) ? has=true : has=false;
         return has;
     }; //1
+
+    void * getCyCallback() const
+    {
+        return cyCallback;
+    };
+
     pCallback getHandler() const
     {
         return handler;
@@ -720,33 +804,73 @@ public:
     {
         return eventID;
     };
-    unsigned int  getMonitorID() const
-    {
-        return id;
-    };
-    int  getStatus() const
-    {
-        return status;
-    };
+
     unsigned int  getID() const
     {
         return id;
     };
 
+    unsigned int  getMonitorID() const
+    {
+        return id;
+    };
 
+    ptime getLastUpdate() const
+    {
+        return lastUpdate;
+    };
+
+    unsigned short getNotifyDeltaMilliSeconds() const
+    {
+        return notifyDeltaMilliSeconds;
+    };
+
+    int  getStatus() const
+    {
+        return status;
+    };
+   
     void setMask(unsigned int  m)
     {
         mask=m;
     };
 
+    void setNotifyDeltaMilliSeconds(unsigned short deltaMS)
+    {
+        notifyDeltaMilliSeconds = deltaMS;
+    };
+
+    void setLastUpdate(ptime new_ptime)
+    {
+        lastUpdate =  new_ptime;
+    };
+
+    void setCyCallback(void * cythonCallback){
+        cyCallback=cythonCallback;
+    }
+
+    void setPyCyHandler(void * cythonCallback)
+    {
+        handler= PyCallbackHandlerMonitor;
+        cyCallback=cythonCallback;
+    };
+  
     void setPyHandler()
     {
         handler= PyCallbackHandlerMonitor;
     };
+
+    void setPyCyHandlerData(void * cythonCallback)
+    {
+        handler= PyCallbackHandlerMonitorData;
+        cyCallback=cythonCallback;
+    };
+
     void setPyHandlerData()
     {
         handler= PyCallbackHandlerMonitorData;
     };
+
     void setDefaultHandler()
     {
         handler= callbackHandlerMonitor;
@@ -762,14 +886,17 @@ public:
     };
     void setDataType(chtype dt)
     {
-        if (dt < DBR_PUT_ACKT) {
+        if (dt < DBR_PUT_ACKT)
+        {
             dataType=dt%(LAST_TYPE+1);
         }
-        else {
+        else
+        {
             std::cout << "monitorPolicy FUNNY! " << dt << " is an INVALID DATATYPE! " << std::endl;
             return;
         }
-        switch(cafeDbrType) {
+        switch(cafeDbrType)
+        {
         case CAFENUM::DBR_TIME:
             dbrDataType=(dbf_type_to_DBR_TIME(dataType));
             break;
@@ -792,16 +919,19 @@ public:
 
     void setCafeDbrType( CAFENUM::DBR_TYPE cdt)
     {
-        if (cdt > DBR_PUT) {
+        if (cdt > DBR_PUT)
+        {
             std::cout << "monitorPolicy FUNNY! " << cdt << " is an INVALID CAFENUM::DBR_TYPE! " << std::endl;
             return;
         }
-        else {
+        else
+        {
             cafeDbrType=cdt;
         }
         //std::cout << "monitorPolicy Class: " << " cafeDbrType = " << cafeDbrType << std::endl;
         //std::cout << "setDataType: " <<  dataType << std::endl;
-        switch(cafeDbrType) {
+        switch(cafeDbrType)
+        {
         case CAFENUM::DBR_TIME:
             dbrDataType=(dbf_type_to_DBR_TIME(dataType));
             break;
@@ -822,8 +952,6 @@ public:
         }
         //std::cout << "monitorPolicy Class: " << " dbrDataType = " << dbrDataType << std::endl;
     }
-
-
 
     void setUserArgs(void * u)
     {

@@ -79,17 +79,22 @@ int  getCachePVArrayNoWait (std::vector<unsigned int> handleV, PVDataHolder * pv
 {
 
     int overallStatus=ICAFE_NORMAL;
-    for (size_t i=0; i< (size_t) handleV.size(); ++i) {
+    for (size_t i=0; i< (size_t) handleV.size(); ++i)
+    {
         status=getCacheNoWait(handleV[i], pvd[i]);
-        //cout << "handle= " << handleV[i] << " pvFromHandle= " << CAFE::getPVFromHandle(handleV[i]) << " status= " << pvd[i].getStatus() << " val= " << pvd[i].getAsString() << endl;
-        if (status!=ICAFE_NORMAL) {
+	//std::cout << "handle= " << handleV[i] << " pvFromHandle= " << CAFE::getPVFromHandle(handleV[i]) << " status= " << pvd[i].getStatus() << " val= " << pvd[i].getAsString() << std::endl;
+        if (status!=ICAFE_NORMAL)
+        {
             resetCallbackGet(handleV[i]);
-            if(overallStatus==ICAFE_NORMAL) {
+            if(overallStatus==ICAFE_NORMAL)
+            {
                 overallStatus=status;
             }
         }
-        if (pvd[i].getStatus() !=ICAFE_NORMAL) {
-            if(overallStatus==ICAFE_NORMAL) {
+        if (pvd[i].getStatus() !=ICAFE_NORMAL)
+        {
+            if(overallStatus==ICAFE_NORMAL)
+            {
                 overallStatus=pvd[i].getStatus();
             }
         }
@@ -259,7 +264,8 @@ int  getCacheStringArray(const unsigned int  handle, std::string * valStr)
 {
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_STRING, _val);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;
@@ -269,7 +275,8 @@ int  getCache(const unsigned int  handle, std::string * valStr)
 {
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_STRING, _val);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;
@@ -279,7 +286,8 @@ int  getCache(const unsigned int  handle, std::string * valStr,  dbr_short_t &al
 {
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_STS_STRING, _val, alarmStatus, alarmSeverity);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;
@@ -289,7 +297,8 @@ int  getCache(const unsigned int  handle, std::string * valStr,  dbr_short_t &al
 {
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_TIME_STRING, _val, alarmStatus, alarmSeverity, ts);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;
@@ -302,7 +311,8 @@ int  getCacheString(const unsigned int handle, std::string  & valStr)  //0
     unsigned int  nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STRING, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr=val[0];
     }
     CAFE::setNelemToRetrieveFromCacheToPrevious(handle, nelemPrevious);
@@ -314,7 +324,8 @@ int  getCache(const unsigned int handle, std::string  & valStr)  //0
     unsigned int  nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STRING, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr=val[0];
     }
     CAFE::setNelemToRetrieveFromCacheToPrevious(handle, nelemPrevious);
@@ -325,7 +336,8 @@ int  getCache(const unsigned int handle, std::string  & valStr, dbr_short_t &ala
     unsigned int  nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STS_STRING, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr=val[0];
     }
     CAFE::setNelemToRetrieveFromCacheToPrevious(handle, nelemPrevious);
@@ -337,7 +349,8 @@ int  getCache(const unsigned int handle, std::string  & valStr,
     unsigned int  nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr=val[0];
     }
     CAFE::setNelemToRetrieveFromCacheToPrevious(handle, nelemPrevious);
@@ -396,7 +409,8 @@ int  getCache(const unsigned int  *handleArray, unsigned int  nelem,  std::strin
     dbr_string_t * val = new dbr_string_t[nelem];
     status=cafeSoluble.getCache(handleArray, nelem, DBR_TIME_STRING, val, statusArray,
                                 alarmStatus, alarmSeverity, ts);
-    for (unsigned int i=0; i< nelem; ++i) {
+    for (unsigned int i=0; i< nelem; ++i)
+    {
         valStr[i]=val[i];
     }
     delete [] val;
@@ -408,7 +422,8 @@ int  getCache(const unsigned int  *handleArray, unsigned int  nelem,  std::strin
     dbr_string_t * val = new dbr_string_t[nelem];
     status=cafeSoluble.getCache(handleArray, nelem, DBR_STS_STRING, val, statusArray,
                                 alarmStatus, alarmSeverity);
-    for (unsigned int i=0; i< nelem; ++i) {
+    for (unsigned int i=0; i< nelem; ++i)
+    {
         valStr[i]=val[i];
     }
     delete [] val;
@@ -418,7 +433,8 @@ int  getCache (const unsigned int  *handleArray, unsigned int  nelem, std::strin
 {
     dbr_string_t * val = new dbr_string_t[nelem];
     status=cafeSoluble.getCache(handleArray, nelem, DBR_STRING, val, statusArray);
-    for (unsigned int i=0; i< nelem; ++i) {
+    for (unsigned int i=0; i< nelem; ++i)
+    {
         valStr[i]=val[i];
     }
     delete [] val;
@@ -740,7 +756,8 @@ int  getCache(const char * pv, std::string * valStr)
     unsigned int handle=handleHelper.getHandleFromPV(pv);
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_STRING, _val);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;
@@ -751,7 +768,8 @@ int  getCache(const char * pv, std::string * valStr,  dbr_short_t &alarmStatus, 
     unsigned int handle=handleHelper.getHandleFromPV(pv);
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_STS_STRING, _val, alarmStatus, alarmSeverity);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;
@@ -762,7 +780,8 @@ int  getCache(const char * pv, std::string * valStr,  dbr_short_t &alarmStatus, 
     unsigned int handle=handleHelper.getHandleFromPV(pv);
     dbr_string_t * _val = new dbr_string_t[handleHelper.getNelemRequest(handle)];
     status=cafeSoluble.getCache(handle, DBR_TIME_STRING, _val, alarmStatus, alarmSeverity, ts);
-    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+    for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+    {
         valStr[i]=_val[i];
     }
     delete [] _val;

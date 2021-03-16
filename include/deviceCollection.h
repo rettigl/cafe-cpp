@@ -14,7 +14,8 @@
 #include <cstring>
 #include <helper.h>
 
-class collectionMember {
+class collectionMember
+{
 public:
     collectionMember():deviceName(""),devicePosition(0) {};
     virtual ~collectionMember() {};
@@ -22,7 +23,8 @@ public:
     float devicePosition;
 };
 
-class deviceCollection {
+class deviceCollection
+{
     friend class Connect;
     friend class CAFE;
     //if HAVE_LIBQTXML
@@ -61,7 +63,8 @@ public:
         std::vector<float> posV;
         posV.clear();
         posV.reserve(cMembers.size());
-        for (size_t i=0; i<cMembers.size(); ++i) {
+        for (size_t i=0; i<cMembers.size(); ++i)
+        {
             posV.push_back(cMembers[i].devicePosition);
         };
         return posV;
@@ -70,8 +73,10 @@ public:
     {
         char _c[PVNAME_SIZE];
         helper.removeLeadingAndTrailingSpaces(c, _c);
-        for (size_t i=0; i<cMembers.size(); ++i) {
-            if(strcmp(cMembers[i].deviceName.c_str(),_c)==0) {
+        for (size_t i=0; i<cMembers.size(); ++i)
+        {
+            if(strcmp(cMembers[i].deviceName.c_str(),_c)==0)
+            {
                 return cMembers[i].devicePosition;
             }
         }
@@ -85,7 +90,8 @@ public:
         std::vector<std::string> memberV;
         memberV.clear();
         memberV.reserve(cMembers.size());
-        for (size_t i=0; i<cMembers.size(); ++i) {
+        for (size_t i=0; i<cMembers.size(); ++i)
+        {
             memberV.push_back(cMembers[i].deviceName);
         };
         return memberV;
@@ -102,7 +108,8 @@ public:
 };
 
 
-class collectionInGroup {
+class collectionInGroup
+{
     //friend class loadGroupXMLParser;
 public:
     collectionInGroup() {};
@@ -111,7 +118,8 @@ public:
     std::string attrib;
 };
 
-class deviceGroup {
+class deviceGroup
+{
     //if HAVE_LIBQTXML
     friend class loadGroupXMLParser;
     //endif

@@ -13,7 +13,8 @@
 #include <string>
 #include <map>
 
-enum CAFE_DATATYPE  {
+enum CAFE_DATATYPE
+{
     CAFE_TYPENOTCONN  = TYPENOTCONN, // -1 val returned by ca_field_type when channel not connected
     CAFE_STRING       = DBF_STRING,  // 0
     CAFE_SHORT        = DBF_SHORT,   // 1
@@ -34,7 +35,8 @@ enum CAFE_DATATYPE  {
  *  Provides methods to convert between
  *  the CAFE_DATATYPES and text equivalent
  */
-class CAFEDataTypeCode {
+class CAFEDataTypeCode
+{
     typedef std::map<int, std::string> mapLongString;
 private:
     mapLongString   mapDataType;
@@ -97,12 +99,13 @@ public:
     void print ( )
     {
         std::cout << "------------------"   << std::endl;
-        std::cout << "CAFE_DATATYPE LIST" << std::endl;
-        std::cout << "-----------------"   << std::endl;
-        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos) {
+        std::cout << "CAFE_DATATYPE LIST"   << std::endl;
+        std::cout << "------------------"   << std::endl;
+        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
-        std::cout << "-----------------" << std::endl;
+        std::cout << "------------------" << std::endl;
     };
 
 };
@@ -110,7 +113,8 @@ public:
 /**
  *  A union of CAFE primitive datatypes
  */
-union CAFE_DATATYPE_UNION {
+union CAFE_DATATYPE_UNION
+{
     dbr_string_t   str;
     dbr_short_t  s;
     dbr_float_t  f;
@@ -121,6 +125,7 @@ union CAFE_DATATYPE_UNION {
 };
 
 typedef CAFE_DATATYPE_UNION * CAFE_DATATYPE_UNION_SEQ;
+
 
 
 

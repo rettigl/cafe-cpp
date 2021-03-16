@@ -11,7 +11,8 @@
 #include <string>
 #include <map>
 
-enum TM_WDAY  {
+enum TM_WDAY
+{
     TM_SUNDAY  = 0,
     TM_MONDAY  = 1,
     TM_TUESDAY = 2,
@@ -22,7 +23,8 @@ enum TM_WDAY  {
 };
 
 
-enum TM_MONTHP  {
+enum TM_MONTHP
+{
     TM_JAN = 1,
     TM_FEB = 2,
     TM_MAR = 3,
@@ -42,7 +44,8 @@ enum TM_MONTHP  {
  *  Provides methods to convert between
  *  the TM_WDAY and text equivalent
  */
-class TMwdayText {
+class TMwdayText
+{
     typedef std::map<int, std::string> mapLongString;
 private:
     mapLongString   mapDataType;
@@ -56,7 +59,7 @@ public:
         mapDataType.insert(std::make_pair((int) TM_WEDNESDAY,    "Wed" ));
         mapDataType.insert(std::make_pair((int) TM_THURSDAY,     "Thu" ));
         mapDataType.insert(std::make_pair((int) TM_FRIDAY,       "Fri" ));
-        mapDataType.insert(std::make_pair((int) TM_SATURDAY,     "Sat" ));        
+        mapDataType.insert(std::make_pair((int) TM_SATURDAY,     "Sat" ));
     };
 
     ~TMwdayText() {};
@@ -101,7 +104,8 @@ public:
         std::cout << "------------------"   << std::endl;
         std::cout << "TM_WDAY LIST" << std::endl;
         std::cout << "------------------"   << std::endl;
-        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos) {
+        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
         std::cout << "-----------------" << std::endl;
@@ -117,7 +121,8 @@ public:
  *  Provides methods to convert between
  *  the TM_WDAY and text equivalent
  */
-class TMmonthpText {
+class TMmonthpText
+{
     typedef std::map<int, std::string> mapLongString;
 private:
     mapLongString   mapDataType;
@@ -137,7 +142,7 @@ public:
         mapDataType.insert(std::make_pair((int) TM_OCT,       "Oct" ));
         mapDataType.insert(std::make_pair((int) TM_NOV,       "Nov" ));
         mapDataType.insert(std::make_pair((int) TM_DEC,       "Dec" ));
-      
+
     };
 
     ~TMmonthpText() {};
@@ -182,7 +187,8 @@ public:
         std::cout << "------------------"   << std::endl;
         std::cout << "TM_MONTH(+1) LIST" << std::endl;
         std::cout << "------------------"   << std::endl;
-        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos) {
+        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
         std::cout << "-----------------" << std::endl;

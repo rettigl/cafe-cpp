@@ -5,18 +5,26 @@
 /// \version CAFE 1.0.0
 ///
 
-#include <config.h>
-
-#if HAVE_LIBQTXML
 
 #ifndef LOADGROUPXMLPARSER_H
 #define LOADGROUPXMLPARSER_H
 
+#include <config.h>
+
+#if HAVE_LIBQTXML
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <deviceCollection.h>
 
-#include <QtXml/QXmlDefaultHandler>
+//include <QtXml/QXmlDefaultHandler>
+#include <QXmlDefaultHandler>
 
-class loadGroupXMLParser : public QXmlDefaultHandler {
+
+class loadGroupXMLParser : public QXmlDefaultHandler
+{
 public:
     loadGroupXMLParser();
     virtual ~loadGroupXMLParser();
@@ -26,7 +34,8 @@ public:
 
     std::vector<deviceGroup> groups;
 private:
-    enum {
+    enum
+    {
         NotWaiting,
         WaitingForDescription,
         WaitingForStatusGroup,
@@ -61,6 +70,8 @@ private:
     const static QString& tagCollectiveType;
 };
 
+#endif
+
 #endif /* LOADGROUPXMLPARSER_H */
 
-#endif
+

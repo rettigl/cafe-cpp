@@ -123,10 +123,12 @@ int match(std::string valSet, unsigned int handleMatch,
     ss.str(valSet);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         valSetDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -139,10 +141,12 @@ int match(std::string valSet, unsigned int handleMatch,
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -170,10 +174,12 @@ int match(dbr_string_t valSet, unsigned int handleMatch,
     ss.str(valSet);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         valSetDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -186,10 +192,12 @@ int match(dbr_string_t valSet, unsigned int handleMatch,
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -269,16 +277,19 @@ int matchMany(std::vector<std::string> valSetV, std::vector<unsigned int> handle
     std::istringstream ss;
     dbr_double_t d=0;
     dbr_double_t toleranceDouble = 0;
-    for (size_t i=0; i< valSetV.size(); ++i) {
+    for (size_t i=0; i< valSetV.size(); ++i)
+    {
         d=0;
         ss.clear();
         ss.str(valSetV[i]);
         ss>>d;
 
-        if ( !ss.fail()) {
+        if ( !ss.fail())
+        {
             valSetDoubleV.push_back(d);
         }
-        else {
+        else
+        {
             std::cout << __METHOD__ << __LINE__ << std::endl;
             std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
             std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -293,10 +304,12 @@ int matchMany(std::vector<std::string> valSetV, std::vector<unsigned int> handle
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -380,16 +393,19 @@ int setAndMatchMany(std::vector<unsigned int> handleSetV, std::vector<std::strin
     std::istringstream ss;
     dbr_double_t d=0;
     dbr_double_t toleranceDouble = 0;
-    for (size_t i=0; i< valSetV.size(); ++i) {
+    for (size_t i=0; i< valSetV.size(); ++i)
+    {
         d=0;
         ss.clear();
         ss.str(valSetV[i]);
         ss>>d;
 
-        if ( !ss.fail()) {
+        if ( !ss.fail())
+        {
             valSetDoubleV.push_back(d);
         }
-        else {
+        else
+        {
             std::cout << __METHOD__ << __LINE__ << std::endl;
             std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
             std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -404,10 +420,12 @@ int setAndMatchMany(std::vector<unsigned int> handleSetV, std::vector<std::strin
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -515,16 +533,19 @@ int gameSetAndMatch(std::vector<unsigned int> handleSetV, std::vector<std::strin
     std::istringstream ss;
     dbr_double_t d=0;
     dbr_double_t toleranceDouble = 0;
-    for (size_t i=0; i< valSetV.size(); ++i) {
+    for (size_t i=0; i< valSetV.size(); ++i)
+    {
         d=0;
         ss.clear();
         ss.str(valSetV[i]);
         ss>>d;
 
-        if ( !ss.fail()) {
+        if ( !ss.fail())
+        {
             valSetDoubleV.push_back(d);
         }
-        else {
+        else
+        {
             std::cout << __METHOD__ << __LINE__ << std::endl;
             std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
             std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -539,10 +560,12 @@ int gameSetAndMatch(std::vector<unsigned int> handleSetV, std::vector<std::strin
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -618,10 +641,12 @@ int setAndMatch(const unsigned int handleSet, dbr_string_t valSet, const unsigne
     ss.str(valSet);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         valSetDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -634,10 +659,12 @@ int setAndMatch(const unsigned int handleSet, dbr_string_t valSet, const unsigne
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -662,10 +689,12 @@ int setAndMatch(const unsigned int handleSet, std::string valSet, const unsigned
     ss.str(valSet);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         valSetDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -678,10 +707,12 @@ int setAndMatch(const unsigned int handleSet, std::string valSet, const unsigned
     ss.str(tolerance);
     ss>>d;
 
-    if ( !ss.fail()) {
+    if ( !ss.fail())
+    {
         toleranceDouble=d;
     }
-    else {
+    else
+    {
         std::cout << __METHOD__ << __LINE__ << std::endl;
         std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
         std::cout << "***WARNING*** COULD NOT CONVERT: ";

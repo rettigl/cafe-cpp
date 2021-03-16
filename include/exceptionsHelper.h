@@ -12,20 +12,22 @@
 #include <statusCodes.h>
 #include <defines.h>
 
-class ExceptionsHelper {
+class ExceptionsHelper
+{
 private:
     CAFEDataTypeCode cafeDataTypeCode;
     CAFEStatus cafeStatus;
 public:
-    CAFEException_pv prepareCAFEException_pv(const char *pv, const char *pvAlias,
+    CAFEException_pv prepareCAFEException_pv(
+            const char pv[PVNAME_SIZE], const char pvAlias[PVNAME_SIZE],
             unsigned int  handle, chid pCh, int  status,
-            const char * source, unsigned int  ln);
+	    std::string source, unsigned int ln);
 
     CAFEException_group prepareCAFEException_group(
-        char groupName [PVNAME_SIZE],
+        const char groupName [PVNAME_SIZE],
         unsigned int    groupHandle,
         int             statusCode,
-        const  char *   source,
+        std::string   source,
         unsigned int    ln);
 
     ExceptionsHelper(void) {};

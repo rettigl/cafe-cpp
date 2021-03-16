@@ -17,7 +17,8 @@
  *   Friend to Conduit/CAFEGroup permitting the event_handler_args.dbr data from callback fn
  *   to be recorded in hash table
  */
-struct change_eventHandlerArgs {
+struct change_eventHandlerArgs
+{
 #define __METHOD__ "change_eventHandlerArgs"
     change_eventHandlerArgs (const struct event_handler_args & new_eventHandlerArgs) :
         new_eventHandlerArgs(new_eventHandlerArgs) {}
@@ -25,11 +26,14 @@ struct change_eventHandlerArgs {
     void operator() (Conduit& c)
     {
 
-		
-        
-		
+      //c.eventHandlerArgs = new_eventHandlerArgs;   
         c.status= new_eventHandlerArgs.status;
-        if(c.status!=ECA_NORMAL) return;
+
+        if(c.status!=ECA_NORMAL) {
+	  std::cout << __METHOD__ << " STATUS IS " << c.status << std::endl;
+          std::cout << __METHOD__ << " return from method enforced " << std::endl;
+          return;
+        }
 
         Helper helper;
 
@@ -39,8 +43,6 @@ struct change_eventHandlerArgs {
         //Let is do comparison!
         CAFENUM::DBR_TYPE dbrTypeClass=helper.convertToCAFEDbrTypeClass(new_eventHandlerArgs.type);
 
-
-
         c.usrArgs = new_eventHandlerArgs.usr;
         c.dataType= requestedT;
         c.dbrDataType= bufferType;
@@ -49,16 +51,20 @@ struct change_eventHandlerArgs {
         c.hasNewData=true; //flag used by getMonitorAction for CAFE extensions!
 
 
-        if (new_eventHandlerArgs.type < DBR_GR_STRING) {
+        if (new_eventHandlerArgs.type < DBR_GR_STRING)
+        {
             bufferType = dbf_type_to_DBR_TIME(requestedT);
         }
-        else if (new_eventHandlerArgs.type < DBR_PUT_ACKT) {
+        else if (new_eventHandlerArgs.type < DBR_PUT_ACKT)
+        {
             bufferType = dbf_type_to_DBR_CTRL(requestedT);
         }
-        else if (new_eventHandlerArgs.type < (LAST_BUFFER_TYPE+1)) {
+        else if (new_eventHandlerArgs.type < (LAST_BUFFER_TYPE+1))
+        {
             // keep default
         }
-        else {
+        else
+        {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             std::cout << "CAFE INTERNAL FUNNY: UNKNOWN event_handler_args.type= "
                       <<  new_eventHandlerArgs.type << std::endl;
@@ -70,8 +76,8 @@ struct change_eventHandlerArgs {
         unsigned int navailable = nrequired;
 
 
-
-        switch(dbrTypeClass) {
+        switch(dbrTypeClass)
+        {
         case CAFENUM::DBR_STSACK:
             navailable =   c.channelRequestMetaSTSACK.byteSize;
             c.channelRequestMetaSTSACK.nelem        =  new_eventHandlerArgs.count;
@@ -83,9 +89,7 @@ struct change_eventHandlerArgs {
         case CAFENUM::DBR_PRIMITIVE:
         case CAFENUM::DBR_STS:
         case CAFENUM::DBR_TIME:
-            navailable =   c.channelRequestMetaData.byteSize; //
-
-
+            navailable =   c.channelRequestMetaData.byteSize;
 
             c.channelRequestMetaData.nelem        =  new_eventHandlerArgs.count;
             c.channelRequestMetaData.dataType     =  requestedT;
@@ -94,7 +98,8 @@ struct change_eventHandlerArgs {
             c.channelRequestMetaData.usrArg       =  new_eventHandlerArgs.usr; //c.channelRequestMetaDataClient.usrArg;
 
             //Do this check here already
-            if (nrequired > navailable) {
+            if (nrequired > navailable)
+            {
                 c.channelRequestMetaData.byteSize     =  nrequired;
 
             }
@@ -107,7 +112,8 @@ struct change_eventHandlerArgs {
             c.channelRequestMetaCtrl.dbrDataType  =  new_eventHandlerArgs.type;
             c.channelRequestMetaCtrl.cafeDbrType  =  dbrTypeClass;
             c.channelRequestMetaCtrl.usrArg       =  new_eventHandlerArgs.usr; //c.channelRequestMetaDataClient.usrArg;
-            if (nrequired > navailable) {
+            if (nrequired > navailable)
+            {
                 c.channelRequestMetaCtrl.byteSize     =  nrequired;
             }
             break;
@@ -122,9 +128,8 @@ struct change_eventHandlerArgs {
         }
 
 
-
-
-        if (nrequired > navailable) {
+        if (nrequired > navailable)
+        {
 
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             std::cout << "CHANGE OF BUFFER SIZE: FROM " << navailable << " bytes TO " << nrequired << " bytes" << std::endl;
@@ -133,13 +138,16 @@ struct change_eventHandlerArgs {
                       << " type="  << dbr_type_to_text(new_eventHandlerArgs.type) << std::endl;
 
             //check DataBuffers
-            switch(dbrTypeClass) {
+            switch(dbrTypeClass)
+            {
             case CAFENUM::DBR_STSACK: //value is of type dbr_string_t
 
-                if (c.stsackBuffer!=NULL)  {
+                if (c.stsackBuffer!=NULL)
+                {
                     free(c.stsackBuffer);
                 }
-                else {
+                else
+                {
                     std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     std::cout << "CAFE INTERNAL FUNNY: HOW CAN stsackBuffer NOT ALREADY EXIST?" << std::endl;
                     std::cout << "CREATING stsackBuffer " << std::endl;
@@ -148,7 +156,8 @@ struct change_eventHandlerArgs {
                 c.stsackBuffer = (db_access_val *) malloc (nrequired);
 
 
-                if (c.stsackBuffer==NULL) {
+                if (c.stsackBuffer==NULL)
+                {
                     std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
                     printf ("Exiting CAFE");
@@ -166,7 +175,8 @@ struct change_eventHandlerArgs {
             case CAFENUM::DBR_TIME:
 
                 // Check that buffer is large enough! Do not expect this part ever to be invoked
-                if (c.dataBuffer != NULL) {
+                if (c.dataBuffer != NULL)
+                {
 
                     // Only re-allocate buffer if the number of native elements has increased without the
                     // the callback function first being called. i.e. nelemNative was changed on the fly!
@@ -174,7 +184,8 @@ struct change_eventHandlerArgs {
 
                     free(c.dataBuffer);
                 }
-                else {
+                else
+                {
                     std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     std::cout << "CAFE INTERNAL FUNNY: HOW CAN dataBuffer NOT ALREADY EXIST?" << std::endl;
                     std::cout << "CREATING dataBuffer " << std::endl;
@@ -182,7 +193,8 @@ struct change_eventHandlerArgs {
 
                 c.dataBuffer = (db_access_val *) malloc (nrequired);
 
-                if (c.dataBuffer==NULL) {
+                if (c.dataBuffer==NULL)
+                {
                     std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
                     printf ("Exiting CAFE");
@@ -196,7 +208,8 @@ struct change_eventHandlerArgs {
             case CAFENUM::DBR_CTRL:
 
                 // Check that buffer is large enough! Do not expect this part ever to be invoked
-                if (c.ctrlBuffer != NULL) {
+                if (c.ctrlBuffer != NULL)
+                {
 
                     // Only re-allocate buffer if the number of native elements has increased without the
                     // the callback function first being called. i.e. nelemNative was changed on the fly!
@@ -204,7 +217,8 @@ struct change_eventHandlerArgs {
 
                     free(c.ctrlBuffer);
                 }
-                else {
+                else
+                {
                     std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     std::cout << "CAFE INTERNAL FUNNY: HOW CAN dataBuffer NOT ALREADY EXIST?" << std::endl;
                     std::cout << "CREATING dataBuffer " << std::endl;
@@ -212,7 +226,8 @@ struct change_eventHandlerArgs {
 
                 c.ctrlBuffer = (db_access_val *) malloc (nrequired);
 
-                if (c.ctrlBuffer==NULL) {
+                if (c.ctrlBuffer==NULL)
+                {
                     std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
                     printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
                     printf ("Exiting CAFE");
@@ -234,13 +249,18 @@ struct change_eventHandlerArgs {
         } // if new buffer size required
 
 
-        if (new_eventHandlerArgs.count >  0) {
-            if ((unsigned int) new_eventHandlerArgs.count >   c.channelRegalia.nelem) {
+        if (new_eventHandlerArgs.count >  0)
+        {
+            if ((unsigned int) new_eventHandlerArgs.count >   c.channelRegalia.nelem)
+            {
                 c.channelRegalia.nelem = (unsigned int) new_eventHandlerArgs.count;
             }
         }
 
-        switch(dbrTypeClass) {
+
+
+        switch(dbrTypeClass)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             //c.hasAlarmStatus  =false;
             //c.hasAlarmSeverity=false;
@@ -300,10 +320,12 @@ struct change_eventHandlerArgs {
 
         //Now fill buffers
 
-        switch(new_eventHandlerArgs.type) {
+        switch(new_eventHandlerArgs.type)
+        {
         case DBR_DOUBLE: //6
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->doubleval)+i))
                     = (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->doubleval)+i));
             }
@@ -312,7 +334,8 @@ struct change_eventHandlerArgs {
 
         case DBR_FLOAT: // 2
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->fltval)+i))
                     =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->fltval)+i));
             }
@@ -322,7 +345,8 @@ struct change_eventHandlerArgs {
 
         case DBR_LONG: // 5
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->longval)+i))
                     = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->longval)+i));
             }
@@ -330,7 +354,8 @@ struct change_eventHandlerArgs {
 
         case DBR_SHORT: // 1
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->shrtval)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->shrtval)+i));
             }
@@ -338,7 +363,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STRING: // 0
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 strcpy ((*(&((c.dataBuffer)->strval)+i)),
                         (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->strval)+i)) );
             }
@@ -346,7 +372,8 @@ struct change_eventHandlerArgs {
 
         case DBR_ENUM: // 3
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->enmval)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->enmval)+i));
             }
@@ -354,7 +381,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CHAR:  // 4
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->charval)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->charval)+i));
             }
@@ -363,7 +391,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_DOUBLE: // 13
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->sdblval.value)+i))
                     = (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->sdblval.value)+i));
             }
@@ -377,7 +406,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_FLOAT: // 9
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->sfltval.value)+i))
                     =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->sfltval.value)+i));
             }
@@ -392,7 +422,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_LONG: // 12
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->slngval.value)+i))
                     = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->slngval.value)+i));
             }
@@ -407,7 +438,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_SHORT: // 8
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->sshrtval.value)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->sshrtval.value)+i));
             }
@@ -420,7 +452,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_STRING: // 7
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 strcpy ((*(&((c.dataBuffer)->sstrval.value)+i)),
                         (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->sstrval.value)+i)) );
             }
@@ -434,7 +467,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_ENUM: // 10
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->senmval.value)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->senmval.value)+i));
             }
@@ -448,7 +482,8 @@ struct change_eventHandlerArgs {
 
         case DBR_STS_CHAR: // 11
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->schrval.value)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->schrval.value)+i));
             }
@@ -463,7 +498,8 @@ struct change_eventHandlerArgs {
 
         case DBR_TIME_DOUBLE: // 20
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->tdblval.value)+i))
                     = (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->tdblval.value)+i));
             }
@@ -481,7 +517,8 @@ struct change_eventHandlerArgs {
 
         case DBR_TIME_FLOAT: //16
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
 
                 (*(&((c.dataBuffer)->tfltval.value)+i))
                     =  (dbr_float_t) (*(&( ( (union db_access_val *)  new_eventHandlerArgs.dbr)->tfltval.value)+i));
@@ -501,7 +538,8 @@ struct change_eventHandlerArgs {
 
         case DBR_TIME_LONG: //19
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->tlngval.value)+i))
                     = (*(&(( (union db_access_val *) new_eventHandlerArgs.dbr)->tlngval.value)+i));
             }
@@ -516,7 +554,8 @@ struct change_eventHandlerArgs {
             break;
 
         case DBR_TIME_SHORT:
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->tshrtval.value)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tshrtval.value)+i));
             }
@@ -533,7 +572,8 @@ struct change_eventHandlerArgs {
 
         case DBR_TIME_STRING: //14
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 strcpy ((*(&((c.dataBuffer)->tstrval.value)+i)),
                         (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tstrval.value)+i)) );
             }
@@ -551,7 +591,8 @@ struct change_eventHandlerArgs {
 
         case DBR_TIME_ENUM: //17
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->tenmval.value)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tenmval.value)+i));
             }
@@ -569,7 +610,8 @@ struct change_eventHandlerArgs {
 
         case DBR_TIME_CHAR: //18
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.dataBuffer)->tchrval.value)+i))
                     = (*(&(((union db_access_val *) new_eventHandlerArgs.dbr)->tchrval.value)+i));
 
@@ -585,7 +627,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_DOUBLE: //34
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->cdblval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cdblval.value)+i));
             }
@@ -622,7 +665,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_LONG: //33
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->clngval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->clngval.value)+i));
             }
@@ -663,7 +707,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_CHAR: //32
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->gchrval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cchrval.value)+i));
             }
@@ -704,7 +749,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_ENUM: //31
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->cenmval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cenmval.value)+i));
             }
@@ -738,7 +784,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_FLOAT: //30
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->cfltval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cfltval.value)+i));
             }
@@ -784,7 +831,8 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_SHORT: //29
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->gshrtval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cshrtval.value)+i));
             }
@@ -826,7 +874,9 @@ struct change_eventHandlerArgs {
 
         case DBR_CTRL_STRING: //28
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 strcpy( (*(&((c.ctrlBuffer)->cstrval.value)+i)),
                         (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->cstrval.value)+i)));
             }
@@ -839,11 +889,13 @@ struct change_eventHandlerArgs {
             //c.alarmStatus  =((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->status;
             //c.alarmSeverity=((struct dbr_sts_string *) new_eventHandlerArgs.dbr)->severity;
 
+
             break;
 
         case DBR_GR_DOUBLE: //27
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->gdblval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gdblval.value)+i));
             }
@@ -883,7 +935,8 @@ struct change_eventHandlerArgs {
 
         case DBR_GR_LONG: //26
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->glngval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->glngval.value)+i));
             }
@@ -920,7 +973,8 @@ struct change_eventHandlerArgs {
 
         case DBR_GR_CHAR: //25
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->gchrval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gchrval.value)+i));
             }
@@ -957,7 +1011,8 @@ struct change_eventHandlerArgs {
 
         case DBR_GR_ENUM: //24
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->genmval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->genmval.value)+i));
             }
@@ -992,7 +1047,8 @@ struct change_eventHandlerArgs {
 
         case DBR_GR_FLOAT: //23
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->gfltval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gfltval.value)+i));
             }
@@ -1034,7 +1090,8 @@ struct change_eventHandlerArgs {
 
         case DBR_GR_SHORT: //22
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 (*(&((c.ctrlBuffer)->gshrtval.value)+i)) =
                     (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gshrtval.value)+i));
             }
@@ -1071,7 +1128,8 @@ struct change_eventHandlerArgs {
 
         case DBR_GR_STRING: //21
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 strcpy( (*(&((c.ctrlBuffer)->gstrval.value)+i)),
                         (*(&( ((union db_access_val *)  new_eventHandlerArgs.dbr)->gstrval.value)+i)));
             }
@@ -1102,7 +1160,8 @@ struct change_eventHandlerArgs {
             //        (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+0))
             //        << std::endl;
 
-            for (long i=0; i<new_eventHandlerArgs.count; ++i) {
+            for (long i=0; i<new_eventHandlerArgs.count; ++i)
+            {
                 strcpy ((*(&((c.stsackBuffer)->sastrval.value)+i)),
                         (*(&(((struct dbr_stsack_string *) new_eventHandlerArgs.dbr)->value)+i)) );
                 //std::cout << " VAL  " << (*(&((c.stsackBuffer)->sastrval.value)+i)) << " [" << i << "] ";
@@ -1169,7 +1228,8 @@ struct change_eventHandlerArgs {
 
         //Do this to prevent overflow error in epicsTime time(ts) routines!
         //This bad number can occur in timeouts
-        if(c.ts.nsec>1000000000) {
+        if(c.ts.nsec>1000000000)
+        {
             c.ts.nsec=0;
         }
 

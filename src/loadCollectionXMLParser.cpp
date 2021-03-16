@@ -7,8 +7,13 @@
 
 
 
+//has config.h
 #include <loadCollectionXMLParser.h>
+
 #if HAVE_LIBQTXML
+
+//#include <QtCore/QString>
+
 
 const QString& loadCollectionXMLParser::tagConfig = "config";
 const QString& loadCollectionXMLParser::tagGroup = "collection";
@@ -32,59 +37,75 @@ bool loadCollectionXMLParser::startElement(const QString& namespaceURI, const QS
 
     bool error = false;
 
-    if (localName.compare(tagConfig, Qt::CaseInsensitive) == 0) {
+    if (localName.compare(tagConfig, Qt::CaseInsensitive) == 0)
+    {
     }
-    else if (localName.compare(tagGroup, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagGroup, Qt::CaseInsensitive) == 0)
+    {
         devCollection = deviceCollection();
-        devCollection.name = atts.value("id").toAscii().constData();
+        devCollection.name = atts.value("id").toLatin1().constData();
         state=NotWaiting;
     }
-    else if (localName.compare(tagDescription, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagDescription, Qt::CaseInsensitive) == 0)
+    {
         state = WaitingForDescription;
     }
-    else if (localName.compare(tagAttributes, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagAttributes, Qt::CaseInsensitive) == 0)
+    {
         state=NotWaiting;
     }
-    else if (localName.compare(tagAttribute, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagAttribute, Qt::CaseInsensitive) == 0)
+    {
         state=WaitingForAttribute;
     }
-    else if (localName.compare(tagMember, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagMember, Qt::CaseInsensitive) == 0)
+    {
         cMember=collectionMember();
         cMember.devicePosition = atts.value("pos").toFloat();
         state=NotWaiting;
     }
-    else if (localName.compare(tagDevice, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagDevice, Qt::CaseInsensitive) == 0)
+    {
         state = WaitingForDevice;
     }
-    else {
+    else
+    {
         error = true;
     }
     return !error;
+
 }
 
 bool loadCollectionXMLParser::endElement(const QString& namespaceURI, const QString& localName,
         const QString& qName)
 {
-    if (localName.compare(tagGroup, Qt::CaseInsensitive) == 0) {
+
+    if (localName.compare(tagGroup, Qt::CaseInsensitive) == 0)
+    {
         deviceCollectionV.push_back(devCollection);
     }
-    else if (localName.compare(tagMember, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagMember, Qt::CaseInsensitive) == 0)
+    {
         devCollection.cMembers.push_back(cMember);
     }
-    else if (localName.compare(tagAttribute, Qt::CaseInsensitive) == 0) {
+    else if (localName.compare(tagAttribute, Qt::CaseInsensitive) == 0)
+    {
         devCollection.attributes.push_back(attributeName);
     }
     return true;
+
 }
 
 bool loadCollectionXMLParser::characters(const QString& ch)
 {
+
     bool error = false;
 
-    std::string data = ch.trimmed().toAscii().constData();;
+    std::string data = ch.trimmed().toLatin1().constData();;
 
 
-    switch (state) {
+    switch (state)
+    {
 
     case WaitingForDevice:
         cMember.deviceName = data;
@@ -106,6 +127,7 @@ bool loadCollectionXMLParser::characters(const QString& ch)
         break;
     }
     return !error;
+
 }
 
 #endif

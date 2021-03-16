@@ -16,7 +16,8 @@
  *   class MemberMap
  *   maps string to index
  */
-class MemberMap {
+class MemberMap
+{
     typedef std::map<long, std::string> mapLongString;
 private:
     mapLongString           mapNameIndex;
@@ -47,9 +48,11 @@ public:
         helper.removeLeadingAndTrailingSpaces(_Name.c_str(), pvStripped);
         std::string Name=pvStripped;
 
-        for (pos=mapNameIndex.begin(); pos != mapNameIndex.end(); ++pos) {
+        for (pos=mapNameIndex.begin(); pos != mapNameIndex.end(); ++pos)
+        {
 
-            if (pos->second==Name) {
+            if (pos->second==Name)
+            {
                 return pos->first;
             }
             // String searches such as s.find(s1) return string::npos on failure
@@ -66,7 +69,8 @@ public:
 * This class is the holder of PVDataHolder objects associated with
 * of group of handles
 */
-class PVGroup {
+class PVGroup
+{
     friend class Connect;
     friend class CAFE;
     //if HAVE_LIBQTXML
@@ -103,9 +107,10 @@ public:
     {
         return pvdata;
     };
-    PVDataHolder   getPVData(unsigned int  idx) throw(std::out_of_range)
+    PVDataHolder   getPVData(unsigned int  idx) noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx <<
                 " to PVGroup.pvdata() is out of range. Valid range is from 0 to " << npv-1;
@@ -115,13 +120,15 @@ public:
     };
     void setHasAlarm(bool h)
     {
-        for (unsigned int i=0; i<npv; ++i) {
+        for (unsigned int i=0; i<npv; ++i)
+        {
             pvdata[i].setHasAlarm(h);
         }
     }
     void setHasTS(bool h)
     {
-        for (unsigned int i=0; i<npv; ++i) {
+        for (unsigned int i=0; i<npv; ++i)
+        {
             pvdata[i].setHasTS(h);
         }
     }
@@ -231,11 +238,13 @@ public:
         std::cout << "PVGROUP: " << name << " HAS " << npv << " MEMBERS " << std::endl;
         std::cout << "PRINTING THE REQUESTED " << npvToPrint << " MEMBERS " << std::endl;
         std::cout << "OVERALL STATUS OF GROUP REPORTS " << statusGroup << std::endl;
-        if (statusGroup!=ICAFE_NORMAL) {
+        if (statusGroup!=ICAFE_NORMAL)
+        {
             CAFEStatus cstat;
             cstat.report(statusGroup);
         }
-        for (unsigned int  i=0; i<npvToPrint; ++i) {
+        for (unsigned int  i=0; i<npvToPrint; ++i)
+        {
             std::cout <<  "------------------------------------------" << std::endl;
             std::cout <<  "Element [" << i << "] of " << npvToPrint << " in group: " << name << std::endl;
             pvdata[i].print();
@@ -248,11 +257,13 @@ public:
         std::cout << "PVGROUP: " << name << " HAS " << npv << " MEMBERS " << std::endl;
         std::cout << "PRINTING THE REQUESTED " << npvToPrint << " MEMBERS " << std::endl;
         std::cout << "OVERALL STATUS OF GROUP REPORTS " << statusGroup << std::endl;
-        if (statusGroup!=ICAFE_NORMAL) {
+        if (statusGroup!=ICAFE_NORMAL)
+        {
             CAFEStatus cstat;
             cstat.report(statusGroup);
         }
-        for (unsigned int  i=0; i<npvToPrint; ++i) {
+        for (unsigned int  i=0; i<npvToPrint; ++i)
+        {
             std::cout <<  "------------------------------------------" << std::endl;
             std::cout <<  "Element [" << i << "] of " << npvToPrint << " in group: " << name << std::endl;
             pvdata[i].print(std::min(maxNelemWF,pvdata[i].getNelem()));
@@ -263,9 +274,12 @@ public:
     {
         unsigned int  npvToPrint=npv;
         bool iErrorFound=false;
-        for (unsigned int  i=0; i<npvToPrint; ++i) {
-            if (pvdata[i].getStatus() != ICAFE_NORMAL) {
-                if(!iErrorFound) {
+        for (unsigned int  i=0; i<npvToPrint; ++i)
+        {
+            if (pvdata[i].getStatus() != ICAFE_NORMAL)
+            {
+                if(!iErrorFound)
+                {
                     std::cout << "PVGROUP: " << name << " HAS " << npv << " MEMBERS " << std::endl;
                     std::cout << "PRINTING PV TRANSACTIONS WITH ERRORS " << std::endl;
                     iErrorFound=true;

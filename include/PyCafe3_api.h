@@ -16,6 +16,10 @@ static void (*__pyx_api_f_6PyCafe_py_cb_handle_get_wrapper)(unsigned int) = 0;
 #define py_cb_handle_get_wrapper __pyx_api_f_6PyCafe_py_cb_handle_get_wrapper
 static void (*__pyx_api_f_6PyCafe_py_cb_handle_put_wrapper)(unsigned int) = 0;
 #define py_cb_handle_put_wrapper __pyx_api_f_6PyCafe_py_cb_handle_put_wrapper
+static void (*__pyx_api_f_6PyCafe_py_cb_handle_open_wrapper)(unsigned int, int) = 0;
+#define py_cb_handle_open_wrapper __pyx_api_f_6PyCafe_py_cb_handle_open_wrapper
+static void (*__pyx_api_f_6PyCafe_py_cb_handle_connect_wrapper)(unsigned int, std::string, int) = 0;
+#define py_cb_handle_connect_wrapper __pyx_api_f_6PyCafe_py_cb_handle_connect_wrapper
 #if !defined(__Pyx_PyIdentifier_FromString)
 #if PY_MAJOR_VERSION < 3
 #define __Pyx_PyIdentifier_FromString(s) PyString_FromString(s)
@@ -48,7 +52,8 @@ static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**
 {
     PyObject *d = 0;
     PyObject *cobj = 0;
-    union {
+    union
+    {
         void (*fp)(void);
         void *p;
     } tmp;
@@ -56,14 +61,16 @@ static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**
     if (!d)
         goto bad;
     cobj = PyDict_GetItemString(d, funcname);
-    if (!cobj) {
+    if (!cobj)
+    {
         PyErr_Format(PyExc_ImportError,
                      "%.200s does not export expected C function %.200s",
                      PyModule_GetName(module), funcname);
         goto bad;
     }
 #if PY_VERSION_HEX >= 0x02070000
-    if (!PyCapsule_IsValid(cobj, sig)) {
+    if (!PyCapsule_IsValid(cobj, sig))
+    {
         PyErr_Format(PyExc_TypeError,
                      "C function %.200s.%.200s has wrong signature (expected %.500s, got %.500s)",
                      PyModule_GetName(module), funcname, sig, PyCapsule_GetName(cobj));
@@ -78,11 +85,13 @@ static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**
             goto bad;
         s1 = desc;
         s2 = sig;
-        while (*s1 != '\0' && *s1 == *s2) {
+        while (*s1 != '\0' && *s1 == *s2)
+        {
             s1++;
             s2++;
         }
-        if (*s1 != *s2) {
+        if (*s1 != *s2)
+        {
             PyErr_Format(PyExc_TypeError,
                          "C function %.200s.%.200s has wrong signature (expected %.500s, got %.500s)",
                          PyModule_GetName(module), funcname, sig, desc);
@@ -114,6 +123,8 @@ static int import_PyCafe(void)
     if (__Pyx_ImportFunction(module, "py_cb_handle_monid_wrapper", (void (**)(void))&__pyx_api_f_6PyCafe_py_cb_handle_monid_wrapper, "void (unsigned int, unsigned long)") < 0) goto bad;
     if (__Pyx_ImportFunction(module, "py_cb_handle_get_wrapper", (void (**)(void))&__pyx_api_f_6PyCafe_py_cb_handle_get_wrapper, "void (unsigned int)") < 0) goto bad;
     if (__Pyx_ImportFunction(module, "py_cb_handle_put_wrapper", (void (**)(void))&__pyx_api_f_6PyCafe_py_cb_handle_put_wrapper, "void (unsigned int)") < 0) goto bad;
+    if (__Pyx_ImportFunction(module, "py_cb_handle_open_wrapper", (void (**)(void))&__pyx_api_f_6PyCafe_py_cb_handle_open_wrapper, "void (unsigned int, int)") < 0) goto bad;
+    if (__Pyx_ImportFunction(module, "py_cb_handle_connect_wrapper", (void (**)(void))&__pyx_api_f_6PyCafe_py_cb_handle_connect_wrapper, "void (unsigned int, std::string, int)") < 0) goto bad;
     Py_DECREF(module);
     module = 0;
     return 0;

@@ -8,7 +8,7 @@
 #ifndef HASHCONDUIT_GROUP_H
 #define HASHCONDUIT_GROUP_H
 
-#include "conduitGroup.h"
+#include <conduitGroup.h>
 
 // boost include
 #include <boost/multi_index_container.hpp>

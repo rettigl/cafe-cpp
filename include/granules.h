@@ -28,7 +28,8 @@
 
 
 
-class Granules {
+class Granules
+{
 public:
 
     template <class CTYPE> friend class Instant;

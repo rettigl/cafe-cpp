@@ -35,10 +35,16 @@ POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
 #am__append_1 = PyCafe.cpp
+#am__append_2 = zbsCafeService.cpp zbsDataHolders.cpp \
+#		bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c bitshuffle/iochain.c 									  
+
 subdir = src
 DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -76,8 +82,13 @@ am__libcafe_la_SOURCES_DIST = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	handleHelper.cpp loadCollectionXMLParser.cpp \
 	loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp \
 	policyHelper.cpp conduitGroup.cpp connectGroup.cpp \
-	transpose.cpp restorePVGroupXMLParser.cpp PyCafe.cpp
+	transpose.cpp restorePVGroupXMLParser.cpp PyCafe.cpp \
+	zbsCafeService.cpp zbsDataHolders.cpp \
+	bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c \
+	bitshuffle/iochain.c
 #am__objects_1 = PyCafe.lo
+#am__objects_2 = zbsCafeService.lo zbsDataHolders.lo \
+#	bitshuffle_core.lo bitshuffle.lo iochain.lo
 am_libcafe_la_OBJECTS = cafe.lo cafeCache.lo cafeGroup.lo \
 	cafeVectors.lo cafeXML.lo callbackHandlerCreate.lo \
 	callbackHandlerMonitor.lo conduit.lo connect.lo \
@@ -85,12 +96,24 @@ am_libcafe_la_OBJECTS = cafe.lo cafeCache.lo cafeGroup.lo \
 	handleHelper.lo loadCollectionXMLParser.lo \
 	loadGroupXMLParser.lo methodCallbacks.lo helper.lo \
 	policyHelper.lo conduitGroup.lo connectGroup.lo transpose.lo \
-	restorePVGroupXMLParser.lo $(am__objects_1)
+	restorePVGroupXMLParser.lo $(am__objects_1) $(am__objects_2)
 libcafe_la_OBJECTS = $(am_libcafe_la_OBJECTS)
+libcafe_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(libcafe_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)/./include
 depcomp = $(SHELL) $(top_srcdir)/./depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -107,30 +130,27 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run aclocal-1.11
 AMTAR = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run tar
-
-#if HAVE_ZEROMQ
-#libcafe_la_SOURCES += cafeService.cpp 
-#endif
-AM_CPPFLAGS =  -fexceptions -fPIC -Wno-deprecated -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/usr/include/QtCore  -I/usr/include/QtXml  -I$(top_srcdir)/include 
-AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/usr/lib64  -Wl,-rpath,/usr/lib64
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I$(top_srcdir)/include 
+AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoheader
 AUTOMAKE = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run automake-1.11
 AWK = gawk
 CAFE_CPPFLAGS = -I$(top_srcdir)/include 
-CC = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/gcc
+CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -Wno-deprecated -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/usr/include/QtCore  -I/usr/include/QtXml 
-CXX = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/g++
-CXXCPP = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/g++ -E
+CPP = /opt/psi/Programming/gcc/6.3.0/bin/gcc -E
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include
+CXX = /opt/psi/Programming/gcc/6.3.0/bin/g++
+CXXCPP = /opt/psi/Programming/gcc/6.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
+DLLTOOL = false
 DSYMUTIL = 
 DUMPBIN = 
 ECHO_C = 
@@ -146,14 +166,16 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/usr/lib64  -Wl,-rpath,/usr/lib64
+LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64
 LIBOBJS = 
-LIBS = -lQtXml -lQtCore 
+LIBS = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
+LT_SYS_LIBRARY_PATH = 
 MAKEINFO = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run makeinfo
+MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -164,21 +186,22 @@ OTOOL64 =
 PACKAGE = cafe
 PACKAGE_BUGREPORT = Bug reports to: jan.chrin@psi.ch
 PACKAGE_NAME = CAFE
-PACKAGE_STRING = CAFE 1.8.0
+PACKAGE_STRING = CAFE 1.12.5
 PACKAGE_TARNAME = cafe
-PACKAGE_VERSION = 1.8.0
+PACKAGE_VERSION = 1.12.5
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.8.0
+VERSION = 1.12.5
 abs_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_top_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
-ac_ct_CC = /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/6.3.0/bin/gcc
+ac_ct_AR = ar
+ac_ct_CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
 ac_ct_CXX = 
 ac_ct_DUMPBIN = 
 am__include = include
@@ -207,16 +230,15 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.8.0-gcc-6.3.0/lib
+libdir = /opt/gfa/cafe/cpp/cafe-noqt-1.12.5-gcc-6.3.0/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
-lt_ECHO = echo
 mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.8.0-gcc-6.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-noqt-1.12.5-gcc-6.3.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -228,6 +250,15 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 lib_LTLIBRARIES = libcafe.la
+
+#10:2:9  11:2:10    12:0:11 12:1:11 13.0.12 13.1.12 13:2:12 13.4.12
+#current:revision:age
+#maps in soname to:
+#1st: current-age
+#2nd: age
+#3rd: revision
+#1.9.1   1.10.2     1.11.0 1.11.1   1.12.0 1.12.1 1.12.2    1.12.4
+libcafe_la_LDFLAGS = -version-info 13:4:12
 libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	cafeVectors.cpp cafeXML.cpp callbackHandlerCreate.cpp \
 	callbackHandlerMonitor.cpp conduit.cpp connect.cpp \
@@ -235,11 +266,12 @@ libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	handleHelper.cpp loadCollectionXMLParser.cpp \
 	loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp \
 	policyHelper.cpp conduitGroup.cpp connectGroup.cpp \
-	transpose.cpp restorePVGroupXMLParser.cpp $(am__append_1)
+	transpose.cpp restorePVGroupXMLParser.cpp $(am__append_1) \
+	$(am__append_2)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/makefile.in:  $(srcdir)/makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -302,7 +334,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libcafe.la: $(libcafe_la_OBJECTS) $(libcafe_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libcafe_la_OBJECTS) $(libcafe_la_LIBADD) $(LIBS)
+	$(libcafe_la_LINK) -rpath $(libdir) $(libcafe_la_OBJECTS) $(libcafe_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -311,6 +343,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/PyCafe.Plo
+include ./$(DEPDIR)/bitshuffle.Plo
+include ./$(DEPDIR)/bitshuffle_core.Plo
 include ./$(DEPDIR)/cafe.Plo
 include ./$(DEPDIR)/cafeCache.Plo
 include ./$(DEPDIR)/cafeGroup.Plo
@@ -327,12 +361,57 @@ include ./$(DEPDIR)/exceptionsHelper.Plo
 include ./$(DEPDIR)/granules.Plo
 include ./$(DEPDIR)/handleHelper.Plo
 include ./$(DEPDIR)/helper.Plo
+include ./$(DEPDIR)/iochain.Plo
 include ./$(DEPDIR)/loadCollectionXMLParser.Plo
 include ./$(DEPDIR)/loadGroupXMLParser.Plo
 include ./$(DEPDIR)/methodCallbacks.Plo
 include ./$(DEPDIR)/policyHelper.Plo
 include ./$(DEPDIR)/restorePVGroupXMLParser.Plo
 include ./$(DEPDIR)/transpose.Plo
+include ./$(DEPDIR)/zbsCafeService.Plo
+include ./$(DEPDIR)/zbsDataHolders.Plo
+
+.c.o:
+	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+#	source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(COMPILE) -c $<
+
+.c.obj:
+	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+#	source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+.c.lo:
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+#	source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LTCOMPILE) -c -o $@ $<
+
+bitshuffle_core.lo: bitshuffle/bitshuffle_core.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bitshuffle_core.lo -MD -MP -MF $(DEPDIR)/bitshuffle_core.Tpo -c -o bitshuffle_core.lo `test -f 'bitshuffle/bitshuffle_core.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle_core.c
+	$(am__mv) $(DEPDIR)/bitshuffle_core.Tpo $(DEPDIR)/bitshuffle_core.Plo
+#	source='bitshuffle/bitshuffle_core.c' object='bitshuffle_core.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bitshuffle_core.lo `test -f 'bitshuffle/bitshuffle_core.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle_core.c
+
+bitshuffle.lo: bitshuffle/bitshuffle.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bitshuffle.lo -MD -MP -MF $(DEPDIR)/bitshuffle.Tpo -c -o bitshuffle.lo `test -f 'bitshuffle/bitshuffle.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle.c
+	$(am__mv) $(DEPDIR)/bitshuffle.Tpo $(DEPDIR)/bitshuffle.Plo
+#	source='bitshuffle/bitshuffle.c' object='bitshuffle.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bitshuffle.lo `test -f 'bitshuffle/bitshuffle.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle.c
+
+iochain.lo: bitshuffle/iochain.c
+	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iochain.lo -MD -MP -MF $(DEPDIR)/iochain.Tpo -c -o iochain.lo `test -f 'bitshuffle/iochain.c' || echo '$(srcdir)/'`bitshuffle/iochain.c
+	$(am__mv) $(DEPDIR)/iochain.Tpo $(DEPDIR)/iochain.Plo
+#	source='bitshuffle/iochain.c' object='iochain.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iochain.lo `test -f 'bitshuffle/iochain.c' || echo '$(srcdir)/'`bitshuffle/iochain.c
 
 .cpp.o:
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -35,7 +35,8 @@ template <class CTYPE> int  Instant<CTYPE>::set(const unsigned int  _handle, con
 
     status=ICAFE_NORMAL;
 
-    if (_dbrType > DBR_DOUBLE) {
+    if (_dbrType > DBR_DOUBLE)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         std::cout << "INTERNAL CAFE ERROR: HOW DID THIS PERCULIAR DATA TYPE: "
                   << dbr_type_to_text(_dbrType) << " GET THROUGH!" << std::endl;
@@ -45,36 +46,44 @@ template <class CTYPE> int  Instant<CTYPE>::set(const unsigned int  _handle, con
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
-        if ( (status=cafeGranules.channelVerifyPut(_handle, _dbrType)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelVerifyPut(_handle, _dbrType)) != ICAFE_NORMAL)
+        {
             return status;
         }
 
-        if ( (status=cafeGranules.channelPreparePut(_handle)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelPreparePut(_handle)) != ICAFE_NORMAL)
+        {
+            return status;
+        }
+       
+        if ( (status=clientRequests(_handle, _dbrType, _val)) != ICAFE_NORMAL)
+        {
             return status;
         }
 
-        if ( (status=clientRequests(_handle, _dbrType, _val)) != ICAFE_NORMAL) {
-            return status;
-        }
-
-        if ( (status=cafeGranules.channelExecutePut(_handle)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelExecutePut(_handle)) != ICAFE_NORMAL)
+        {
             return status;
         }
 
     }
-    else {
+    else
+    {
         std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
 
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.lock();
     }; //lock
     handle_index.modify(it_handle, change_status(status));
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.unlock();
     }; //unlock
 
@@ -116,12 +125,14 @@ template <class CTYPE> int  Instant<CTYPE>::get(const unsigned int  _handle,
 
     status=ICAFE_NORMAL;
 
-    if (_dbrType > DBR_CTRL_DOUBLE) {
+    if (_dbrType > DBR_CTRL_DOUBLE)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         std::cout << "INTERNAL CAFE ERROR: HOW DID THIS PERCULIAR DATA TYPE: "
                   << dbr_type_to_text(_dbrType) << " GET THROUGH!" << std::endl;
     }
-    else if (_dbrType > DBR_TIME_DOUBLE) {
+    else if (_dbrType > DBR_TIME_DOUBLE)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         std::cout << "INTERNAL CAFE ERROR: METHOD NOT MEANT FOR THIS DATA TYPE: "
                   << dbr_type_to_text(_dbrType) << std::endl;
@@ -134,26 +145,32 @@ template <class CTYPE> int  Instant<CTYPE>::get(const unsigned int  _handle,
 
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
 
-        if ( (*it_handle).getChannelGetActionWhenMonitorPolicy().getActionKind() == CAFENUM::GET_FROM_CACHE) {
-            if ( helper.getNmonitorData(_handle) >0) {
+        if ( (*it_handle).getChannelGetActionWhenMonitorPolicy().getActionKind() == CAFENUM::GET_FROM_CACHE)
+        {
+            if ( helper.getNmonitorData(_handle) >0)
+            {
                 return Instant::getCache(_handle, _dbrType, _val, alarmStatus, alarmSeverity, ts);
             }
         }
 
-        if ( (status=cafeGranules.channelVerifyGet(_handle, _dbrType)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelVerifyGet(_handle, _dbrType)) != ICAFE_NORMAL)
+        {
             return status;
         }
 
         //Here fill channelRequestMetaData
 
-        if ( (status=cafeGranules.channelPrepareGet(_handle)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelPrepareGet(_handle)) != ICAFE_NORMAL)
+        {
             return status;
         }
 
-        if ( (status=cafeGranules.channelExecuteGet(_handle)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelExecuteGet(_handle)) != ICAFE_NORMAL)
+        {
             return status;
         }
 
@@ -164,17 +181,20 @@ template <class CTYPE> int  Instant<CTYPE>::get(const unsigned int  _handle,
                                _val, alarmStatus, alarmSeverity, ts, false);
 
     }
-    else {
+    else
+    {
         std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
 
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.lock();
     }; //lock
     handle_index.modify(it_handle, change_status(status));
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.unlock();
     }; //unlock
 
@@ -212,9 +232,10 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
         const chtype _dbrType,  CTYPE * _val,
         dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)
 {
-#define __METHOD__ "Instant::getCache(_handle, dbrType, _val, alarmStatus, alarmSeverity, ts) "
+#define __METHOD__ "Instant::getCache(_handle, _dbrType, _val, alarmStatus, alarmSeverity, ts) "
 
     //std::cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << std::endl;
+    //std::cout <<  "handle " << _handle << " dbr input type " <<  _dbrType  << std::endl;
 
     status=ICAFE_NORMAL;
 
@@ -227,40 +248,91 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //std::cout << __METHOD__ << "__" << __LINE__ << std::endl;
         //std::cout <<  "(*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()" <<
         //(*it_handle).getChannelGetCacheWaitPolicy().getWaitKind() << " 0=NO_CHECK 1=NO_WAIT 2=WAIT " << std::endl;
 
-	       
-        //meant for use in callbacks in monitors!
-        if ( (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_NO_CHECK) {
-            status=clientRequests(_handle,
-                                  _dbrType, _val, alarmStatus, alarmSeverity, ts, true);
-            
-            return status;
+        //Let us check input type against client request type.
+        chtype _dataTypeClient           = (*it_handle).getChannelRequestMetaDataClient().getDataType();
+        chtype _dbrTypePlain = _dbrType;
+
+        //reduce _dbrType ton_dataTypeClient
+
+        if (dbr_type_is_STS(_dbrType) )
+        {
+            _dbrTypePlain = _dbrType%(LAST_TYPE+1); //DBR_STS_STRING;
+        }
+        else if (dbr_type_is_TIME(_dbrType) )
+        {
+            _dbrTypePlain = _dbrType%(LAST_TYPE+1); //DBR_TIME_STRING;
         }
 
-				
-        //ifNeverConnected - return error
-        if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
+        // If they do not agrre - change the data tzype in the client space for the handle!!
+        // std::cout <<   _dataTypeClient  << " //COMPARISON// " <<    _dbrTypePlain  << std::endl;
 
+        if (_dataTypeClient !=  _dbrTypePlain)
+        {
+
+            channelRequestMetaDataClient= (*it_handle).getChannelRequestMetaDataClient();
+
+            channelRequestMetaDataClient.setDataType   (_dbrTypePlain);
+            channelRequestMetaDataClient.setDbrDataType(_dbrType);
+
+            channelRequestMetaDataClient.setCafeDbrType(
+                (CAFENUM::DBR_TYPE) helper.convertToCAFEDbrTypeClass(_dbrType) );
+
+            if(MUTEX)
+            {
+                cafeMutex.lock();   //lock
+            }
+            handle_index.modify(it_handle,
+                                change_channelRequestMetaDataClient(channelRequestMetaDataClient));
+            if(MUTEX)
+            {
+                cafeMutex.unlock();   //unlock
+            }
+
+        }
+
+
+        //ifNeverConnected - return error
+        if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+        {
             return ICAFE_CS_NEVER_CONN;
         }
-        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)
+        {
             return ICAFE_CS_CLOSED;
         }
 
-          
+
+        // Meant for use in callbacks in monitors!
+        // Does not check what the client is requesting.
+        // If the datadatype render, i.e., dbrType does not correspond to the clientDataType in hash
+        // then there is a risk that that the data will be unfolded from the buffer incorrectly
+        // especially when strings are involved
+        // Solved with the above modification
+
+        if ( (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_NO_CHECK)
+        {
+            //std::cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << std::endl;
+            status=clientRequests(_handle, _dbrType, _val, alarmStatus, alarmSeverity, ts, true);
+            //std::cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << std::endl;
+            return status;
+        }
 
 
-        if (_dbrType > DBR_CTRL_DOUBLE) {
+        if (_dbrType > DBR_CTRL_DOUBLE)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "INTERNAL CAFE ERROR: HOW DID THIS PERCULIAR DATA TYPE: "
                       << dbr_type_to_text(_dbrType) << " GET THROUGH!" << std::endl;
         }
-        else if (_dbrType > DBR_TIME_DOUBLE) {
+        else if (_dbrType > DBR_TIME_DOUBLE)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "INTERNAL CAFE ERROR: METHOD NOT MEANT FOR THIS DATA TYPE: "
                       << dbr_type_to_text(_dbrType) << std::endl;
@@ -276,7 +348,8 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
         CAFENUM::DBR_TYPE cafedbrtype= (*it_handle).getChannelRequestMetaData().getCafeDbrType();
 
 
-        switch (cafedbrtype) {
+        switch (cafedbrtype)
+        {
         case CAFENUM::DBR_TIME:
             dbrtype = dbf_type_to_DBR_TIME(_dbrType%DBR_STS_STRING);
             break;
@@ -295,24 +368,25 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
 
 
         status=ICAFE_NORMAL;
-				
-		    
+
+
         //What's in the buffer and is the status OK?
         //Is using Callback finished??
         // If No return
-        if ( (status=cafeGranules.channelVerifyGet(_handle, dbrtype)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelVerifyGet(_handle, dbrtype)) != ICAFE_NORMAL)
+        {
 
-            
+
             //See what's in buffer anyway!
             clientRequests(_handle,
                            _dbrType, _val, alarmStatus, alarmSeverity, ts, true);
 
-						
+
             return status;
         }
 
 
-        
+
         //Test callbackProgressKind
         channelRequestStatusGet =(*it_handle).getChannelRequestStatusGet();
 
@@ -323,7 +397,8 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
                 && (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_WAIT
                 && (*it_handle).isConnected()
 
-           ) {
+           )
+        {
 
             channelTimeoutPolicyGet  = (*it_handle).getChannelTimeoutPolicyGet();
 
@@ -331,9 +406,11 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
             //usleep(500); //wait 0.5ms to give time for callback to complete
             status=cafeGranules.waitForGetEvent(_handle, channelTimeoutPolicyGet.getTimeout());
 
-            if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout()) {
+            if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout())
+            {
                 unsigned short ntries=0;
-                while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries()) {
+                while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries())
+                {
                     status=cafeGranules.waitForGetEvent(_handle, channelTimeoutPolicyGet.getTimeout() +
                                                         channelTimeoutPolicyGet.getDeltaTimeout()*(++ntries));
                 }
@@ -341,14 +418,16 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "No of waitForGetEvent tries=" << ntries << std::endl;
 
-                if (status==ECAFE_TIMEOUT) {
+                if (status==ECAFE_TIMEOUT)
+                {
                     std::cout << "is the MAXIMUM allowed as configured through TimeoutPolicy! "  << std::endl;
                     std::cout << "TURNING OFF SELF-GOVERNING TIMEOUT FOR GET OPERATIONS FOR THIS CHANNEL"  << std::endl;
                     channelTimeoutPolicyGet.setSelfGoverningTimeout(false);
                     channelTimeoutPolicyGet.setTimeout( channelTimeoutPolicyGet.getTimeout()); //not needed same as the old one
                     std::cout << "AND TIMEOUT RESTORED TO START VALUE OF " << channelTimeoutPolicyGet.getTimeout() << std::endl;
                 }
-                else {
+                else
+                {
                     std::cout << "Changing timeout for handle/pv "
                               << _handle << "/" << (*it_handle).getPV() << " to: "  <<
 
@@ -360,48 +439,57 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
                                                          channelTimeoutPolicyGet.getDeltaTimeout()*ntries));
                 }
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 };     //lock
                 handle_index.modify(it_handle, change_channelTimeoutPolicyGet(channelTimeoutPolicyGet));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 };   //unlock
 
-                if (status==ECAFE_TIMEOUT) {
+                if (status==ECAFE_TIMEOUT)
+                {
                     std::cout << "CURRENT STATUS OF HANDLE: " << std::endl;
                     helper.printHandle(_handle);
                 }
             }
 
 
-            if (status != ICAFE_NORMAL) {
+            if (status != ICAFE_NORMAL)
+            {
                 //Check these in at end of routine
                 channelRequestStatusGet.setCallbackStatus    (status);
 
                 channelRequestStatusGet.setCallbackKind(false, false); // NOT_INITIATED NOT_TRIGGERED
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 };   //lock
                 handle_index.modify(it_handle,
                                     change_channelRequestStatusGet(channelRequestStatusGet));
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }; //unlock
             }
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             };   //lock
             handle_index.modify(it_handle, change_status(status));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }; //unlock
 
 
-            if (status != ICAFE_NORMAL) {
+            if (status != ICAFE_NORMAL)
+            {
                 std::cout << __METHOD__ << " status= " << status << std::endl;
                 std::cout << "Returning ICAFE_WAITING_FOR_PREV_CALLBACK " << std::endl;
                 //Why is this required - See what's in buffer anyway!
@@ -419,10 +507,11 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
         channelRequestStatusGet = (*it_handle).getChannelRequestStatusGet();
         status=channelRequestStatusGet.getMessageStatus();
 
-        
-         
 
-        if (status != ICAFE_NORMAL) {
+
+
+        if (status != ICAFE_NORMAL)
+        {
             cafeStatus.report(status);
             //Why is this required - See what's in buffer anyway!
             clientRequests(_handle,
@@ -433,12 +522,13 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
 
         status=clientRequests(_handle,
                               _dbrType, _val, alarmStatus, alarmSeverity, ts, true);
-															
-								  
+
+
 
     }
 
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -475,12 +565,14 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
 
     //std::cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << std::endl;
 
-    for (unsigned int  i=0; i<nelem; ++i) {
+    for (unsigned int  i=0; i<nelem; ++i)
+    {
 
 
 
         //Very possibly waveforems will need longer to report back!
-        if(helper.getNelemNative(handleArray[i])!=1) {
+        if(helper.getNelemNative(handleArray[i])!=1)
+        {
 
             cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
             cafeConduit_set_by_handle::iterator it_handle;
@@ -494,7 +586,8 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
                     != CAFENUM::WITH_CALLBACK_USER_SUPPLIED
                     && (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind() == CAFENUM::GET_CACHE_WAIT
                     && (*it_handle).isConnected()
-               ) {
+               )
+            {
 
                 channelTimeoutPolicyGet  = (*it_handle).getChannelTimeoutPolicyGet();
 
@@ -502,9 +595,11 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
                 status=cafeGranules.waitForGetEvent(handleArray[i], channelTimeoutPolicyGet.getTimeout());
 
 
-                if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout()) {
+                if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout())
+                {
                     unsigned short ntries=0;
-                    while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries()) {
+                    while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries())
+                    {
                         status=cafeGranules.waitForGetEvent(handleArray[i], channelTimeoutPolicyGet.getTimeout() +
                                                             channelTimeoutPolicyGet.getDeltaTimeout()*(++ntries));
                     }
@@ -513,14 +608,16 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "No of waitForGetEvent tries=" << ntries << std::endl;
 
-                    if (status==ECAFE_TIMEOUT) {
+                    if (status==ECAFE_TIMEOUT)
+                    {
                         std::cout << "is the MAXIMUM allowed as configured through TimeoutPolicy! "  << std::endl;
                         std::cout << "TURNING OFF SELF-GOVERNING TIMEOUT FOR GET OPERATIONS FOR THIS CHANNEL"  << std::endl;
                         channelTimeoutPolicyGet.setSelfGoverningTimeout(false);
                         channelTimeoutPolicyGet.setTimeout( channelTimeoutPolicyGet.getTimeout() ); //not needed really(!)
                         std::cout << "AND TIMEOUT RESTORED TO START VALUE OF " << channelTimeoutPolicyGet.getTimeout() << std::endl;
                     }
-                    else {
+                    else
+                    {
                         std::cout << "Changing timeout for handle/pv "
                                   << handleArray[i] << "/" << (*it_handle).getPV() << " to: "  <<
 
@@ -532,47 +629,56 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
                                                              channelTimeoutPolicyGet.getDeltaTimeout()*ntries));
                     }
 
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.lock();
                     };     //lock
                     handle_index.modify(it_handle, change_channelTimeoutPolicyGet(channelTimeoutPolicyGet));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();
                     };   //unlock
 
-                    if (status==ECAFE_TIMEOUT) {
+                    if (status==ECAFE_TIMEOUT)
+                    {
                         std::cout << "CURRENT STATUS OF HANDLE: " << std::endl;
                         helper.printHandle(handleArray[i]);
                     }
                 }
 
-                if (status != ICAFE_NORMAL) {
+                if (status != ICAFE_NORMAL)
+                {
                     //Check these in at end of routine
                     channelRequestStatusGet.setCallbackStatus    (status);
 
                     channelRequestStatusGet.setCallbackKind(false, false); // NOT_INITIATED NOT_TRIGGERED
 
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.lock();
                     };   //lock
                     handle_index.modify(it_handle,
                                         change_channelRequestStatusGet(channelRequestStatusGet));
 
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();
                     }; //unlock
                 }
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 };   //lock
                 handle_index.modify(it_handle, change_status(status));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }; //unlock
 
 
-                if (status != ICAFE_NORMAL) {
+                if (status != ICAFE_NORMAL)
+                {
                     std::cout << __METHOD__ << " status " << status << std::endl;
                     std::cout << "Returning ICAFE_WAITING_FOR_PREV_CALLBACK " << std::endl;
                     return ICAFE_WAITING_FOR_PREV_CALLBACK;
@@ -597,20 +703,24 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
 
         chtype channelType= _dbrType;
 
-        if (dbr_type_is_TIME(channelType)) {
+        if (dbr_type_is_TIME(channelType))
+        {
             ts[i].secPastEpoch= ts1.secPastEpoch; // default value if cache does not have timeStamp
             ts[i].nsec        = ts1.nsec;        // default value if cache does not have timeStamp
         }
-        if (dbr_type_is_TIME(channelType) ||  dbr_type_is_STS(channelType) ) {
+        if (dbr_type_is_TIME(channelType) ||  dbr_type_is_STS(channelType) )
+        {
             alarmStatus  [i]  = a1;   // default value if cache does not have alarmStatus
             alarmSeverity[i]  = a2;   // default value if cache does not have alarmSeverity
         }
 
-        if (statusArray[i] != ICAFE_NORMAL && !statusSet) {
+        if (statusArray[i] != ICAFE_NORMAL && !statusSet)
+        {
             gStatus=statusArray[i];
             statusSet=true;
         }
-        if(helper.getNelemNative(handleArray[i])!=1) {
+        if(helper.getNelemNative(handleArray[i])!=1)
+        {
             helper.setNelemToRetrieveFromCache(handleArray[i],nelemPrevious);
         };
 
@@ -638,11 +748,15 @@ template <class CTYPE> int  Instant<CTYPE>::set(const unsigned int  *handleArray
     int  overallStatus=ICAFE_NORMAL;
     bool isGood=true;
 
+    //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+
     unsigned int  nelemPrevious=1;
 
-    for (unsigned int  i=0; i<nelem; ++i) {
+    for (unsigned int  i=0; i<nelem; ++i)
+    {
 
-        if(helper.getNelemNative(handleArray[i])!=1) {
+        if(helper.getNelemNative(handleArray[i])!=1)
+        {
 
             //std::cout << "Native =" << helper.getNelemNative(handleArray[i]) << std::endl;
             //std::cout << "Client =" << helper.getNelemClient(handleArray[i]) << std::endl;
@@ -652,8 +766,6 @@ template <class CTYPE> int  Instant<CTYPE>::set(const unsigned int  *handleArray
             nelemPrevious=helper.getNelemClient(handleArray[i]);
             helper.setNelem(handleArray[i],1);
         }
-
-
 
         //OveridePolicy
         //NO_WAIT, FLUSH_DESIGNATED_TO_CLIENT
@@ -667,14 +779,16 @@ template <class CTYPE> int  Instant<CTYPE>::set(const unsigned int  *handleArray
         pol.setWhenToFlushSendBuffer(FLUSH_DESIGNATED_TO_CLIENT);
         policyHelper.setChannelRequestPolicyPut(handleArray[i], pol);
         statusArray[i]=Instant::set(handleArray[i],  _dbrType, &val[i]);
-        if ( (statusArray[i] != ICAFE_NORMAL) && isGood) {
+        if ( (statusArray[i] != ICAFE_NORMAL) && isGood)
+        {
             overallStatus=statusArray[i];
             isGood=false;
         }
         //Return policy to previous
         policyHelper.setChannelRequestPolicyPut(handleArray[i], originalPol);
 
-        if(helper.getNelemNative(handleArray[i])!=1) {
+        if(helper.getNelemNative(handleArray[i])!=1)
+        {
             helper.setNelem(handleArray[i],nelemPrevious);
         };
     }
@@ -710,11 +824,15 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
     alarmStatus    =-1; // default value if cache does not have alarmStatus
     alarmSeverity  =-1; // default value if cache does not have alarmSeverity
 
+    //std::cout << __METHOD__ << " " << _dbrType << " handle " << _handle << std::endl;
+    //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+   
     //this is what the client is requesting!
 
     int status=ICAFE_NORMAL; //Use local value!!
 
-    switch( _dbrType) {
+    switch( _dbrType)
+    {
 
     case DBR_TIME_STRING:  //0
         status = renderString.get(  _handle, (dbr_string_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
@@ -723,7 +841,9 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
         status = renderShort.get (  _handle, (dbr_short_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
         break;
     case DBR_TIME_FLOAT:   //2
+
         status = renderFloat.get ( _handle,  (dbr_float_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
+
         break;
     case DBR_TIME_ENUM:    //3
         status = renderEnum.get  ( _handle,  (dbr_enum_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
@@ -732,10 +852,14 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
         status = renderChar.get  ( _handle,  (dbr_char_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
         break;
     case DBR_TIME_LONG:    //5
+
         status = renderLong.get  ( _handle,  (dbr_long_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
+
         break;
     case DBR_TIME_DOUBLE:  //6
+
         status = renderDouble.get( _handle,  (dbr_double_t *) _val, alarmStatus, alarmSeverity, ts, isCacheRequest);
+
         break;
     case DBR_STS_STRING:  //0
         status = renderString.get( _handle, (dbr_string_t *) _val, alarmStatus, alarmSeverity, isCacheRequest);
@@ -814,7 +938,8 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
 
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         //May 2017 Caught by Cython - These variables are set but never used
         //Hence comment them out
         /*
@@ -827,9 +952,9 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
         nelem    = (*it_handle).getChannelRequestMetaPrimitive().getNelem();
         dbrTypeRequest_DataBuffer = (*it_handle).getChannelRequestMetaPrimitive().getDbrDataType();
         */
-
-
-        switch(_dbrType) {
+      
+        switch(_dbrType)
+        {
         case DBR_STRING:
             status=renderString.putString(_handle, (dbr_string_t *) _val);
             break;
@@ -871,7 +996,8 @@ template <class CTYPE> int  Instant<CTYPE>::clientRequests(
         */
     }
 
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -903,15 +1029,18 @@ template <class CTYPE> int  Instant<CTYPE>::setAndGet(const unsigned int handleS
     valSetA[0] = (CTYPE) valSet;
 
     status=Instant::set(handleSet, dbrType, valSetA);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
 
         unsigned int  nelemPrevious, nelemRequestedCheck=0;
         unsigned int  nelemRequested=1;
         nelemPrevious=helper.getNelemClient(handleSet);
         //Check the number of elements requested?
-        if (nelemPrevious>1) {
+        if (nelemPrevious>1)
+        {
             nelemRequestedCheck = helper.setNelem(handleSet,nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPrevious << std::endl;
@@ -921,16 +1050,19 @@ template <class CTYPE> int  Instant<CTYPE>::setAndGet(const unsigned int handleS
         }
         status=Instant::get(handleSet, dbrType, valGetA);
 
-        if (nelemPrevious>1) {
+        if (nelemPrevious>1)
+        {
             helper.setNelem(handleSet,nelemPrevious);
         }
 
         valGet=valGetA[0];
     }
-    else {
+    else
+    {
         return status;
     }
-    if(valSet==valGet) {
+    if(valSet==valGet)
+    {
         return ICAFE_NORMAL;
     }
     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
@@ -953,16 +1085,20 @@ template <class CTYPE> int  Instant<CTYPE>::setMany(std::vector<unsigned int> ha
 
     status=ICAFE_NORMAL;
 
-    if (handleSet.size() != valSet.size() ) {
+    if (handleSet.size() != valSet.size() )
+    {
         return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
     }
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
-        if (!helper.isChannelConnected(handleSet[i])) {
+        if (!helper.isChannelConnected(handleSet[i]))
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
-            if (!helper.isChannelConnected(handleSet[i])) {
+            if (!helper.isChannelConnected(handleSet[i]))
+            {
                 helper.printHandle(handleSet[i]);
                 status=helper.getStatus(handleSet[i]);
             }
@@ -971,23 +1107,29 @@ template <class CTYPE> int  Instant<CTYPE>::setMany(std::vector<unsigned int> ha
     }
 
 
-    if (status!=ICAFE_NORMAL) {
+    if (status!=ICAFE_NORMAL)
+    {
         return status;
     }
 
-    if(printFlag) {
+    if(printFlag)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
     }
 
 
-    if (printFlag) {
+    if (printFlag)
+    {
 
-        for (size_t i=0; i< handleSet.size(); ++i) {
+        for (size_t i=0; i< handleSet.size(); ++i)
+        {
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet[i]) << " to " << (unsigned short) valSet[i] << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet[i]) << " to " << valSet[i] << std::endl;
             }
 
@@ -996,7 +1138,8 @@ template <class CTYPE> int  Instant<CTYPE>::setMany(std::vector<unsigned int> ha
     } //if
 
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
 
 
@@ -1007,9 +1150,11 @@ template <class CTYPE> int  Instant<CTYPE>::setMany(std::vector<unsigned int> ha
 
         nelemPrevious=helper.getNelemClient(handleSet[i]);
         //Check the number of elements requested?
-        if (nelemPrevious>1) {
+        if (nelemPrevious>1)
+        {
             nelemRequestedCheck = helper.setNelem(handleSet[i],nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPrevious << std::endl;
@@ -1035,7 +1180,8 @@ template <class CTYPE> int  Instant<CTYPE>::setMany(std::vector<unsigned int> ha
 
         status=set(handleSet[i], dbrType, valSetA);
 
-        if (status!=ICAFE_NORMAL) {
+        if (status!=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(status);
         }
@@ -1047,9 +1193,11 @@ template <class CTYPE> int  Instant<CTYPE>::setMany(std::vector<unsigned int> ha
         nelemRequested=1;
         //Switch back to previous value
         //if (nelemPrevious>1) {
-        if(helper.getNelemRequest(handleSet[i])!= nelemPrevious) {
+        if(helper.getNelemRequest(handleSet[i])!= nelemPrevious)
+        {
             nelemPreviousCheck= helper.setNelem(handleSet[i],nelemPrevious);
-            if (nelemPreviousCheck != nelemPrevious) {
+            if (nelemPreviousCheck != nelemPrevious)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                           << nelemRequested << std::endl;
@@ -1099,17 +1247,21 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
     status=ICAFE_NORMAL;
 
 
-    if (handleMatch.size() != valSet.size() ) {
+    if (handleMatch.size() != valSet.size() )
+    {
         return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
     }
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
-        if (!helper.isChannelConnected(handleMatch[i])) {
+        if (!helper.isChannelConnected(handleMatch[i]))
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
 
-            if (!helper.isChannelConnected(handleMatch[i])) {
+            if (!helper.isChannelConnected(handleMatch[i]))
+            {
                 helper.printHandle(handleMatch[i]);
                 status=helper.getStatus(handleMatch[i]);
             }
@@ -1118,24 +1270,30 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
     }
 
 
-    if (status!=ICAFE_NORMAL) {
+    if (status!=ICAFE_NORMAL)
+    {
         return status;
     }
 
-    if(printFlag) {
+    if(printFlag)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
     }
 
-    if (printFlag) {
+    if (printFlag)
+    {
 
 
-        for (size_t i=0; i< handleMatch.size(); ++i) {
+        for (size_t i=0; i< handleMatch.size(); ++i)
+        {
 
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "SETTING  PV= " << helper.getPVFromHandle(handleSet[i]) << " to " << (unsigned short) valSet[i] << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "SETTING  PV= " << helper.getPVFromHandle(handleSet[i]) << " to " << valSet[i] << std::endl;
             }
 
@@ -1172,10 +1330,12 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
     nelemPreviousCache.reserve( valSet.size());
 
 
-    for (size_t i=0; i< valSet.size(); ++i) {
+    for (size_t i=0; i< valSet.size(); ++i)
+    {
 
 
-        switch (dbrType) {
+        switch (dbrType)
+        {
         case DBR_LONG :
         case DBR_SHORT :
         case DBR_ENUM:
@@ -1217,18 +1377,22 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
 
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
         //what is monitorpolicy??
-        if (nMonitors[i]==0) {
+        if (nMonitors[i]==0)
+        {
 
             unsigned int  _nelemPrevious, _nelemRequestedCheck=0;
             unsigned int  _nelemRequested=1;
             _nelemPrevious=helper.getNelemClient(handleMatch[i]);
             //Check the number of elements requested?
-            if (_nelemPrevious>1) {
+            if (_nelemPrevious>1)
+            {
                 _nelemRequestedCheck = helper.setNelem(handleMatch[i],_nelemRequested);
-                if (_nelemRequestedCheck != _nelemRequested) {
+                if (_nelemRequestedCheck != _nelemRequested)
+                {
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                               << _nelemPrevious << std::endl;
@@ -1242,12 +1406,14 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
 
             valGet[i]=valGetA[0];
 
-            if (_nelemPrevious>1) {
+            if (_nelemPrevious>1)
+            {
                 helper.setNelem(handleMatch[i],_nelemPrevious);
             }
 
 
-            if (status!=ICAFE_NORMAL) {
+            if (status!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(status);
             }
@@ -1258,17 +1424,21 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
 
             statMonitor[i]=connect.monitorStart(handleMatch[i], monitorID[i]);
 
-            if (statMonitor[i]!=ICAFE_NORMAL) {
+            if (statMonitor[i]!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(statMonitor[i]);
             }
-            else {
-                if(printFlag) {
+            else
+            {
+                if(printFlag)
+                {
                     std::cout << "MONITOR NOW IN PLACE FOR READBACK CHANNEL " << helper.getPVFromHandle(handleMatch[i]) << " WITH ID=" << monitorID[i] << std::endl;
                 }
             }
             //revert to previous
-            if (whenKind != FLUSH_AUTOMATIC) {
+            if (whenKind != FLUSH_AUTOMATIC)
+            {
                 connect.channelMonitorPolicy.setWhenToFlushSendBuffer(whenKind);
             }
 
@@ -1288,9 +1458,11 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
         //Check the number of elements requested
         //See set and Match; this needs to be checked
         //Avoid problem when readback channel is the very same as the set(!)
-        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1) {
+        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1)
+        {
             nelemRequestedCheck = helper.setNelemToRetrieveFromCache(handleMatch[i],nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPreviousCache[i] << std::endl;
@@ -1318,7 +1490,8 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
     ptime timeStart(microsec_clock::local_time());
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
         valGetA[0]=0;
 
@@ -1327,23 +1500,28 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
         valGet[i]=valGetA[0];
 
 
-        if (status !=ICAFE_NORMAL) {
+        if (status !=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(status);
         }
 
         ///valGet[i]=valGetA[0][i];
-        if (dbrType==DBR_CHAR) {
+        if (dbrType==DBR_CHAR)
+        {
             valGet[i] = (unsigned short) valGetA[0];
         }
 
-        if(printFlag) {
+        if(printFlag)
+        {
             //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "Current Cached Value = " << (unsigned short) valGet[i] << std::endl;
                 std::cout << "Lower/Upper Target Values = " << (unsigned short)  valSetLower[i] << " and " << (unsigned short)  valSetUpper[i] << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "Current Cached Value = " << valGet[i] << std::endl;
                 std::cout << "Lower/Upper Target Values = " << valSetLower[i] << " and " << valSetUpper[i] << std::endl;
             }
@@ -1358,11 +1536,13 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
     timeElapsed= (double) duration.total_microseconds()/1000000.0;
 
 
-    for (size_t i=0; i< valSet.size(); ++i) {
+    for (size_t i=0; i< valSet.size(); ++i)
+    {
 
 
         while ( (valGet[i]>valSetUpper[i] || valGet[i]<valSetLower[i] )
-                && timeElapsed < timeout ) {
+                && timeElapsed < timeout )
+        {
 
             valGetA[0]=0;
 
@@ -1374,7 +1554,8 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
             //std::cout <<"Cached value " << valGet[i] << std::endl;
 
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 valGet[i] = (unsigned short) valGetA[0];
             }
 
@@ -1386,15 +1567,19 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
 
             timeElapsed2=timeElapsed-timeElapsedBase;
 
-            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL) {
+            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL)
+            {
 
 
-                for (size_t ij=0; ij< handleMatch.size(); ++ij) {
+                for (size_t ij=0; ij< handleMatch.size(); ++ij)
+                {
                     status=Instant::getCache(handleMatch[ij], dbrType, valGetA);
                     valGet[ij]=valGetA[0];
-                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij]) {
+                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij])
+                    {
 
-                        if (dbrType==DBR_CHAR) {
+                        if (dbrType==DBR_CHAR)
+                        {
 
                             std::cout << "REPORTING " << helper.getPVFromHandle(handleSet[ij])
                                       << " SET VALUE=" << (unsigned short) valSet[ij]
@@ -1402,7 +1587,8 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
                                       << " HAS CURRENT VALUE=" << (unsigned short) valGet[ij]
                                       << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
                         }
-                        else {
+                        else
+                        {
                             std::cout << "REPORTING "  << helper.getPVFromHandle(handleSet[ij])
                                       << " SET VALUE=" << valSet[ij]
                                       << "; READBACK " << helper.getPVFromHandle(handleMatch[ij])
@@ -1437,26 +1623,32 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
 
 
 
-    if (timeout <=timeElapsed ) {
+    if (timeout <=timeElapsed )
+    {
         std::cout << "*****TIMEOUT REACHED****** AFTER " << timeout << " (sec) " << std::endl;
         std::cout << "*****NOT ALL READBACK CHANNELS REACHED THEIR DESIRED VALUES WITHIN THE GIVEN TOLERANCE AND TIME PERIOD*****" << std::endl;
         status=ECAFE_TIMEOUT_SET_AND_MATCH;
     }
-    else {
+    else
+    {
 
-        if (printFlag) {
+        if (printFlag)
+        {
 
-            for (size_t i=0; i< handleMatch.size(); ++i) {
+            for (size_t i=0; i< handleMatch.size(); ++i)
+            {
 
                 valGetA[0]=0;
                 status=Instant::getCache(handleMatch[i], dbrType, valGetA);
                 valGet[i]=valGetA[0];
-                if (dbrType==DBR_CHAR) {
+                if (dbrType==DBR_CHAR)
+                {
                     std::cout << "GAME SET AND MATCH: " << helper.getPVFromHandle(handleSet[i]) << " SET VALUE= " << (unsigned short) valSet[i]
                               << " // " << helper.getPVFromHandle(handleMatch[i])  << " READBACK VALUE= " << (unsigned short) valGet[i] //pvdMatch.getAsDouble()
                               << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
                 }
-                else {
+                else
+                {
                     std::cout << "GAME SET AND MATCH: " << helper.getPVFromHandle(handleSet[i]) << " SET VALUE= " << valSet[i]
                               << " // " << helper.getPVFromHandle(handleMatch[i])  << " READBACK VALUE= " << valGet[i] //pvdMatch.getAsDouble()
                               << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
@@ -1468,14 +1660,17 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
     }
 //
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
         unsigned int  nelemPreviousCheck;
         unsigned int  nelemRequested=1;
 
 
-        if (nelemPreviousCache[i]>1) {
+        if (nelemPreviousCache[i]>1)
+        {
             nelemPreviousCheck= helper.setNelemToRetrieveFromCache(handleMatch[i],nelemPreviousCache[i]);
-            if (nelemPreviousCheck != nelemPreviousCache[i]) {
+            if (nelemPreviousCheck != nelemPreviousCache[i])
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                           << nelemRequested << std::endl;
@@ -1486,11 +1681,13 @@ template <class CTYPE> int  Instant<CTYPE>::compareAndMatchMany(std::vector<unsi
 
 
 
-        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL && printFlag) {
+        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL && printFlag)
+        {
             std::cout << "MONITOR NOW STOPPED FOR READBACK CHANNEL " << helper.getPVFromHandle(handleMatch[i]) << " WITH ID =" << monitorID[i] << std::endl;
             int statm;
             statm=connect.monitorStop(handleMatch[i], monitorID[i]);
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
                 status=statm;
             }
         }
@@ -1533,25 +1730,31 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
     status=ICAFE_NORMAL;
 
-    if (handleSet.size() != handleMatch.size() ) {
+    if (handleSet.size() != handleMatch.size() )
+    {
         return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
     }
 
-    if (handleSet.size() != valSet.size() ) {
+    if (handleSet.size() != valSet.size() )
+    {
         return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
     }
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
         if (!helper.isChannelConnected(handleSet[i])
-                || !helper.isChannelConnected(handleMatch[i])) {
+                || !helper.isChannelConnected(handleMatch[i]))
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
-            if (!helper.isChannelConnected(handleSet[i])) {
+            if (!helper.isChannelConnected(handleSet[i]))
+            {
                 helper.printHandle(handleSet[i]);
                 status=helper.getStatus(handleSet[i]);
             }
-            if (!helper.isChannelConnected(handleMatch[i])) {
+            if (!helper.isChannelConnected(handleMatch[i]))
+            {
                 helper.printHandle(handleMatch[i]);
                 status=helper.getStatus(handleMatch[i]);
             }
@@ -1560,24 +1763,30 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
     }
 
 
-    if (status!=ICAFE_NORMAL) {
+    if (status!=ICAFE_NORMAL)
+    {
         return status;
     }
 
-    if(printFlag) {
+    if(printFlag)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
     }
 
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
 
-        if (printFlag) {
+        if (printFlag)
+        {
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet[i]) << " to " << (unsigned short) valSet[i] << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet[i]) << " to " << valSet[i] << std::endl;
             }
 
@@ -1614,10 +1823,12 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
     nelemPreviousCache.reserve(handleSet.size());
 
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
 
-        switch (dbrType) {
+        switch (dbrType)
+        {
         case DBR_LONG :
         case DBR_SHORT :
         case DBR_ENUM:
@@ -1659,18 +1870,22 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
 
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
         //what is monitorpolicy??
-        if (nMonitors[i]==0) {
+        if (nMonitors[i]==0)
+        {
 
             unsigned int  _nelemPrevious, _nelemRequestedCheck=0;
             unsigned int  _nelemRequested=1;
             _nelemPrevious=helper.getNelemClient(handleMatch[i]);
             //Check the number of elements requested?
-            if (_nelemPrevious>1) {
+            if (_nelemPrevious>1)
+            {
                 _nelemRequestedCheck = helper.setNelem(handleMatch[i],_nelemRequested); //change handleSet to handleMatch 23/3/17
-                if (_nelemRequestedCheck != _nelemRequested) {
+                if (_nelemRequestedCheck != _nelemRequested)
+                {
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                               << _nelemPrevious << std::endl;
@@ -1684,12 +1899,14 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
             valGet[i]=valGetA[0];
 
-            if (_nelemPrevious>1) {
+            if (_nelemPrevious>1)
+            {
                 helper.setNelem(handleMatch[i],_nelemPrevious);  //change handleSet to handleMatch 23/3/17
             }
 
 
-            if (status!=ICAFE_NORMAL) {
+            if (status!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(status);
             }
@@ -1700,17 +1917,21 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
             statMonitor[i]=connect.monitorStart(handleMatch[i], monitorID[i]);
 
-            if (statMonitor[i]!=ICAFE_NORMAL) {
+            if (statMonitor[i]!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(statMonitor[i]);
             }
-            else {
-                if(printFlag) {
+            else
+            {
+                if(printFlag)
+                {
                     std::cout << "MONITOR NOW IN PLACE FOR READBACK CHANNEL " << helper.getPVFromHandle(handleMatch[i]) << " WITH ID=" << monitorID[i] << std::endl;
                 }
             }
             //revert to previous
-            if (whenKind != FLUSH_AUTOMATIC) {
+            if (whenKind != FLUSH_AUTOMATIC)
+            {
                 connect.channelMonitorPolicy.setWhenToFlushSendBuffer(whenKind);
             }
 
@@ -1725,9 +1946,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
         nelemPrevious=helper.getNelemClient(handleSet[i]);
         //Check the number of elements requested?
-        if (nelemPrevious>1) {
+        if (nelemPrevious>1)
+        {
             nelemRequestedCheck = helper.setNelem(handleSet[i],nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPrevious << std::endl;
@@ -1753,7 +1976,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
         status=set(handleSet[i], dbrType, valSetA);
 
-        if (status!=ICAFE_NORMAL) {
+        if (status!=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(status);
         }
@@ -1764,9 +1988,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
         nelemRequested=1;
         //Switch back to previous value
         //if (nelemPrevious>1) {
-        if(helper.getNelemRequest(handleSet[i])!= nelemPrevious) {
+        if(helper.getNelemRequest(handleSet[i])!= nelemPrevious)
+        {
             nelemPreviousCheck= helper.setNelem(handleSet[i],nelemPrevious);
-            if (nelemPreviousCheck != nelemPrevious) {
+            if (nelemPreviousCheck != nelemPrevious)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                           << nelemRequested << std::endl;
@@ -1786,9 +2012,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
         //Check the number of elements requested
         //See set and Match; this needs to be checked
         //Avoid problem when readback channel is the very same as the set(!)
-        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1) {
+        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1)
+        {
             nelemRequestedCheck = helper.setNelemToRetrieveFromCache(handleMatch[i],nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPreviousCache[i] << std::endl;
@@ -1813,7 +2041,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
     ptime timeStart(microsec_clock::local_time());
 
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
 
 
@@ -1825,23 +2054,28 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
 
 
-        if (status !=ICAFE_NORMAL) {
+        if (status !=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(status);
         }
 
         ///valGet[i]=valGetA[0][i];
-        if (dbrType==DBR_CHAR) {
+        if (dbrType==DBR_CHAR)
+        {
             valGet[i] = (unsigned short) valGetA[0];
         }
 
-        if(printFlag) {
+        if(printFlag)
+        {
             //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "Current Cached Value = " << (unsigned short) valGet[i] << std::endl;
                 std::cout << "Lower/Upper Target Values = " << (unsigned short)  valSetLower[i] << " and " << (unsigned short)  valSetUpper[i] << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "Current Cached Value = " << valGet[i] << std::endl;
                 std::cout << "Lower/Upper Target Values = " << valSetLower[i] << " and " << valSetUpper[i] << std::endl;
             }
@@ -1856,11 +2090,13 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
     timeElapsed= (double) duration.total_microseconds()/1000000.0;
 
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
 
 
         while ( (valGet[i]>valSetUpper[i] || valGet[i]<valSetLower[i] )
-                && timeElapsed < timeout ) {
+                && timeElapsed < timeout )
+        {
 
             valGetA[0]=0;
 
@@ -1872,7 +2108,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
             //std::cout <<"Cached value " << valGet[i] << std::endl;
 
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 valGet[i] = (unsigned short) valGetA[0];
             }
 
@@ -1884,16 +2121,20 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
             timeElapsed2=timeElapsed-timeElapsedBase;
 
-            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL) {
+            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL)
+            {
 
 
 
-                for (size_t ij=0; ij< handleMatch.size(); ++ij) {
+                for (size_t ij=0; ij< handleMatch.size(); ++ij)
+                {
                     status=Instant::getCache(handleMatch[ij], dbrType, valGetA);
                     valGet[ij]=valGetA[0];
-                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij]) {
+                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij])
+                    {
 
-                        if (dbrType==DBR_CHAR) {
+                        if (dbrType==DBR_CHAR)
+                        {
 
                             std::cout << "REPORTING " << helper.getPVFromHandle(handleSet[ij])
                                       << " SET VALUE=" << (unsigned short) valSet[ij]
@@ -1901,7 +2142,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
                                       << " HAS CURRENT VALUE=" << (unsigned short) valGet[ij]
                                       << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
                         }
-                        else {
+                        else
+                        {
                             std::cout << "REPORTING " << helper.getPVFromHandle(handleSet[ij])
                                       << " SET VALUE=" << valSet[ij]
                                       << "; READBACK " << helper.getPVFromHandle(handleMatch[ij])
@@ -1936,26 +2178,32 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
 
 
-    if (timeout <=timeElapsed ) {
+    if (timeout <=timeElapsed )
+    {
         std::cout << "*****TIMEOUT REACHED****** AFTER " << timeout << " (sec) " << std::endl;
         std::cout << "*****NOT ALL READBACK CHANNELS REACHED THEIR DESIRED VALUES WITHIN THE GIVEN TOLERANCE AND TIME PERIOD*****" << std::endl;
         status=ECAFE_TIMEOUT_SET_AND_MATCH;
     }
-    else {
+    else
+    {
 
-        if (printFlag) {
+        if (printFlag)
+        {
 
-            for (size_t i=0; i< handleSet.size(); ++i) {
+            for (size_t i=0; i< handleSet.size(); ++i)
+            {
 
                 valGetA[0]=0;
                 status=Instant::getCache(handleMatch[i], dbrType, valGetA);
                 valGet[i]=valGetA[0];
-                if (dbrType==DBR_CHAR) {
+                if (dbrType==DBR_CHAR)
+                {
                     std::cout << "GAME SET AND MATCH: " << helper.getPVFromHandle(handleSet[i]) << " SET VALUE= " << (unsigned short) valSet[i]
                               << " // " << helper.getPVFromHandle(handleMatch[i])  << " READBACK VALUE= " << (unsigned short) valGet[i] //pvdMatch.getAsDouble()
                               << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
                 }
-                else {
+                else
+                {
                     std::cout << "GAME SET AND MATCH: " << helper.getPVFromHandle(handleSet[i]) << " SET VALUE= " << valSet[i]
                               << " // " << helper.getPVFromHandle(handleMatch[i])  << " READBACK VALUE= " << valGet[i] //pvdMatch.getAsDouble()
                               << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
@@ -1967,14 +2215,17 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
     }
 //
 
-    for (size_t i=0; i< handleSet.size(); ++i) {
+    for (size_t i=0; i< handleSet.size(); ++i)
+    {
         unsigned int  nelemPreviousCheck;
         unsigned int  nelemRequested=1;
 
 
-        if (nelemPreviousCache[i]>1) {
+        if (nelemPreviousCache[i]>1)
+        {
             nelemPreviousCheck= helper.setNelemToRetrieveFromCache(handleMatch[i],nelemPreviousCache[i]);
-            if (nelemPreviousCheck != nelemPreviousCache[i]) {
+            if (nelemPreviousCheck != nelemPreviousCache[i])
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                           << nelemRequested << std::endl;
@@ -1985,11 +2236,13 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatchMany(std::vector<unsigned
 
 
 
-        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL && printFlag) {
+        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL && printFlag)
+        {
             std::cout << "MONITOR NOW STOPPED FOR READBACK CHANNEL " << helper.getPVFromHandle(handleMatch[i]) << " WITH ID =" << monitorID[i] << std::endl;
             int statm;
             statm=connect.monitorStop(handleMatch[i], monitorID[i]);
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
                 status=statm;
             }
         }
@@ -2026,25 +2279,31 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     CAFEStatus cstat;
 
     if (!helper.isChannelConnected(handleSet)
-            || !helper.isChannelConnected(handleMatch)) {
+            || !helper.isChannelConnected(handleMatch))
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
-        if (!helper.isChannelConnected(handleSet)) {
+        if (!helper.isChannelConnected(handleSet))
+        {
             helper.printHandle(handleSet);
             return helper.getStatus(handleSet);
         }
-        if (!helper.isChannelConnected(handleMatch)) {
+        if (!helper.isChannelConnected(handleMatch))
+        {
             helper.printHandle(handleMatch);
             return helper.getStatus(handleMatch);
         }
     }
 
-    if (printFlag) {
+    if (printFlag)
+    {
 
-        if (dbrType==DBR_CHAR) {
+        if (dbrType==DBR_CHAR)
+        {
             std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet) << " to " << (unsigned short) valSet << std::endl;
         }
-        else {
+        else
+        {
             std::cout << "SETTING  PV=" << helper.getPVFromHandle(handleSet) << " to " << valSet << std::endl;
         }
         std::cout << "READBACK PV=" << helper.getPVFromHandle(handleMatch)
@@ -2062,7 +2321,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     CTYPE valSetLower;
 
 
-    switch (dbrType) {
+    switch (dbrType)
+    {
     case DBR_LONG :
     case DBR_SHORT :
     case DBR_ENUM:
@@ -2090,15 +2350,18 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     unsigned int monitorIDis=0;
 
     //what is monitorpolicy??
-    if (nMonitors==0) {
+    if (nMonitors==0)
+    {
 
         unsigned int  _nelemPrevious, _nelemRequestedCheck=0;
         unsigned int  _nelemRequested=1;
         _nelemPrevious=helper.getNelemClient(handleMatch);
         //Check the number of elements requested?
-        if (_nelemPrevious>1) {
+        if (_nelemPrevious>1)
+        {
             _nelemRequestedCheck = helper.setNelem(handleMatch,_nelemRequested); ////change handleSet to handleMatch 23/3/17
-            if (_nelemRequestedCheck != _nelemRequested) {
+            if (_nelemRequestedCheck != _nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << _nelemPrevious << std::endl;
@@ -2112,11 +2375,13 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
         //valGet=valGetA[0];
 
 
-        if (_nelemPrevious>1) {
+        if (_nelemPrevious>1)
+        {
             helper.setNelem(handleMatch,_nelemPrevious);  ////change handleSet to handleMatch 23/3/17
         }
 
-        if (status!=ICAFE_NORMAL) {
+        if (status!=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(status);
         }
@@ -2127,17 +2392,21 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
         statMonitor=connect.monitorStart(handleMatch, monitorIDis);
 
-        if (statMonitor!=ICAFE_NORMAL) {
+        if (statMonitor!=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(statMonitor);
         }
-        else {
-            if(printFlag) {
+        else
+        {
+            if(printFlag)
+            {
                 std::cout << "MONITOR STARTED WITH ID=" << monitorIDis<< std::endl;
             }
         }
         //revert to previous
-        if (whenKind != FLUSH_AUTOMATIC) {
+        if (whenKind != FLUSH_AUTOMATIC)
+        {
             connect.channelMonitorPolicy.setWhenToFlushSendBuffer(whenKind);
         }
     }
@@ -2151,9 +2420,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     unsigned int  nelemRequested=1;
     nelemPrevious=helper.getNelemClient(handleSet);
     //Check the number of elements requested?
-    if (nelemPrevious>1) {
+    if (nelemPrevious>1)
+    {
         nelemRequestedCheck = helper.setNelem(handleSet,nelemRequested);
-        if (nelemRequestedCheck != nelemRequested) {
+        if (nelemRequestedCheck != nelemRequested)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                       << nelemPrevious << std::endl;
@@ -2175,7 +2446,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
     status=set(handleSet, dbrType, valSetA);
 
-    if (status!=ICAFE_NORMAL) {
+    if (status!=ICAFE_NORMAL)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         cstat.report(status);
     }
@@ -2186,9 +2458,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     nelemRequested=1;
     //Switch back to previous value
     //if (nelemPrevious>1) {
-    if(helper.getNelemRequest(handleSet)!= nelemPrevious) {
+    if(helper.getNelemRequest(handleSet)!= nelemPrevious)
+    {
         nelemPreviousCheck= helper.setNelem(handleSet,nelemPrevious);
-        if (nelemPreviousCheck != nelemPrevious) {
+        if (nelemPreviousCheck != nelemPrevious)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                       << nelemRequested << std::endl;
@@ -2221,9 +2495,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
 
     //Check the number of elements requested
-    if (nelemPrevious>0) {
+    if (nelemPrevious>0)
+    {
         nelemRequestedCheck = helper.setNelemToRetrieveFromCache(handleMatch,nelemRequested);
-        if (nelemRequestedCheck != nelemRequested) {
+        if (nelemRequestedCheck != nelemRequested)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                       << nelemPrevious << std::endl;
@@ -2245,7 +2521,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
 
 
-    if (status !=ICAFE_NORMAL) {
+    if (status !=ICAFE_NORMAL)
+    {
         std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         cstat.report(status);
     }
@@ -2253,14 +2530,17 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
 
 
-    if(printFlag) {
+    if(printFlag)
+    {
         //std::cout << __METHOD__ << std::endl;
         std::cout << "Current Cached Value = " ;
-        if (dbrType==DBR_CHAR) {
+        if (dbrType==DBR_CHAR)
+        {
             std::cout << (unsigned short) valGetA[0] << std::endl;
             std::cout << "Lower/Upper Target Values = " << (unsigned short) valSetLower << " and " << (unsigned short) valSetUpper << std::endl;
         }
-        else {
+        else
+        {
             std::cout << valGetA[0] << std::endl;
             std::cout << "Lower/Upper Target Values = " << valSetLower << " and " << valSetUpper << std::endl;
         }
@@ -2274,11 +2554,13 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
 
 
-    if (dbrType==DBR_CHAR) {
+    if (dbrType==DBR_CHAR)
+    {
         valGet= (unsigned short) valGetA[0];
     }
 
-    else {
+    else
+    {
         valGet=valGetA[0];
     }
 
@@ -2287,7 +2569,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     while ( (valGet>valSetUpper || valGet<valSetLower)
 
             //while ( (pvdMatch.getAsDouble()>valSetUpper || pvdMatch.getAsDouble()<valSetLower)
-            && timeElapsed < timeout ) {
+            && timeElapsed < timeout )
+    {
         //status=getCache(handleMatch, dbrType, pvdMatch);
 
         /*
@@ -2308,7 +2591,8 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
         valGet=valGetA[0];
 
-        if (dbrType==DBR_CHAR) {
+        if (dbrType==DBR_CHAR)
+        {
             valGet = (unsigned short) valGetA[0];
         }
         //std::cout << "getCache(handleMatch, dbrType, valGetA) = " << valGet << std::endl;
@@ -2320,13 +2604,16 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
         timeElapsed2=timeElapsed-timeElapsedBase;
 
-        if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL) {
+        if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL)
+        {
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "SET VALUE " << (unsigned short) valSet << " CURRENT VALUE " << (unsigned short) valGetA[0]
                           << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "SET VALUE " << valSet << " CURRENT VALUE " << valGetA[0] //pvdMatch.getAsDouble()
                           << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
             }
@@ -2347,20 +2634,25 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
     }
 
 
-    if (timeout <=timeElapsed ) {
+    if (timeout <=timeElapsed )
+    {
         std::cout << "*****TIMEOUT REACHED****** AFTER " << timeout << " (sec) " << std::endl;
 
         status=ECAFE_TIMEOUT_SET_AND_MATCH;
     }
-    else {
-        if (printFlag) {
+    else
+    {
+        if (printFlag)
+        {
             status=Instant::getCache(handleMatch, dbrType, valGetA);
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 std::cout << "GAME SET AND MATCH: SET VALUE= " << (unsigned short) valSet
                           << " LAST VALUE READ= " << (unsigned short) valGetA[0] //pvdMatch.getAsDouble()
                           << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "GAME SET AND MATCH: SET VALUE= " << valSet << " LAST VALUE READ= " << valGetA[0] //pvdMatch.getAsDouble()
                           << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
             }
@@ -2371,9 +2663,11 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
 
 
-    if (nelemPrevious>1) {
+    if (nelemPrevious>1)
+    {
         nelemPreviousCheck= helper.setNelemToRetrieveFromCache(handleMatch,nelemPrevious);
-        if (nelemPreviousCheck != nelemPrevious) {
+        if (nelemPreviousCheck != nelemPrevious)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                       << nelemRequested << std::endl;
@@ -2385,13 +2679,16 @@ template <class CTYPE> int  Instant<CTYPE>::setAndMatch(const unsigned int handl
 
 
 
-    if (nMonitors==0 && statMonitor==ICAFE_NORMAL) {
-        if (monitorIDis !=0 ) {
+    if (nMonitors==0 && statMonitor==ICAFE_NORMAL)
+    {
+        if (monitorIDis !=0 )
+        {
             std::cout << "STOPPED MONITOR WITH ID =" << monitorIDis << std::endl;
             int statm;
             statm=connect.monitorStop(handleMatch, monitorIDis);
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
                 status=statm;
             }
         }
@@ -2460,12 +2757,15 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
     status=ICAFE_NORMAL;
 
 
-    if (handleMatch.size() != valSet.size() ) {
+    if (handleMatch.size() != valSet.size() )
+    {
         return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
     }
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
-        if ( !helper.isChannelConnected(handleMatch[i])) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+        if ( !helper.isChannelConnected(handleMatch[i]))
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
 
@@ -2475,13 +2775,16 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
     }
 
 
-    if (status!=ICAFE_NORMAL) {
+    if (status!=ICAFE_NORMAL)
+    {
         return status;
     }
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
-        if (printFlag) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+        if (printFlag)
+        {
             std::cout << "SET VALUE IS = " << valSet[i] << std::endl;
             std::cout << "READBACK PV=" << helper.getPVFromHandle(handleMatch[i])
                       << "  tolerance= " << fabs((double)tolerance) << std::endl;
@@ -2509,9 +2812,11 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
     nelemPreviousCache.reserve(handleMatch.size());
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
-        switch (dbrType) {
+        switch (dbrType)
+        {
         case DBR_LONG :
         case DBR_SHORT :
         case DBR_ENUM:
@@ -2551,18 +2856,22 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
         //what is monitorpolicy??
-        if (nMonitors[i]==0) {
+        if (nMonitors[i]==0)
+        {
 
             unsigned int  _nelemPrevious, _nelemRequestedCheck=0;
             unsigned int  _nelemRequested=1;
             _nelemPrevious=helper.getNelemClient(handleMatch[i]);
             //Check the number of elements requested?
-            if (_nelemPrevious>1) {
+            if (_nelemPrevious>1)
+            {
                 _nelemRequestedCheck = helper.setNelem(handleMatch[i],_nelemRequested);
-                if (_nelemRequestedCheck != _nelemRequested) {
+                if (_nelemRequestedCheck != _nelemRequested)
+                {
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                               << _nelemPrevious << std::endl;
@@ -2576,12 +2885,14 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
             valGet[i]=valGetA[0];
 
-            if (_nelemPrevious>1) {
+            if (_nelemPrevious>1)
+            {
                 helper.setNelem(handleMatch[i],_nelemPrevious);
             }
 
 
-            if (status!=ICAFE_NORMAL) {
+            if (status!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(status);
             }
@@ -2592,17 +2903,21 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
             statMonitor[i]=connect.monitorStart(handleMatch[i], monitorID[i]);
 
-            if (statMonitor[i]!=ICAFE_NORMAL) {
+            if (statMonitor[i]!=ICAFE_NORMAL)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 cstat.report(statMonitor[i]);
             }
-            else {
-                if(printFlag) {
+            else
+            {
+                if(printFlag)
+                {
                     std::cout << "MONITOR STARTED WITH ID=" << monitorID[i] << std::endl;
                 }
             }
             //revert to previous
-            if (whenKind != FLUSH_AUTOMATIC) {
+            if (whenKind != FLUSH_AUTOMATIC)
+            {
                 connect.channelMonitorPolicy.setWhenToFlushSendBuffer(whenKind);
             }
 
@@ -2618,9 +2933,11 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
         nelemPrevious=helper.getNelemClient(handleMatch[i]);
         //Check the number of elements requested?
-        if (nelemPrevious>1) {
+        if (nelemPrevious>1)
+        {
             nelemRequestedCheck = helper.setNelem(handleMatch[i],nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPrevious << std::endl;
@@ -2639,9 +2956,11 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
         //Check the number of elements requested
         //See set and Match; this needs to be checked
         //Avoid problem when readback channel is the very same as the set(!)
-        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1) {
+        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1)
+        {
             nelemRequestedCheck = helper.setNelemToRetrieveFromCache(handleMatch[i],nelemRequested);
-            if (nelemRequestedCheck != nelemRequested) {
+            if (nelemRequestedCheck != nelemRequested)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
                           << nelemPreviousCache[i] << std::endl;
@@ -2662,7 +2981,8 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
     ptime timeStart(microsec_clock::local_time());
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
         valGetA[0]=0;
 
@@ -2670,17 +2990,20 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
         valGet[i]=valGetA[0];
 
-        if (status !=ICAFE_NORMAL) {
+        if (status !=ICAFE_NORMAL)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             cstat.report(status);
         }
 
         ///valGet[i]=valGetA[0][i];
-        if (dbrType==DBR_CHAR) {
+        if (dbrType==DBR_CHAR)
+        {
             valGet[i] = (unsigned short) valGet[i];
         }
 
-        if(printFlag) {
+        if(printFlag)
+        {
             std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
             std::cout << "Current Cached Value = " << valGet[i] << std::endl;
             std::cout << "Lower/Upper Target Values = " << valSetLower[i] << " and " << valSetUpper[i] << std::endl;
@@ -2695,11 +3018,13 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
     timeElapsed= (double) duration.total_microseconds()/1000000.0;
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
 
 
         while ( (valGet[i]>valSetUpper[i] || valGet[i]<valSetLower[i] )
-                && timeElapsed < timeout ) {
+                && timeElapsed < timeout )
+        {
 
             valGetA[0]=0;
 
@@ -2710,7 +3035,8 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
             //std::cout <<"Cached value " << valGet[i] << std::endl;
 
 
-            if (dbrType==DBR_CHAR) {
+            if (dbrType==DBR_CHAR)
+            {
                 valGet[i] = (unsigned short) valGet[i];
             }
 
@@ -2722,12 +3048,15 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
             timeElapsed2=timeElapsed-timeElapsedBase;
 
-            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL) {
+            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL)
+            {
 
-                for (size_t ij=0; ij< handleMatch.size(); ++ij) {
+                for (size_t ij=0; ij< handleMatch.size(); ++ij)
+                {
                     status=Instant::getCache(handleMatch[ij], dbrType, valGetA);
                     valGet[ij]=valGetA[0];
-                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij]) {
+                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij])
+                    {
                         std::cout << "REPORTING ON: " << helper.getPVFromHandle(handleMatch[ij]) << " SET VALUE= " << valSet[ij] \
                                   <<" WHILE CURRENT READBACK VALUE=" << valGet[ij]
                                   << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
@@ -2754,16 +3083,20 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
 
 
-    if (timeout <=timeElapsed ) {
+    if (timeout <=timeElapsed )
+    {
         std::cout << "*****TIMEOUT REACHED****** AFTER " << timeout << " (sec) " << std::endl;
         status=ECAFE_TIMEOUT_SET_AND_MATCH;
     }
-    else {
+    else
+    {
 
-        for (size_t i=0; i< handleMatch.size(); ++i) {
+        for (size_t i=0; i< handleMatch.size(); ++i)
+        {
 
             //if (printFlag) {std::cout << "MONITOR STARTED WITH ID/2-/=" << monitorID[i] << std::endl;}
-            if (printFlag) {
+            if (printFlag)
+            {
                 valGetA[0]=0;
                 status=Instant::getCache(handleMatch[i], dbrType, valGetA);
                 valGet[i]=valGetA[0];
@@ -2775,14 +3108,17 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
     }
 
 
-    for (size_t i=0; i< handleMatch.size(); ++i) {
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
         unsigned int  nelemPreviousCheck;
         unsigned int  nelemRequested=1;
 
 
-        if (nelemPreviousCache[i]>1) {
+        if (nelemPreviousCache[i]>1)
+        {
             nelemPreviousCheck= helper.setNelemToRetrieveFromCache(handleMatch[i],nelemPreviousCache[i]);
-            if (nelemPreviousCheck != nelemPreviousCache[i]) {
+            if (nelemPreviousCheck != nelemPreviousCache[i])
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
                           << nelemRequested << std::endl;
@@ -2793,11 +3129,13 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 
 
 
-        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL) {
+        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL)
+        {
             std::cout << "STOPPING MONITOR WITH ID =" << monitorID[i] << std::endl;
             int statm;
             statm=connect.monitorStop(handleMatch[i], monitorID[i]);
-            if(status==ICAFE_NORMAL) {
+            if(status==ICAFE_NORMAL)
+            {
                 status=statm;
             }
         }

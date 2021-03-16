@@ -28,9 +28,12 @@ int CAFE::getCache(const unsigned int  *handleArray, unsigned int  nelem, long l
 #define __METHOD__ \
     "CAFE::getCache(*handleArray, nelem, * val, *statusArray, *alarmStatus, *alarmSeverity, *ts"
 
+
+
     unsigned int * nelemPrevious = new unsigned int [nelem];
 
-    for (unsigned int  i=0; i < nelem; ++i) {
+    for (unsigned int  i=0; i < nelem; ++i)
+    {
         nelemPrevious[i] =CAFE::setNelemToRetrieveFromCacheToOne(handleArray[i]);
     }
 
@@ -44,10 +47,12 @@ int CAFE::getCache(const unsigned int  *handleArray, unsigned int  nelem, long l
     unsigned short nbyteChType=1;
     unsigned short nbyteMax=nbyteChType;
 
-    for (unsigned int i=0; i<nelem; ++i) {
+    for (unsigned int i=0; i<nelem; ++i)
+    {
         CAFE::getChannelInfo(handleArray[i], channelInfo);
 
-        switch (channelInfo.getDataType()) {
+        switch (channelInfo.getDataType())
+        {
         case DBF_CHAR:
             nbyteChType=sizeof(dbr_char_t);
             break;
@@ -73,45 +78,55 @@ int CAFE::getCache(const unsigned int  *handleArray, unsigned int  nelem, long l
             nbyteChType=1;
         }
 
-        if ( channelInfo.getCafeConnectionState() != ICAFE_CS_NEVER_CONN  && channelInfo.getCafeConnectionState() != ICAFE_CS_CLOSED) {
-            if (channelInfo.getDataType()==DBF_STRING) {
+        if ( channelInfo.getCafeConnectionState() != ICAFE_CS_NEVER_CONN  && channelInfo.getCafeConnectionState() != ICAFE_CS_CLOSED)
+        {
+            if (channelInfo.getDataType()==DBF_STRING)
+            {
                 chtMax=DBR_STRING;
                 break;
             }
 
-            if(nbyteChType>nbyteMax && channelInfo.getDataType()< CAFE_NO_ACCESS) {
+            if(nbyteChType>nbyteMax && channelInfo.getDataType()< CAFE_NO_ACCESS)
+            {
                 chtMax=channelInfo.getDataType();
                 nbyteMax=4;
             }
         }
     }
 
-    switch (chtMax) {
-    case DBR_STRING: {
+    switch (chtMax)
+    {
+    case DBR_STRING:
+    {
         dbr_string_t * _sVal = new dbr_string_t[nelem];
         status=cafeSoluble.getCache(handleArray, nelem, DBR_TIME_STRING, _sVal, statusArray,
                                     alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             istringstream ss;
-            for (unsigned int  i=0; i < nelem; ++i) {
+            for (unsigned int  i=0; i < nelem; ++i)
+            {
                 long long l=0;
                 ss.clear();
                 ss.str(_sVal[i]);
                 ss>>l;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     val[i] = (long  long) l;
                     std::string strInput=_sVal[i];
                     std::stringstream ssOut;
                     ssOut << l;
                     std::string strOutput=ssOut.str();
-                    if (strInput!=strOutput) {
+                    if (strInput!=strOutput)
+                    {
                         cout << __METHOD__ << "//" << __LINE__ << endl;
                         cout << "***WARNING*** STRING TO LONG LONG CONVERSION REPORTS: " << endl;
                         cout << "STRING VALUE: " << strInput << " CONVERTED TO: " << strOutput << endl;
                     }
                 }
-                else {
+                else
+                {
                     cout << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO LONG LONG  CONVERSION for ELEMENT " << i \
                          << " of " << nelem << " !! " << endl;
@@ -128,46 +143,58 @@ int CAFE::getCache(const unsigned int  *handleArray, unsigned int  nelem, long l
         delete [] _sVal;
         break;
     }
-    case DBR_DOUBLE: {
+    case DBR_DOUBLE:
+    {
         dbr_double_t * _dVal = new dbr_double_t[nelem];
         status=cafeDoppio.getCache(handleArray, nelem, DBR_TIME_DOUBLE, _dVal, statusArray,
                                    alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int  i=0; i < nelem; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int  i=0; i < nelem; ++i)
+            {
                 val[i] = (long  long) _dVal[i];
             }
         }
         delete [] _dVal;
         break;
     }
-    case DBR_FLOAT: {
+    case DBR_FLOAT:
+    {
         dbr_float_t * _fVal = new dbr_float_t[nelem];
         status=cafeFrappuccino.getCache(handleArray, nelem, DBR_TIME_FLOAT, _fVal, statusArray,
                                         alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int  i=0; i < nelem; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int  i=0; i < nelem; ++i)
+            {
                 val[i] = (long  long) _fVal[i];
             }
         }
         delete [] _fVal;
         break;
     }
-    case DBR_LONG: {
+    case DBR_LONG:
+    {
         dbr_long_t * _lVal = new dbr_long_t[nelem];
+        //std::cout << __METHOD__  << std::endl;
         status=cafeLatte.getCache(handleArray, nelem, DBR_TIME_LONG, _lVal, statusArray,
                                   alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int  i=0; i < nelem; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int  i=0; i < nelem; ++i)
+            {
                 val[i] = (long  long) _lVal[i];
             }
         }
+        //(std::cout << __METHOD__  << val[0] << std::endl;
         delete [] _lVal;
         break;
     }
 
     }//switch
 
-    for (unsigned int  i=0; i < nelem; ++i) {
+    for (unsigned int  i=0; i < nelem; ++i)
+    {
         CAFE::setNelemToRetrieveFromCacheToPrevious(handleArray[i],nelemPrevious[i]);
     }
 
@@ -238,10 +265,12 @@ int  CAFE::getCache(const unsigned int handle, long long * _val, \
 
     ChannelRegalia channelInfo;
     CAFE::getChannelInfo(handle, channelInfo);
-    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
+    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+    {
         return ICAFE_CS_NEVER_CONN;
     }
-    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)
+    {
         return ICAFE_CS_CLOSED;
     }
 
@@ -249,34 +278,40 @@ int  CAFE::getCache(const unsigned int handle, long long * _val, \
     unsigned int  nn=handleHelper.getNelemRequest(handle);
 
 
-    if ( channelInfo.getDataType() == DBR_STRING) {
+    if ( channelInfo.getDataType() == DBR_STRING)
+    {
         dbr_string_t * _sVal = new dbr_string_t[nn];
         _status=cafeSoluble.getCache (handle, DBR_TIME_STRING,  _sVal, alarmStatus, alarmSeverity, ts);
-        if (_status!=ICAFE_NORMAL) {
+        if (_status!=ICAFE_NORMAL)
+        {
             delete [] _sVal;
             return _status;
         }
         istringstream ss;
 
-        for (unsigned short i=0; i<nn; ++i) {
+        for (unsigned short i=0; i<nn; ++i)
+        {
             long long l=0;
             ss.clear();
             ss.str(_sVal[i]);
             ss>>l;
 
-            if ( !ss.fail()) {
+            if ( !ss.fail())
+            {
                 _val[i] = (long  long) l;
                 std::string strInput=_sVal[i];
                 std::stringstream ssOut;
                 ssOut << l;
                 std::string strOutput=ssOut.str();
-                if (strInput!=strOutput) {
+                if (strInput!=strOutput)
+                {
                     cout << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** STRING TO LONG LONG CONVERSION REPORTS: " << endl;
                     cout << "STRING VALUE: " << strInput << " CONVERTED TO: " << strOutput << endl;
                 }
             }
-            else {
+            else
+            {
                 cout << __METHOD__ << "//" << __LINE__ << endl;
                 cout << "***WARNING*** NO STRING TO LONG LONG  CONVERSION for ELEMENT " << i \
                      << " of " << nn << " !! " << endl;
@@ -291,26 +326,32 @@ int  CAFE::getCache(const unsigned int handle, long long * _val, \
         delete [] _sVal;
     }
 
-    else if ( channelInfo.getDataType() == DBR_DOUBLE) {
+    else if ( channelInfo.getDataType() == DBR_DOUBLE)
+    {
         dbr_double_t * _dVal = new dbr_double_t[nn];
         _status=cafeDoppio.getCache (handle, DBR_TIME_DOUBLE,  _dVal, alarmStatus, alarmSeverity, ts);
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _dVal[i];
         }
         delete [] _dVal;
     }
-    else if ( channelInfo.getDataType() == DBR_FLOAT) {
+    else if ( channelInfo.getDataType() == DBR_FLOAT)
+    {
         dbr_float_t * _fVal = new dbr_float_t[nn];
         _status=cafeFrappuccino.getCache (handle, DBR_TIME_FLOAT,  _fVal, alarmStatus, alarmSeverity, ts);
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _fVal[i];
         }
         delete [] _fVal;
     }
-    else {
+    else
+    {
         dbr_long_t * _lVal = new dbr_long_t[nn];
         _status=cafeLatte.getCache (handle, DBR_TIME_LONG,  _lVal, alarmStatus, alarmSeverity, ts);
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _lVal[i];
         }
         delete [] _lVal;
@@ -335,44 +376,52 @@ int  CAFE::getCache(const unsigned int  handle, long long   * _val, \
                     dbr_short_t &alarmSeverity)"
     ChannelRegalia channelInfo;
     CAFE::getChannelInfo(handle, channelInfo);
-    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
+    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+    {
         return ICAFE_CS_NEVER_CONN;
     }
-    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)
+    {
         return ICAFE_CS_CLOSED;
     }
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemRequest(handle);
 
 
-    if ( channelInfo.getDataType() == DBR_STRING) {
+    if ( channelInfo.getDataType() == DBR_STRING)
+    {
         dbr_string_t * _sVal = new dbr_string_t[nn];
         _status=cafeSoluble.getCache (handle, DBR_STS_STRING,  _sVal, alarmStatus, alarmSeverity);
-        if (_status!=ICAFE_NORMAL) {
+        if (_status!=ICAFE_NORMAL)
+        {
             delete [] _sVal;
             return _status;
         }
         istringstream ss;
 
-        for (unsigned short i=0; i<nn; ++i) {
+        for (unsigned short i=0; i<nn; ++i)
+        {
             long long l=0;
             ss.clear();
             ss.str(_sVal[i]);
             ss>>l;
 
-            if ( !ss.fail()) {
+            if ( !ss.fail())
+            {
                 _val[i] = (long  long) l;
                 std::string strInput=_sVal[i];
                 std::stringstream ssOut;
                 ssOut << l;
                 std::string strOutput=ssOut.str();
-                if (strInput!=strOutput) {
+                if (strInput!=strOutput)
+                {
                     cout << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** STRING TO LONG LONG CONVERSION REPORTS: " << endl;
                     cout << "STRING VALUE: " << strInput << " CONVERTED TO: " << strOutput << endl;
                 }
             }
-            else {
+            else
+            {
                 cout << __METHOD__ << "//" << __LINE__ << endl;
                 cout << "***WARNING*** NO STRING TO LONG LONG  CONVERSION for ELEMENT " << i \
                      << " of " << nn << " !! " << endl;
@@ -387,26 +436,32 @@ int  CAFE::getCache(const unsigned int  handle, long long   * _val, \
         delete [] _sVal;
     }
 
-    else if ( channelInfo.getDataType() == DBR_DOUBLE) {
+    else if ( channelInfo.getDataType() == DBR_DOUBLE)
+    {
         dbr_double_t * _dVal = new dbr_double_t[nn];
         _status=cafeDoppio.getCache(handle, DBR_STS_DOUBLE,  _dVal, alarmStatus, alarmSeverity);
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _dVal[i];
         }
         delete [] _dVal;
     }
-    else if ( channelInfo.getDataType() == DBR_FLOAT) {
+    else if ( channelInfo.getDataType() == DBR_FLOAT)
+    {
         dbr_float_t * _fVal = new dbr_float_t[nn];
         _status=cafeFrappuccino.getCache (handle, DBR_STS_FLOAT,  _fVal, alarmStatus, alarmSeverity);
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _fVal[i];
         }
         delete [] _fVal;
     }
-    else {
+    else
+    {
         dbr_long_t * _lVal = new dbr_long_t[nn];
         _status=cafeLatte.getCache (handle, DBR_STS_LONG,  _lVal, alarmStatus, alarmSeverity);
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _lVal[i];
         }
         delete [] _lVal;
@@ -429,44 +484,52 @@ int  CAFE::getCache(const unsigned int handle, long long * _val)
 
     ChannelRegalia channelInfo;
     CAFE::getChannelInfo(handle, channelInfo);
-    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
+    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+    {
         return ICAFE_CS_NEVER_CONN;
     }
-    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)
+    {
         return ICAFE_CS_CLOSED;
     }
 
     int  _status=ICAFE_NORMAL;
     unsigned int  nn=handleHelper.getNelemRequest(handle);
 
-    if ( channelInfo.getDataType() == DBR_STRING) {
+    if ( channelInfo.getDataType() == DBR_STRING)
+    {
         dbr_string_t * _sVal = new dbr_string_t[nn];
         _status=cafeSoluble.getCache (handle, DBR_STRING,  _sVal);
-        if (_status!=ICAFE_NORMAL) {
+        if (_status!=ICAFE_NORMAL)
+        {
             delete [] _sVal;
             return _status;
         }
         istringstream ss;
 
-        for (unsigned short i=0; i<nn; ++i) {
+        for (unsigned short i=0; i<nn; ++i)
+        {
             long long l=0;
             ss.clear();
             ss.str(_sVal[i]);
             ss>>l;
 
-            if ( !ss.fail()) {
+            if ( !ss.fail())
+            {
                 _val[i] = (long  long) l;
                 std::string strInput=_sVal[i];
                 std::stringstream ssOut;
                 ssOut << l;
                 std::string strOutput=ssOut.str();
-                if (strInput!=strOutput) {
+                if (strInput!=strOutput)
+                {
                     cout << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** STRING TO LONG LONG CONVERSION REPORTS: " << endl;
                     cout << "STRING VALUE: " << strInput << " CONVERTED TO: " << strOutput << endl;
                 }
             }
-            else {
+            else
+            {
                 cout << __METHOD__ << "//" << __LINE__ << endl;
                 cout << "***WARNING*** NO STRING TO LONG LONG  CONVERSION for ELEMENT " << i \
                      << " of " << nn << " !! " << endl;
@@ -480,38 +543,47 @@ int  CAFE::getCache(const unsigned int handle, long long * _val)
 
         delete [] _sVal;
     }
-    else if ( channelInfo.getDataType() == DBR_DOUBLE) {
+    else if ( channelInfo.getDataType() == DBR_DOUBLE)
+    {
         dbr_double_t * _dVal = new dbr_double_t[nn];
         _status=cafeDoppio.getCache (handle, DBR_DOUBLE,  _dVal);
-        if (_status!=ICAFE_NORMAL) {
+        if (_status!=ICAFE_NORMAL)
+        {
             delete [] _dVal;
             return _status;
         }
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _dVal[i];
         }
         delete [] _dVal;
     }
-    else if ( channelInfo.getDataType() == DBR_FLOAT) {
+    else if ( channelInfo.getDataType() == DBR_FLOAT)
+    {
         dbr_float_t * _fVal = new dbr_float_t[nn];
         _status=cafeFrappuccino.getCache (handle, DBR_FLOAT,  _fVal);
-        if (_status!=ICAFE_NORMAL) {
+        if (_status!=ICAFE_NORMAL)
+        {
             delete [] _fVal;
             return _status;
         }
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _fVal[i];
         }
         delete [] _fVal;
     }
-    else {
+    else
+    {
         dbr_long_t * _lVal = new dbr_long_t[nn];
         _status=cafeLatte.getCache (handle, DBR_LONG,  _lVal);
-        if (_status!=ICAFE_NORMAL) {
+        if (_status!=ICAFE_NORMAL)
+        {
             delete [] _lVal;
             return _status;
         }
-        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int  i=0; i < handleHelper.getNelemRequest(handle); ++i)
+        {
             _val[i] = (long  long) _lVal[i];
         }
         delete [] _lVal;
@@ -539,11 +611,14 @@ int  CAFE::getCache(const unsigned int * handleArray, unsigned int nelem, PVData
 
     int  overallStatus=ICAFE_NORMAL;
     bool isGood=true;
-    for (unsigned int  i=0; i<nelem; ++i) {
+    for (unsigned int  i=0; i<nelem; ++i)
+    {
 
         status=getCache(handleArray[i],  pvdArray [i]);
-        if ( (status != ICAFE_NORMAL) && isGood) {
-            overallStatus=status;
+        //if ( (status != ICAFE_NORMAL) && isGood) {
+        if ( (pvdArray[i].status != ICAFE_NORMAL) && isGood)
+        {
+            overallStatus=pvdArray[i].status;
             isGood=false;
         }
     }
@@ -570,41 +645,54 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
+    // std::cout <<  __FILE__ << " " << __METHOD__  << std::endl;
+
+    if (it_handle != handle_index.end())
+    {
 
         //meant for use in callbacks in monitors!
-        if ( (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_NO_CHECK) {
+        if ( (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_NO_CHECK)
+        {
             (*it_handle).getPVDataHolder(pvd);
-            return status;
-        }
-				/*
-				std::cout << "=============================================================================" << std::endl;
-        std::cout <<  __METHOD__ << " PV= " << (*it_handle).getPV() << std::endl;  
-        std::cout <<  __METHOD__ << " "  <<  " ONE "  << std::endl;
-        std::cout << (*it_handle).getChannelRegalia().getCafeConnectionState() << std::endl;
-        std::cout << (*it_handle).isConnected() << std::endl;  
-         */
-				//Newly added!!
-        //ifNeverConnected - return error
-        if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
-            pvd.status=  ICAFE_CS_NEVER_CONN; 
-            return ICAFE_CS_NEVER_CONN;
-        }
-        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)  {
-				    pvd.status=  ICAFE_CS_CLOSED; 
-            return ICAFE_CS_CLOSED;
+	    //pvd.status = ICAFE_NORMAL;
+            //return status;
+            return pvd.status;
         }
 
+        //std::cout << "=============================================================================" << std::endl;
+        //std::cout <<  __METHOD__ << " PV= " << (*it_handle).getPV() << std::endl;
+
+        //std::cout << (*it_handle).getChannelRegalia().getCafeConnectionState() << std::endl;
+        //std::cout << (*it_handle).isConnected() << std::endl;
+
+        //Newly added!!
+        //ifNeverConnected - return error
+        if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+        {
+            pvd.status=  ICAFE_CS_NEVER_CONN;
+            return ICAFE_CS_NEVER_CONN;
+        }
+        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)
+        {
+            pvd.status=  ICAFE_CS_CLOSED;
+            return ICAFE_CS_CLOSED;
+        }
+        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_DISCONN)
+        {
+            pvd.status=  ICAFE_CS_DISCONN;
+            return ICAFE_CS_DISCONN;
+        }
 
         //Whatever is already there!
         chtype dbrtype= (*it_handle).getChannelRequestMetaData().getDbrDataType();
 
-     
+
         //Find Native DataType
-        if ( (status=cafeGranules.channelVerifyGet(handle, dbrtype)) != ICAFE_NORMAL) {
-				   
+        if ( (status=cafeGranules.channelVerifyGet(handle, dbrtype)) != ICAFE_NORMAL)
+        {
+
             (*it_handle).getPVDataHolder(pvd);
-						
+            pvd.status = status;
             return status;
         }
 
@@ -615,7 +703,8 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
                 && (*it_handle).getChannelRequestPolicyGet().getMethodKind()
                 != CAFENUM::WITH_CALLBACK_USER_SUPPLIED
                 && (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_WAIT
-                && (*it_handle).isConnected() ) {
+                && (*it_handle).isConnected() )
+        {
 
             ChannelTimeoutPolicy channelTimeoutPolicyGet = (*it_handle).getChannelTimeoutPolicyGet();
 
@@ -624,28 +713,33 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
             status=cafeGranules.waitForGetEvent(handle,
                                                 channelTimeoutPolicyGet.getTimeout() );
 
-            if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout()) {
+            if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout())
+            {
                 unsigned short ntries=0;
 
-                while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries()) {
+                while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries())
+                {
                     status=cafeGranules.waitForGetEvent(handle, channelTimeoutPolicyGet.getTimeout() +
                                                         channelTimeoutPolicyGet.getDeltaTimeout()*(++ntries));
-                    
+
                 }
 
 
-                if ((*it_handle).isConnected()) {
+                if ((*it_handle).isConnected())
+                {
 
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "No of additional ca_pend_io tries=" << ntries << std::endl;
-                    if (status==ECA_TIMEOUT) {
+                    if (status==ECA_TIMEOUT)
+                    {
                         std::cout << "is the MAXIMUM allowed as configured through TimeoutPolicy! "  << std::endl;
                         std::cout << "TURNING OFF SELF-GOVERNING TIMEOUT FOR GET OPERATIONS FOR THIS CHANNEL"  << std::endl;
                         channelTimeoutPolicyGet.setSelfGoverningTimeout(false);
                         channelTimeoutPolicyGet.setTimeout( channelTimeoutPolicyGet.getTimeout() );
                         std::cout << "AND TIMEOUT RESTORED TO START VALUE OF " << channelTimeoutPolicyGet.getTimeout() << endl;
                     }
-                    else {
+                    else
+                    {
                         std::cout <<  "Changing timeout for handle/pv "
                                   << handle << "/" << (*it_handle).getPV() << " to: "  <<
                                   (channelTimeoutPolicyGet.getTimeout() +
@@ -656,22 +750,26 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
                                                              channelTimeoutPolicyGet.getDeltaTimeout()*ntries));
                     }
 
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.lock();   //lock
                     }
                     handle_index.modify(it_handle, change_channelTimeoutPolicyGet(channelTimeoutPolicyGet));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();   //unlock
                     }
 
                 }
             }
 
-        
-					 
-            if (!(*it_handle).isConnected() || status != ICAFE_NORMAL) {
 
-                if(MUTEX) {
+
+            if (!(*it_handle).isConnected() || status != ICAFE_NORMAL)
+            {
+
+                if(MUTEX)
+                {
                     cafeMutex.lock();   //lock
                 }
                 ChannelRequestStatus channelRequestStatusGet = (*it_handle).getChannelRequestStatusGet();
@@ -681,17 +779,23 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
                 handle_index.modify(it_handle,
                                     change_channelRequestStatusGet(channelRequestStatusGet));
 
-                if (!(*it_handle).isConnected()) {
+                if (!(*it_handle).isConnected())
+                {
                     handle_index.modify(it_handle, change_status(ICAFE_CS_DISCONN));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();
-                        (*it_handle).getPVDataHolder(pvd);
-                    }//unlock
+	            }//unlock
+	
+                    (*it_handle).getPVDataHolder(pvd);
+                   
                     return ICAFE_CS_DISCONN;
                 }
-                else {
+                else
+                {
                     handle_index.modify(it_handle, change_status(status));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();   //unlock
                     }
                 }
@@ -700,17 +804,20 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
                 cafeStatus.report(status);
                 //cout << "Method returning ICAFE_WAITING_FOR_PREV_CALLBACK " << endl;
                 (*it_handle).getPVDataHolder(pvd);
+		pvd.status = status;
                 return ICAFE_WAITING_FOR_PREV_CALLBACK;
             }
         }
 
-       
+
         //For Monitors
         (*it_handle).getPVDataHolder(pvd);
-				
+	pvd.status = ICAFE_NORMAL;
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
         }
@@ -718,11 +825,13 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
         return ECAFE_INVALID_HANDLE;
     }
 
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.lock();
     }; //lock
     handle_index.modify(it_handle, change_status(status));
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.unlock();
     }; //unlock
 
@@ -739,37 +848,48 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
  */
 int  CAFE::getCacheFromPulseID (const unsigned int  handle, const unsigned long long globalPulseID, PVDataHolder & pvd)
 {
-#define __METHOD__ "CAFE::getCacheFromPulseID (const unsigned int  handle, const unsigned long long, globalPulseID, PVDataHolder & pvd)"
+#define __METHOD__ "CAFE::getCacheFromPulseID (const unsigned int  handle, const unsigned long long globalPulseID, PVDataHolder & pvd)"
     status=ICAFE_NORMAL;
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
+    //std::cout << __METHOD__ << " " << std::endl;
+
+    if (it_handle != handle_index.end())
+    {
         std::deque<PVDataHolder> mapPulseID;
 
-        try {
-            if(MUTEX) {
+        try
+        {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             mapPulseID=(*it_handle).getPulsePVData();
 
-            //(*it_handle).getPVDataHolder(pvd);
+            //std::cout << __METHOD__ << " " << std::endl;
             //std::cout << " Size =====================================>>>> " << mapPulseID.size() << " handle=" << handle << std::endl;
-            //std::cout << "Handle " << handle  << " " << handleHelper.getPVFromHandle(handle) << std::endl;
-            if(MUTEX) {
+            //std::cout << " Handle " << handle  << " " << handleHelper.getPVFromHandle(handle) << std::endl;
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
-            if (mapPulseID.size()==0) {
+            if (mapPulseID.size()==0)
+            {
+                //std::cout << "Map Size is zero " << std::endl;
                 (*it_handle).getPVDataHolder(pvd);
+                //pvd.print();
                 return ICAFE_NORMAL;
                 //This case can happen if the monitored event is the pulseID PV itself!
             }
         }
-        catch (std::bad_alloc &e) {
-            //Will eventually happen if there were no mutex for getPulsePVDataMap which accesses a dynamic map
-            std::cout << __METHOD__ << " " << e.what() << std:: endl;
+        catch (std::bad_alloc &e)
+        {
+            //Would eventually happen if there were no mutex for getPulsePVDataMap which accesses a dynamic map
+            std::cout << __FILE__ << "//" << __METHOD__ << " Force exit!! " << std::endl;
+            std::cout << e.what() << std:: endl;
             exit(1);
         }
 
@@ -779,9 +899,25 @@ int  CAFE::getCacheFromPulseID (const unsigned int  handle, const unsigned long 
         //ptime timeStart(microsec_clock::local_time());
 
 
-        pvd=mapPulseID[0];
-        for (int mpos=0; mpos < mapPulseID.size(); ++mpos) {
+        pvd=mapPulseID[mapPulseID.size()-1];
+	
+	if (  pvd.getPulseID() > globalPulseID ) 
+	  {
+	      if (SF_WITH_PULSE_ID)
+		{
+		  cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+		  std::cout << (*it_handle).getPV() << " " << (*it_handle).getHandle() << std::endl;
+		  std::cout << "WARNING: mapPulseIDBufferSize is too shallow to match data to pulseID. " << std::endl;
+		  std::cout << "WARNING: Current IDBufferSize= " << (*it_handle).getMapPulseIDBufferSize() << " and can be expanded by user if required. " << std::endl;
+		  std::cout << "key: pulseID " <<  pvd.getPulseID() << " is > global pid  " << globalPulseID << std::endl;
+		    //" in loop idx:" << mpos  << std::endl;
+		}
 
+	    return ICAFE_NORMAL;
+	  }
+
+        for (unsigned int mpos=0; mpos < mapPulseID.size(); ++mpos)
+        {
 
             //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             //std::cout << (*it_handle).getPV() << " " << (*it_handle).getHandle() << std::endl;
@@ -789,26 +925,24 @@ int  CAFE::getCacheFromPulseID (const unsigned int  handle, const unsigned long 
             //std::cout << "key: pulseID " <<  mapPulseID[mpos].getPulseID() << " and gobal pid  " << globalPulseID << " in loop idx:" << mpos  << std::endl;
 
 
-            if ( mapPulseID[mpos].getPulseID() == globalPulseID) {
-                //std::cout << "key: " <<  mapPulseID[mpos].getPulseID()  << " pid  " << globalPulseID << " " << mpos  << std::endl;
+            if ( mapPulseID[mpos].getPulseID() == globalPulseID)
+            {
+                std::cout << "key: EQUAL" <<  mapPulseID[mpos].getPulseID()  << " pid  " << globalPulseID << " " << mpos  << std::endl;
                 pvd=mapPulseID[mpos];
                 return ICAFE_NORMAL;
             }
-            else if ( mapPulseID[mpos].getPulseID() > globalPulseID) {
-                if (SF_WITH_PULSE_ID) { //Otherwise dont print
-                    cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-                    std::cout << (*it_handle).getPV() << " " << (*it_handle).getHandle() << std::endl;
-                    std::cout << "WARNING: mapPulseIDBufferSize is too shallow to match data to pulseID. " << std::endl;
-                    std::cout << "WARNING: Current IDBufferSize= " << (*it_handle).getMapPulseIDBufferSize() << " and can be expanded by user if required. " << std::endl;
-                    std::cout << "key: pulseID " <<  mapPulseID[mpos].getPulseID() << " is GT gobal pid  " << globalPulseID << " in loop idx:" << mpos  << std::endl;
-                }
-                return ICAFE_NORMAL;
-            }
-            else {
+            else if ( mapPulseID[mpos].getPulseID() > globalPulseID)
+            {
+	      //Missed the event; get event before
+		pvd=mapPulseID[mpos-1];
 
-                //std::cout << "key: LT " <<  mapPulseID[mpos].getPulseID() << " pid  " << globalPulseID << " " << mpos <<  std::endl;
-                pvd=mapPulseID[mpos];
+                return ICAFE_NORMAL;
             }
+            //else
+            //{
+            //    std::cout << "key: LT " <<  mapPulseID[mpos].getPulseID() << " pid  " << globalPulseID << " " << mpos <<  std::endl;
+            //    //pvd=mapPulseID[mpos];
+            //}
         }
 
 
@@ -817,8 +951,10 @@ int  CAFE::getCacheFromPulseID (const unsigned int  handle, const unsigned long 
 //timeElapsed= (double) duration.total_microseconds()/1000000.0;
 //std::cout << "time for getPulsePVDataMap = " << timeElapsed << std::endl;
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
         }
@@ -845,8 +981,10 @@ int CAFE::resetCallbackPut(const unsigned int handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
-        if(MUTEX) {
+    if (it_handle != handle_index.end())
+    {
+        if(MUTEX)
+        {
             cafeMutex.lock();   //lock
         }
         ChannelRequestStatus channelRequestStatusPut = (*it_handle).getChannelRequestStatusPut();
@@ -856,19 +994,23 @@ int CAFE::resetCallbackPut(const unsigned int handle)
         handle_index.modify(it_handle,
                             change_channelRequestStatusPut(channelRequestStatusPut));
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();   //unlock
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
         }
 
         return ECAFE_INVALID_HANDLE;
     }
+    return status;
 
 #undef __METHOD__
 }
@@ -889,8 +1031,10 @@ int CAFE::resetCallbackGet(const unsigned int handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
-        if(MUTEX) {
+    if (it_handle != handle_index.end())
+    {
+        if(MUTEX)
+        {
             cafeMutex.lock();   //lock
         }
         ChannelRequestStatus channelRequestStatusGet = (*it_handle).getChannelRequestStatusGet();
@@ -900,18 +1044,21 @@ int CAFE::resetCallbackGet(const unsigned int handle)
         handle_index.modify(it_handle,
                             change_channelRequestStatusGet(channelRequestStatusGet));
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();   //unlock
         }
-
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
         }
         return ECAFE_INVALID_HANDLE;
     }
+    return status;
 
 #undef __METHOD__
 }
@@ -933,21 +1080,34 @@ int  CAFE::getCacheNoWait(const unsigned int  handle, PVDataHolder & pvd)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
+    int local_status = ICAFE_NORMAL;
+
+    if (it_handle != handle_index.end())
+    {
+
+      //std::cout << __METHOD__ << " pvd.getStatus()  start STATUS ===> " << pvd.getStatus() << endl;
 
         //Whatever is already there!
         chtype dbrtype= (*it_handle).getChannelRequestMetaData().getDbrDataType();
 
         //Find Native DataType
-        if ( (status=cafeGranules.channelVerifyGet(handle, dbrtype)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelVerifyGet(handle, dbrtype)) != ICAFE_NORMAL)
+        {
             (*it_handle).getPVDataHolder(pvd);
+	    
+	    //std::cout << __METHOD__ << status << " is status of VerifyGet" << std::endl;
+	    pvd.status = status;
             return status;
         }
 
+        
+           
 
-        if (!(*it_handle).isConnected() ) {
+        if (!(*it_handle).isConnected() )
+        {
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();   //lock
             }
             ChannelRequestStatus channelRequestStatusGet = (*it_handle).getChannelRequestStatusGet();
@@ -958,12 +1118,13 @@ int  CAFE::getCacheNoWait(const unsigned int  handle, PVDataHolder & pvd)
                                 change_channelRequestStatusGet(channelRequestStatusGet));
 
             handle_index.modify(it_handle, change_status(ICAFE_CS_DISCONN));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();   //unlock
             }
 
             (*it_handle).getPVDataHolder(pvd);
-
+            
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ICAFE_CS_DISCONN);
             return ICAFE_CS_DISCONN;
@@ -973,12 +1134,14 @@ int  CAFE::getCacheNoWait(const unsigned int  handle, PVDataHolder & pvd)
 
 
         (*it_handle).getPVDataHolder(pvd);
-
+        pvd.status = local_status;
         //cout << __METHOD__ << " pvd.getStatus()  STATUS ===> " << pvd.getStatus() << endl;
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
         }
@@ -986,11 +1149,13 @@ int  CAFE::getCacheNoWait(const unsigned int  handle, PVDataHolder & pvd)
         return ECAFE_INVALID_HANDLE;
     }
 
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.lock();
     }; //lock
     handle_index.modify(it_handle, change_status(status));
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.unlock();
     }; //unlock
 
@@ -1014,9 +1179,11 @@ int  CAFE::getCtrlCache(const unsigned int * handleArray, unsigned int nelem, PV
 
     int  overallStatus=ICAFE_NORMAL;
     bool isGood=true;
-    for (unsigned int  i=0; i<nelem; ++i) {
+    for (unsigned int  i=0; i<nelem; ++i)
+    {
         status=getCtrlCache(handleArray[i],  pvcArray [i]);
-        if ( (status != ICAFE_NORMAL) && isGood) {
+        if ( (status != ICAFE_NORMAL) && isGood)
+        {
             overallStatus=status;
             isGood=false;
         }
@@ -1042,24 +1209,27 @@ int  CAFE::getCtrlCache(const unsigned int  handle, PVCtrlHolder & pvc)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
-
+    if (it_handle != handle_index.end())
+    {
+      
         //Whatever is already there!
         chtype dbrtype= (*it_handle).getChannelRequestMetaData().getDbrDataType();
 
         //Use Native DataType
-        if ( (status=cafeGranules.channelVerifyGetCtrl(handle, dbrtype)) != ICAFE_NORMAL) {
+        if ( (status=cafeGranules.channelVerifyGetCtrl(handle, dbrtype)) != ICAFE_NORMAL)
+        {
             (*it_handle).getPVCtrlHolder(pvc);
-            pvc.status=status;
+            pvc.status=status;	    
             return status;
         }
-
+       
         if ((*it_handle).getChannelRequestStatusGetCtrl().getCallbackProgressKind() == CAFENUM::PENDING
                 && handleHelper.getNmonitorCtrl(handle)==0
                 && (*it_handle).getChannelRequestPolicyGetCtrl().getMethodKind()
                 != CAFENUM::WITH_CALLBACK_USER_SUPPLIED
                 && (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_WAIT
-                && (*it_handle).isConnected()    ) {
+                && (*it_handle).isConnected()    )
+        {
 
             ChannelTimeoutPolicy channelTimeoutPolicyGet=(*it_handle).getChannelTimeoutPolicyGet();
 
@@ -1068,18 +1238,22 @@ int  CAFE::getCtrlCache(const unsigned int  handle, PVCtrlHolder & pvc)
                                                     channelTimeoutPolicyGet.getTimeout() );
 
             if (status==ECAFE_TIMEOUT && channelTimeoutPolicyGet.getSelfGoverningTimeout()
-                    && (*it_handle).isConnected() ) {
+                    && (*it_handle).isConnected() )
+            {
                 unsigned short ntries=0;
-                while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries()) {
+                while (status==ECAFE_TIMEOUT && ntries<channelTimeoutPolicyGet.getNtries())
+                {
                     status=cafeGranules.waitForGetCtrlEvent(handle,
                                                             channelTimeoutPolicyGet.getTimeout() +
                                                             channelTimeoutPolicyGet.getDeltaTimeout()*(++ntries));
                 }
-                if ((*it_handle).isConnected()) {
+                if ((*it_handle).isConnected())
+                {
                     std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                     std::cout << "No of waitForGetCtrlEvent tries=" << ntries << std::endl;
 
-                    if (status==ECAFE_TIMEOUT) {
+                    if (status==ECAFE_TIMEOUT)
+                    {
                         std::cout <<
                                   "is the MAXIMUM allowed as configured through TimeoutPolicy! "
                                   << std::endl;
@@ -1093,19 +1267,23 @@ int  CAFE::getCtrlCache(const unsigned int  handle, PVCtrlHolder & pvc)
                     //modify timeout for handle
                     channelTimeoutPolicyGet.setTimeout( (channelTimeoutPolicyGet.getTimeout() +
                                                          channelTimeoutPolicyGet.getDeltaTimeout()*ntries));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.lock();   //lock
                     }
                     handle_index.modify(it_handle,
                                         change_channelTimeoutPolicyGet(channelTimeoutPolicyGet));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();   //unlock
                     }
                 }//isConnected
             }
 
-            if (!(*it_handle).isConnected() || status != ICAFE_NORMAL) {
-                if(MUTEX) {
+            if (!(*it_handle).isConnected() || status != ICAFE_NORMAL)
+            {
+                if(MUTEX)
+                {
                     cafeMutex.lock();   //lock
                 }
                 channelRequestStatusGetCtrl = (*it_handle).getChannelRequestStatusGetCtrl();
@@ -1116,16 +1294,20 @@ int  CAFE::getCtrlCache(const unsigned int  handle, PVCtrlHolder & pvc)
                                     change_channelRequestStatusGetCtrl(channelRequestStatusGetCtrl));
 
 
-                if (!(*it_handle).isConnected()) {
+                if (!(*it_handle).isConnected())
+                {
                     handle_index.modify(it_handle, change_status(ICAFE_CS_DISCONN));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();   //unlock
                     }
                     return ICAFE_CS_DISCONN;
                 }
-                else {
+                else
+                {
                     handle_index.modify(it_handle, change_status(status));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();   //unlock
                     }
                 }
@@ -1137,9 +1319,12 @@ int  CAFE::getCtrlCache(const unsigned int  handle, PVCtrlHolder & pvc)
             }
         }
         (*it_handle).getPVCtrlHolder(pvc);
+
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
         }
@@ -1147,11 +1332,13 @@ int  CAFE::getCtrlCache(const unsigned int  handle, PVCtrlHolder & pvc)
         return ECAFE_INVALID_HANDLE;
     }
 
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.lock();
     }; //lock
     handle_index.modify(it_handle, change_status(status));
-    if(MUTEX) {
+    if(MUTEX)
+    {
         cafeMutex.unlock();
     }; //unlock
 
@@ -1174,7 +1361,8 @@ int  CAFE::getCache(unsigned int handle, dbr_string_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STRING, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         sprintf(_val, val[0]);
     }
     //Switch back to previous value
@@ -1196,7 +1384,8 @@ int  CAFE::getCache(unsigned int handle, dbr_string_t  &_val, dbr_short_t &alarm
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STS_STRING, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         sprintf(_val, val[0]);
     }
     //Switch back to previous value
@@ -1219,7 +1408,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_string_t  &_val,  dbr_short_t
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         sprintf(_val, val[0]);
     }
     //Switch back to previous value
@@ -1241,7 +1431,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_short_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_short_t val[1]= {0};
     status=cafeSchale.getCache(handle, DBR_SHORT, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1263,7 +1454,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_short_t  &_val,  dbr_short_t 
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_short_t val[1]= {0};
     status=cafeSchale.getCache(handle, DBR_STS_SHORT, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1286,7 +1478,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_short_t  &_val,  dbr_short_t 
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_short_t val[1]= {0};
     status=cafeSchale.getCache(handle, DBR_TIME_SHORT, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1308,7 +1501,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_float_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_float_t val[1]= {0};
     status=cafeFrappuccino.getCache(handle, DBR_FLOAT, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1330,7 +1524,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_float_t  &_val,  dbr_short_t 
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_float_t val[1]= {0};
     status=cafeFrappuccino.getCache(handle, DBR_STS_FLOAT, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1353,7 +1548,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_float_t  &_val,  dbr_short_t 
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_float_t val[1]= {0};
     status=cafeFrappuccino.getCache(handle, DBR_TIME_FLOAT, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1374,7 +1570,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_enum_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_enum_t val[1]= {0};
     status=cafeEspresso.getCache(handle, DBR_ENUM, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1396,7 +1593,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_enum_t  &_val,  dbr_short_t &
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_enum_t val[1]= {0};
     status=cafeEspresso.getCache(handle, DBR_STS_ENUM, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1419,7 +1617,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_enum_t  &_val,  dbr_short_t &
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_enum_t val[1]= {0};
     status=cafeEspresso.getCache(handle, DBR_TIME_ENUM, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1440,7 +1639,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_char_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_char_t val[1]= {0};
     status=cafeCappuccino.getCache(handle, DBR_CHAR, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1462,7 +1662,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_char_t  &_val,  dbr_short_t &
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_char_t val[1]= {0};
     status=cafeCappuccino.getCache(handle, DBR_STS_CHAR, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1485,7 +1686,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_char_t  &_val,  dbr_short_t &
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_char_t val[1]= {0};
     status=cafeCappuccino.getCache(handle, DBR_TIME_CHAR, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1506,7 +1708,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_long_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_long_t val[1]= {0};
     status=cafeLatte.getCache(handle, DBR_LONG, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1528,7 +1731,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_long_t &_val, dbr_short_t &al
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_long_t val[1]= {0};
     status=cafeLatte.getCache(handle, DBR_STS_LONG, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1551,7 +1755,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_long_t  &_val, dbr_short_t &a
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_long_t val[1]= {0};
     status=cafeLatte.getCache(handle, DBR_TIME_LONG, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1630,7 +1835,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_double_t  &_val)
     dbr_double_t val[1]= {0};
     status=cafeDoppio.getCache(handle, DBR_DOUBLE, val);
 
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
 
@@ -1654,7 +1860,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_double_t  &_val,  dbr_short_t
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_double_t val[1]= {0};
     status=cafeDoppio.getCache(handle, DBR_STS_DOUBLE, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1677,7 +1884,8 @@ int  CAFE::getCache(const unsigned int handle, dbr_double_t  &_val,  dbr_short_t
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_double_t val[1]= {0};
     status=cafeDoppio.getCache(handle, DBR_TIME_DOUBLE, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1703,10 +1911,12 @@ int  CAFE::getCache(const char * pv, std::string  &valStr)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STRING, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr = val[0];
     }
-    else {
+    else
+    {
         valStr="";
     }
     //Switch back to previous value
@@ -1728,10 +1938,12 @@ int  CAFE::getCache(const char * pv, std::string  &valStr,  dbr_short_t &alarmSt
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STS_STRING, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr= val[0];
     }
-    else {
+    else
+    {
         valStr="";
     }
     //Switch back to previous value
@@ -1754,10 +1966,12 @@ int  CAFE::getCache(const char * pv, std::string  &valStr,  dbr_short_t &alarmSt
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         valStr= val[0];
     }
-    else {
+    else
+    {
         valStr="";
     }
     //Switch back to previous value
@@ -1778,7 +1992,8 @@ int  CAFE::getCache(const char * pv, dbr_string_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STRING, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         sprintf(_val, val[0]);
     }
     //Switch back to previous value
@@ -1800,7 +2015,8 @@ int  CAFE::getCache(const char * pv, dbr_string_t  &_val,  dbr_short_t &alarmSta
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_STS_STRING, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         sprintf(_val, val[0]);
     }
     //Switch back to previous value
@@ -1823,7 +2039,8 @@ int  CAFE::getCache(const char * pv, dbr_string_t  &_val,  dbr_short_t &alarmSta
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_string_t val[1]= {""};
     status=cafeSoluble.getCache(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         sprintf(_val, val[0]);
     }
     //Switch back to previous value
@@ -1845,7 +2062,8 @@ int  CAFE::getCache(const char * pv, dbr_short_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_short_t val[1]= {0};
     status=cafeSchale.getCache(handle, DBR_SHORT, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1867,7 +2085,8 @@ int  CAFE::getCache(const char * pv, dbr_short_t  &_val,  dbr_short_t &alarmStat
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_short_t val[1]= {0};
     status=cafeSchale.getCache(handle, DBR_STS_SHORT, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1890,7 +2109,8 @@ int  CAFE::getCache(const char * pv, dbr_short_t  &_val,  dbr_short_t &alarmStat
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_short_t val[1]= {0};
     status=cafeSchale.getCache(handle, DBR_TIME_SHORT, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1913,7 +2133,8 @@ int  CAFE::getCache(const char * pv, dbr_float_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_float_t val[1]= {0};
     status=cafeFrappuccino.getCache(handle, DBR_FLOAT, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1935,7 +2156,8 @@ int  CAFE::getCache(const char * pv, dbr_float_t  &_val,  dbr_short_t &alarmStat
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_float_t val[1]= {0};
     status=cafeFrappuccino.getCache(handle, DBR_STS_FLOAT, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1958,7 +2180,8 @@ int  CAFE::getCache(const char * pv, dbr_float_t  &_val,  dbr_short_t &alarmStat
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_float_t val[1]= {0};
     status=cafeFrappuccino.getCache(handle, DBR_TIME_FLOAT, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -1979,7 +2202,8 @@ int  CAFE::getCache(const char * pv, dbr_enum_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_enum_t val[1]= {0};
     status=cafeEspresso.getCache(handle, DBR_ENUM, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2001,7 +2225,8 @@ int  CAFE::getCache(const char * pv, dbr_enum_t  &_val,  dbr_short_t &alarmStatu
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_enum_t val[1]= {0};
     status=cafeEspresso.getCache(handle, DBR_STS_ENUM, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2024,7 +2249,8 @@ int  CAFE::getCache(const char * pv, dbr_enum_t  &_val,  dbr_short_t &alarmStatu
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_enum_t val[1]= {0};
     status=cafeEspresso.getCache(handle, DBR_TIME_ENUM, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2045,7 +2271,8 @@ int  CAFE::getCache(const char * pv, dbr_char_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_char_t val[1]= {0};
     status=cafeCappuccino.getCache(handle, DBR_CHAR, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2067,7 +2294,8 @@ int  CAFE::getCache(const char * pv, dbr_char_t  &_val,  dbr_short_t &alarmStatu
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_char_t val[1]= {0};
     status=cafeCappuccino.getCache(handle, DBR_STS_CHAR, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2090,7 +2318,8 @@ int  CAFE::getCache(const char * pv, dbr_char_t  &_val,  dbr_short_t &alarmStatu
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_char_t val[1]= {0};
     status=cafeCappuccino.getCache(handle, DBR_TIME_CHAR, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2111,7 +2340,8 @@ int  CAFE::getCache(const char * pv, dbr_long_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_long_t val[1]= {0};
     status=cafeLatte.getCache(handle, DBR_LONG, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2133,7 +2363,8 @@ int  CAFE::getCache(const char * pv, dbr_long_t  &_val,  dbr_short_t &alarmStatu
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_long_t val[1]= {0};
     status=cafeLatte.getCache(handle, DBR_STS_LONG, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2156,7 +2387,8 @@ int  CAFE::getCache(const char * pv, dbr_long_t  &_val,  dbr_short_t &alarmStatu
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_long_t val[1]= {0};
     status=cafeLatte.getCache(handle, DBR_TIME_LONG, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2177,7 +2409,8 @@ int  CAFE::getCache(const char * pv, dbr_double_t  &_val)
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_double_t val[1]= {0};
     status=cafeDoppio.getCache(handle, DBR_DOUBLE, val);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2199,7 +2432,8 @@ int  CAFE::getCache(const char * pv, dbr_double_t  &_val,  dbr_short_t &alarmSta
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_double_t val[1]= {0};
     status=cafeDoppio.getCache(handle, DBR_STS_DOUBLE, val, alarmStatus, alarmSeverity);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value
@@ -2222,7 +2456,8 @@ int  CAFE::getCache(const char * pv, dbr_double_t  &_val,  dbr_short_t &alarmSta
     unsigned int nelemPrevious=CAFE::setNelemToRetrieveFromCacheToOne(handle);
     dbr_double_t val[1]= {0};
     status=cafeDoppio.getCache(handle, DBR_TIME_DOUBLE, val, alarmStatus, alarmSeverity, ts);
-    if (status==ICAFE_NORMAL) {
+    if (status==ICAFE_NORMAL)
+    {
         _val= val[0];
     }
     //Switch back to previous value

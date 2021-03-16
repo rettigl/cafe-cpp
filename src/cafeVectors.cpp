@@ -363,7 +363,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<double> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested=(*it_handle).getChannelRegalia().getNelem();
 
@@ -372,11 +373,13 @@ int  CAFE::get(const unsigned int  _handle, std::vector<double> & V,
         //Check the number of elements requested?
 
 
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
 
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -388,10 +391,12 @@ int  CAFE::get(const unsigned int  _handle, std::vector<double> & V,
 
         double * val = new double [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
 
             status=cafeDoppio.get (_handle, DBR_DOUBLE, val);
@@ -407,7 +412,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<double> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             //(*it_handle).getChannelRequestMetaData().getNelem() <<=nelemThatWillBeRequested
 
             //for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
@@ -422,7 +428,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<double> & V,
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -450,17 +457,20 @@ int  CAFE::get(const unsigned int  _handle, std::vector<dbr_long_t> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested= (*it_handle).getChannelRegalia().getNelem();
 
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -471,11 +481,13 @@ int  CAFE::get(const unsigned int  _handle, std::vector<dbr_long_t> & V,
 
         dbr_long_t * val = new dbr_long_t [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
 
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeLatte.get (_handle, DBR_LONG, val);
             break;
@@ -490,7 +502,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<dbr_long_t> & V,
 
         vectorDbrType=CAFENUM::DBR_NONE;
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
 
             //for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
             //    V.push_back(val[i]);
@@ -502,7 +515,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<dbr_long_t> & V,
         delete [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -533,14 +547,17 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         ChannelRegalia channelInfo;
         CAFE::getChannelInfo(_handle, channelInfo);
-        if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
+        if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+        {
             return ICAFE_CS_NEVER_CONN;
         }
-        else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+        else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)
+        {
             return ICAFE_CS_CLOSED;
         }
 
@@ -549,10 +566,12 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -562,15 +581,18 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
         V.reserve(nelemThatWillBeRequested);
 
 
-        if ( channelInfo.getDataType() == DBR_STRING) {
+        if ( channelInfo.getDataType() == DBR_STRING)
+        {
 
             dbr_string_t * val = new dbr_string_t[nelemThatWillBeRequested];
 
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
 
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeSoluble.get (_handle, DBR_STRING, val);
                 break;
@@ -584,31 +606,36 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
             }
 
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
 
                 istringstream ss;
                 bool allStringsAreValid=true;
 
 
-                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+                {
                     long long l=0;
                     ss.clear();
                     ss.str(val[i]);
                     ss>>l;
 
-                    if ( !ss.fail()) {
+                    if ( !ss.fail())
+                    {
                         V.push_back(l);
                         std::string strInput=val[i];
                         std::stringstream ssOut;
                         ssOut << l;
                         std::string strOutput=ssOut.str();
-                        if (strInput!=strOutput) {
+                        if (strInput!=strOutput)
+                        {
                             cout << __METHOD__ << "//" << __LINE__ << endl;
                             cout << "***WARNING*** STRING TO LONG LONG CONVERSION REPORTS: " << endl;
                             cout << "STRING VALUE: " << strInput << " CONVERTED TO: " << strOutput << endl;
                         }
                     }
-                    else {
+                    else
+                    {
                         cout << __METHOD__ << "//" << __LINE__ << endl;
                         cout << "***WARNING*** NO STRING TO LONG LONG  CONVERSION for ELEMENT " << i \
                              << " of " << (*it_handle).getChannelRequestMetaData().getNelem() << " !! " << endl;
@@ -620,7 +647,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
                     }
                 }
 
-                if(!allStringsAreValid) {
+                if(!allStringsAreValid)
+                {
                     cout << "----------------------------------------------------------------" << endl;
                     cout << "NOT ALL ELEMENTS OF STRING ARRAY COULD BE CONVERTED TO LONG LONG " << endl;
                     cout << "THESE HAVE A VALUE OF ZERO IN PLACE OF STRING VALUE " << endl;
@@ -635,15 +663,18 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
         }
 
 
-        else if ( channelInfo.getDataType() == DBR_DOUBLE) {
+        else if ( channelInfo.getDataType() == DBR_DOUBLE)
+        {
 
             dbr_double_t * val = new dbr_double_t[nelemThatWillBeRequested];
 
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
 
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeDoppio.get (_handle, DBR_DOUBLE, val);
                 break;
@@ -656,9 +687,11 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
 
-                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+                {
                     V.push_back((long long) val[i]);
                 }
 
@@ -667,13 +700,16 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
 
             delete  [] val;
         }
-        else if ( channelInfo.getDataType() == DBR_FLOAT) {
+        else if ( channelInfo.getDataType() == DBR_FLOAT)
+        {
 
             dbr_float_t * val = new dbr_float_t[nelemThatWillBeRequested];
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeFrappuccino.get (_handle, DBR_FLOAT, val);
                 break;
@@ -686,9 +722,11 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
 
-                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+                {
                     V.push_back((long long) val[i]);
                 }
                 //V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -698,15 +736,18 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
         }
 
 
-        else {
+        else
+        {
 
             dbr_long_t * val = new dbr_long_t [nelemThatWillBeRequested];
 
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
 
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeLatte.get (_handle, DBR_LONG, val);
                 break;
@@ -719,9 +760,11 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
 
-                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+                for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+                {
                     V.push_back((long long) val[i]);
                 }
                 //V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -735,7 +778,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<long long> & V,
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -764,17 +808,20 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned char> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested= (*it_handle).getChannelRegalia().getNelem();
 
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -785,14 +832,16 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned char> & V,
 
         unsigned char * val = new unsigned char [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
 
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeCappuccino.get (_handle, DBR_CHAR, val);
-            cout << "status=cafeCappuccino.get (_handle, DBR_CHAR, val) " << endl;
+            //cout << "status=cafeCappuccino.get (_handle, DBR_CHAR, val) " << endl;
             break;
         case CAFENUM::DBR_STS:
             status=cafeCappuccino.get (_handle, DBR_STS_CHAR, val, alarmStatus, alarmSeverity);
@@ -800,15 +849,17 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned char> & V,
         case CAFENUM::DBR_TIME:
         default:
             status=cafeCappuccino.get (_handle, DBR_TIME_CHAR, val, alarmStatus, alarmSeverity, ts);
-            cout << "status=cafeCappuccino.get (_handle, DBR_CHAR,val, alarmStatus, alarmSeverity, ts);"
-                 << endl;
+            //cout << "status=cafeCappuccino.get (_handle, DBR_CHAR,val, alarmStatus, alarmSeverity, ts);"
+            //     << endl;
             break;
         }
         vectorDbrType=CAFENUM::DBR_NONE;
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
 
-            for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+            for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+            {
                 V.push_back(val[i]);
             }
             //V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -817,7 +868,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned char> & V,
         delete [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -846,17 +898,20 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned short> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested= (*it_handle).getChannelRegalia().getNelem();
 
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -867,10 +922,12 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned short> & V,
 
         unsigned short * val = new unsigned short [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeEspresso.get (_handle, DBR_ENUM, val);
             break;
@@ -885,7 +942,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned short> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
 
             //for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
             //    V.push_back(val[i]);
@@ -896,7 +954,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<unsigned short> & V,
         delete  [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -925,16 +984,19 @@ int  CAFE::get(const unsigned int  _handle, std::vector<float> & V,
 
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested= (*it_handle).getChannelRegalia().getNelem();
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -946,11 +1008,13 @@ int  CAFE::get(const unsigned int  _handle, std::vector<float> & V,
 
         float * val = new float [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
 
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
 
             status=cafeFrappuccino.get (_handle, DBR_FLOAT, val);
@@ -967,7 +1031,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<float> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
 
             //for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
             //    V.push_back(val[i]);
@@ -978,7 +1043,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<float> & V,
         delete [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1007,17 +1073,20 @@ int  CAFE::get(const unsigned int  _handle, std::vector<short> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested=(*it_handle).getChannelRegalia().getNelem();
 
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -1029,10 +1098,12 @@ int  CAFE::get(const unsigned int  _handle, std::vector<short> & V,
         short * val = new short [nelemThatWillBeRequested];
 
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeSchale.get (_handle, DBR_SHORT, val);
             break;
@@ -1047,9 +1118,11 @@ int  CAFE::get(const unsigned int  _handle, std::vector<short> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             //(*it_handle).getChannelRequestMetaData().getNelem() <<=nelemThatWillBeRequested
-            for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+            for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+            {
                 V.push_back(val[i]);
             }
             //	V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -1058,7 +1131,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<short> & V,
         delete [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1088,17 +1162,20 @@ int  CAFE::get(const unsigned int  _handle, std::vector<std::string> & V,
 
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int  nelemThatWillBeRequested=(*it_handle).getChannelRegalia().getNelem();
 
         //Reserve only what will be in the buffer.
         //Lets calculate this
         //Check the number of elements requested?
-        if ((*it_handle).getChannelRegalia().getNelem()>1) {
+        if ((*it_handle).getChannelRegalia().getNelem()>1)
+        {
             //What did the client request? What is native type? Transfer minimum of this.
             if ( (*it_handle).getChannelRegalia().getNelem()
-                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+                    !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+            {
 
                 nelemThatWillBeRequested= min( (*it_handle).getChannelRegalia().getNelem(),
                                                (*it_handle).getChannelRequestMetaDataClient().getNelem());
@@ -1111,10 +1188,12 @@ int  CAFE::get(const unsigned int  _handle, std::vector<std::string> & V,
         dbr_string_t * vals = new dbr_string_t [nelemThatWillBeRequested];
 
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeSoluble.get (_handle, DBR_STRING, vals);
             break;
@@ -1129,9 +1208,11 @@ int  CAFE::get(const unsigned int  _handle, std::vector<std::string> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             //(*it_handle).getChannelRequestMetaData().getNelem() <<=nelemThatWillBeRequested
-            for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
+            for (unsigned int  i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i)
+            {
                 V.push_back(vals[i]);
             }
             //	V.insert(V.end(), &vals[0], &vals[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -1142,7 +1223,8 @@ int  CAFE::get(const unsigned int  _handle, std::vector<std::string> & V,
         return status;
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1502,7 +1584,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<double> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //Reserve only what will be in the request data buffer.
         unsigned int  nelemThatWillBeRequested=
@@ -1514,10 +1597,12 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<double> & V,
 
         double * val = new double [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeDoppio.getCache (_handle, DBR_DOUBLE, val);
             break;
@@ -1531,7 +1616,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<double> & V,
         }
         vectorDbrType=CAFENUM::DBR_NONE;
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             // for (unsigned int   i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
             //    V.push_back(val[i]);
             // }
@@ -1541,7 +1627,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<double> & V,
         delete [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1569,7 +1656,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<dbr_long_t> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //Reserve only what will be in the request data buffer.
         unsigned int  nelemThatWillBeRequested=
@@ -1581,10 +1669,12 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<dbr_long_t> & V,
         dbr_long_t * val = new dbr_long_t [nelemThatWillBeRequested];
 
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeLatte.getCache (_handle, DBR_LONG, val);
             break;
@@ -1600,7 +1690,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<dbr_long_t> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             //for (unsigned int   i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
             //     V.push_back(val[i]);
             // }
@@ -1610,7 +1701,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<dbr_long_t> & V,
         delete [] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1639,7 +1731,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         //Reserve only what will be in the request data buffer.
         unsigned int  nelemThatWillBeRequested=
             min((*it_handle).getChannelRequestMetaData().getNelem(),(*it_handle).getChannelRequestMetaData().getNelemCache());
@@ -1647,15 +1740,18 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
         V.reserve(nelemThatWillBeRequested);
 
         //What is the native type?
-        if ( (*it_handle).getChannelRequestMetaData().getDataType() == DBR_STRING) {
+        if ( (*it_handle).getChannelRequestMetaData().getDataType() == DBR_STRING)
+        {
 
             dbr_string_t * val = new dbr_string_t[nelemThatWillBeRequested];
 
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
 
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeSoluble.getCache (_handle, DBR_STRING, val);
                 break;
@@ -1668,29 +1764,34 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
                 istringstream ss;
                 bool allStringsAreValid=true;
 
-                for (unsigned short i=0; i<nelemThatWillBeRequested; ++i) {
+                for (unsigned short i=0; i<nelemThatWillBeRequested; ++i)
+                {
                     long long l=0;
                     ss.clear();
                     ss.str(val[i]);
                     ss>>l;
 
-                    if ( !ss.fail()) {
+                    if ( !ss.fail())
+                    {
                         V.push_back(l);
                         std::string strInput=val[i];
                         std::stringstream ssOut;
                         ssOut << l;
                         std::string strOutput=ssOut.str();
-                        if (strInput!=strOutput) {
+                        if (strInput!=strOutput)
+                        {
                             cout << __METHOD__ << "//" << __LINE__ << endl;
                             cout << "***WARNING*** STRING TO LONG LONG CONVERSION REPORTS: " << endl;
                             cout << "STRING VALUE: " << strInput << " CONVERTED TO: " << strOutput << endl;
                         }
                     }
-                    else {
+                    else
+                    {
                         cout << __METHOD__ << "//" << __LINE__ << endl;
                         cout << "***WARNING*** NO STRING TO LONG LONG  CONVERSION for ELEMENT " << i \
                              << " of " << (*it_handle).getChannelRequestMetaData().getNelem() << " !! " << endl;
@@ -1702,7 +1803,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
                     }
                 }
 
-                if(!allStringsAreValid) {
+                if(!allStringsAreValid)
+                {
                     cout << "----------------------------------------------------------------" << endl;
                     cout << "NOT ALL ELEMENTS OF STRING ARRAY COULD BE CONVERTED TO LONG LONG " << endl;
                     cout << "THESE HAVE A VALUE OF ZERO IN PLACE OF STRING VALUE " << endl;
@@ -1715,15 +1817,18 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
         }
 
 
-        else if ( (*it_handle).getChannelRequestMetaData().getDataType()  == DBR_DOUBLE) {
+        else if ( (*it_handle).getChannelRequestMetaData().getDataType()  == DBR_DOUBLE)
+        {
 
             dbr_double_t * val = new dbr_double_t[nelemThatWillBeRequested];
 
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
 
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeDoppio.getCache (_handle, DBR_DOUBLE, val);
                 break;
@@ -1736,8 +1841,10 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
-                for (unsigned short i=0; i<nelemThatWillBeRequested; ++i) {
+            if (status==ICAFE_NORMAL)
+            {
+                for (unsigned short i=0; i<nelemThatWillBeRequested; ++i)
+                {
                     V.push_back((long long) val[i]);
                 }
                 //	V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -1745,13 +1852,16 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
 
             delete [] val;
         }
-        else if ( (*it_handle).getChannelRequestMetaData().getDataType()  == DBR_FLOAT) {
+        else if ( (*it_handle).getChannelRequestMetaData().getDataType()  == DBR_FLOAT)
+        {
 
             dbr_float_t * val = new dbr_float_t[nelemThatWillBeRequested];
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeFrappuccino.getCache (_handle, DBR_FLOAT, val);
                 break;
@@ -1764,8 +1874,10 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
-                for (unsigned short i=0; i<nelemThatWillBeRequested; ++i) {
+            if (status==ICAFE_NORMAL)
+            {
+                for (unsigned short i=0; i<nelemThatWillBeRequested; ++i)
+                {
                     V.push_back((long long) val[i]);
                 }
                 //	V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -1774,15 +1886,18 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
         }
 
 
-        else {
+        else
+        {
 
             dbr_long_t * val = new dbr_long_t [nelemThatWillBeRequested];
 
-            if(vectorDbrType==CAFENUM::DBR_NONE) {
+            if(vectorDbrType==CAFENUM::DBR_NONE)
+            {
                 vectorDbrType=CAFENUM::DBR_TIME;
             };
 
-            switch (vectorDbrType) {
+            switch (vectorDbrType)
+            {
             case CAFENUM::DBR_PRIMITIVE:
                 status=cafeLatte.getCache (_handle, DBR_LONG, val);
                 break;
@@ -1795,7 +1910,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
                 break;
             }
 
-            if (status==ICAFE_NORMAL) {
+            if (status==ICAFE_NORMAL)
+            {
                 //for (unsigned short i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
                 //    V.push_back((long long) val[i]);
                 //}
@@ -1811,7 +1927,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<long long> & V,
         return status;
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1840,7 +1957,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<unsigned char> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //Reserve only what will be in the request data buffer.
         unsigned int  nelemThatWillBeRequested=
@@ -1850,11 +1968,13 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<unsigned char> & V,
 
         unsigned char * val = new unsigned char [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
 
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeCappuccino.getCache (_handle, DBR_CHAR, val);
             break;
@@ -1869,8 +1989,10 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<unsigned char> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i)
+            {
                 V.push_back(val[i]);
             }
             //	V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -1879,7 +2001,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<unsigned char> & V,
         delete []val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1907,7 +2030,8 @@ int  CAFE::getCache (const unsigned int  _handle, std::vector<unsigned short> & 
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //Reserve only what will be in the request data buffer.
         unsigned int  nelemThatWillBeRequested=
@@ -1917,10 +2041,12 @@ int  CAFE::getCache (const unsigned int  _handle, std::vector<unsigned short> & 
 
         unsigned short * val = new unsigned short [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeEspresso.getCache  (_handle, DBR_ENUM, val);
             break;
@@ -1935,7 +2061,8 @@ int  CAFE::getCache (const unsigned int  _handle, std::vector<unsigned short> & 
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             //for (unsigned int   i=0; i<(*it_handle).getChannelRequestMetaData().getNelem(); ++i) {
             //    V.push_back(val[i]);
             //}
@@ -1945,7 +2072,8 @@ int  CAFE::getCache (const unsigned int  _handle, std::vector<unsigned short> & 
         delete []val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1974,7 +2102,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<float> & V,
 
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //Reserve only what will be in the request data buffer.
         unsigned int nelemThatWillBeRequested=
@@ -1989,11 +2118,13 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<float> & V,
 
         float * val = new float [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
 
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeFrappuccino.getCache(_handle, DBR_FLOAT, val);
             break;
@@ -2008,8 +2139,10 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<float> & V,
         vectorDbrType=CAFENUM::DBR_NONE;
 
 
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i)
+            {
                 V.push_back(val[i]);
             }
             //	V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -2020,7 +2153,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<float> & V,
         delete []val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -2049,7 +2183,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<short> & V,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
 
         //Reserve only what will be in the request data buffer.
@@ -2061,10 +2196,12 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<short> & V,
 
         short * val = new short [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeSchale.getCache (_handle, DBR_SHORT, val);
             break;
@@ -2078,8 +2215,10 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<short> & V,
         }
         vectorDbrType=CAFENUM::DBR_NONE;
 
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i)
+            {
                 V.push_back(val[i]);
             }
             //	V.insert(V.end(), &val[0], &val[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -2088,7 +2227,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<short> & V,
         delete []val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -2119,7 +2259,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<std::string> & V,
 
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         //Reserve only what will be in the request data buffer.
         unsigned int  nelemThatWillBeRequested=
@@ -2130,10 +2271,12 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<std::string> & V,
 
         dbr_string_t * vals = new dbr_string_t [nelemThatWillBeRequested];
 
-        if(vectorDbrType==CAFENUM::DBR_NONE) {
+        if(vectorDbrType==CAFENUM::DBR_NONE)
+        {
             vectorDbrType=CAFENUM::DBR_TIME;
         };
-        switch (vectorDbrType) {
+        switch (vectorDbrType)
+        {
         case CAFENUM::DBR_PRIMITIVE:
             status=cafeSoluble.getCache (_handle, DBR_STRING, vals);
             break;
@@ -2148,8 +2291,10 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<std::string> & V,
 
         vectorDbrType=CAFENUM::DBR_NONE;
 
-        if (status==ICAFE_NORMAL) {
-            for (unsigned int   i=0; i<nelemThatWillBeRequested; ++i) {
+        if (status==ICAFE_NORMAL)
+        {
+            for (unsigned int   i=0; i<nelemThatWillBeRequested; ++i)
+            {
                 V.push_back(vals[i]);
             }
             //V.insert(V.end(), &vals[0], &vals[(*it_handle).getChannelRequestMetaData().getNelem()]);
@@ -2159,7 +2304,8 @@ int  CAFE::getCache(const unsigned int  _handle, std::vector<std::string> & V,
         return status;
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -2180,16 +2326,20 @@ int  CAFE::get(std::vector<unsigned int> handleV, std::vector<int> &statusV)
     statusV.clear();
     statusV.reserve(handleV.size());
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
 
         //Does already have a monitor?
-        if (handleHelper.getNmonitorData(handleV[i])>0) {
+        if (handleHelper.getNmonitorData(handleV[i])>0)
+        {
             statusV.push_back(ICAFE_NORMAL); // ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE);
         }
-        else {
+        else
+        {
             statusV.push_back(get(handleV[i]));
         }
-        if ( (statusV[i] != ICAFE_NORMAL) && isGood) {
+        if ( (statusV[i] != ICAFE_NORMAL) && isGood)
+        {
             overallStatus=statusV[i];
             isGood=false;
         }
@@ -2359,14 +2509,16 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<std::string> 
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         strcpy(value[i],"");
     }
 
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2422,14 +2574,16 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_short_t> 
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2485,14 +2639,16 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_float_t> 
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2548,14 +2704,18 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_enum_t> &
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
+
     overallStatus = getCache(h, (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2610,14 +2770,16 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_char_t> &
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2638,9 +2800,9 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_char_t> &
 
 //5
 /**
- *  \brief   get cached vector of dbr_char_t (unsigned char)
+ *  \brief   get cached vector of dbr_long_t
  *  \param   handleV input: vector of handles
- *  \param   V output: vector of dbr_char_t (unsigned char)
+ *  \param   V output: vector of dbr_long_t
  *  \param   statusV output: vector of longs
  *  \param   alarmStatusV output: vector of alarm status
  *  \param   alarmSeverityV output: vecor of alarm severity
@@ -2673,14 +2835,16 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_long_t> &
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2702,9 +2866,9 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_long_t> &
 
 //5
 /**
- *  \brief   get cached vector of dbr_char_t (unsigned char)
+ *  \brief   get cached vector of long long
  *  \param   handleV input: vector of handles
- *  \param   V output: vector of dbr_char_t (unsigned char)
+ *  \param   V output: vector of long long
  *  \param   statusV output: vector of longs
  *  \param   alarmStatusV output: vector of alarm status
  *  \param   alarmSeverityV output: vecor of alarm severity
@@ -2737,14 +2901,16 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<long long> & 
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2779,6 +2945,9 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_double_t>
                     std::vector<dbr_short_t> &alarmStatusV, std::vector<dbr_short_t> &alarmSeverityV,
                     std::vector<epicsTimeStamp> &tsV)
 {
+#define __METHOD__ "int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_double_t> & V, std::vector<int> &statusV, \
+                    std::vector<dbr_short_t> &alarmStatusV, std::vector<dbr_short_t> &alarmSeverityV, \
+                    std::vector<epicsTimeStamp> &tsV)"
 
     int  overallStatus=ICAFE_NORMAL;
 
@@ -2801,14 +2970,18 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_double_t>
     dbr_short_t * asev  = new dbr_short_t    [handleV.size()];
     epicsTimeStamp *ets = new epicsTimeStamp [handleV.size()];
 
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         //h[i] = handleV[i];
         value[i]=0; // initialize to zero
     }
 
+
     overallStatus = getCache(&handleV[0], (unsigned int) handleV.size(), value, stats, astat, asev, ets);
 
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         V.push_back(value[i]);
         statusV.push_back(stats[i]);
         alarmStatusV.push_back(astat[i]);
@@ -2824,6 +2997,7 @@ int  CAFE::getCache(std::vector<unsigned int> handleV, std::vector<dbr_double_t>
     delete []ets;
 
     return overallStatus; // ICAFE_NORMAL else reports first failure
+#undef __METHOD__
 }
 
 
@@ -2842,33 +3016,38 @@ int  CAFE::set(const unsigned int  _handle, std::vector<std::string>  V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
         //}
         dbr_string_t * val = new dbr_string_t [nelemThatWillBeRequested];
 
-        for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+        {
             strcpy(val[i],V[i].c_str());
         }
         status=cafeSoluble.set (_handle, DBR_STRING, val);
         delete []val;
 
-        if (nelemPrevious!=0) {
+        if (nelemPrevious!=0)
+        {
             handleHelper.setNelem(_handle, nelemPrevious);
         }
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -2887,24 +3066,29 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_short_t>  V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
         //}
         dbr_short_t * val = new dbr_short_t [nelemThatWillBeRequested];
-        if (V.size()==nelemThatWillBeRequested) {
+        if (V.size()==nelemThatWillBeRequested)
+        {
             std::copy(V.begin(), V.end(), val);
         }
-        else {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        else
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+            {
                 val[i]=V[i];
             }
         }
@@ -2913,13 +3097,15 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_short_t>  V)
 
 
         //Reset to previous value
-        if (nelemPrevious!=nelemThatWillBeRequested) {
+        if (nelemPrevious!=nelemThatWillBeRequested)
+        {
             handleHelper.setNelem(_handle, nelemPrevious);
         }
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -2937,24 +3123,29 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_float_t>  V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
         //}
         dbr_float_t * val = new dbr_float_t [nelemThatWillBeRequested];
-        if (V.size()==nelemThatWillBeRequested) {
+        if (V.size()==nelemThatWillBeRequested)
+        {
             std::copy(V.begin(), V.end(), val);
         }
-        else {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        else
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+            {
                 val[i]=V[i];
             }
         }
@@ -2963,13 +3154,15 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_float_t>  V)
 
 
         //Reset to previous value
-        if (nelemPrevious!=nelemThatWillBeRequested) {
+        if (nelemPrevious!=nelemThatWillBeRequested)
+        {
             handleHelper.setNelem(_handle, nelemPrevious);
         }
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -2988,24 +3181,29 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_enum_t>  V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
         //}
         dbr_enum_t * val = new dbr_enum_t [nelemThatWillBeRequested];
-        if (V.size()==nelemThatWillBeRequested) {
+        if (V.size()==nelemThatWillBeRequested)
+        {
             std::copy(V.begin(), V.end(), val);
         }
-        else {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        else
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+            {
                 val[i]=V[i];
             }
         }
@@ -3014,13 +3212,15 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_enum_t>  V)
 
 
         //Reset to previous value
-        if (nelemPrevious!=nelemThatWillBeRequested) {
+        if (nelemPrevious!=nelemThatWillBeRequested)
+        {
             handleHelper.setNelem(_handle, nelemPrevious);
         }
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -3039,24 +3239,29 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_char_t>  V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
         //}
         dbr_char_t * val = new dbr_char_t [nelemThatWillBeRequested];
-        if (V.size()==nelemThatWillBeRequested) {
+        if (V.size()==nelemThatWillBeRequested)
+        {
             std::copy(V.begin(), V.end(), val);
         }
-        else {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        else
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+            {
                 val[i]=V[i];
             }
         }
@@ -3064,7 +3269,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_char_t>  V)
         delete[] val;
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -3082,16 +3288,20 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
 
     ChannelRegalia channelInfo;
     CAFE::getChannelInfo(_handle, channelInfo);
-    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN) {
+    if ( channelInfo.getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+    {
         return ICAFE_CS_NEVER_CONN;
     }
-    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)  {
+    else if ( channelInfo.getCafeConnectionState()==ICAFE_CS_CLOSED)
+    {
         return ICAFE_CS_CLOSED;
     }
 
-    switch ( channelInfo.getDataType()) {
+    switch ( channelInfo.getDataType())
+    {
 
-    case DBR_DOUBLE: {
+    case DBR_DOUBLE:
+    {
         //cpy vector
         vector<dbr_double_t> Vl;
         Vl.clear();
@@ -3099,7 +3309,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
         Vl.assign(V.begin(), V.end());
         return set(_handle, Vl);
     }
-    case DBR_FLOAT: {
+    case DBR_FLOAT:
+    {
         //cpy vector
         vector<dbr_float_t> Vl;
         Vl.clear();
@@ -3107,7 +3318,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
         Vl.assign(V.begin(), V.end());
         return set(_handle, Vl);
     }
-    case DBR_LONG: {
+    case DBR_LONG:
+    {
         //cpy vector
         vector<dbr_long_t> Vl;
         Vl.clear();
@@ -3115,7 +3327,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
         Vl.assign(V.begin(), V.end());
         return set(_handle, Vl);
     }
-    case DBR_SHORT: {
+    case DBR_SHORT:
+    {
         //cpy vector
         vector<dbr_short_t> Vl;
         Vl.clear();
@@ -3123,7 +3336,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
         Vl.assign(V.begin(), V.end());
         return set(_handle, Vl);
     }
-    case DBR_ENUM: {
+    case DBR_ENUM:
+    {
         //cpy vector
         vector<dbr_enum_t> Vl;
         Vl.clear();
@@ -3131,7 +3345,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
         Vl.assign(V.begin(), V.end());
         return set(_handle, Vl);
     }
-    case DBR_CHAR: {
+    case DBR_CHAR:
+    {
         //cpy vector
         vector<dbr_char_t> Vl;
         Vl.clear();
@@ -3140,13 +3355,15 @@ int  CAFE::set(const unsigned int  _handle, std::vector<long long> V)
         return set(_handle, Vl);
     }
     case DBR_STRING:
-    default: {
+    default:
+    {
         vector<string> Vl;
         Vl.clear();
         Vl.reserve(V.size());
         std::stringstream ss;
 
-        for (unsigned int i=0; i< V.size(); ++i) {
+        for (unsigned int i=0; i< V.size(); ++i)
+        {
             ss.clear();
             ss << V[i];
             Vl.push_back(ss.str());
@@ -3168,7 +3385,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_long_t> V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
@@ -3176,7 +3394,8 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_long_t> V)
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if (nelemThatWillBeRequested != (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
@@ -3184,11 +3403,14 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_long_t> V)
 
 
         dbr_long_t * val = new dbr_long_t [nelemThatWillBeRequested];
-        if (V.size()==nelemThatWillBeRequested) {
+        if (V.size()==nelemThatWillBeRequested)
+        {
             std::copy(V.begin(), V.end(), val);
         }
-        else {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        else
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+            {
                 val[i]=V[i];
             }
         }
@@ -3197,13 +3419,15 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_long_t> V)
         delete []val;
 
         //Reset to previous value
-        if (nelemPrevious!=nelemThatWillBeRequested) {
+        if (nelemPrevious!=nelemThatWillBeRequested)
+        {
             handleHelper.setNelem(_handle, nelemPrevious);
         }
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -3222,24 +3446,29 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_double_t>  V)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         unsigned int  nelemThatWillBeRequested= V.size();
         unsigned int  nelemPrevious=nelemThatWillBeRequested;
         //Check the number of elements requested?
         //JC 25/6/15 Cython must also handle a list of 1!
         //if (nelemThatWillBeRequested>1) {
         //What did the client request? What is native type? Transfer minimum of this.
-        if ( nelemThatWillBeRequested !=  (*it_handle).getChannelRequestMetaDataClient().getNelem()) {
+        if ( nelemThatWillBeRequested !=  (*it_handle).getChannelRequestMetaDataClient().getNelem())
+        {
             nelemPrevious=(*it_handle).getChannelRequestMetaDataClient().getNelem();
             nelemThatWillBeRequested= handleHelper.setNelem(_handle, nelemThatWillBeRequested);
         }
         //}
         double * val = new double [nelemThatWillBeRequested];
-        if (V.size()==nelemThatWillBeRequested) {
+        if (V.size()==nelemThatWillBeRequested)
+        {
             std::copy(V.begin(), V.end(), val);
         }
-        else {
-            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i ) {
+        else
+        {
+            for (unsigned int  i=0; i<nelemThatWillBeRequested; ++i )
+            {
                 val[i]=V[i];
             }
         }
@@ -3248,13 +3477,15 @@ int  CAFE::set(const unsigned int  _handle, std::vector<dbr_double_t>  V)
 
 
         //Reset to previous value
-        if (nelemPrevious!=nelemThatWillBeRequested) {
+        if (nelemPrevious!=nelemThatWillBeRequested)
+        {
             handleHelper.setNelem(_handle, nelemPrevious);
         }
 
         return status;
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -3270,7 +3501,8 @@ int CAFE::setPVArray(std::vector<unsigned int> handleV, PVDataHolder * pvd)
 {
     int  overallStatus=ICAFE_NORMAL;
     unsigned int    * h = new unsigned int   [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), pvd);
@@ -3295,12 +3527,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<std::string>  V, s
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_string_t * value = new dbr_string_t  [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (size_t  i=0; i<handleV.size(); ++i) {
+    for (size_t  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         sprintf(value[i],"%s",V[i].c_str());
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (size_t   i=0; i<handleV.size(); ++i) {
+    for (size_t   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3324,12 +3558,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<dbr_short_t>  V, s
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_short_t * value = new dbr_short_t    [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i]     = handleV[i];
         value[i] = V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3353,12 +3589,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<dbr_float_t> V, st
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_float_t * value = new dbr_float_t    [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i] = V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3382,12 +3620,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<dbr_enum_t> V, std
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_enum_t * value  = new dbr_enum_t    [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i] = V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3411,12 +3651,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<dbr_char_t> V, std
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_char_t * value  = new dbr_char_t    [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i] = V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3440,12 +3682,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<dbr_long_t> V, std
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_long_t * value  = new dbr_long_t    [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i] = V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3469,12 +3713,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<long long> V, std:
     unsigned int    * h = new unsigned int   [handleV.size()];
     long long * value   = new long long [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i] = (long long) V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(),value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;
@@ -3498,12 +3744,14 @@ int  CAFE::set(std::vector<unsigned int> handleV, std::vector<dbr_double_t> V, s
     unsigned int    * h = new unsigned int   [handleV.size()];
     dbr_double_t * value  = new dbr_double_t    [handleV.size()];
     int  * stats        = new int  [handleV.size()];
-    for (unsigned int  i=0; i<handleV.size(); ++i) {
+    for (unsigned int  i=0; i<handleV.size(); ++i)
+    {
         h[i] = handleV[i];
         value[i] = V[i];
     }
     overallStatus = CAFE::set(h, (unsigned int) handleV.size(), value, stats);
-    for (unsigned int   i=0; i<handleV.size(); ++i) {
+    for (unsigned int   i=0; i<handleV.size(); ++i)
+    {
         statusV.push_back(stats[i]);
     }
     delete []h;

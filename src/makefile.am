@@ -3,22 +3,33 @@
 ## input file for production of cafe library
 ##
 
-
 lib_LTLIBRARIES = libcafe.la
+
+#10:2:9  11:2:10    12:0:11 12:1:11 13.0.12 13.1.12 13:2:12 13.4.12
+#current:revision:age
+#maps in soname to:
+#1st: current-age
+#2nd: age
+#3rd: revision
+#1.9.1   1.10.2     1.11.0 1.11.1   1.12.0 1.12.1 1.12.2    1.12.4
+libcafe_la_LDFLAGS = -version-info 13:4:12
+
 libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp cafeVectors.cpp cafeXML.cpp \
-					 callbackHandlerCreate.cpp callbackHandlerMonitor.cpp conduit.cpp connect.cpp connectCallbacks.cpp \
-					 exceptionsHelper.cpp granules.cpp handleHelper.cpp loadCollectionXMLParser.cpp \
-					 loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp policyHelper.cpp \
-					 conduitGroup.cpp connectGroup.cpp transpose.cpp restorePVGroupXMLParser.cpp
+		callbackHandlerCreate.cpp callbackHandlerMonitor.cpp conduit.cpp connect.cpp connectCallbacks.cpp \
+		exceptionsHelper.cpp granules.cpp handleHelper.cpp loadCollectionXMLParser.cpp \
+		loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp policyHelper.cpp \
+		conduitGroup.cpp connectGroup.cpp transpose.cpp restorePVGroupXMLParser.cpp
 
 
-if HAVE_PYCAFE_EXT
+if HAVE_PYCAFE_EXT_
 libcafe_la_SOURCES += PyCafe.cpp
 endif
 
-#if HAVE_ZEROMQ
-#libcafe_la_SOURCES += cafeService.cpp 
-#endif
+if HAVE_ZEROMQ_
+libcafe_la_SOURCES += zbsCafeService.cpp zbsDataHolders.cpp \
+		bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c bitshuffle/iochain.c 									  
+endif
+##bitshuffle/bshuf_h5filter.c bitshuffle/bshuf_h5plugin.c  bitshuffle/lzf_h5plugin.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ @CAFE_CPPFLAGS@
 AM_LDFLAGS= @AM_LDFLAGS@

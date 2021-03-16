@@ -1,3 +1,6 @@
+rm -f configure.ac
+ln -s configurezbspy37.ac configure.ac
+
 source usePy3
 aclocal  --force -I m4
 libtoolize --force --copy
@@ -27,16 +30,16 @@ export CAFE_EPICS_V_MINOR=$EBMIN
 export CAFE_EPICS_V_PATCH=$EBPAT
 
 #--enable-boost --with-boost=/afs/psi.ch/intranet/Controls/BD/deps/boost_1_57_0 \
-CAFE_VERSION=cafe-1.8.0
-CYCAFE_VERSION=pycafe-noqt-1.8.0
+CAFE_VERSION=cafe-1.12.5
+CYCAFE_VERSION=pycafe-noqt-1.12.5
 
 ./configure \
-    --prefix=/opt/gfa/cafe/python/python-3.5/${CYCAFE_VERSION}/ \
-    --libdir=/opt/gfa/cafe/python/python-3.5/${CYCAFE_VERSION}/lib \
-    --enable-boost --with-boost=/opt/gfa/cafe/boost/boost_1_57_0 \
+    --prefix=/opt/gfa/cafe/python/python-3.7/${CYCAFE_VERSION}/ \
+    --libdir=/opt/gfa/cafe/python/python-3.7/${CYCAFE_VERSION}/lib \
+    --enable-boost --with-boost=/opt/gfa/cafe/boost/boost_1_61_0 \
     --enable-epics --with-epics=${EPICS} \
-	  --enable-python-inc --with-python-inc=/opt/gfa/python-3.5/latest/include/python3.5m \
-	  --enable-python-lib --with-python-lib=/opt/gfa/python-3.5/latest/lib
+	  --enable-python-inc --with-python-inc=/opt/gfa/python-3.7/latest/include/python3.5m \
+	  --enable-python-lib --with-python-lib=/opt/gfa/python-3.57/latest/lib
 unset  CAFE_EPICS_V_MAJOR
 unset  CAFE_EPICS_V_MINOR
 unset  CAFE_EPICS_V_PATCH 

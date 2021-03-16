@@ -6,19 +6,21 @@
 ///
 
 
-#include <config.h>
-
-#if HAVE_LIBQTXML
 
 #ifndef LOADCOLLECTIONXMLPARSER_H
 #define LOADCOLLECTIONXMLPARSER_H
 
+#include <config.h>
+
+#if HAVE_LIBQTXML
+
 #include <deviceCollection.h>
 
-#include <QtXml/QXmlDefaultHandler>
+//include <QtXml/QXmlDefaultHandler>
+#include <QXmlDefaultHandler>
 
-
-class loadCollectionXMLParser : public QXmlDefaultHandler {
+class loadCollectionXMLParser : public QXmlDefaultHandler
+{
 public:
     loadCollectionXMLParser();
     virtual ~loadCollectionXMLParser();
@@ -35,7 +37,8 @@ public:
 
 
 private:
-    enum {
+    enum
+    {
         NotWaiting,
         WaitingForDescription,
         WaitingForDevice,

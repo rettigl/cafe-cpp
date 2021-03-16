@@ -7,6 +7,7 @@
 #ifndef CAFE_H
 #define CAFE_H
 
+#include <hashConduit.h>
 #include <connect.h>
 #include <conduitEventHandlerArgs.h>
 #include <instant.h>
@@ -25,7 +26,8 @@ using namespace CAFEBS;
 * \class CAFE
 * \brief Methods for synchronous and asynchronous interactions
 */
-class CAFE : public Connect {
+class CAFE : public Connect
+{
 private:
     Instant<dbr_string_t>   cafeSoluble;
     Instant<dbr_float_t>    cafeFrappuccino;
@@ -63,8 +65,8 @@ public:
         channelRequestPolicyMasterPut.setPolicy(CAFENUM::FLUSH_AFTER_EACH_MESSAGE,
                                                 CAFENUM::NO_WAIT,  CAFENUM::WITH_CALLBACK_DEFAULT); //WITHOUT_CALLBACK)
 
-        //channelRequestPolicyMasterGet.setPolicy(CAFENUM::FLUSH_AFTER_EACH_MESSAGE,
-        //	  CAFENUM::WAIT,  CAFENUM::WITH_CALLBACK_DEFAULT); //WITHOUT_CALLBACK);
+        // channelRequestPolicyMasterGet.setPolicy(CAFENUM::FLUSH_AFTER_EACH_MESSAGE,
+	//					CAFENUM::WAIT, CAFENUM::WITH_CALLBACK_DEFAULT); // WITHOUT_CALLBACK);
         //channelRequestPolicyMasterGetCtrl.setPolicy(CAFENUM::FLUSH_AFTER_EACH_MESSAGE,
         //	 CAFENUM::WAIT, CAFENUM::WITH_CALLBACK_DEFAULT); //WITH_CALLBACK_DEFAULT);
     };
@@ -146,13 +148,16 @@ public:
     {
         unsigned int  handle;
         status=ICAFE_NORMAL;
-        try {
+        try
+        {
             status = open(pv,  handle);
         }
-        catch (CAFEException_open & e) {
+        catch (CAFEException_open & e)
+        {
             return e.pvEx.statusCode;
         }
-        if (status == ICAFE_NORMAL) {
+        if (status == ICAFE_NORMAL)
+        {
             status=getWFAsString(handle, message);
         }
         return status;
@@ -163,13 +168,16 @@ public:
     {
         unsigned int  handle;
         status=ICAFE_NORMAL;
-        try {
+        try
+        {
             status = open(pv,  handle);
         }
-        catch (CAFEException_open & e) {
+        catch (CAFEException_open & e)
+        {
             return e.pvEx.statusCode;
         }
-        if (status == ICAFE_NORMAL) {
+        if (status == ICAFE_NORMAL)
+        {
             status=getWFAsStringCache(handle, message);
         }
         return status;
@@ -182,26 +190,40 @@ public:
         return ss.str();
     }
 
-		int  getAllChannelInfo(unsigned int handle, ChannelRegalia & channelInfo, PVCtrlHolder & pvc, PVDataHolder &pvd, std::string & desc);
-	  int  getChannelDataStore(unsigned int handle, ChannelDataStore & cds);
+    int  getAllChannelInfo(unsigned int handle, ChannelRegalia & channelInfo, PVCtrlHolder & pvc, PVDataHolder &pvd, std::string & desc);
+    int  getChannelDataStore(unsigned int handle, ChannelDataStore & cds);
 
     int supplementHandles();
     int supplementHandlesV(std::vector<unsigned int> hV);
-    int supplementHandle(unsigned int handle) {
-		 std::vector<unsigned int> hV;
-		 hV.push_back(handle);
-		 return supplementHandlesV(hV);
-		} 
+    int supplementHandle(unsigned int handle)
+    {
+        std::vector<unsigned int> hV;
+        hV.push_back(handle);
+        return supplementHandlesV(hV);
+    }
+    int addWidget(unsigned int _handle, void * widget)
+    {
+        return handleHelper.addWidget(_handle, widget);
+    }
 
+    int removeWidget (unsigned int _handle, void * widget)
+    {
+        return handleHelper.removeWidget(_handle, widget);
+    }
+
+    int getWidgets(unsigned int _handle, std::vector<void *> & widgetV)
+    {
+        return  handleHelper.getWidgets(_handle, widgetV);
+    }
 
 #if HAVE_ZEROMQ
     int calcDBPMStatus(int, int, std::string);
     int initBSwithCA(CAFEBS::BSDataHolder &bsd);
-		int setBS2CA_Step1(CAFEBS::BSDataHolder &bsd);
-		int setBS2CA_Step2(CAFEBS::BSDataHolder &bsd);
-		int setBS2CA_Step3(CAFEBS::BSDataHolder &bsd);
+
+    int setBS2CAGroup(CAFEBS::BSDataHolder &bsd);
     int setBS2CA(CAFEBS::BSDataHolder &bsd);
-    int setBS(CAFEBS::BSDataHolder &bsd, bool closeCA);
+    
+    int setBS(CAFEBS::BSDataHolder &bsd);
     int getBS(CAFEBS::BSDataHolder &bsd);
     int closeBS(CAFEBS::BSDataHolder &bsd);
     int setPulseIDBufferSize(unsigned int _handle, unsigned short _bsize)
@@ -219,22 +241,25 @@ public:
     }
     int getDBPM(DBPMKeeper &dbpm);
     int readDBPMOffsets(DBPMKeeper &dbpm);
+#if HAVE_LIBQTXML
     int prepareDBPM(std::vector<std::string> &_glist, std::vector<unsigned int> &_hV, std::vector<std::string> &dev,  std::vector<float> &pos) ;
     int prepareDBPM(std::vector<std::string> &_glist, std::vector<unsigned int> &_hV, std::map<float, std::string> &posDev) ;
 #endif
-
+#endif
     //Standard BLOCKING get
     //0+
     int  get(const unsigned int  handle, std::string * valStr,  dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)
     {
         unsigned int nn=handleHelper.getNelemClient(handle);
-        if (nn==0) {
+        if (nn==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         //check on handle number before proceeding!
         dbr_string_t * _val = new dbr_string_t[nn];
         status=cafeSoluble.get(handle, DBR_TIME_STRING, _val, alarmStatus, alarmSeverity, ts);
-        for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+        {
             valStr[i]=_val[i];
         }
         delete [] _val;
@@ -244,12 +269,14 @@ public:
     int  get(const unsigned int  handle, std::string * valStr, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)
     {
         unsigned int nn=handleHelper.getNelemClient(handle);
-        if (nn==0) {
+        if (nn==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t * _val = new dbr_string_t[nn];
         status=cafeSoluble.get(handle, DBR_STS_STRING, _val, alarmStatus, alarmSeverity);
-        for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+        {
             valStr[i]=_val[i];
         }
         delete [] _val;
@@ -259,12 +286,14 @@ public:
     int  get(const unsigned int  handle, std::string * valStr)
     {
         unsigned int nn=handleHelper.getNelemClient(handle);
-        if (nn==0) {
+        if (nn==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t * _val = new dbr_string_t[nn];
         status=cafeSoluble.get(handle, DBR_STRING, _val);
-        for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i) {
+        for (unsigned int i=0; i< handleHelper.getNelemRequest(handle); ++i)
+        {
             valStr[i]=_val[i];
         }
         delete [] _val;
@@ -367,7 +396,10 @@ public:
     {
         return cafeDoppio.get (handle, DBR_DOUBLE, _val);
     };
-    //Arrays
+
+
+
+    //Arrays -user allocates space 
     int getCharArray(const unsigned int handle, dbr_char_t * _val)
     {
         return cafeCappuccino.get (handle, DBR_CHAR, _val);
@@ -405,17 +437,20 @@ public:
         return cafeSoluble.get(handle, DBR_STRING, _val);
     };
 
+
     //0
     //single values
     int getString(const unsigned int handle, std::string  & valStr)   //0+
     {
         unsigned int nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_STRING, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             valStr=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -425,12 +460,14 @@ public:
     int get(const unsigned int handle, std::string  & valStr)   //0+
     {
         unsigned int nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_STRING, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             valStr=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -440,12 +477,14 @@ public:
     int get(const unsigned int  handle, std::string  & valStr, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //0
     {
         unsigned int nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_STS_STRING, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             valStr=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -456,12 +495,14 @@ public:
                      dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //0
     {
         unsigned int nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             valStr=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -472,12 +513,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //0
     {
         unsigned int nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             valStr=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -487,12 +530,14 @@ public:
     int get(const unsigned int handle, dbr_string_t  & _val)   //0
     {
         unsigned int nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_STRING, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             sprintf(_val, val[0]);
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -502,12 +547,14 @@ public:
     int get(const unsigned int  handle, dbr_string_t  & _val, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //0
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_STS_STRING, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             sprintf(_val, val[0]);
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -518,12 +565,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //0
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1]= {""};
         status=cafeSoluble.get(handle, DBR_TIME_STRING, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             sprintf(_val, val[0]);
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -533,12 +582,14 @@ public:
     int  get(const unsigned int  handle, dbr_short_t  & _val)  //1
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_short_t val[1]= {0};
         status=cafeSchale.get(handle, DBR_SHORT, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -547,12 +598,14 @@ public:
     int get(const unsigned int  handle, dbr_short_t  & _val, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //1
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_short_t val[1]= {0};
         status=cafeSchale.get(handle, DBR_STS_SHORT, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -562,12 +615,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //1
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_short_t val[1]= {0};
         status=cafeSchale.get(handle, DBR_TIME_SHORT, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -576,12 +631,14 @@ public:
     int get(const unsigned int  handle, dbr_float_t  &_val)  //2
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_float_t val[1]= {0};
         status=cafeFrappuccino.get(handle, DBR_FLOAT, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -590,12 +647,14 @@ public:
     int get(const unsigned int  handle, dbr_float_t  &_val, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //2
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_float_t val[1]= {0};
         status=cafeFrappuccino.get(handle, DBR_STS_FLOAT, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -605,12 +664,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //2
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_float_t val[1]= {0};
         status=cafeFrappuccino.get(handle, DBR_TIME_FLOAT, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -619,12 +680,14 @@ public:
     int get(const unsigned int  handle, dbr_enum_t  & _val)  //3
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_enum_t val[1]= {0};
         status=cafeEspresso.get(handle, DBR_ENUM, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -633,12 +696,14 @@ public:
     int get(const unsigned int  handle, dbr_enum_t  & _val, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //3
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_enum_t val[1]= {0};
         status=cafeEspresso.get(handle, DBR_STS_ENUM, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -648,12 +713,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //3
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_enum_t val[1]= {0};
         status=cafeEspresso.get(handle, DBR_TIME_ENUM, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -662,12 +729,14 @@ public:
     int get(const unsigned int  handle, dbr_char_t  & _val)  //4
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_char_t val[1]= {0};
         status=cafeCappuccino.get(handle, DBR_CHAR, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -676,12 +745,14 @@ public:
     int get(const unsigned int  handle, dbr_char_t  & _val, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //4
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_char_t val[1]= {0};
         status=cafeCappuccino.get(handle, DBR_STS_CHAR, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -691,12 +762,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //4
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_char_t val[1]= {0};
         status=cafeCappuccino.get(handle, DBR_TIME_CHAR, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -705,12 +778,14 @@ public:
     int getLong(const unsigned int  handle, dbr_long_t  & _val)  //5
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_long_t val[1]= {0};
         status=cafeLatte.get(handle, DBR_LONG, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -719,12 +794,14 @@ public:
     int get(const unsigned int  handle, dbr_long_t  & _val)  //5
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_long_t val[1]= {0};
         status=cafeLatte.get(handle, DBR_LONG, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -734,12 +811,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //5
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_long_t val[1]= {0};
         status=cafeLatte.get(handle, DBR_STS_LONG, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -749,12 +828,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //5
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_long_t val[1]= {0};
         status=cafeLatte.get(handle, DBR_TIME_LONG, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -764,12 +845,14 @@ public:
     int get(const unsigned int  handle, long long  & _val)  //5+ long long
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         long long val[1]= {0};
         status=CAFE::get(handle, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -779,12 +862,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)  //5+ long long
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         long long val[1]= {0};
         status=CAFE::get(handle, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -794,12 +879,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //5+ long long
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         long long val[1]= {0};
         status=CAFE::get(handle, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -809,12 +896,14 @@ public:
     int getDouble(const unsigned int  handle, dbr_double_t  & _val)   //6
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_double_t val[1]= {0};
         status=cafeDoppio.get(handle, DBR_DOUBLE, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -823,12 +912,14 @@ public:
     int get(const unsigned int  handle, dbr_double_t  & _val)   //6
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_double_t val[1]= {0};
         status=cafeDoppio.get(handle, DBR_DOUBLE, val);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -837,12 +928,14 @@ public:
     int get(const unsigned int  handle, dbr_double_t  & _val, dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity)   //6
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_double_t val[1]= {0};
         status=cafeDoppio.get(handle, DBR_STS_DOUBLE, val, alarmStatus, alarmSeverity);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -852,12 +945,14 @@ public:
             dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity, epicsTimeStamp &ts)  //6
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_double_t val[1]= {0};
         status=cafeDoppio.get(handle, DBR_TIME_DOUBLE, val, alarmStatus, alarmSeverity, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             _val=val[0];
         }
         CAFE::setNelemToPrevious(handle, nelemPrevious);
@@ -1001,6 +1096,24 @@ public:
         return cafeDoppio.set (handle, DBR_DOUBLE, _val);
     };
 
+    /* NOT REQUIRED 
+    int setStringWF(const unsigned int  handle, std::string wfStr) {
+      dbr_char_t * wfChar = new dbr_char_t[wfStr.size()];
+      unsigned short iCount = 0;
+      for (std::string::size_type i=0; i < wfStr.size(); ++i) {
+	if (wfStr[i].compare("\\") == 0 ) {
+	     wfChar[iCount] = '\n'; 
+             ++i;
+        } 
+        else {
+             wfChar[iCount] = wfStr[i] 
+        }     
+        ++iCount; 
+      } 
+      return cafeCappuccino.set (handle, DBR_CHAR, wfChar);
+      delete [] wfChar;
+    }
+    */
 
     //set for PythonTypes
     //0
@@ -1051,7 +1164,7 @@ public:
         return set (handle,  _val);
     };
     //5
-    int   setLong(const unsigned int handle, const dbr_long_t  _val)
+    int setLong(const unsigned int handle, const dbr_long_t  _val)
     {
         return set (handle, _val);
     };
@@ -1071,7 +1184,8 @@ public:
     int set(const unsigned int  handle, std::string _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1];
@@ -1088,7 +1202,8 @@ public:
     int set(const unsigned int  handle, const dbr_string_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_string_t val[1];
@@ -1101,7 +1216,8 @@ public:
     int set(const unsigned int  handle, const dbr_short_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_short_t val[1];
@@ -1114,7 +1230,8 @@ public:
     int set(const unsigned int  handle, const dbr_float_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_float_t val[1];
@@ -1127,7 +1244,8 @@ public:
     int set(const unsigned int  handle, const dbr_enum_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_enum_t val[1];
@@ -1140,7 +1258,8 @@ public:
     int set(const unsigned int  handle, const dbr_char_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_char_t val[1];
@@ -1153,7 +1272,8 @@ public:
     int set(const unsigned int  handle, const dbr_long_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_long_t val[1];
@@ -1166,15 +1286,18 @@ public:
     int set(const unsigned int  handle, const long long _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
-        if (_val <= LONG_MAX) {
+        if (_val <= LONG_MAX)
+        {
             dbr_long_t val[1];
             val[0]=_val;
             status=CAFE::set(handle,  val);
         }
-        else {
+        else
+        {
             dbr_double_t val[1];
             val[0]=_val;
             status=CAFE::set(handle,  val);
@@ -1186,7 +1309,8 @@ public:
     int set(const unsigned int  handle, const dbr_double_t _val)
     {
         unsigned int  nelemPrevious=CAFE::setNelemToOne(handle);
-        if (nelemPrevious==0) {
+        if (nelemPrevious==0)
+        {
             return ECAFE_INVALID_HANDLE;
         }
         dbr_double_t val[1];
@@ -1321,7 +1445,8 @@ public:
     std::vector<unsigned int> closeDisconnectedChannelsFromWithinGroupV(const unsigned int groupHandle)
     {
         std::vector<unsigned int> dhV=handleHelper.getDisconnectedHandlesFromWithinGroupV(groupHandle);
-        if (dhV.size() >0) {
+        if (dhV.size() >0)
+        {
             closeChannelsKeepHandles(dhV);
         }
         return dhV;

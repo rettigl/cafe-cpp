@@ -33,6 +33,7 @@ const unsigned short ICAFE_STATUS_BASE  =  600;
 const unsigned short ICAFE_STATUS_CS    = ICAFE_STATUS_BASE;
 const unsigned short ICAFE_STATUS_CFT   =  700; // ca_field_type
 const unsigned short ICAFE_STATUS_CA_OP =  800;
+const unsigned short ICAFE_STATUS_DAQ    =  900; // for use in HLAs
 const unsigned short ICAFE_STATUS_ERROR = 1000;
 const unsigned short ICAFE_FILE_ERROR   = 1100;
 const unsigned short ICAFE_SERVICE_ERROR    =1200;
@@ -42,7 +43,6 @@ const unsigned short ICAFE_ERRNO_BASE   = 5000;
 
 const unsigned short ICAFE_SUCCESS      = ECA_NORMAL;
 const unsigned short ICAFE_NORMAL       = ECA_NORMAL;
-
 
 
 enum CAFE_CS_STATE {    ICAFE_CS_NEVER_CONN=ICAFE_STATUS_CS,
@@ -74,6 +74,11 @@ enum CAFE_CC_STATE {    ICAFE_CA_OP_GET=ICAFE_STATUS_CA_OP,
                         ICAFE_CA_OP_CONN_UP,
                         ICAFE_CA_OP_CONN_DOWN
                    };
+
+enum CAFE_DAQ_STATE {   ICAFE_DAQ_RUN= ICAFE_STATUS_DAQ,
+                        ICAFE_DAQ_PAUSED,
+                        ICAFE_DAQ_STOPPED
+                    };
 
 enum CAFE_ERROR_STATE { ECAFE_NODATA=ICAFE_STATUS_ERROR,
                         ECAFE_INVALID_TYPE,
@@ -160,7 +165,8 @@ enum EPICS_GLOBAL_ALARM_CONDITION {STAT_NO_ALARM=0, STAT_READ, STAT_WRITE, STAT_
 enum EPICS_GLOBAL_ALARM_SEVERITY {SEV_NO_ALARM=0, SEV_MINOR, SEV_MAJOR, SEV_INVALID};
 
 
-class CAFEGlobalAlarmCondition {
+class CAFEGlobalAlarmCondition
+{
     typedef std::map<int, std::string> mapIntString;
 
 private:
@@ -201,12 +207,14 @@ public:
     {
 
         pos = mapAlarmCondition.find(i);
-        if (pos != mapAlarmCondition.end()) {
+        if (pos != mapAlarmCondition.end())
+        {
             return    pos->second;
         }
 
         std::ostringstream oss;
-        if (i == -1) {
+        if (i == -1)
+        {
             oss << "NO_DATA" ;
             return oss.str();
         }
@@ -221,9 +229,9 @@ public:
 
 
     int asInt (std::string message)
-
     {
-        for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos) {
+        for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos)
+        {
 
             if (pos->second==message) return pos->first;
             // String searches such as s.find(s1) return string::npos on failure
@@ -244,7 +252,8 @@ public:
         vecI.clear();
         vecI.reserve(mapAlarmCondition.size());
 
-        for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos) {
+        for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos)
+        {
             vecI.push_back(pos->first);
             vecS.push_back(pos->second);
         }
@@ -257,11 +266,14 @@ public:
         std::cout << "-------------------" << std::endl;
         std::cout << "EPICS GLOBAL ALARM CONDITION LIST" << std::endl;
         std::cout << "-------------------" << std::endl;
-        for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos) {
-            if (pos->first < 10) {
+        for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos)
+        {
+            if (pos->first < 10)
+            {
                 std::cout << " " << pos->first << " " << pos->second << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << pos->first << " " << pos->second << std::endl;
             }
         }
@@ -272,7 +284,8 @@ public:
 
 
 
-class CAFEGlobalAlarmSeverity {
+class CAFEGlobalAlarmSeverity
+{
     typedef std::map<int, std::string> mapIntString;
 
 private:
@@ -294,13 +307,15 @@ public:
     {
 
         pos = mapAlarmSeverity.find(i);
-        if (pos != mapAlarmSeverity.end()) {
+        if (pos != mapAlarmSeverity.end())
+        {
             return    pos->second;
         }
 
 
         std::ostringstream oss;
-        if (i == -1) {
+        if (i == -1)
+        {
             oss << "NO_DATA" ;
             return oss.str();
         }
@@ -316,7 +331,8 @@ public:
 
     int asInt (std::string message)
     {
-        for (pos=mapAlarmSeverity.begin(); pos != mapAlarmSeverity.end(); ++pos) {
+        for (pos=mapAlarmSeverity.begin(); pos != mapAlarmSeverity.end(); ++pos)
+        {
 
             if (pos->second==message) return pos->first;
             // String searches such as s.find(s1) return string::npos on failure
@@ -337,7 +353,8 @@ public:
         vecI.clear();
         vecI.reserve(mapAlarmSeverity.size());
 
-        for (pos=mapAlarmSeverity.begin(); pos != mapAlarmSeverity.end(); ++pos) {
+        for (pos=mapAlarmSeverity.begin(); pos != mapAlarmSeverity.end(); ++pos)
+        {
 
             vecI.push_back(pos->first);
             vecS.push_back(pos->second);
@@ -350,7 +367,8 @@ public:
         std::cout << "-------------------" << std::endl;
         std::cout << "EPICS GLOBAL ALARM SEVERITY LIST" << std::endl;
         std::cout << "-------------------" << std::endl;
-        for (pos=mapAlarmSeverity.begin(); pos != mapAlarmSeverity.end(); ++pos) {
+        for (pos=mapAlarmSeverity.begin(); pos != mapAlarmSeverity.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
         std::cout << "------------------" << std::endl;
@@ -414,6 +432,9 @@ public:
 *  709 ICAFE_SET_AND_GET_MISMATCH \n
 *  806 ICAFE_CA_OP_CONN_UP \n
 *  807 ICAFE_CA_OP_CONN_DOWN \n
+*  900 ICAFE_DAQ_RUN \n
+*  901 ICAFE_DAQ_PAUSED \n
+*  902 ICAFE_DAQ_STOPPED \n
 * 1000 ECAFE_NODATA \n
 * 1001 ECAFE_INVALID_TYPE \n
 * 1002 ECAFE_BADCOUNT \n
@@ -463,13 +484,14 @@ public:
 * 1502 ECAFE_BSREAD_PARSEFAIL_DATAHEADER \n
 * 1503 ECAFE_BSREAD_ZMQSTREAM_NULL \n
 * 5004 ERRNO_EINTR \n
-* 5011 ERRNO_EGAIN \n
+* 5011 ERRNO_EAGAIN \n
 * 5014 ERRNO_EFAULT \n
 * 5022 ERRNO_EINVAL Invalid argument \n
 * 5088 ERRNO_ENOTSOCK \n
 * 5093 ERRNO_EPROTONOSUPPORT \n
 */
-class CAFEStatusInfo {
+class CAFEStatusInfo
+{
     typedef std::map<int, std::string> mapLongString;
 private:
     mapLongString mapStatusInfo;
@@ -499,8 +521,11 @@ public:
         mapStatusInfo.insert(std::make_pair((int)  ICAFE_MONITOR_DELAYED_AS_CONN_DOWN, "Channel disconnected. Monitor will be started on connection "));
         mapStatusInfo.insert(std::make_pair((int)  ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE, "Handle has monitor, hence data retrieved from cache "));
 
-        mapStatusInfo.insert(std::make_pair((int)  ICAFE_SET_AND_GET_MISMATCH, "Set and Get values from SetAndGetMethod do not match"));
+        mapStatusInfo.insert(std::make_pair((int)  ICAFE_SET_AND_GET_MISMATCH, "Set and Get values from SetAndGetMethod do not match "));
 
+        mapStatusInfo.insert(std::make_pair((int)  ICAFE_DAQ_RUN,           "HLA DAQ in progress " ));
+        mapStatusInfo.insert(std::make_pair((int)  ICAFE_DAQ_PAUSED,        "HLA DAQ has been paused " ));
+        mapStatusInfo.insert(std::make_pair((int)  ICAFE_DAQ_STOPPED,       "HLA DAQ has been stopped " ));
 
         mapStatusInfo.insert(std::make_pair((int)  ECAFE_NODATA,            "Requested data transfer is of zero length! " ));
         mapStatusInfo.insert(std::make_pair((int)  ECAFE_INVALID_TYPE,      "Invalid data type! " ));
@@ -583,13 +608,16 @@ public:
     std::string message (int i)
     {
 
-        if (i<ICAFE_STATUS_BASE) {
+        if (i<ICAFE_STATUS_BASE)
+        {
             std::string c= ca_message(i);
             return c;
         }
-        else {
+        else
+        {
             posStatusInfo = mapStatusInfo.find(i);
-            if (posStatusInfo != mapStatusInfo.end()) {
+            if (posStatusInfo != mapStatusInfo.end())
+            {
                 return    posStatusInfo->second;
             }
 
@@ -609,7 +637,8 @@ public:
         std::cout << "-----------------------" << std::endl;
         std::cout << "CAFE ERROR MESSAGE LIST" << std::endl;
         std::cout << "-----------------------" << std::endl;
-        for (posStatusInfo=mapStatusInfo.begin(); posStatusInfo != mapStatusInfo.end(); ++posStatusInfo) {
+        for (posStatusInfo=mapStatusInfo.begin(); posStatusInfo != mapStatusInfo.end(); ++posStatusInfo)
+        {
             std::cout << posStatusInfo->first << " " << posStatusInfo->second << std::endl;
         }
         std::cout << "------------------" << std::endl;
@@ -620,7 +649,8 @@ public:
 
 
 
-class CAFEStatusCode {
+class CAFEStatusCode
+{
     typedef std::map<int, std::string> mapLongString;
 
 private:
@@ -674,17 +704,21 @@ public:
         mapStatusCode.insert(std::make_pair((int)  ICAFE_TYPENOTCONN,     "CHANNEL FIELD TYPE: ICAFE_CFT_TYPENOTCONN"));
         mapStatusCode.insert(std::make_pair((int)  ICAFE_RULE_FALSE,      "CAFE INFO: ICAFE_RULE_FALSE"));
         mapStatusCode.insert(std::make_pair((int)  ICAFE_BADCOUNT,          "CAFE INFO: ICAFE_BADCOUNT"));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_CALLBACK_NOT_YET_INVOKED, "CAFE_INFO: ICAFE_CALLBACK_NOT_YET_INVOKED"));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_WAITING_FOR_PREV_CALLBACK, "CAFE_INFO: ICAFE_WAITING_FOR_PREV_CALLBACK"));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_CACHE_EMPTY,     "CAFE_INFO:ICAFE_CACHE_EMPTY"));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT, "CAFE_INFO: ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT"));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_CA_OP_CONN_UP,   "CHANNEL CONNECTION: ICAFE_CC_OP_CONN_UP" ));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_CA_OP_CONN_DOWN, "CHANNEL CONNECTION: ICAFE_CC_OP_CONN_DOWN" ));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_CALLBACK_NOT_YET_INVOKED, "CAFE INFO: ICAFE_CALLBACK_NOT_YET_INVOKED"));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_WAITING_FOR_PREV_CALLBACK, "CAFE INFO: ICAFE_WAITING_FOR_PREV_CALLBACK"));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_CACHE_EMPTY,     "CAFE INFO:ICAFE_CACHE_EMPTY"));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT, "CAFE INFO: ICAFE_CHANNEL_BLOCKING_POLICY_CONFLICT"));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_CA_OP_CONN_UP,   "CHANNEL CONNECTION: ICAFE_CA_OP_CONN_UP" ));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_CA_OP_CONN_DOWN, "CHANNEL CONNECTION: ICAFE_CA_OP_CONN_DOWN" ));
 
         mapStatusCode.insert(std::make_pair((int)  ICAFE_MONITOR_DELAYED_AS_CONN_DOWN, "CHANNEL CONNECTION: ICAFE_MONITOR_DELAYED_AS_CONN_DOWN"));
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE, "CAFE_INFO: ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE"));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE, "CAFE INFO: ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE"));
 
-        mapStatusCode.insert(std::make_pair((int)  ICAFE_SET_AND_GET_MISMATCH, "CAFE_INFO: ICAFE_SET_AND_GET_MISMATCH"));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_SET_AND_GET_MISMATCH, "CAFE INFO: ICAFE_SET_AND_GET_MISMATCH"));
+
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_DAQ_RUN,           "CAFE INFO: ICAFE_DAQ_RUN" ));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_DAQ_PAUSED,        "CAFE INFO: ICAFE_DAQ_PAUSED" ));
+        mapStatusCode.insert(std::make_pair((int)  ICAFE_DAQ_STOPPED,       "CAFE INFO: ICAFE_DAQ_STOPPED" ));
 
         mapStatusCode.insert(std::make_pair((int)  ECAFE_NODATA,          "CAFE ERROR: ECAFE_NODATA"));
         mapStatusCode.insert(std::make_pair((int)  ECAFE_BADCOUNT,        "CAFE ERROR: ECAFE_BADCOUNT"));
@@ -756,7 +790,8 @@ public:
     {
 
         pos = mapStatusCode.find(i);
-        if (pos != mapStatusCode.end()) {
+        if (pos != mapStatusCode.end())
+        {
             return    pos->second;
         }
 
@@ -776,13 +811,16 @@ public:
         vecI.clear();
         vecI.reserve(mapStatusCode.size());
 
-        for (pos=mapStatusCode.begin(); pos != mapStatusCode.end(); ++pos) {
+        for (pos=mapStatusCode.begin(); pos != mapStatusCode.end(); ++pos)
+        {
             std::size_t found = (pos->second).find(": ");
-            if (found!=std::string::npos) {
+            if (found!=std::string::npos)
+            {
 
                 vecS.push_back((pos->second).substr(found+2,(pos->second).length()));
             }
-            else {
+            else
+            {
                 vecS.push_back(pos->second);
             }
             vecI.push_back(pos->first);
@@ -794,13 +832,16 @@ public:
     {
 
         pos = mapStatusCode.find(i);
-        if (pos != mapStatusCode.end()) {
+        if (pos != mapStatusCode.end())
+        {
             std::size_t found = (pos->second).find(": ");
-            if (found!=std::string::npos) {
+            if (found!=std::string::npos)
+            {
 
                 return (pos->second).substr(found+2,(pos->second).length());
             }
-            else {
+            else
+            {
                 return    pos->second;
             }
         }
@@ -815,7 +856,8 @@ public:
 
     int enumIs (std::string message)
     {
-        for (pos=mapStatusCode.begin(); pos != mapStatusCode.end(); ++pos) {
+        for (pos=mapStatusCode.begin(); pos != mapStatusCode.end(); ++pos)
+        {
 
             if (pos->second==message) return pos->first;
             // String searches such as s.find(s1) return string::npos on failure
@@ -826,10 +868,12 @@ public:
 
     bool isTimeout(int statusCodeToCheck)
     {
-        if (statusCodeToCheck==ECA_TIMEOUT || statusCodeToCheck==ECAFE_TIMEOUT) {
+        if (statusCodeToCheck==ECA_TIMEOUT || statusCodeToCheck==ECAFE_TIMEOUT)
+        {
             return true;
         }
-        else {
+        else
+        {
             return false;
         }
     }
@@ -839,7 +883,8 @@ public:
         std::cout << "-------------------" << std::endl;
         std::cout << "CAFE ERROR CODE LIST" << std::endl;
         std::cout << "-------------------" << std::endl;
-        for (pos=mapStatusCode.begin(); pos != mapStatusCode.end(); ++pos) {
+        for (pos=mapStatusCode.begin(); pos != mapStatusCode.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
         std::cout << "------------------" << std::endl;
@@ -849,7 +894,8 @@ public:
 
 
 
-class CAFEStatusSeverity {
+class CAFEStatusSeverity
+{
     typedef std::map<int, std::string> mapLongString;
 
 private:
@@ -874,7 +920,7 @@ public:
         mapStatusSeverity.insert(std::make_pair(ECA_EVDISALLOW,    "ERROR"));
         mapStatusSeverity.insert(std::make_pair(ECA_BADMONID,      "ERROR"));
         mapStatusSeverity.insert(std::make_pair(ECA_BADMASK,       "ERROR"));
-        mapStatusSeverity.insert(std::make_pair(ECA_IODONE,       "INFO"));
+        mapStatusSeverity.insert(std::make_pair(ECA_IODONE,        "INFO"));
         mapStatusSeverity.insert(std::make_pair(ECA_IOINPROGRESS,  "INFO"));
         mapStatusSeverity.insert(std::make_pair(ECA_BADSYNCGRP,    "ERROR"));
         mapStatusSeverity.insert(std::make_pair(ECA_PUTCBINPROG,   "ERROR"));
@@ -914,6 +960,10 @@ public:
         mapStatusSeverity.insert(std::make_pair((int)  ICAFE_HAS_MONITOR_GET_DONE_FROM_CACHE, "INFO"));
 
         mapStatusSeverity.insert(std::make_pair((int)  ICAFE_SET_AND_GET_MISMATCH, "WARN"));
+
+        mapStatusSeverity.insert(std::make_pair((int)  ICAFE_DAQ_RUN,      "INFO" ));
+        mapStatusSeverity.insert(std::make_pair((int)  ICAFE_DAQ_PAUSED,   "INFO" ));
+        mapStatusSeverity.insert(std::make_pair((int)  ICAFE_DAQ_STOPPED,  "INFO" ));
 
         mapStatusSeverity.insert(std::make_pair((int)  ECAFE_NODATA,          "WARN"));
         mapStatusSeverity.insert(std::make_pair((int)  ECAFE_BADCOUNT,        "WARN"));
@@ -984,7 +1034,8 @@ public:
     std::string message (int i)
     {
         pos = mapStatusSeverity.find(i);
-        if (pos != mapStatusSeverity.end()) {
+        if (pos != mapStatusSeverity.end())
+        {
             return    pos->second;
         }
 
@@ -997,7 +1048,8 @@ public:
 
     int enumIs (std::string message)
     {
-        for (pos=mapStatusSeverity.begin(); pos != mapStatusSeverity.end(); ++pos) {
+        for (pos=mapStatusSeverity.begin(); pos != mapStatusSeverity.end(); ++pos)
+        {
 
             if (pos->second==message) return pos->first;
             // String searches such as s.find(s1) return string::npos on failure
@@ -1011,7 +1063,8 @@ public:
         std::cout << "-------------------" << std::endl;
         std::cout << "CAFE STATUS SEVERITY LIST" << std::endl;
         std::cout << "-------------------" << std::endl;
-        for (pos=mapStatusSeverity.begin(); pos != mapStatusSeverity.end(); ++pos) {
+        for (pos=mapStatusSeverity.begin(); pos != mapStatusSeverity.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
         std::cout << "------------------" << std::endl;
@@ -1027,7 +1080,8 @@ public:
 //code:     SUCCESS: ECA_NORMAL
 //info:     Normal successful completion
 //message:  SUCCESS: ECA_NORMAL Normal successful completion
-class CAFEStatus {
+class CAFEStatus
+{
 
 public:
     CAFEStatusSeverity css;

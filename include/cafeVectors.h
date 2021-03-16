@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+
 int get(const unsigned int  _handle, std::vector<std::string> & V);         //0
 int get(const unsigned int  _handle, std::vector<short> & V);          //1
 int get(const unsigned int  _handle, std::vector<float> & V);          //2
@@ -19,6 +20,16 @@ int get(const unsigned int  _handle, std::vector<unsigned char>  & V); //4
 int get(const unsigned int  _handle, std::vector<dbr_long_t> & V);     //5
 int get(const unsigned int  _handle, std::vector<long long> & V);      //5
 int get(const unsigned int  _handle, std::vector<double> & V);         //6
+
+int getStringVector(const unsigned int _handle, std::vector<std::string> & V) {return get(_handle, V);};   //0
+int getShortVector(const unsigned int  _handle, std::vector<short> & V) {return get(_handle, V);};          //1
+int getFloatVector(const unsigned int  _handle, std::vector<float> & V) {return get(_handle, V);};          //2
+int getUShortVector(const unsigned int _handle, std::vector<unsigned short> & V) {return get(_handle, V);};//3
+int getUCharVector(const unsigned int  _handle, std::vector<unsigned char>  & V) {return get(_handle, V);}; //4
+int getLongVector(const unsigned int   _handle, std::vector<dbr_long_t> & V) {return get(_handle, V);};      //5
+int getLongLongVector(const unsigned int _handle, std::vector<long long> & V) {return get(_handle, V);};   //5
+int getDoubleVector(const unsigned int  _handle, std::vector<double> & V) {return get(_handle, V);};        //6
+
 int get(const unsigned int  _handle, std::vector<std::string> & V,
         dbr_short_t &alarmStatus, dbr_short_t &alarmSeverity);//0
 int get(const unsigned int  _handle, std::vector<short> & V,
@@ -167,6 +178,7 @@ int getScalars(std::vector<unsigned int> handleV, std::vector<dbr_double_t>  & V
     //for (size_t i=0; i< handleV.size(); ++i) { cout << "/Cach/h=" <<  handleV[i] << "s=" << statusV[i] << " [" << i << "] " << endl;}
     return status;
 }
+
 
 
 

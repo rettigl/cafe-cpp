@@ -26,7 +26,8 @@ void Helper::removeLeadingAndTrailingSpacesDbrString(const char * pv, char pvStr
     size_t found1  = pvS.find_first_not_of(" ");
     size_t found2  = pvS.find_last_not_of (" ");
 
-    if (found1!=std::string::npos && found2 !=std::string::npos) {
+    if (found1!=std::string::npos && found2 !=std::string::npos)
+    {
 
         size_t found21 = std::min((int)((found2+1)-found1), (int) (MAX_STRING_SIZE-1));
         size_t length  = pvS.copy(pvStripped,found21,found1);
@@ -34,7 +35,8 @@ void Helper::removeLeadingAndTrailingSpacesDbrString(const char * pv, char pvStr
         pvStripped[length]='\0'; //required
 
     }
-    else {
+    else
+    {
         std::strcpy(pvStripped,"");
 
     }
@@ -58,7 +60,8 @@ void Helper::removeLeadingAndTrailingSpacesPseudo(const char * pv, char pvStripp
     size_t found1  = pvS.find_first_not_of(" ");
     size_t found2  = pvS.find_last_not_of (" ");
 
-    if (found1!=std::string::npos && found2 !=std::string::npos) {
+    if (found1!=std::string::npos && found2 !=std::string::npos)
+    {
 
         size_t found21 = std::min((int)((found2+1)-found1), (int) (PVGROUP_PSEUDO_SIZE-1));
         size_t length  = pvS.copy(pvStripped,found21,found1);
@@ -66,7 +69,8 @@ void Helper::removeLeadingAndTrailingSpacesPseudo(const char * pv, char pvStripp
         pvStripped[length]='\0'; //required
 
     }
-    else {
+    else
+    {
         std::strcpy(pvStripped,"isEmpty");
 
     }
@@ -90,7 +94,8 @@ void Helper::removeLeadingAndTrailingSpaces(const char * pv, char pvStripped[PVN
     size_t found1  = pvS.find_first_not_of(" ");
     size_t found2  = pvS.find_last_not_of (" ");
 
-    if (found1!=std::string::npos && found2 !=std::string::npos) {
+    if (found1!=std::string::npos && found2 !=std::string::npos)
+    {
 
         size_t found21 = std::min((int)((found2+1)-found1), (int) (PVNAME_SIZE-1));
         size_t length  = pvS.copy(pvStripped,found21,found1);
@@ -98,7 +103,8 @@ void Helper::removeLeadingAndTrailingSpaces(const char * pv, char pvStripped[PVN
         pvStripped[length]='\0'; //required
 
     }
-    else {
+    else
+    {
         std::strcpy(pvStripped,"isEmpty");
 
     }
@@ -137,19 +143,22 @@ unsigned int  Helper::convertToUniqueNumber(const char * pv, ca_client_context *
     unsigned int intValueIs=0;
     unsigned int iL=0;
 
-    for (unsigned int  i=0; i< myString.size(); i++) {
+    for (unsigned int  i=0; i< myString.size(); i++)
+    {
 
         intValueIs= (unsigned int) myString[i];
         ld=1;
 
         if ( (intValueIs >47 && intValueIs < 58) ||
                 (intValueIs >64 && intValueIs < 91) ||
-                (intValueIs >97 && intValueIs < 123) ) {
+                (intValueIs >97 && intValueIs < 123) )
+        {
             dpow=pow((float) 42, (int) iL%4);
             ld = static_cast<unsigned int>(dpow);
             ++iL;
         }
-        else {
+        else
+        {
             iL=0;
         }
 
@@ -190,19 +199,22 @@ unsigned int  Helper::convertToUniqueNumber(const char * pv, ca_client_context *
     unsigned int intValueIs=0;
     unsigned int iL=0;
 
-    for (unsigned int  i=0; i< myString.size(); i++) {
+    for (unsigned int  i=0; i< myString.size(); i++)
+    {
 
         intValueIs= (unsigned int) myString[i];
         ld=1;
 
         if ( (intValueIs >47 && intValueIs < 58) ||
                 (intValueIs >64 && intValueIs < 91) ||
-                (intValueIs >97 && intValueIs < 123) ) {
+                (intValueIs >97 && intValueIs < 123) )
+        {
             dpow=pow((float)42, (int)iL%4);
             ld = static_cast<unsigned int>(dpow);
             ++iL;
         }
-        else {
+        else
+        {
             iL=0;
         }
 
@@ -225,31 +237,40 @@ CAFENUM::DBR_TYPE Helper::convertToCAFEDbrTypeClass(const chtype _chtype) const
 {
 #define __METHOD__ "Helper::convertToCAFEDbrTypeClass(const chtype _chtype)"
 
-    if (_chtype>=DBR_STRING && _chtype <= DBR_DOUBLE) {
+    if (_chtype>=DBR_STRING && _chtype <= DBR_DOUBLE)
+    {
         return CAFENUM::DBR_PRIMITIVE;
     }
-    else if (_chtype>=DBR_STS_STRING && _chtype <= DBR_STS_DOUBLE) {
+    else if (_chtype>=DBR_STS_STRING && _chtype <= DBR_STS_DOUBLE)
+    {
         return CAFENUM::DBR_STS;
     }
-    else if (_chtype>=DBR_TIME_STRING && _chtype <= DBR_TIME_DOUBLE) {
+    else if (_chtype>=DBR_TIME_STRING && _chtype <= DBR_TIME_DOUBLE)
+    {
         return CAFENUM::DBR_TIME;
     }
-    else if (_chtype>=DBR_GR_STRING && _chtype <= DBR_GR_DOUBLE) {
+    else if (_chtype>=DBR_GR_STRING && _chtype <= DBR_GR_DOUBLE)
+    {
         return CAFENUM::DBR_GR;
     }
-    else if (_chtype>=DBR_CTRL_STRING && _chtype <= DBR_CTRL_DOUBLE) {
+    else if (_chtype>=DBR_CTRL_STRING && _chtype <= DBR_CTRL_DOUBLE)
+    {
         return CAFENUM::DBR_CTRL;
     }
-    else if (_chtype==DBR_PUT_ACKT || _chtype==DBR_PUT_ACKS) {
+    else if (_chtype==DBR_PUT_ACKT || _chtype==DBR_PUT_ACKS)
+    {
         return CAFENUM::DBR_PUT;
     }
-    else if (_chtype==DBR_STSACK_STRING) {
+    else if (_chtype==DBR_STSACK_STRING)
+    {
         return CAFENUM::DBR_STSACK;
     }
-    else if (_chtype==DBR_CLASS_NAME) {
+    else if (_chtype==DBR_CLASS_NAME)
+    {
         return CAFENUM::DBR_CLASS;
     }
-    else {
+    else
+    {
         return CAFENUM::DBR_NONE;
     }
 
@@ -267,8 +288,10 @@ std::string  Helper::concatToString(dbr_char_t * inpChar, unsigned int nChar)
 
     std::string psWF = "";
 
-    for (unsigned int i=0; i<nChar; ++i) {
-        if (inpChar[i] != '\0') {
+    for (unsigned int i=0; i<nChar; ++i)
+    {
+        if (inpChar[i] != '\0')
+        {
             psWF.append(1, inpChar[i]);
         }
     }

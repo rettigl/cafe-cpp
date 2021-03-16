@@ -24,7 +24,8 @@
  *   \param _memberCC       CAFEConduit object representing each group member
  *   \param _groupStatus    groupStatus: error indicates >0 members have an error
  */
-class ConduitGroup {
+class ConduitGroup
+{
     friend struct change_channelTimeoutPolicySGPut;
     friend struct change_channelTimeoutPolicySGGet;
     friend struct change_timeout_sg_pend_io;
@@ -122,7 +123,8 @@ public:
  *   Friend to ConduitGroup permitting fast modification of the rule in group hash table;
  *   the rule flag only functions within a PVGroup
  */
-struct change_sg_rule {
+struct change_sg_rule
+{
     change_sg_rule (const bool & new_rule, const unsigned int  & iMember):
         new_rule(new_rule),iMember(iMember) {}
 
@@ -140,7 +142,8 @@ private:
 /**
  *   Friend to ConduitGroup permitting fast modification of status in group hash table;
  */
-struct change_sg_status {
+struct change_sg_status
+{
     change_sg_status (const int  & new_status, const unsigned int  & iMember):
         new_status(new_status),iMember(iMember) {}
 
@@ -158,7 +161,8 @@ private:
  *   friend to ConduitGroup permitting fast modification to \n
  *   the timeout_sg_pend_event period recorded in ConduitGroup hash table
  */
-struct change_timeout_sg_pend_io {
+struct change_timeout_sg_pend_io
+{
     change_timeout_sg_pend_io (const double & new_timeout_sg_pend_io):
         new_timeout_sg_pend_io(new_timeout_sg_pend_io) {}
     void operator() (ConduitGroup& g)
@@ -174,7 +178,8 @@ private:
 /**
  *   Friend to ConduitGroup records the channelTimeoutPolicySGGet in hash table
  */
-struct change_channelTimeoutPolicySGGet {
+struct change_channelTimeoutPolicySGGet
+{
     change_channelTimeoutPolicySGGet (const ChannelTimeoutPolicy & new_channelTimeoutPolicy):
         new_channelTimeoutPolicy(new_channelTimeoutPolicy) {}
 
@@ -191,7 +196,8 @@ private:
 /**
  *   Friend to ConduitGroup records the channelTimeoutPolicySGPut in hash table
  */
-struct change_channelTimeoutPolicySGPut {
+struct change_channelTimeoutPolicySGPut
+{
     change_channelTimeoutPolicySGPut (const ChannelTimeoutPolicy & new_channelTimeoutPolicy):
         new_channelTimeoutPolicy(new_channelTimeoutPolicy) {}
 

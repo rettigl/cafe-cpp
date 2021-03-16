@@ -10,22 +10,24 @@
 
 #include <exception>
 #include <cstring>
+#include <iostream>
 #include <defines.h>
 #include <cafeDataType.h>
 
 /**
  *  The CAFEException_pv struct for pv error reporting
  */
-struct CAFEException_pv {
+struct CAFEException_pv
+{
     char            pv     [PVNAME_SIZE];
     char            pvAlias[PVNAME_SIZE];
     unsigned int    handle;
     CAFE_DATATYPE   dataTypeNative;
-    const  char *   dataTypeNativeText;
+    std::string     dataTypeNativeText;
     int             statusCode;
-    const  char *   statusCodeText;
-    const  char *   statusMessage;
-    const  char *   source;
+    std::string     statusCodeText;
+    std::string     statusMessage;
+    std::string     source;
     unsigned int    ln;
 };
 
@@ -33,13 +35,14 @@ struct CAFEException_pv {
 /**
  *  The CAFEException_group struct for group error reporting
  */
-struct CAFEException_group {
+struct CAFEException_group
+{
     char            groupName [PVNAME_SIZE];
     unsigned int    groupHandle;
     int             statusCode;
-    const  char *   statusCodeText;
-    const  char *   statusMessage;
-    const  char *   source;
+    std::string     statusCodeText;
+    std::string     statusMessage;
+    std::string     source;
     unsigned int    ln;
 };
 
@@ -47,24 +50,49 @@ struct CAFEException_group {
 /**
  *  The CAFEException_open class for ca open error reporting
  */
-class CAFEException_open : public std::exception {
+class CAFEException_open : public std::exception
+{
+private:
+    std::string ewhat;  
+
 public:
+    CAFEException_open() {
+        ewhat = "CAFEException_Open exception: Could not establish link to pv";
+    };
+    CAFEException_open(std::string _ewhat) {
+        ewhat = _ewhat;
+    };
+    
+    CAFEException_pv pvEx;  
+
     virtual const char* what() const throw()
     {
-        return "CAFEException_open exception: Could not establish link to pv";
+      return  ewhat.c_str();
     };
 
-    CAFEException_pv pvEx;
+   
 };
 
 /**
  *  The CAFEException_groupOpen class for ca group open error reporting
  */
-class CAFEException_groupOpen : public std::exception {
+class CAFEException_groupOpen : public std::exception
+{
+private:
+    std::string ewhat;  
+
 public:
+    CAFEException_groupOpen() {
+        ewhat = "CAFEException_groupOpen exception: Could not establish link to group";
+    };
+
+    CAFEException_groupOpen(std::string _ewhat) {
+        ewhat = _ewhat;
+    };
+
     virtual const char* what() const throw()
     {
-        return "CAFEException_groupOpen exception: Could not establish link to group";
+      return ewhat.c_str();
     };
 
     CAFEException_group groupEx;
@@ -74,11 +102,12 @@ public:
 /**
  *  The CAFEException_init
  */
-class CAFEException_init: public std::exception {
+class CAFEException_init: public std::exception
+{
 public:
     virtual const char* what() const throw()
     {
-        return "CAFEException_init exception: \nChannel Access Error: ECA_ALLOCMEM when calling ca_context_create";
+        return "CAFEException_init: \nChannel Access Error: ECA_ALLOCMEM when calling ca_context_create";
     };
 };
 
@@ -86,7 +115,8 @@ public:
 /**
  *  The CAFEException_allocBufferMem
  */
-class CAFEException_allocBufferMem: public std::exception {
+class CAFEException_allocBufferMem: public std::exception
+{
 public:
     virtual const char* what() const throw()
     {

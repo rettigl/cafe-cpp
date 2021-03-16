@@ -31,21 +31,28 @@ void Connect::callbackHandlerAccessRights(struct access_rights_handler_args args
 
     //Note: At first connection the no of elements is unknown!
     //Therefore we cannot allocate memory for data buffers here!
-    //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+    //std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
 
     unsigned int  _handle = (unsigned long) ca_puser(args.chid);
+
+    //std::cout << "handle " << _handle << std::endl;
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find((unsigned int) _handle);
 
-    if (it_handle != handle_index.end()) {
-        if(MUTEX) {
+    if (it_handle != handle_index.end())
+    {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
+        //HandleHelper hh;
+        //std::cout << hh.getPVFromHandle(_handle) << std::endl;
         handle_index.modify(it_handle, change_accessRightsHandlerArgs(args));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
     }
@@ -78,7 +85,8 @@ void Connect::callbackHandlerException(struct exception_handler_args args)
     char pName[PVNAME_SIZE];
 
 
-    if (args.chid) {
+    if (args.chid)
+    {
         strcpy(pName, ca_name(args.chid));
         _handle = (unsigned long) ca_puser(args.chid);
         sprintf(buf,
@@ -88,7 +96,8 @@ void Connect::callbackHandlerException(struct exception_handler_args args)
 
     }
     // This case is more usual(!)
-    else {
+    else
+    {
         strcpy(pName, "unknown");
         sprintf(buf,
                 "%s with channel=%s, op=%ld, datatype=%s, count=%ld. %s",

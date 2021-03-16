@@ -16,33 +16,37 @@
  *   Friend to Conduit/CAFEGroup records the connection_handler_args struct from callback fns
  *   in hash table
  */
-struct change_connectionHandlerArgs {
+struct change_connectionHandlerArgs
+{
 #define __METHOD__ "change_connectionHandlerArgs"
     change_connectionHandlerArgs (const struct connection_handler_args & new_connectionHandlerArgs):
         new_connectionHandlerArgs(new_connectionHandlerArgs) {}
 
     void operator() (Conduit& c)
     {
-     
-
         chtype nativeDataType = ca_field_type(new_connectionHandlerArgs.chid);
 
+        //c.connectionHandlerArgs = new_connectionHandlerArgs;
         c.channelRegalia.connectionState=new_connectionHandlerArgs.op;
 
         // Data type code will be one of DBF_. The constant TYPENOTCONN=-1 is
         // returned if the channel is not connected
         // but we do not overwrite it upon disconnect.
 
+	//std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+
         //connectFlag
-        if  (new_connectionHandlerArgs.op == CA_OP_CONN_UP) {
+        if  (new_connectionHandlerArgs.op == CA_OP_CONN_UP)
+        {
 
             //std::cout << " change_connectionHandlerArgs: bytesize UP " << c.channelRequestMetaData.byteSize << std::endl;
             //channelRegalia
             c.channelRegalia.nelem                  = ca_element_count(new_connectionHandlerArgs.chid);
             c.channelRegalia.connectFlag            = true;
-            c.channelRegalia.hostName               = (const char *) ca_host_name (new_connectionHandlerArgs.chid);
+            c.channelRegalia.hostName               = (const char *) ca_host_name (new_connectionHandlerArgs.chid);	    
 
-            if (c.channelRegalia.channelID != new_connectionHandlerArgs.chid) {
+            if (c.channelRegalia.channelID != new_connectionHandlerArgs.chid)
+            {
                 std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
                 std::cout <<  "Internal CAFE WARNING for handle : " <<  c.handle << std::endl;
                 std::cout <<  "Channel ID has changed from " << c.channelRegalia.channelID
@@ -65,7 +69,8 @@ struct change_connectionHandlerArgs {
             // Check if c.channelRegalia.cafeConnectionState == ICAFE_CS_NEVER_CONN or not!
 
 
-            if (c.channelRegalia.cafeConnectionState  == ICAFE_CS_NEVER_CONN ) {
+            if (c.channelRegalia.cafeConnectionState  == ICAFE_CS_NEVER_CONN )
+            {
                 c.channelRequestMetaDataClient.channelID   = new_connectionHandlerArgs.chid;
                 c.channelRequestMetaDataClient.nelem       = c.channelRegalia.nelem;
                 c.channelRequestMetaDataClient.nelemCache  = c.channelRegalia.nelem;
@@ -73,7 +78,8 @@ struct change_connectionHandlerArgs {
 
                 //cafeDbrType first filled with CAFENUM:DBR_TIME on initialization
                 //but will be overwritten by whatever the client needs
-                switch (c.channelRequestMetaDataClient.cafeDbrType) {
+                switch (c.channelRequestMetaDataClient.cafeDbrType)
+                {
                 case CAFENUM::DBR_TIME:
                     c.channelRequestMetaDataClient.dbrDataType = dbf_type_to_DBR_TIME(nativeDataType);
                     break;
@@ -104,7 +110,8 @@ struct change_connectionHandlerArgs {
 
             //cafeDbrType first filled with CAFENUM:DBR_TIME on initialization
             //cafeDbrType can only be overwritten by an explicit method invocation
-            switch (c.channelRequestMetaData.cafeDbrType) {
+            switch (c.channelRequestMetaData.cafeDbrType)
+            {
             case CAFENUM::DBR_TIME:
                 c.channelRequestMetaData.dbrDataType = dbf_type_to_DBR_TIME(nativeDataType);
                 break;
@@ -127,16 +134,19 @@ struct change_connectionHandlerArgs {
             //No of elements for Ctrl Buffers
             unsigned int  nelem_ctrl_buffer=1;
 
-            if ( c.channelRegalia.nelem > MAX_NELEM_FOR_CTRL_BUFFER) {
+            if ( c.channelRegalia.nelem > MAX_NELEM_FOR_CTRL_BUFFER)
+            {
                 nelem_ctrl_buffer         = DEFAULT_NELEM_FOR_CTRL_BUFFER;
             }
-            else {
+            else
+            {
                 nelem_ctrl_buffer  = c.channelRegalia.nelem;
             }
 
             //ctrl data CLIENT
             //Ctrl data requested by Client
-            if (c.channelRegalia.cafeConnectionState  == ICAFE_CS_NEVER_CONN ) {
+            if (c.channelRegalia.cafeConnectionState  == ICAFE_CS_NEVER_CONN )
+            {
                 c.channelRequestMetaCtrlClient.channelID   = new_connectionHandlerArgs.chid;
                 c.channelRequestMetaCtrlClient.nelem       = c.channelRegalia.nelem; //nelem_ctrl_buffer;
                 c.channelRequestMetaCtrlClient.nelemCache  = c.channelRegalia.nelem;
@@ -144,7 +154,8 @@ struct change_connectionHandlerArgs {
 
                 //cafeDbrType first filled with CAFENUM:DBR_CTRL on initialization
                 //but will be overwritten by whatever the client needs
-                switch (c.channelRequestMetaCtrlClient.cafeDbrType) {
+                switch (c.channelRequestMetaCtrlClient.cafeDbrType)
+                {
                 case CAFENUM::DBR_CTRL:
                     c.channelRequestMetaCtrlClient.dbrDataType = dbf_type_to_DBR_CTRL(nativeDataType);
                     break;
@@ -168,7 +179,8 @@ struct change_connectionHandlerArgs {
             c.channelRequestMetaCtrl.dataType    = nativeDataType;
             //cafeDbrType first filled with CAFENUM:DBR_CTRL on initialization
             //cafeDbrType can only be overwritten by an explicit method invocation
-            switch (c.channelRequestMetaCtrl.cafeDbrType) {
+            switch (c.channelRequestMetaCtrl.cafeDbrType)
+            {
             case CAFENUM::DBR_CTRL:
                 c.channelRequestMetaCtrl.dbrDataType = dbf_type_to_DBR_CTRL(nativeDataType);
                 break;
@@ -186,10 +198,12 @@ struct change_connectionHandlerArgs {
             //No of elements for STSACK Buffers
             unsigned int  nelem_stsack_buffer;
 
-            if ( c.channelRegalia.nelem > MAX_NELEM_FOR_STSACK_BUFFER) {
+            if ( c.channelRegalia.nelem > MAX_NELEM_FOR_STSACK_BUFFER)
+            {
                 nelem_stsack_buffer        = DEFAULT_NELEM_FOR_STSACK_BUFFER;
             }
-            else {
+            else
+            {
                 nelem_stsack_buffer = c.channelRegalia.nelem;
             }
 
@@ -213,7 +227,8 @@ struct change_connectionHandlerArgs {
             ///////////////////////////////////////////////////////////////////////////
 
 
-            if ( c.channelRegalia.nelem>1) {
+            if ( c.channelRegalia.nelem>1)
+            {
                 double  tout=  ((unsigned int) (c.channelRegalia.nelem*0.000001)); // 1 sec per million
                 c.channelRequestDataTypePolicy.setRequestKind(CAFENUM::LOWEST_DATATYPE);
                 c.channelTimeoutPolicyGet.setTimeout(std::max(DEFAULT_TIMEOUT_PEND_IO_WF, tout));
@@ -225,7 +240,8 @@ struct change_connectionHandlerArgs {
             c.channelRegalia.cafeConnectionState = ICAFE_CS_CONN;
             c.status = ICAFE_CA_OP_CONN_UP;
         }
-        else {
+        else
+        {
 
             //nativeType not known on disconnect!!
 
@@ -234,7 +250,7 @@ struct change_connectionHandlerArgs {
             c.channelRequestStatusPut.setCallbackKind(false, true); //fake completion
             c.channelRegalia.cafeConnectionState   =ICAFE_CS_DISCONN;
             c.channelRegalia.connectFlag = false;
-            c.status             = ICAFE_CA_OP_CONN_DOWN;
+            c.status  = ICAFE_CA_OP_CONN_DOWN;
 
         }
 
@@ -251,7 +267,8 @@ private:
  *   Friend to Conduit/CAFEGroup permitting fast modification to the ctrlBuffer
  *   This is the ctrlBuffer for _CTRL data requested through ca_get
  */
-struct change_dataBufferSize_CTRL {
+struct change_dataBufferSize_CTRL
+{
 #define __METHOD__ "change_dataBufferSize_CTRL"
     change_dataBufferSize_CTRL (const chtype & new_ctrlTypeBuffer): new_ctrlTypeBuffer(new_ctrlTypeBuffer) {}
 
@@ -263,11 +280,13 @@ struct change_dataBufferSize_CTRL {
 
         bool allocateMemory=false ;
 
-        if(c.ctrlBuffer==NULL) {
+        if(c.ctrlBuffer==NULL)
+        {
             allocateMemory=true;
         }
 
-        else if ( dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem()) > c.channelRequestMetaCtrl.getByteSize() ) {
+        else if ( dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem()) > c.channelRequestMetaCtrl.getByteSize() )
+        {
             std::cout << "ctrlBuffer already exists= " << c.ctrlBuffer << " for channel " << c.pv
                       << " with handle " << c.handle << std::endl;
             std::cout << "Freeing and reallocating ctrlBuffer" << std::endl;
@@ -275,14 +294,16 @@ struct change_dataBufferSize_CTRL {
             allocateMemory=true;
         }
 
-        if (allocateMemory) {
+        if (allocateMemory)
+        {
             //std::cout << "sizeof c.ctrlBuffer " << dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem())  << std::endl;
             c.ctrlBuffer = (db_access_val *) malloc ( dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem()) );
             c.channelRequestMetaCtrl.byteSize=dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem());
         }
 
 
-        if (c.ctrlBuffer==0) {
+        if (c.ctrlBuffer==0)
+        {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
             printf ("Exiting CAFE");
@@ -300,7 +321,8 @@ private:
  *   Friend to CAFEConduit/CAFEGroup permitting fast modification to the dataBuffer of type DBR (putBuffer)
  *   This is used in ca_put methods when input data that is not already in native data type is thus converted
  */
-struct change_dataBufferSize_PRIMITIVE {
+struct change_dataBufferSize_PRIMITIVE
+{
 #define __METHOD__ "change_dataBufferSize_PRIMITIVE"
     change_dataBufferSize_PRIMITIVE (const chtype & new_dataTypeBufferNative): new_dataTypeBufferNative(new_dataTypeBufferNative) {}
 
@@ -309,12 +331,14 @@ struct change_dataBufferSize_PRIMITIVE {
 
         bool allocateMemory=false ;
 
-        if(c.putBuffer==NULL) {
+        if(c.putBuffer==NULL)
+        {
             allocateMemory=true;
         }
         else if ( dbr_size_n(c.channelRequestMetaPrimitive.getDbrDataType(),
                              c.channelRequestMetaPrimitive.getNelem())
-                  > c.channelRequestMetaPrimitive.getByteSize() ) {
+                  > c.channelRequestMetaPrimitive.getByteSize() )
+        {
             std::cout << "putBuffer already exists= " << c.putBuffer << " for channel " << c.pv
                       << " with handle " << c.handle << std::endl;
             std::cout << "Freeing and reallocating putBuffer" << std::endl;
@@ -322,7 +346,8 @@ struct change_dataBufferSize_PRIMITIVE {
             allocateMemory=true;
         }
 
-        if (allocateMemory) {
+        if (allocateMemory)
+        {
             //std::cout << "sizeof c.putBuffer " << dbr_size_n(c.channelRequestMetaPrimitive.getDbrDataType(),
             //                                           c.channelRequestMetaPrimitive.getNelem())  << std::endl;
             c.putBuffer = (db_access_val *) malloc (dbr_size_n(c.channelRequestMetaPrimitive.getDbrDataType(),
@@ -333,7 +358,8 @@ struct change_dataBufferSize_PRIMITIVE {
                             c.channelRequestMetaPrimitive.getNelem());
         }
 
-        if (c.putBuffer==0) {
+        if (c.putBuffer==0)
+        {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
             printf ("Exiting CAFE");
@@ -353,7 +379,8 @@ private:
  *   Friend to CAFEConduit/CAFEGroup permitting fast modification to the ctrlBuffer
  *   This is the ctrlBuffer for _CTRL data requested through ca_get
  */
-struct change_dataBufferSize_STSACK {
+struct change_dataBufferSize_STSACK
+{
 #define __METHOD__ "change_dataBufferSize_STSACK"
     change_dataBufferSize_STSACK () {}
 
@@ -362,14 +389,16 @@ struct change_dataBufferSize_STSACK {
 
         bool allocateMemory=false ;
 
-        if(c.stsackBuffer==NULL) {
+        if(c.stsackBuffer==NULL)
+        {
 
             allocateMemory=true;
         }
 
         else if ( dbr_size_n(c.channelRequestMetaSTSACK.getDbrDataType(),
                              c.channelRequestMetaSTSACK.getNelem())
-                  > c.channelRequestMetaSTSACK.getByteSize() ) {
+                  > c.channelRequestMetaSTSACK.getByteSize() )
+        {
             std::cout << "stsackBuffer already exists= " << c.stsackBuffer << " for channel " << c.pv
                       << " with handle " << c.handle << std::endl;
             std::cout << "Freeing and reallocating putBuffer" << std::endl;
@@ -377,7 +406,8 @@ struct change_dataBufferSize_STSACK {
             allocateMemory=true;
         }
 
-        if (allocateMemory) {
+        if (allocateMemory)
+        {
             //std::cout << "sizeof c.stsackBuffer " << dbr_size_n(c.channelRequestMetaSTSACK.getDbrDataType(),
             //                                           c.channelRequestMetaSTSACK.getNelem())  << std::endl;
             c.stsackBuffer = (db_access_val *) malloc (dbr_size_n(c.channelRequestMetaSTSACK.getDbrDataType(),
@@ -397,7 +427,8 @@ struct change_dataBufferSize_STSACK {
  *   Friend to CAFEConduit/CAFEGroup permitting fast modification to the dataBuffer of type DBR_TIME (dataBuffer)
  *   This is the main dataBuffer for data requested through ca_get
  */
-struct change_dataBufferSize_TIME {
+struct change_dataBufferSize_TIME
+{
 #define __METHOD__ "change_dataBufferSize_PRIMITIVE"
 
     change_dataBufferSize_TIME (const chtype & new_dataTypeBuffer): new_dataTypeBuffer(new_dataTypeBuffer) {}
@@ -411,12 +442,14 @@ struct change_dataBufferSize_TIME {
         bool allocateMemory=false ;
 
 
-        if(c.dataBuffer==NULL) {
+        if(c.dataBuffer==NULL)
+        {
 
             allocateMemory=true;
         }
 
-        else if ( dbr_size_n(new_dataTypeBuffer,c.channelRegalia.getNelem()) > c.channelRequestMetaData.getByteSize() ) {
+        else if ( dbr_size_n(new_dataTypeBuffer,c.channelRegalia.getNelem()) > c.channelRequestMetaData.getByteSize() )
+        {
             std::cout << "dataBuffer already exists= " << c.dataBuffer << " for channel " << c.pv
                       << " with handle " << c.handle << std::endl;
             std::cout << "Freeing and reallocating dataBuffer" << std::endl;
@@ -428,14 +461,16 @@ struct change_dataBufferSize_TIME {
 
         }
 
-        if (allocateMemory) {
+        if (allocateMemory)
+        {
             //std::cout << "sizeof c.dataBuffer " << dbr_size_n(new_dataTypeBuffer,c.channelRegalia.getNelem())  << std::endl;
             c.dataBuffer = (db_access_val *) malloc ( dbr_size_n(new_dataTypeBuffer,c.channelRegalia.getNelem()) );
             c.channelRequestMetaData.byteSize=dbr_size_n(new_dataTypeBuffer,c.channelRequestMetaData.getNelem());
 
         }
 
-        if (c.dataBuffer==NULL) {
+        if (c.dataBuffer==NULL)
+        {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             printf ("Virtual memory exhausted for channel %s ", ca_name(c.channelID));
             printf ("Exiting CAFE");
@@ -453,7 +488,8 @@ private:
 /**
  *   Friend to CAFEConduit/CAFEGroup - releases resources
  */
-struct free_dataBuffers {
+struct free_dataBuffers
+{
     free_dataBuffers () {}
 
     void operator() (Conduit& c)
@@ -461,19 +497,23 @@ struct free_dataBuffers {
 
         //std::cout << "c.handle=" << c.handle << " " << c.pv << std::endl;
 
-        if(c.dataBuffer) {
+        if(c.dataBuffer)
+        {
             free(c.dataBuffer); // _TIME data buffer for ca_get
         }
 
-        if(c.ctrlBuffer) {
+        if(c.ctrlBuffer)
+        {
             free(c.ctrlBuffer); // _CTRL data buffer for ca_get
         }
 
-        if(c.stsackBuffer) {
+        if(c.stsackBuffer)
+        {
             free(c.stsackBuffer); // _STSACK_STRING data buffer for ca_get
         }
 
-        if(c.putBuffer) {
+        if(c.putBuffer)
+        {
             free(c.putBuffer);  // data buffer for ca_put
         }
 

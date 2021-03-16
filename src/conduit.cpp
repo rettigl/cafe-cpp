@@ -7,6 +7,7 @@
 
 #include <conduit.h>
 #include <helper.h>
+//include <boost/date_time/posix_time/posix_time.hpp>
 
 unsigned int  Conduit::handleNext=0; //4294967295;
 unsigned int  MonitorPolicy::idNext=0xfff; //4095
@@ -20,7 +21,6 @@ Conduit::Conduit( ) {};
  *   Good place to clean up!
  */
 Conduit::~Conduit() {};
-
 
 /*
 Conduit::Conduit(const char * _pv, ca_client_context *_ccc,  bool _pyCafeFlag) {
@@ -57,8 +57,7 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,
                  ChannelRequestPolicy _channelRequestPolicyPut, ChannelRequestPolicy _channelRequestPolicyGet,
                  ChannelGetActionWhenMonitorPolicy _channelGetActionWhenMonitorPolicy,
                  bool _pyCafeFlag)
-{
-
+{    
     // To avoid the following compilation error
     // conduit.cpp:41: warning: extended initializer lists only available with -std=c++0x or -std=gnu++0x
     //epicsAlarmSeverityStrings= {"NO_ALARM","MINOR","MAJOR","INVALID"};
@@ -97,7 +96,8 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,
     pv = _pv;
 
     ++handleNext;
-    if(handleNext==0) { // In case we loop round 4294967295(!)
+    if(handleNext==0)   // In case we loop round 4294967295(!)
+    {
         ++handleNext;   // 0 reserved for handle not found
     }
 
@@ -105,30 +105,31 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,
 
     mapPulseIDBufferSize=SF_PULSE_ID_BUFFER_SIZE;
 
+    //connectionHandlerArgs = (connect_handler_args) NULL;
+    //eventHandlerArgs = (event_handler_args) NULL;
 
     handle = handleNext;
-    groupHandle= 0;
+    groupHandle = 0;
 
     channelID=NULL;
 
-    alarmStatus=-1;
-    alarmSeverity=-1;
-		
-		
-		//New Oct. 2018
-		desc="";
-		//hhsv=-1;
-		//hsv =-1;
-		//lsv =-1;
-		//llsv=-1;
+    alarmStatus = -1;
+    alarmSeverity = -1;
+
+    //New Oct. 2018
+    desc="";
+    //hhsv=-1;
+    //hsv =-1;
+    //lsv =-1;
+    //llsv=-1;
 
     aSevStruct.hhsv=-1;
     aSevStruct.hsv =-1;
     aSevStruct.lsv =-1;
     aSevStruct.llsv=-1;
-		
-		hasDesc=false;
-		hasAlarmSevStruct=false;
+
+    hasDesc=false;
+    hasAlarmSevStruct=false;
 
     ts.secPastEpoch=0;
     ts.nsec=0;
@@ -159,11 +160,15 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,
     deviceAttributeDeliminator=DEFAULT_DEVICE_ATTRIBUTE_DELIMINATOR;
     channelDeviceAttribute.init(pv,deviceAttributeDeliminator);
 
+
+    widgetV.reserve(2);
+
     mpV.reserve(2);
     monitorAction.reserve(2);
     hasNewData=true; // used by HandleHelper.getMonitorAction(); start with true
 
     //channelRequestPolicyPut
+     
 
     channelRequestPolicyPut.setPolicy(_channelRequestPolicyPut.getWhenToFlushSendBuffer(),
                                       _channelRequestPolicyPut.getWaitKind(), _channelRequestPolicyPut.getMethodKind());
@@ -192,21 +197,36 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,
     //							  CAFENUM::WAIT, CAFENUM::WITHOUT_CALLBACK); //WITH_CALLBACK_DEFAULT);
 
 #if HAVE_PYTHON_H
+    pyConnectCallbackVector.reserve(1);
+    pyOpenCallbackFlag=false;
 
 #if HAVE_PYCAFE_EXT
     //Do nothing as PyCafe_ext is compiled
+
+    //Py_Initialize();
+    //dlopen("libpython2.6.so", RTLD_GLOBAL|RTLD_LAZY);
+    //dlopen("/opt/gfa/python-3.5/latest/lib/libpython3.5m.so", RTLD_GLOBAL|RTLD_LAZY);
+    //PyInit_PyCafe(); from Python 3 onwards
+    //initPyCafe(); //only if PyCafe.h as opposed to PyCafe_api.h
+    //PyEval_InitThreads();
+    //#else
+    //Py_Initialize();
 
 #else
     //Give non Python APIs (e.g. MATLAB) a chance to turn this off
     //MATLAB needs to turn this off
 
-    //Careful With That GIL, Eugene
+    //Careful With That GIL,
     //Any method that calls this from Python, e.g., open, must be done so ***with*** the GIL
-    if (pyCafeFlag) {
-        //Py_Initialize();
+    //Set pyCafeFlag to false if opening from C++!
+    if (pyCafeFlag)
+    {    
+      PyGILState_STATE gstate;
+      gstate =  PyGILState_Ensure();
+      //std::cout << "GIL state " << std::endl;
+      import_PyCafe(); // Use PyCafe_api.h
 
-        import_PyCafe(); // Use PyCafe_api.h
-
+      PyGILState_Release(gstate);
     }
 #endif
 
@@ -215,9 +235,52 @@ Conduit::Conduit(const char * _pv, ca_client_context *_ccc,
 }
 
 #if HAVE_PYTHON_H
-void * Conduit::PyGetHandler() const
+
+
+/*void * Conduit::PyOpenHandler() const
+{
+    py_cb_handle_open_wrapper(handle, channelRegalia.cafeConnectionState);
+
+    return (void *) 0;
+}*/
+
+
+ /*void * Conduit::PyConnectHandler() const
+{
+    py_cb_handle_connect_wrapper(handle, pv, channelRegalia.cafeConnectionState);
+
+    return (void *) 0;
+}*/
+
+void * Conduit::PyConnectHandler() const
 {
 
+  //std::cout << pyConnectCallbackFn << std::endl;
+
+  //if (pyConnectCallbackFn != NULL) {
+  //      cy_connect_handler_wrapper(pyConnectCallbackFn, handle, pv, channelRegalia.cafeConnectionState);
+  //  }
+
+   
+    for (unsigned int i=0; i < pyConnectCallbackVector.size(); ++i) {
+      //std::cout << "\n void * Conduit::PyConnectHandler() " << handle << " " 
+      //          << " " <<  pv << " " << channelRegalia.cafeConnectionState << std::endl; 
+      //std::cout << i << " " << pyConnectCallbackVector[i] << std::endl;
+        cy_connect_handler_wrapper(pyConnectCallbackVector[i], handle, pv, channelRegalia.cafeConnectionState);
+	//std::cout << "==============================================================================\n" << std::endl;
+    } 
+   
+
+    return (void *) 0;
+}
+
+
+void * Conduit::PyGetHandler() const
+{
+    //PVDataHolder pvd(channelRequestMetaData.nelem);
+    //size is set in conduitEventHandlerArgs.h
+    //getPVDataHolder(pvd);
+    //std::cout << "PyGetHandler" << pvd.getAsString(0) << std::endl;
     py_cb_handle_get_wrapper(handle);
 
     return (void *) 0;
@@ -231,37 +294,89 @@ void * Conduit::PyPutHandler() const
     return (void *) 0;
 }
 
-void * Conduit::PyEventHandler() const
+
+/*void * Conduit::PyEventHandler() const
 {
     //py_cb_handle_wrapper(handle);
 
     py_cb_handle_monid_wrapper(handle, (unsigned long) usrArgs);
 
     return (void *) 0;
-}
+}*/
 
 
-void * Conduit::PyEventHandler(unsigned int monid) const
+/*void * Conduit::PyEventHandler(unsigned int monid) const
 {
     //py_cb_handle_wrapper(handle);
 
     py_cb_handle_monid_wrapper(handle, monid);
 
     return (void *) 0;
+}*/
+
+
+void * Conduit::CyEventHandler() const
+{
+    void * cythonCallback = NULL;
+    
+    for (int i=0; i < mpV.size(); ++i) {
+        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {
+	    cythonCallback = mpV[i].getCyCallback(); 	    
+	    break;  
+        }        
+    }
+    //std::cout << "  cythonCallback " << cythonCallback << std:: endl;
+    if (cythonCallback == NULL) {
+      //std::cout << " NO CYTHON CALLBACK MATCH FOUND in Conduit::CyEventHandler()" << std::endl;
+        return (void *) 0; ;  
+    }
+    cy_event_handler_wrapper(cythonCallback, handle, pv);
+    return (void *) 0;
 }
 
-void * Conduit::PyDataEventHandler() const
-{
 
+/*void * Conduit::PyDataEventHandler() const
+{
     PVDataHolder pvd(channelRequestMetaData.nelem);
     //size is set in conduitEventHandlerArgs.h
     getPVDataHolder(pvd);
     py_cb_wrapper(pvd, handle, pv);
+    return (void *) 0;
+}*/
 
+void * Conduit::CyDataEventHandler() const
+{
+   
+    PVDataHolder pvd(channelRequestMetaData.nelem);
+    //size is set in conduitEventHandlerArgs.h
+    void * cythonCallback = NULL;
+    
+    for (int i=0; i < mpV.size(); ++i) {
+      //std::cout << i << " " <<   mpV[i].getCyCallback() 
+      //	         << " " <<   mpV[i].getID() 
+      //	         << std::endl;  
+        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {
+	    cythonCallback = mpV[i].getCyCallback(); 	    
+	    break;  
+        }        
+    }
+
+   
+
+    if (cythonCallback == NULL) {
+      //std::cout << " NO CYTHON CALLBACK MATCH FOUND Conduit::CyDataEventHandler()" << std::endl;
+        return (void *) 0; ;  
+    }
+
+    getPVDataHolder(pvd);
+   
+    cy_data_event_handler_wrapper(cythonCallback, handle, pv, pvd);
+    //std::cout << " CYTHON CALLBACK MATCH FOUND Conduit::CyDataEventHandler()" << std::endl;
     return (void *) 0;
 }
 
-void * Conduit::PyCtrlEventHandler() const
+
+/*void * Conduit::PyCtrlEventHandler() const
 {
 
     PVCtrlHolder pvc(channelRequestMetaCtrl.nelem);
@@ -270,8 +385,37 @@ void * Conduit::PyCtrlEventHandler() const
     py_cb_ctrl_wrapper(pvc, handle, pv);
 
     return (void *) 0;
+}*/
+
+
+void * Conduit::CyCtrlEventHandler() const
+{
+   
+    PVCtrlHolder pvc(channelRequestMetaCtrl.nelem);
+    //size is set in conduitEventHandlerArgs.h
+    void * cythonCallback = NULL;
+    
+    for (int i=0; i < mpV.size(); ++i) {
+        //std::cout << i << " " <<   mpV[i].getCyCallback() 
+        //	         << " " <<   mpV[i].getID() 
+        //	         << std::endl;  
+        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {
+	    cythonCallback = mpV[i].getCyCallback(); 	    
+	    break;  
+        }        
+    }
+    if (cythonCallback == NULL) {
+      //std::cout << " NO CYTHON CALLBACK MATCH FOUND in Conduit::CyCtrlEventHandler()" << std::endl;
+        return (void *) 0; ;  
+    }
+
+    getPVCtrlHolder(pvc);
+    cy_ctrl_event_handler_wrapper(cythonCallback, handle, pv, pvc);
+    return (void *) 0;
 }
 #endif
+
+
 
 /**
  *  \brief Called from Granules.cc \n
@@ -326,8 +470,22 @@ int  Conduit::putWithCallback(pCallback callbackHandlerPut) const
 int  Conduit::get(void) const
 {
 #define __METHOD__  "Conduit::get(void) "
+    /* For testing readout time for waveforms!
+    using namespace boost::posix_time;
+    ptime timeStart(microsec_clock::local_time());
+    double  timeElapsed=0;
+    unsigned int  nPoll=0;
+   
+    for (int i=0; i< 100000; ++i) {
+        ca_array_get(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
+			  channelRegalia.channelID,dataBuffer);
+    } 
+    ptime timeEnd(microsec_clock::local_time());
+    time_duration duration(timeEnd-timeStart);
+    timeElapsed= (double) duration.total_microseconds()/1000000.0;
 
-
+    std::cout << "Time Elapsed " << timeElapsed << std::endl;
+    */
     return ca_array_get(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
                         channelRegalia.channelID, dataBuffer);
 
@@ -343,9 +501,6 @@ int  Conduit::get(void) const
 int  Conduit::getWithCallback(pCallback callbackHandlerGet) const
 {
 #define __METHOD__ "Conduit::getCallback(pCallback callbackHandlerGet) "
-
-    //std::cout << __FILE__ << "//" << __METHOD__ << std::endl;
-    //std::cout << "nelem= " << channelRequestMetaData.nelem << " handle = " << handle << endl;
 
     return ca_array_get_callback(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
                                  channelRegalia.channelID,callbackHandlerGet,(void *) (long long) handle );
@@ -439,11 +594,11 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
     chtype channelType = channelRequestMetaData.getDbrDataType();
     CAFENUM::DBR_TYPE dbrTypeClass=helper.convertToCAFEDbrTypeClass(channelType);
 
-   
+    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN  &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED)
+    {
 
-    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN  &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED) {
-
-        switch(dbrTypeClass) {
+        switch(dbrTypeClass)
+        {
         case CAFENUM::DBR_PRIMITIVE:
         case CAFENUM::DBR_STS:
         case CAFENUM::DBR_TIME:
@@ -462,17 +617,17 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
 
     unsigned int  offset   = channelRequestMetaData.getOffset(); //channelRequestMetaDataClient.getOffset();
     unsigned int  nelem    = channelRequestMetaData.getNelem()-offset;
-		
+
     nelem=min(_pvd.nelem,nelem); // Add this for getCache method
 
     _pvd.alarmStatus    = -1;//alarmStatus;
     _pvd.alarmSeverity  = -1;//alarmSeverity;
     _pvd.ts.nsec        =  0;//ts;
     _pvd.ts.secPastEpoch=  0;
-		
+
     _pvd.nelem          =  min(_pvd.size,nelem); //channelRequestMetaData.getNelem();
     _pvd.beamEventNo    =  beamEventNo;
-    _pvd.status         =  status;
+    _pvd.status         =  status; //ICAFE_NORMAL;
 
     _pvd.dataTypeNative = (CAFE_DATATYPE) channelRegalia.getDataType();
     _pvd.dataType       = (CAFE_DATATYPE) channelRequestMetaData.getDataType();//dataTypeRequest;
@@ -483,25 +638,29 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
     strcpy(_pvd.device,  channelDeviceAttribute.getDevice());
     strcpy(_pvd.attrib,  channelDeviceAttribute.getAttribute());
 
-    if (_pvd.dataTypeNative==DBR_ENUM) {
+    if (_pvd.dataTypeNative==DBR_ENUM)
+    {
         _pvd.noStr =  ((struct dbr_ctrl_enum *) ctrlBuffer)->no_str;
         memcpy( _pvd.strs,  &(((struct dbr_ctrl_enum *) ctrlBuffer)->strs),  sizeof(_pvd.strs)) ;
         //for (int i=0; i<_pvd.noStr; ++i) cout << __METHOD__ << i << " " << _pvd.strs[i] << endl;
     }
-   
-    switch (channelType) {
+
+    switch (channelType)
+    {
     case DBR_TIME_DOUBLE:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].d = (*(&((dataBuffer)->tdblval.value)+i+offset));
         }
         _pvd.ts            = ((struct dbr_time_double *) dataBuffer)->stamp;
         _pvd.alarmStatus   = ((struct dbr_time_double *) dataBuffer)->status;
         _pvd.alarmSeverity = ((struct dbr_time_double *) dataBuffer)->severity;
-	      
+
         break;
 
     case DBR_TIME_FLOAT:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].f = (*(&((dataBuffer)->tfltval.value)+i+offset));
         }
         _pvd.ts            = (epicsTimeStamp) ((struct dbr_time_float *) dataBuffer)->stamp;
@@ -511,7 +670,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_TIME_LONG:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].l = (*(&((dataBuffer)->tlngval.value)+i+offset));
         }
         _pvd.ts            = ((struct dbr_time_long  *) dataBuffer)->stamp;
@@ -521,7 +681,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_TIME_SHORT:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].s = (*(&((dataBuffer)->tshrtval.value)+i+offset));
         }
         _pvd.ts            = ((struct dbr_time_short *) dataBuffer)->stamp;
@@ -531,7 +692,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_TIME_ENUM:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].us = (*(&((dataBuffer)->tenmval.value)+i+offset));
         }
         _pvd.ts            = ((struct dbr_time_enum *) dataBuffer)->stamp;
@@ -541,7 +703,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_TIME_CHAR:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].ch = (*(&((dataBuffer)->tchrval.value)+i+offset));
         }
         _pvd.ts            = ((struct dbr_time_char *) dataBuffer)->stamp;
@@ -551,7 +714,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_TIME_STRING:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             strcpy(_pvd.val[i].str, (*(&((dataBuffer)->tstrval.value)+i+offset)));
         }
         _pvd.ts            = ((struct dbr_time_string *) dataBuffer)->stamp;
@@ -561,7 +725,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_DOUBLE:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].d = (*(&((dataBuffer)->sdblval.value)+i+offset));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_double *) dataBuffer)->status;
@@ -570,7 +735,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_FLOAT:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].f = (*(&((dataBuffer)->sfltval.value)+i+offset));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_float *) dataBuffer)->status;
@@ -579,7 +745,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_LONG:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].l = (*(&((dataBuffer)->slngval.value)+i+offset));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_int  *) dataBuffer)->status;
@@ -588,7 +755,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_SHORT:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].s = (*(&((dataBuffer)->sshrtval.value)+i+offset));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_short *) dataBuffer)->status;
@@ -597,7 +765,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_ENUM:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].us = (*(&((dataBuffer)->senmval.value)+i+offset));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_enum *) dataBuffer)->status;
@@ -606,7 +775,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_CHAR:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].ch = (*(&((dataBuffer)->schrval.value)+i+offset));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_char *) dataBuffer)->status;
@@ -615,7 +785,8 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_STS_STRING:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             strcpy(_pvd.val[i].str, (*(&((dataBuffer)->sstrval.value)+i+offset)));
         }
         _pvd.alarmStatus   = ((struct dbr_sts_string *) dataBuffer)->status;
@@ -624,49 +795,57 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
         break;
 
     case DBR_DOUBLE:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].d = (*(&((dataBuffer)->doubleval)+i+offset));
         }
         break;
 
     case DBR_FLOAT:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].f = (*(&((dataBuffer)->fltval)+i+offset));
         }
         break;
 
     case DBR_LONG:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].l = (*(&((dataBuffer)->longval)+i+offset));
         }
         break;
 
     case DBR_SHORT:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].s = (*(&((dataBuffer)->shrtval)+i+offset));
         }
         break;
 
     case DBR_ENUM:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].us = (*(&((dataBuffer)->enmval)+i+offset));
         }
         break;
 
     case DBR_CHAR:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             _pvd.val[i].ch = (*(&((dataBuffer)->charval)+i+offset));
         }
         break;
 
     case DBR_STRING:
-        for (unsigned int  i=0; i<_pvd.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvd.nelem; ++i)
+        {
             strcpy(_pvd.val[i].str, (*(&((dataBuffer)->strval)+i+offset)));
         }
         break;
 
     case TYPENOTCONN:
-        if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN  &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED ) {
+        if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN  &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED )
+        {
             cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__  << endl;
             cout << "ERROR CAFE_TYPENOTCONN: dataType: "
                  <<  channelType <<  " : " << dbr_type_to_text(channelType) << endl;
@@ -681,10 +860,11 @@ int  Conduit::getPVDataHolder(PVDataHolder & _pvd) const
 
     //Do this to prevent overflow error in epicsTime time(ts) routines!
     //This bad number can occur in timeouts
-    if(_pvd.ts.nsec>1000000000) {
+    if(_pvd.ts.nsec>1000000000)
+    {
         _pvd.ts.nsec=0;
     }
-  
+
 
     return ICAFE_NORMAL;
 #undef __METHOD__
@@ -707,9 +887,11 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
 
     CAFENUM::DBR_TYPE dbrTypeClass=helper.convertToCAFEDbrTypeClass(channelType);
 
-    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED ) {
+    if ( channelRegalia.getCafeConnectionState()  != ICAFE_CS_NEVER_CONN &&  channelRegalia.getCafeConnectionState()  != ICAFE_CS_CLOSED )
+    {
 
-        switch(dbrTypeClass) {
+        switch(dbrTypeClass)
+        {
         case CAFENUM::DBR_GR:
         case CAFENUM::DBR_CTRL:
             break;
@@ -749,17 +931,20 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
     strcpy(_pvc.attrib,channelDeviceAttribute.getAttribute());
 
 
-    if (_pvc.dataTypeNative==DBR_ENUM) {
+    if (_pvc.dataTypeNative==DBR_ENUM)
+    {
         _pvc.noStr =  ((struct dbr_ctrl_enum *) ctrlBuffer)->no_str;
         memcpy( _pvc.strs,  &(((struct dbr_ctrl_enum *) ctrlBuffer)->strs),  sizeof(_pvc.strs)) ;
         //for (int i=0; i<_pvc.noStr; ++i) cout << __METHOD__ << i << " " << _pvc.strs[i] << endl;
     }
 
 
-    switch (channelType) {
+    switch (channelType)
+    {
 
     case DBR_CTRL_CHAR:
-        for (unsigned int  i=0; i<_pvc.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvc.nelem; ++i)
+        {
             _pvc.val[i].ch =   (*(&((ctrlBuffer)->cchrval.value)+i+offset));
         }
 
@@ -784,7 +969,8 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         break;
 
     case DBR_CTRL_FLOAT:
-        for (unsigned int  i=0; i<_pvc.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvc.nelem; ++i)
+        {
             _pvc.val[i].f =   (*(&((ctrlBuffer)->cfltval.value)+i+offset));
         }
 
@@ -809,7 +995,8 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         break;
 
     case DBR_CTRL_DOUBLE:
-        for (unsigned int  i=0; i<_pvc.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvc.nelem; ++i)
+        {
             _pvc.val[i].d =   (*(&((ctrlBuffer)->cdblval.value)+i+offset));
         }
         _pvc.precision     = ((struct dbr_ctrl_double *) ctrlBuffer)->precision;
@@ -832,7 +1019,8 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         break;
 
     case DBR_CTRL_SHORT:
-        for (unsigned int  i=0; i<_pvc.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvc.nelem; ++i)
+        {
             _pvc.val[i].s =   (*(&((ctrlBuffer)->cshrtval.value)+i+offset));
         }
 
@@ -856,7 +1044,8 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         break;
 
     case DBR_CTRL_LONG:
-        for (unsigned int  i=0; i<_pvc.nelem; ++i) {
+        for (unsigned int  i=0; i<_pvc.nelem; ++i)
+        {
             _pvc.val[i].l =   (*(&((ctrlBuffer)->clngval.value)+i+offset));
         }
 
@@ -891,8 +1080,10 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         memcpy(_pvc.strs, &(((struct dbr_ctrl_enum *) ctrlBuffer)->strs),
                sizeof(char)*MAX_ENUM_STRING_SIZE*MAX_ENUM_STATES);
 
-        //no units
-        memcpy(_pvc.units,"",sizeof(char[MAX_UNITS_SIZE]));
+        //no units - with gcc 9.3.0 gives warning: 
+	//reading 8 bytes from a region of size 1
+        //memcpy(_pvc.units,"",sizeof(char[MAX_UNITS_SIZE]));
+	strcpy(_pvc.units, "");
 
         _pvc.upperDispLimit.us    = 0;
         _pvc.lowerDispLimit.us    = 0;
@@ -911,8 +1102,12 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         _pvc.alarmStatus   = ((struct dbr_sts_string *) ctrlBuffer)->status;
         _pvc.alarmSeverity = ((struct dbr_sts_string *) ctrlBuffer)->severity;
 
-        memcpy(_pvc.units,"",sizeof(char[MAX_UNITS_SIZE]));
 
+	//no units - with gcc 9.3.0 gives warning: 
+	//reading 8 bytes from a region of size 1
+        //memcpy(_pvc.units,"",sizeof(char[MAX_UNITS_SIZE]));
+	strcpy(_pvc.units, "");
+        
         _pvc.upperDispLimit.us    = 0;
         _pvc.lowerDispLimit.us    = 0;
         _pvc.upperAlarmLimit.us   = 0;
@@ -928,7 +1123,7 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
         break;
     }
 
-   
+
 
     return ICAFE_NORMAL;
 
@@ -939,7 +1134,11 @@ int  Conduit::getPVCtrlHolder(PVCtrlHolder & _pvc) const
 
 
 /**
- *  \brief Starts a monitor on the epics channel
+ *  \brief Starts a monitor on the epics channel.
+ *         Should the MonitorPolicy class have been configured before the channel was first connected
+ *         then the dbrDataType will not be known (-1) if the user requested native data type,
+ *         resulting in an ECA_BADTYPE error. To avoid this mp.dbrDataType should be overwritten
+ *         after interrogating native and dbr data types
  *  \param  mp input: MonitorPolicy class \n
  *          mp.eventID output: evid identifying the monitor subscription
  *  \return ECA_NORMAL   - normal sucessful completiom
@@ -951,14 +1150,24 @@ int  Conduit::monitorStart(MonitorPolicy &mp) const
 {
 #define __METHOD__  "Conduit::monitorStart(MonitorPolicy mp)"
 
-
     //cout << __METHOD__ << " mp.getDbrDataType()= " << mp.getDbrDataType() << endl;
+    //cout << __METHOD__ << " mp.getHandler() = " << mp.getHandler() << endl;
+    //cout << __METHOD__ << " mp.getUserArgs() = " << mp.getUserArgs() << endl;
+    //cout << "dataType " << (CAFE_DATATYPE) channelRegalia.getDataType() << endl;
+    //cout << "native dataType " << (CAFE_DATATYPE) channelRequestMetaData.getDataType() << endl;
+    //cout << "dbrDataType " << channelRequestMetaData.getDbrDataType() << endl;
+
+    if  (mp.getDbrDataType()== -1)
+    {
+        mp.setDataType((CAFE_DATATYPE) channelRegalia.getDataType() ); // Also sets dbrDataType accordingly
+    }
 
     evid eventID;
     int  status = ca_create_subscription(mp.getDbrDataType(), mp.getNelem(), channelRegalia.channelID, mp.getMask(),
                                          mp.getHandler(), (void *) mp.getUserArgs(), &eventID);
 
     mp.setEventID(eventID);
+
     return status;
 #undef __METHOD__
 };

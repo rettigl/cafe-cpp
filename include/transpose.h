@@ -1345,14 +1345,23 @@ template <class CTYPE> int  Transpose<CTYPE>::get(
         dbrTypeRequest_DataBuffer = (*it_handle).getChannelRequestMetaData().getDbrDataType();
         _dataTypeClient           = (*it_handle).getChannelRequestMetaDataClient().getDataType();
 
+
+        //if (_handle==1) {
+        //    _dataTypeClient=DBR_FLOAT;
+        //}   
+
         //std::cout << "WHAT IS ON THE DATA BUFFER = " << dbrTypeRequest_DataBuffer  << std::endl;
         //std::cout << "WHAT THE CLIENT WANTS    = " << _dataTypeClient << std::endl;
+
+        ////dbr_string_t * val2 = new dbr_string_t[nelem];
 
         ts.secPastEpoch=0;
         ts.nsec        =0;
         alarmStatus    =-1;
         alarmSeverity  =-1;
 
+        //This will happen for DBF_NO_ACCESS = 7
+        // in which case do not use dbr_type_to_text !! 
 
         if (_dataTypeClient < DBR_STRING || _dataTypeClient > DBR_DOUBLE) {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
@@ -1735,15 +1744,25 @@ template <class CTYPE> int  Transpose<CTYPE>::get(
         default:
             switch(_dataTypeClient) {
             case DBR_STRING:
-                memcpy( val, &(&((PVDataL)->strval))[offset], sizeof(dbr_string_t)*nelem);
+                //DEFINE stringf array then copy to CTYPE
+                         
+                memcpy( val, &(&((PVDataL)->tstrval.value))[offset], sizeof(dbr_string_t)*nelem); 
+               
+                //for (unsigned int  i=0; i<nelem; ++i) {
+                //    val[i]= (CTYPE) strtod( val2[i], NULL);
+                //} 
+              
+                         
                 break;
             case DBR_SHORT:
             case DBR_LONG:
             case DBR_ENUM:
             case DBR_CHAR:
+              
                 for (unsigned int  i=0; i<nelem; ++i) {
                     val[i]=  (CTYPE) strtol(  (*(&((PVDataL)->tstrval.value)+i+offset)), NULL, 0);
-                }
+                } 
+                
                 break;
             case DBR_FLOAT:
             case DBR_DOUBLE:
@@ -1767,6 +1786,7 @@ template <class CTYPE> int  Transpose<CTYPE>::get(
             handleHelper.setSTS(_handle, alarmStatus, alarmSeverity, ts);
         }
 
+        ////delete [] val2;  
     }
     else {
         cafeStatus.report(ECAFE_INVALID_HANDLE);

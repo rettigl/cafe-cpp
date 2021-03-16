@@ -33,7 +33,8 @@
  *  Struct defining channel properties and connection status for use in Conduit container
  *
  */
-class ChannelRegalia {
+class ChannelRegalia
+{
 private:
     CAFEStatus cafeStatus;
 public:
@@ -164,13 +165,16 @@ public:
     };
     std::string         getConnectionStateAsString()
     {
-        if(connectionState==CA_OP_CONN_UP) {
+        if(connectionState==CA_OP_CONN_UP)
+        {
             return "CA_OP_CONN_UP";
         }
-        else if(connectionState==CA_OP_CONN_DOWN) {
+        else if(connectionState==CA_OP_CONN_DOWN)
+        {
             return "CA_OP_CONN_DOWN";
         }
-        else {
+        else
+        {
             return "CA_OP_CONN is UNKNOWN: THIS SHOULD NEVER APPEAR!";
         }
     };
@@ -204,21 +208,23 @@ public:
  *  Struct defining channel properties and connection status for use in displays
  *
  */
-class ChannelDataStore {
+class ChannelDataStore
+{
 public:
-   
-		std::string         description;   
-		ChannelRegalia      info; 
-		PVDataHolder        pvd;
-		PVCtrlHolder        pvc;
-		
-		ChannelDataStore() {
-		
-		
-		};
+
+    std::string         description;
+    ChannelRegalia      info;
+    PVDataHolder        pvd;
+    PVCtrlHolder        pvc;
+
+    ChannelDataStore()
+    {
+
+
+    };
 
     ~ChannelDataStore() {};
-				
+
 };
 
 
@@ -228,7 +234,8 @@ public:
  *  Stores strings for Enum datatypes
  *
  */
-class ChannelEnumStrings {
+class ChannelEnumStrings
+{
 public:
     friend struct change_eventHandlerArgs;
 private:
@@ -244,7 +251,8 @@ public:
     {
         std::vector<std::string> optionsV;
         optionsV.reserve(noOptions);
-        for ( short i=0; i<noOptions; ++i) {
+        for ( short i=0; i<noOptions; ++i)
+        {
             optionsV.push_back(options[i]);
         }
         return optionsV;
@@ -256,7 +264,8 @@ public:
  *  Stores device/attribute pairing
  *
  */
-class ChannelDeviceAttribute {
+class ChannelDeviceAttribute
+{
 private:
     std::string pv;
     std::string device;
@@ -271,18 +280,21 @@ public:
         pv=_pv;
         deliminator=_deliminator;
         short posOfSeparator=pv.find_first_of(deliminator);
-        if (posOfSeparator<0) {
+        if (posOfSeparator<0)
+        {
             device="";
             attribute="";
             return ECAFE_DEVICE_ATTRIB_NOT_FOUND;
         }
-        else {
+        else
+        {
             device= pv.substr(0,posOfSeparator);
             attribute=pv.substr(posOfSeparator+1,pv.size());
-            //Check for .VAL and remove	
+            //Check for .VAL and remove
             std::size_t found = attribute.find(".");
-            if (found != std::string::npos) {
-              attribute=attribute.substr(0, found);
+            if (found != std::string::npos)
+            {
+                attribute=attribute.substr(0, found);
             }
         }
         return ICAFE_NORMAL;
@@ -323,7 +335,8 @@ public:
  *   0. Struct defining channel datatype/nelem executed by CAFE for use in Conduit container
  *
  */
-class ChannelRequestMetaData {
+class ChannelRequestMetaData
+{
 public:
     friend struct change_connectionHandlerArgs;
     friend struct change_dataBufferSize_CTRL;
@@ -377,7 +390,8 @@ public:
     void setDbrTypesFromCafeDbrType(CAFENUM::DBR_TYPE cd)
     {
         cafeDbrType=cd;
-        switch(cafeDbrType) {
+        switch(cafeDbrType)
+        {
         case CAFENUM::DBR_TIME:
             dbrDataType = dbf_type_to_DBR_TIME(dataType);
             break;
@@ -457,7 +471,8 @@ public:
  *  -1. Struct defining channel datatype/nelem requested by client for use in Conduit container
  *
  */
-class ChannelRequestMetaDataClient: public ChannelRequestMetaData {
+class ChannelRequestMetaDataClient: public ChannelRequestMetaData
+{
 public:
 
 //protected:
@@ -478,7 +493,8 @@ public:
  *  messageStatus = requestStatus or messageStatus=callbackStatus (if policy WITH_CALLBACK)
  *
  */
-class ChannelRequestStatus {
+class ChannelRequestStatus
+{
 
 private:
     int  preRequestStatus;  // current status of channel
@@ -550,16 +566,20 @@ public:
     {
         hasCallbackInitiated=hasInit;
         hasCallbackTriggered=hasTrig;
-        if      ( hasInit && !hasTrig) {
+        if      ( hasInit && !hasTrig)
+        {
             callbackProgressKind=(CAFENUM::CallbackProgressKind) CAFENUM::PENDING;
         }
-        else if (!hasInit &&  hasTrig) {
+        else if (!hasInit &&  hasTrig)
+        {
             callbackProgressKind=(CAFENUM::CallbackProgressKind) CAFENUM::COMPLETE;
         }
-        else if (!hasInit && !hasTrig) {
+        else if (!hasInit && !hasTrig)
+        {
             callbackProgressKind=(CAFENUM::CallbackProgressKind) CAFENUM::NOT_INITIATED;
         }
-        else {
+        else
+        {
             std::cout << "CAFE INTERNAL POLICY ERROR" << std::endl;
             std::cout << "ChannelRequestStatus::setCallbackKind gives an INVALID callbackProgressKind" << std::endl;
         }

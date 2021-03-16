@@ -13,18 +13,21 @@
 
 
 template<typename T>
-struct enumStrings {
+struct enumStrings
+{
     static char const* data[];
 };
 
 template<typename T>
-struct enumRefHolder {
+struct enumRefHolder
+{
     T& enumVal;
     enumRefHolder(T& enumVal): enumVal(enumVal) {}
 };
 
 template<typename T>
-struct enumConstRefHolder {
+struct enumConstRefHolder
+{
     T const& enumVal;
     enumConstRefHolder(T const& enumVal): enumVal(enumVal) {}
 };
@@ -34,10 +37,12 @@ std::ostream& operator<<(std::ostream& str, enumConstRefHolder<T> const& data)
 {
     //Add check on enumStrings<T>::data size to ensure correspondence with entries in cafeEnumEpics.h
 
-    if ( boost::size( enumStrings<T>::data) > (unsigned int) data.enumVal) {
+    if ( boost::size( enumStrings<T>::data) > (unsigned int) data.enumVal)
+    {
         return str << enumStrings<T>::data[data.enumVal];
     }
-    else {
+    else
+    {
         return str << "ERROR: enumStrings.h reports data.enumVal= " << data.enumVal
                << " DOES NOT HAVE A STRING EQUIVALENT!";
     }
@@ -59,14 +64,16 @@ std::istream& operator>>(std::istream& str, enumRefHolder<T> const& data)
     //if (find != end)
 
     if ( std::find( boost::begin(enumStrings<T>::data),  boost::end( enumStrings<T>::data), value) !=
-            boost::end( enumStrings<T>::data)) {
+            boost::end( enumStrings<T>::data))
+    {
         //data.enumVal = static_cast<T>(std::distance(begin, find));
         data.enumVal = static_cast<T>(std::distance(boost::begin(enumStrings<T>::data),
                                       std::find (boost::begin(enumStrings<T>::data), boost::end(enumStrings<T>::data), value ) ));
     }
 
 
-    if (data.enumVal > boost::size( enumStrings<T>::data) ) {
+    if (data.enumVal > boost::size( enumStrings<T>::data) )
+    {
 
         std::cout << "ERROR: enumStrings.h reports data.enumVal = " << data.enumVal
                   << " is out of enum range = " << boost::size( enumStrings<T>::data) << std::endl;

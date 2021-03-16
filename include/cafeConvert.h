@@ -26,7 +26,8 @@
  * method getAsString() converts CTYPE to string \n
  *
  */
-template <class CTYPE> class CAFEConvert {
+template <class CTYPE> class CAFEConvert
+{
 private:
     CTYPE returnVal[1];
 public:
@@ -55,20 +56,25 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (CAFE_DATATYPE dt, CAFE_D
     // Valid for all types that have numeric_limits support
     // (brackets required) to avoid compiler error should isnan also be a native macro
 
-    switch (dt) {
+    switch (dt)
+    {
     case CAFE_DOUBLE:
-        if ( (boost::math::isnan)((CTYPE) val.d) ) {
+        if ( (boost::math::isnan)((CTYPE) val.d) )
+        {
             returnVal[0]= (CTYPE) val.d;
         }
-        else {
+        else
+        {
             returnVal[0]= (CTYPE) 0;
         }
         break;
     case CAFE_FLOAT:
-        if ( (boost::math::isnan)((CTYPE) val.f) ) {
+        if ( (boost::math::isnan)((CTYPE) val.f) )
+        {
             returnVal[0]= (CTYPE) val.f;
         }
-        else {
+        else
+        {
             returnVal[0]= 0;
         }
         break;
@@ -135,7 +141,8 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::get (unsigned int index, CAFE
 {
 #define __METHOD__ "CAFEConvert<CTYPE>::get(index, dt, val[])"
 
-    switch (dt) {
+    switch (dt)
+    {
     case CAFE_DOUBLE:
         returnVal[0]= (CTYPE) val[index].d;
         break;
@@ -213,30 +220,38 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getStringFromEnum (unsigned i
 
     unsigned int noEmptyStrings=0;
     //Check for empty strings:
-    for (unsigned int j=0; j<noStr; ++j) {
-        if (strcmp(stig[j],"")==0) {
+    for (unsigned int j=0; j<noStr; ++j)
+    {
+        if (strcmp(stig[j],"")==0)
+        {
             ++noEmptyStrings;
         }
     }
 
-    if (noStr==noEmptyStrings) {
-        std::cout << "*** WARNING FROM " << __METHOD__ << " *** " << std::endl;
-        std::cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << std::endl;
-        std::cout << "BADLY CONFIGURED EPICS RECORD. " << std::endl;
-    }
+    // Some developers do not populate enum string values
+    //if (noStr==noEmptyStrings)
+    //{
+    //    std::cout << "*** WARNING FROM " << __METHOD__ << " *** " << std::endl;
+    //    std::cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << std::endl;
+    //    std::cout << "BADLY CONFIGURED EPICS RECORD. " << std::endl;
+    //}
 
 
-    if (index < noStr && noStr!=noEmptyStrings) {
+    if (index < noStr && noStr!=noEmptyStrings)
+    {
         sprintf(returnVal[0], "%s", stig[val[index].us] );
     }
-    else {
+    else
+    {
         sprintf(returnVal[0], "%d", val[index].us );
-        if (  val[index].us>= noStr) {
+        if (  val[index].us>= noStr)
+        {
             std::cout << "*** WARNING FROM " << __METHOD__ << " *** " << std::endl;
             std::cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << std::endl;
             std::cout << "VALUE (unsigned short) = " <<  val[index].us << std::endl;
             std::cout << "NO OF ENUMERATED STRINGS = " << noStr << " WITH VALUES: " << std::endl;
-            for (unsigned int j=0; j<noStr; ++j) {
+            for (unsigned int j=0; j<noStr; ++j)
+            {
                 std::cout << stig[j] << " ["  <<j << "]  ";
             }
             std::cout << std::endl;
@@ -259,7 +274,8 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getString (unsigned int index
 {
 #define __METHOD__  "CAFEConvert<CTYPE>::getString(nelem, dt, val[])"
 
-    switch (dt) {
+    switch (dt)
+    {
     case CAFE_STRING:
         sprintf(returnVal[0], "%s",  val[index].str);
         break;
@@ -329,7 +345,8 @@ template <class CTYPE> CTYPE * CAFEConvert<CTYPE>::getString (CAFE_DATATYPE dt, 
 {
 #define __METHOD__  "CAFEConvert<CTYPE>::getString(dt, val[])"
 
-    switch (dt) {
+    switch (dt)
+    {
     case CAFE_STRING:
         sprintf(returnVal[0], "%s",  val.str);
         break;

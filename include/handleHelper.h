@@ -21,7 +21,8 @@
 #include <tmDateMap.h>
 
 
-class HandleHelper : public Helper {
+class HandleHelper : public Helper
+{
 
 private:
     CAFEStatus cafeStatus;
@@ -40,12 +41,6 @@ private:
 
     PrintErrorPolicy printErrorPolicy;
 
-    // now in defines.h
-    //struct etsNorm{ unsigned int secPastEpoch; unsigned int nsec;};
-    //struct etsDate{ int year; int mon; int day;
-    //                int hour; int min; int sec; unsigned long nsec;};
-
-
 public:
 
     HandleHelper() {};
@@ -59,6 +54,15 @@ public:
     etsDate _etsDate;
     TMwdayText   tmDay;
     TMmonthpText tmMonth;
+
+#if HAVE_PYTHON_H
+    int setPyConnectCallbackFn(unsigned int _handle, void * callbackFn);
+    int setPyGetCallbackFn(unsigned int _handle, void * callbackFn);
+    int setPyPutCallbackFn(unsigned int _handle, void * callbackFn);
+#endif
+    int addWidget (unsigned int _handle, void * widget);
+    int removeWidget (unsigned int _handle, void * widget);
+    int getWidgets(unsigned int _handle, std::vector<void *> & widgetV);
 
     int  checkConsistency();
     int  checkConsistency(unsigned int  _handle);
@@ -110,7 +114,7 @@ public:
     int getTimeStamp(unsigned int  h, epicsTimeStamp &ts);
 
 
-    
+
 
 
     etsNorm getEpicsTimeStampAsUInt32(unsigned int h)
@@ -213,7 +217,8 @@ public:
     }
 
 
-    std::string etsDateAsString(etsNorm ts) {
+    std::string etsDateAsString(etsNorm ts)
+    {
 
         time_t t= ts.secPastEpoch;
 
@@ -232,12 +237,13 @@ public:
     }
 
 
-    //Deprecated!!! 
+    //Deprecated!!!
     int getPulseID(unsigned int h, unsigned int &pulseID)
     {
         epicsTimeStamp ts;
         int status=getTimeStamp(h, ts);
-        if (status==ICAFE_NORMAL) {
+        if (status==ICAFE_NORMAL)
+        {
             std::string nsS = static_cast<std::ostringstream*>( &(std::ostringstream() << ts.nsec) )->str();
             int l=nsS.length();
             int startPos=std::max(l-6,0);
@@ -258,22 +264,26 @@ public:
         return pulseID;
     }
 
-		bool hasAlarmStatusSeverity(unsigned int h);
+    bool hasAlarmStatusSeverity(unsigned int h);
     int  getAlarmStatusSeverity(unsigned int  h, dbr_short_t as[2]);
     int  getAlarmStatusSeverityAsString(unsigned int  h, std::string asas[2]);
     unsigned int  getNoHandles();
     unsigned int  getNextFreeHandle();
 
+    bool hasDescription(unsigned int _handle);
+
     int getDescription(unsigned int _handle, std::string & desc);
     int getUnits    (unsigned int h,  std::string & units);
-    int getPrecision(unsigned int h, short &precision); 
+    int getPrecision(unsigned int h, short &precision);
 
 
     bool isChannelConnected(unsigned int handle);
     bool allChannelsConnected();
+    bool areChannelsConnected(unsigned int * handleArray, const unsigned int nHandles);
+    bool areChannelsConnectedV(std::vector<unsigned int>);
     bool allChannelsWithinGroupConnected();
     bool allChannelsWithinGroupConnectedV(std::vector<unsigned int>);
-		
+
     int  printHandle (unsigned int  h);
     int  printHandlesV(std::vector<unsigned int> handleV);
     int  printHandles(unsigned int * handleArray, unsigned int nHandles);
@@ -303,7 +313,7 @@ public:
     bool isEnum(unsigned int  _handle);
     short  getEnumFromString(unsigned int  _handle, std::string enumStringValue);
     std::string getStringFromEnum(unsigned int  _handle, unsigned short enumValue);
-		std::vector<std::string> getEnumStrings(unsigned int handle);
+    std::vector<std::string> getEnumStrings(unsigned int handle);
 
     int  getDataTypeNative (unsigned int  _handle, chtype &ndt);
     int  getDataTypeRequest(unsigned int  _handle, chtype &rdt);
@@ -364,11 +374,13 @@ public:
     void    setFirstAndLastArrayElements(unsigned int  _handle,
                                          unsigned int  _start, unsigned int  _last)
     {
-        if (_last > _start ) {
+        if (_last > _start )
+        {
             setOffset(_handle, _start);
             setNelem(_handle, _last);
         }
-        else {
+        else
+        {
             std::cout << " offset must be less than the nelements" <<std::endl;
         };
     };

@@ -11,6 +11,206 @@
 
 using namespace std;
 
+#if HAVE_PYTHON_H
+/**
+ *  \brief HandleHelper::setPyGetCallbackFn \n
+ *  Set Python callback function for asynchronous get operations\n
+ *
+ *  \param  _handle input: handle identifying Conduit object
+ *  \param  callbackFn input: void * callback function
+ *  \return ICAFE_NORMAL if OK else ECAFE_INVALID_HANDLE
+ */
+int HandleHelper::setPyGetCallbackFn(unsigned int _handle, void * callbackFn)
+{
+#define __METHOD__ "HandleHelper::setPyGetCallbackFn(unsigned int _handle, void * callbackFn"
+
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end())
+    {
+        handle_index.modify(it_handle, change_pyGetCallbackFn(callbackFn));
+    }
+    else
+    {
+        cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+/**
+ *  \brief HandleHelper::setPyPutCallbackFn \n
+ *  Set Python callback function for asynchronous put operations\n
+ *
+ *  \param  _handle input: handle identifying Conduit object
+ *  \param  callbackFn input: void * callback function
+ *  \return ICAFE_NORMAL if OK else ECAFE_INVALID_HANDLE
+ */
+int HandleHelper::setPyPutCallbackFn(unsigned int _handle, void * callbackFn)
+{
+#define __METHOD__ "HandleHelper::setPyPutCallbackFn(unsigned int _handle, void * callbackFn"
+
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end())
+    {
+        handle_index.modify(it_handle, change_pyPutCallbackFn(callbackFn));
+    }
+    else
+    {
+        cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+/**
+ *  \brief HandleHelper::setPyConnectCallbackFn \n
+ *  Set Python callback function invoked on connect/disconnect\n
+ *
+ *  \param  _handle input: handle identifying Conduit object
+ *  \param  callbackFn input: void * callback function
+ *  \return ICAFE_NORMAL if OK else ECAFE_INVALID_HANDLE
+ */
+int HandleHelper::setPyConnectCallbackFn(unsigned int _handle, void * callbackFn)
+{
+#define __METHOD__ "HandleHelper::setPyConnectCallbackFn(unsigned int _handle, void * callbackFn "
+
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end())
+    {
+        bool _pycbflag = true;
+        handle_index.modify(it_handle, change_pyOpenCallbackFlag(_pycbflag));
+        handle_index.modify(it_handle, change_pyConnectCallbackFn(callbackFn));
+	//cout << "Handle=" << _handle << __METHOD__ << endl;
+	//cout << callbackFn << endl;
+    }
+    else
+    {
+        cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+#endif
+
+
+/**
+ *  \brief HandleHelper::addWidget \n
+ *  Inserts widget to vector of widgets associated to handle\n
+ *
+ *  \param  _handle input: handle identifying Conduit object
+ *  \param   eidget input: void * giving the widget
+ *  \return ICAFE_NORMAL if OK else ECAFE_INVALID_HANDLE
+ */
+int HandleHelper::addWidget(unsigned int _handle, void * widget)
+{
+#define __METHOD__ "HandleHelper::addWidget(unsigned int _handle, void * widget"
+
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end())
+    {
+        handle_index.modify(it_handle, change_widgetInsert(widget));
+    }
+    else
+    {
+        cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+/**
+ *  \brief Get widgets associated to handle.
+ *  Typically one widget is associated to a handle (but can be more).
+ *  \param _handle input : Conduit object reference
+ *  \return returns vector of widgets; length 0 is none or invalid handle
+ */
+int HandleHelper::getWidgets(unsigned int _handle, std::vector<void *> &widgetV)
+{
+#define __METHOD__ \
+    "HandleHelper::getWidgets(unsigned int _handle, vector<void *> &widgetV"
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(_handle);
+
+    int status=ICAFE_NORMAL;
+
+    if (it_handle != handle_index.end())
+    {
+        widgetV=vector<void *>((*it_handle).getWidgetV());
+    }
+    else
+    {
+        status=ECAFE_INVALID_HANDLE;
+        if (printErrorPolicy.getInvalidHandle())
+        {
+            cafeStatus.report(status);
+            cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        }
+    }
+    return status;
+#undef __METHOD__
+
+}
+
+
+/**
+ *  \brief HandleHelper::removeWidget \n
+ *  Removes widget from vector of widgets associated to handle\n
+ *
+ *  \param  _handle input: handle identifying Conduit object
+ *  \param   widget input: void * giving the widget to remove
+ *  \return ICAFE_NORMAL if OK else ECAFE_INVALID_HANDLE
+ */
+int HandleHelper::removeWidget(unsigned int _handle, void * widget)
+{
+#define __METHOD__ "HandleHelper::removeWidget(unsigned int _handle, void * widget"
+
+    cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    it_handle = handle_index.find(_handle);
+    if (it_handle != handle_index.end())
+    {
+        handle_index.modify(it_handle, change_widgetErase(widget));
+    }
+    else
+    {
+        cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+
+
 
 /**
  *  \brief Checks what's in the hash table against actual ca server data \n
@@ -25,9 +225,11 @@ int HandleHelper::checkConsistency()
     int localStatus;
 
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         localStatus=checkConsistency( (*itcs).getHandle());
-        if (localStatus !=ICAFE_NORMAL) {
+        if (localStatus !=ICAFE_NORMAL)
+        {
             gStatus=localStatus;
         }
     }
@@ -47,7 +249,8 @@ int HandleHelper::checkConsistency(unsigned int _handle)
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         unsigned int nflag=0;
         string message="";
@@ -57,28 +260,34 @@ int HandleHelper::checkConsistency(unsigned int _handle)
 
         int op=chInfo.getConnectionState();
 
-        if (op==CA_OP_CONN_UP) {
-            if (ca_state(chInfo.getChannelID()) !=  cs_conn) {
+        if (op==CA_OP_CONN_UP)
+        {
+            if (ca_state(chInfo.getChannelID()) !=  cs_conn)
+            {
                 chInfo.setConnectionState   (CA_OP_CONN_DOWN);
                 chInfo.setCafeConnectionState(ICAFE_CS_DISCONN);
                 chInfo.setConnectFlag(false);
                 nflag=1;
                 message.append("CONNECT TRUE WHEN FALSE\n");
             }
-            if (ca_element_count(chInfo.getChannelID()) != chInfo.getNelem()) {
+            if (ca_element_count(chInfo.getChannelID()) != chInfo.getNelem())
+            {
                 chInfo.setNelem       (ca_element_count(chInfo.getChannelID()));
                 message.append("NELEM COUNT WRONG IN HASH TABLE\n");
                 nflag=10;
             }
 
-            if (ca_field_type(chInfo.getChannelID()) !=   chInfo.getDataType()) {
+            if (ca_field_type(chInfo.getChannelID()) !=   chInfo.getDataType())
+            {
                 chInfo.setDataType    (ca_field_type(chInfo.getChannelID()));
                 message.append("NATIVE DATATYPE WRONG IN HASH TABLE\n");
                 nflag=100;
             }
         }
-        else {
-            if (ca_state(chInfo.getChannelID()) ==  cs_conn) {
+        else
+        {
+            if (ca_state(chInfo.getChannelID()) ==  cs_conn)
+            {
                 chInfo.setConnectionState   (CA_OP_CONN_UP);
                 chInfo.setCafeConnectionState(ICAFE_CS_CONN);
                 chInfo.setConnectFlag(true);
@@ -87,20 +296,23 @@ int HandleHelper::checkConsistency(unsigned int _handle)
             }
         }
 
-        if (ca_read_access( chInfo.getChannelID()) != chInfo.getReadAccess()) {
+        if (ca_read_access( chInfo.getChannelID()) != chInfo.getReadAccess())
+        {
             chInfo.setReadAccess  (ca_read_access(chInfo.getChannelID()));
             message.append("READ ACCESS WRONG IN HASH TABLE\n");
             nflag=1000;
         }
 
-        if (ca_write_access(chInfo.getChannelID()) != chInfo.getWriteAccess()) {
+        if (ca_write_access(chInfo.getChannelID()) != chInfo.getWriteAccess())
+        {
             chInfo.setWriteAccess (ca_write_access(chInfo.getChannelID()));
             message.append("WRITE ACCESS WRONG IN HASH TABLE\n");
             nflag=10000;
         }
 
 
-        if (nflag>0) {
+        if (nflag>0)
+        {
             std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
             std::cout << "Following Corrections Made:" << std::endl;
             std::cout << message << endl;
@@ -110,11 +322,13 @@ int HandleHelper::checkConsistency(unsigned int _handle)
             //}
 
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(it_handle, change_channelRegalia(chInfo));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
 
@@ -123,8 +337,10 @@ int HandleHelper::checkConsistency(unsigned int _handle)
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -149,11 +365,19 @@ bool HandleHelper::isEnum(unsigned int _handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
+
+        if  (!(*it_handle).isConnected() &&  (*it_handle).isConnected() == ICAFE_CS_NEVER_CONN )
+        {
+            return false;
+        }
+
         PVCtrlHolder  _pvc;
         unsigned int nelem=getNelemRequestCtrl(_handle);
 
-        if (nelem >1) {
+        if (nelem >1)
+        {
             setNelemToRetrieveFromCtrlCache(_handle,1);
         }
         _pvc.setNelem(nelem);
@@ -161,11 +385,14 @@ bool HandleHelper::isEnum(unsigned int _handle)
         int _stat = (*it_handle).getPVCtrlHolder(_pvc) ;
 
         //return to previous
-        if (nelem!=1) {
+        if (nelem!=1)
+        {
             setNelemToRetrieveFromCtrlCache(_handle,nelem);
         }
-        if (_stat==ICAFE_NORMAL) {
-            if (_pvc.getNoEnumStrings()>0 ) {
+        if (_stat==ICAFE_NORMAL)
+        {
+            if (_pvc.getNoEnumStrings()>0 )
+            {
                 // cafeBeta 1.0 uses shared pointer
                 //_pvc.deleteVal();
                 return true;
@@ -174,8 +401,10 @@ bool HandleHelper::isEnum(unsigned int _handle)
         // cafeBeta 1.0 uses shared pointer
         //_pvc.deleteVal();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -186,9 +415,6 @@ bool HandleHelper::isEnum(unsigned int _handle)
     return false;
 #undef __METHOD__
 }
-
-
-
 
 
 
@@ -205,33 +431,48 @@ short HandleHelper::getEnumFromString(unsigned int _handle, std::string enumStri
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
+
+        //Never connected so do not know
+        if  (!(*it_handle).isConnected() &&  (*it_handle).getStatus() == ICAFE_CS_NEVER_CONN )
+        {
+            return -1;
+        }
+
         PVCtrlHolder  _pvc;
+
         unsigned int nelem=getNelemRequestCtrl(_handle);
 
-        if (nelem >1) {
-            setNelemToRetrieveFromCache(_handle,1);
+        if (nelem >1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,1);
         }
         _pvc.setNelem(nelem);
 
         int _stat = (*it_handle).getPVCtrlHolder(_pvc) ;
 
         //return to previous
-        if (nelem!=1) {
-            setNelemToRetrieveFromCache(_handle,nelem);
+        if (nelem != 1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,nelem);
         }
-        if (_stat==ICAFE_NORMAL) {
+        if (_stat==ICAFE_NORMAL)
+        {
             return _pvc.getEnumFromString(enumStringValue);
         }
-        else {
+        else
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(_stat);
             cout << "Error for handle=" << _handle << " in (*it_handle).getPVCtrlHolder(_pvc) " << endl;
             return -1;
         }
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -258,33 +499,47 @@ string HandleHelper::getStringFromEnum(unsigned int _handle, unsigned short enum
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
+
+        //Never connected so do not know
+        if  (!(*it_handle).isConnected() &&  (*it_handle).getStatus() == ICAFE_CS_NEVER_CONN )
+        {
+            return (string) "";
+        }
+
         PVCtrlHolder  _pvc;
         unsigned int nelem=getNelemRequestCtrl(_handle);
 
-        if (nelem >1) {
-            setNelemToRetrieveFromCache(_handle,1);
+        if (nelem >1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,1);
         }
         _pvc.setNelem(nelem);
 
         int _stat = (*it_handle).getPVCtrlHolder(_pvc) ;
 
         //return to previous
-        if (nelem!=1) {
-            setNelemToRetrieveFromCache(_handle,nelem);
+        if (nelem!=1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,nelem);
         }
-        if (_stat==ICAFE_NORMAL) {
+        if (_stat==ICAFE_NORMAL)
+        {
             return _pvc.getStringFromEnum(enumValue);
         }
-        else {
+        else
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(_stat);
             cout << "Error for handle=" << _handle << " in (*it_handle).getPVCtrlHolder(_pvc) " << endl;
             return (string) "";
         }
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -311,33 +566,47 @@ vector<std::string> HandleHelper::getEnumStrings(unsigned int _handle)
 
     vector<std::string> stringEnumValues;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
+
+        //Never connected so do not know
+        if  (!(*it_handle).isConnected() &&  (*it_handle).getStatus() == ICAFE_CS_NEVER_CONN )
+        {
+            return stringEnumValues; //empty
+        }
+
         PVCtrlHolder  _pvc;
         unsigned int nelem=getNelemRequestCtrl(_handle);
 
-        if (nelem >1) {
-            setNelemToRetrieveFromCache(_handle,1);
+        if (nelem >1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,1);
         }
         _pvc.setNelem(nelem);
 
         int _stat = (*it_handle).getPVCtrlHolder(_pvc) ;
 
         //return to previous
-        if (nelem!=1) {
-            setNelemToRetrieveFromCache(_handle,nelem);
+        if (nelem!=1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,nelem);
         }
-        if (_stat==ICAFE_NORMAL) {
+        if (_stat==ICAFE_NORMAL)
+        {
             return _pvc.getEnumStrings();
         }
-        else {
+        else
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(_stat);
             cout << "Error for handle=" << _handle << " in (*it_handle).getPVCtrlHolder(_pvc) " << endl;
             return stringEnumValues;
         }
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -366,12 +635,15 @@ unsigned int HandleHelper::getUsrArgsAsUInt(unsigned int _handle)
     it_handle = handle_index.find(_handle);
     unsigned long monid=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         monid = (unsigned long) (*it_handle).getUsrArgs();
         //monid = (unsigned long) (*it_handle).getChannelRequestMetaData().getUsrArg();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -394,12 +666,15 @@ chtype HandleHelper::getDataTypeCB(unsigned int _handle)
     it_handle = handle_index.find(_handle);
     chtype chval=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         chval = (unsigned long) (*it_handle).getDataType();
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -423,12 +698,15 @@ chtype HandleHelper::getDbrDataTypeCB(unsigned int _handle)
     it_handle = handle_index.find(_handle);
     chtype chval=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         chval = (unsigned long) (*it_handle).getDbrDataType();
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -452,11 +730,14 @@ CAFENUM::DBR_TYPE HandleHelper::getCafeDbrTypeCB(unsigned int _handle)
     it_handle = handle_index.find(_handle);
     CAFENUM::DBR_TYPE chval=CAFENUM::DBR_NONE;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         chval =  (*it_handle).getCafeDbrType();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -480,11 +761,14 @@ int HandleHelper::getDataTypeNative(unsigned int _handle, chtype & ndt)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         ndt = (*it_handle).getChannelRegalia().getDataType();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -514,11 +798,14 @@ int  HandleHelper::getChannelRequestStatusGetClassName(unsigned int  _handle, Ch
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         crsClassName = (*it_handle).getChannelRequestStatusGetClassName();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -544,11 +831,14 @@ int  HandleHelper::getChannelRequestStatusGetSTSACK(unsigned int  _handle, Chann
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         crsSTSACK = (*it_handle).getChannelRequestStatusGetSTSACK();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -575,11 +865,14 @@ int  HandleHelper::getChannelRequestStatusGetCtrl(unsigned int  _handle, Channel
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         crsCtrl = (*it_handle).getChannelRequestStatusGetCtrl();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -607,11 +900,14 @@ int  HandleHelper::getChannelRequestStatusGet    (unsigned int  _handle, Channel
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         crs = (*it_handle).getChannelRequestStatusGet();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -637,11 +933,14 @@ int HandleHelper::getChannelRegalia(unsigned int _handle, ChannelRegalia & chann
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         channelInfo = (*it_handle).getChannelRegalia();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -665,9 +964,11 @@ int HandleHelper::setChannelDeviceAttribute(std::string deliminator)
     bool sflag=false;
 
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         localStatus= setChannelDeviceAttribute ((*itcs).getHandle(), deliminator);
-        if (localStatus !=ICAFE_NORMAL && !sflag) {
+        if (localStatus !=ICAFE_NORMAL && !sflag)
+        {
             gStatus=localStatus;
             sflag=true;
         }
@@ -689,25 +990,30 @@ int HandleHelper::setChannelDeviceAttribute(unsigned int _handle, std::string de
     it_handle = handle_index.find(_handle);
 
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         ChannelDeviceAttribute channelDeviceAttribute;
         channelDeviceAttribute.init((*it_handle).pv, deliminator);
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
 
         handle_index.modify(it_handle, change_channelDeviceAttribute(
                                 channelDeviceAttribute));
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -731,21 +1037,24 @@ int HandleHelper::getPrecision(unsigned int _handle, short & precision)
 #define __METHOD__ "HandleHelper::getPrecision"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-			
+
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) { 
-        precision = (*it_handle).getPrecision();         
+    if (it_handle != handle_index.end())
+    {
+        precision = (*it_handle).getPrecision();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         }
         return ECAFE_INVALID_HANDLE;
     }
-			
+
     return ICAFE_NORMAL;
 #undef __METHOD__
 }
@@ -762,21 +1071,24 @@ int HandleHelper::getUnits(unsigned int _handle, std::string & units)
 #define __METHOD__ "HandleHelper::getUnits"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-			
+
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) { 
-        units = (*it_handle).getUnits();         
+    if (it_handle != handle_index.end())
+    {
+        units = (*it_handle).getUnits();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         }
         return ECAFE_INVALID_HANDLE;
     }
-		
+
     return ICAFE_NORMAL;
 #undef __METHOD__
 }
@@ -794,29 +1106,76 @@ int HandleHelper::getDescription(unsigned int _handle, std::string & desc)
 #define __METHOD__ "HandleHelper::getDescription"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-		
-		
-		
+
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
- 
+    if (it_handle != handle_index.end())
+    {
+
         desc = (*it_handle).getDescription();
-         
+
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         }
         return ECAFE_INVALID_HANDLE;
     }
-	
-		
+
     return ICAFE_NORMAL;
 #undef __METHOD__
 }
+
+
+
+/**
+ *  \brief  Whether description field has been filled for a given handle
+ *  \param _handle input: handle to Conduit Object
+ *  \param desc output: true if description field has been filled
+ *  \return ICAFE_NORMAL if all OK else ERROR
+ */
+bool HandleHelper::hasDescription(unsigned int _handle)
+{
+#define __METHOD__ "HandleHelper::getDescription"
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    bool hasDesc=false;
+
+    it_handle = handle_index.find(_handle);
+
+    if (it_handle != handle_index.end())
+    {
+
+        if  (!(*it_handle).isConnected() &&  (*it_handle).getStatus() == ICAFE_CS_NEVER_CONN )
+        {
+            return hasDesc;
+        }
+
+        hasDesc = (*it_handle).hasDescription();
+
+    }
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
+            cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+            cafeStatus.report(ECAFE_INVALID_HANDLE);
+            cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        }
+        return hasDesc;
+    }
+
+
+    return hasDesc;
+#undef __METHOD__
+}
+
+
 
 
 /**
@@ -832,13 +1191,16 @@ int HandleHelper::getChannelDevice(unsigned int _handle, std::string & device)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         device = (*it_handle).getDevice();
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -862,13 +1224,16 @@ int HandleHelper::getChannelAttribute(unsigned int _handle, std::string & attrib
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         attribute = (*it_handle).getAttribute();
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -892,7 +1257,8 @@ unsigned int HandleHelper::getNoHandles()
     unsigned int nHandle=0;
 
     // Loop through all elements;
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         ++nHandle;
     }
     return nHandle;
@@ -917,22 +1283,26 @@ unsigned int HandleHelper::getNextFreeHandle()
     handleVector.reserve(getNoHandles());
 
     // Loop through all elements;
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         handleVector.push_back((*itcs).getHandle());
     }
 
     std::sort (handleVector.begin(), handleVector.begin());
 
-    for (std::vector<unsigned int>::iterator itui=handleVector.begin(); itui!=handleVector.end(); ++itui) {
+    for (std::vector<unsigned int>::iterator itui=handleVector.begin(); itui!=handleVector.end(); ++itui)
+    {
         ++freeHandle;
-        if ( (*itui) !=freeHandle) {
+        if ( (*itui) !=freeHandle)
+        {
             return freeHandle;
         }
     }
     //const unsigned int min_int = std::numeric_limits<unsigned int>::min();
     const unsigned int max_int = std::numeric_limits<unsigned int>::max();
 
-    if (freeHandle == max_int) {
+    if (freeHandle == max_int)
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "THE MAXIMUM ALLOWED NUMBER OF HANDLES HAS BEEN REACHED " << endl;
         cout << "THIS MAXIMUM VALUE IS " << max_int << endl;
@@ -962,15 +1332,19 @@ ca_client_context *  HandleHelper::getContextFromPV(const char * _pv)
     it_pv = pv_index.find(pv);
 
     // Three possibilities of getting a match!
-    if (it_pv != pv_index.end()) {
+    if (it_pv != pv_index.end())
+    {
         // Examine ca_client_context noting that channels within a group dO count!
         return (*it_pv).getClientContext() ;
     }
-    else {
+    else
+    {
         // Loop through all elements and search for pv match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
             //if((*itcs).getGroupHandle()>0) {continue;} // Channels within a group don't count!
-            if (!strcmp((*itcs).getPV(), _pv)) {
+            if (!strcmp((*itcs).getPV(), _pv))
+            {
                 //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 //out << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << endl;
                 //cout << " by looping through tcs::iterator, while the pv::iterator was NOT found! " << endl;
@@ -999,15 +1373,19 @@ ca_client_context * HandleHelper::getContextFromHandle(unsigned int handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         return (*it_handle).getClientContext();
     }
-    else {
+    else
+    {
         // Loop through all elements and search for handle/ca_client_context match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
             // if((*itcs).getGroupHandle()>0) {continue;} // Channels within a group don't count!
 
-            if ( (*itcs).getHandle()==handle) {
+            if ( (*itcs).getHandle()==handle)
+            {
                 //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 //cout << " INFORMATION to author: MATCHed Handle= " << handle << " to PV= " << (*itcs).getPV() << endl;
                 //cout << " by looping through tcs::iterator, while the by_handle::iterator was NOT found! " << endl;
@@ -1015,8 +1393,8 @@ ca_client_context * HandleHelper::getContextFromHandle(unsigned int handle)
             }
         }
     }
-    cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-    cout << "PV for Handle=" << handle << " not found " << endl;
+    //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+    //cout << "PV for Handle=" << handle << " not found " << endl;
 
     return NULL;
 #undef __METHOD__
@@ -1053,6 +1431,7 @@ unsigned int HandleHelper::getHandleFromPVAlias(const char * _pv)
 
     ca_client_context * ccc = ca_current_context();
 
+
     return getHandleFromPVAlias(_pv,ccc);
 
 #undef __METHOD__
@@ -1078,41 +1457,53 @@ unsigned int HandleHelper::getHandleFromPV(const char * _pv, ca_client_context *
 
     it_pv = pv_index.find(pv);
 
+
     // Three possibilities of getting a match!
-    if (it_pv != pv_index.end()) {
+    if (it_pv != pv_index.end())
+    {
 
         // Examine ca_client_context noting that channels within a group don't count!
-        if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 ) {
-
+        if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 )
+        {
+            //std::cout << "One: " << (*it_pv).handle << std::endl;
             return (*it_pv).handle;
         }
-        else {
+        else
+        {
             // Loop through all elements and search for pv/ca_client_context match
-            for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-                if((*itcs).getGroupHandle()>0) {
+            for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+            {
+                if((*itcs).getGroupHandle()>0)
+                {
                     continue;   // Channels within a group don't count!
                 }
 
-                if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext()== ccc) {
-                    //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-                    //cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << endl;
-                    //cout << " by looping through tcs::iterator, even though pv::iterator was found! " << endl;
+                if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext()== ccc)
+                {
+                    //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+                    //std::cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << std::endl;
+                    //std::cout << " by looping through tcs::iterator, even though pv::iterator was found! " << std::endl;
+
                     return (*itcs).handle;
                 }
             }
         }
     }
-    else {
+    else
+    {
         // Loop through all elements and search for pv/ca_client_context match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if((*itcs).getGroupHandle()>0) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if((*itcs).getGroupHandle()>0)
+            {
                 continue;   // Channels within a group don't count!
             }
 
-            if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext() == ccc) {
-                //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-                //out << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << endl;
-                //cout << " by looping through tcs::iterator, while the pv::iterator was NOT found! " << endl;
+            if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext() == ccc)
+            {
+                //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+                //std::cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << std::endl;
+                //std::cout << " by looping through tcs::iterator, while the pv::iterator was NOT found! " << std::endl;
                 return (*itcs).handle;
             }
         }
@@ -1143,21 +1534,27 @@ unsigned int HandleHelper::getHandleFromPVAlias(const char * _pv, ca_client_cont
     it_pv = pv_index.find(pv);
 
     // Three possibilities of getting a match!
-    if (it_pv != pv_index.end()) {
+    if (it_pv != pv_index.end())
+    {
 
         // Examine ca_client_context noting that channels within a group don't count!
-        if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 ) {
+        if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 )
+        {
 
             return (*it_pv).handle;
         }
-        else {
+        else
+        {
             // Loop through all elements and search for pv/ca_client_context match
-            for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-                if((*itcs).getGroupHandle()>0) {
+            for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+            {
+                if((*itcs).getGroupHandle()>0)
+                {
                     continue;   // Channels within a group don't count!
                 }
 
-                if (!strcmp((*itcs).getPVAlias(), _pv) && (*itcs).getClientContext()== ccc) {
+                if (!strcmp((*itcs).getPVAlias(), _pv) && (*itcs).getClientContext()== ccc)
+                {
                     //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                     //cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PVAlias= " << _pv << endl;
                     //cout << " by looping through tcs::iterator, even though pvAlias::iterator was found! " << endl;
@@ -1166,14 +1563,18 @@ unsigned int HandleHelper::getHandleFromPVAlias(const char * _pv, ca_client_cont
             }
         }
     }
-    else {
+    else
+    {
         // Loop through all elements and search for pv/ca_client_context match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if((*itcs).getGroupHandle()>0) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if((*itcs).getGroupHandle()>0)
+            {
                 continue;   // Channels within a group don't count!
             }
 
-            if (!strcmp((*itcs).getPVAlias(), _pv) && (*itcs).getClientContext() == ccc) {
+            if (!strcmp((*itcs).getPVAlias(), _pv) && (*itcs).getClientContext() == ccc)
+            {
                 //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 //cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PVAlias= " << _pv << endl;
                 //cout << " by looping through itcs::iterator, while the pvAlias::iterator was NOT found! " << endl;
@@ -1222,17 +1623,22 @@ const char * HandleHelper::getPVAlias(unsigned int handle, ca_client_context * c
     it_handle = handle_index.find(handle);
 
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         return (*it_handle).getPVAlias();
     }
-    else {
+    else
+    {
         // Loop through all elements and search for handle/ca_client_context match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if((*itcs).getGroupHandle()>0) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if((*itcs).getGroupHandle()>0)
+            {
                 continue;   // Channels within a group don't count!
             }
 
-            if ( (*itcs).getHandle()==handle && (*itcs).getClientContext() == ccc) {
+            if ( (*itcs).getHandle()==handle && (*itcs).getClientContext() == ccc)
+            {
                 //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 //cout << " INFORMATION to author: MATCHed Handle= " << handle << " to PV= " << (*itcs).getPV() << endl;
                 //cout << " by looping through tcs::iterator, while the by_handle::iterator was NOT found! " << endl;
@@ -1241,9 +1647,10 @@ const char * HandleHelper::getPVAlias(unsigned int handle, ca_client_context * c
         }
     }
 
-    if (printErrorPolicy.getInvalidHandle()) {
+    if (printErrorPolicy.getInvalidHandle())
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
-        cout << "PVSlisd for Handle=" << handle << " not found " << endl;
+        cout << "PVAlias for Handle=" << handle << " not found " << endl;
     }
 
     return "";
@@ -1283,17 +1690,22 @@ const char * HandleHelper::getPVFromHandle(unsigned int handle, ca_client_contex
     it_handle = handle_index.find(handle);
 
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         return (*it_handle).getPV();
     }
-    else {
+    else
+    {
         // Loop through all elements and search for handle/ca_client_context match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if((*itcs).getGroupHandle()>0) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if((*itcs).getGroupHandle()>0)
+            {
                 continue;   // Channels within a group don't count!
             }
 
-            if ( (*itcs).getHandle()==handle && (*itcs).getClientContext() == ccc) {
+            if ( (*itcs).getHandle()==handle && (*itcs).getClientContext() == ccc)
+            {
                 //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 //cout << " INFORMATION to author: MATCHed Handle= " << handle << " to PV= " << (*itcs).getPV() << endl;
                 //cout << " by looping through tcs::iterator, while the by_handle::iterator was NOT found! " << endl;
@@ -1302,7 +1714,8 @@ const char * HandleHelper::getPVFromHandle(unsigned int handle, ca_client_contex
         }
     }
 
-    if (printErrorPolicy.getInvalidHandle()) {
+    if (printErrorPolicy.getInvalidHandle())
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "PV for Handle=" << handle << " not found " << endl;
     }
@@ -1355,37 +1768,52 @@ unsigned int HandleHelper::getHandleFromPVWithinGroup(const char * _pv,
     it_pv = pv_index.find(pv);
 
     // Three possibilities of getting a match!
-    if (it_pv != pv_index.end()) {
+    if (it_pv != pv_index.end())
+    {
 
         // Examine ca_client_context noting that channels within a group don't count!
-        if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==gh ) {
+        if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==gh )
+        {
 
             return (*it_pv).handle;
         }
-        else {
+        else
+        {
             // Loop through all elements and search for pv/ca_client_context match
-            for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-                if((*itcs).getGroupHandle()!=gh) {
+            for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+            {
+                if((*itcs).getGroupHandle()!=gh)
+                {
                     continue;   // Channels within a group don't count!
                 }
 
-                if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext()== ccc) {
+                if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext()== ccc)
+                {
                     //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                     //cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << endl;
                     //cout << " by looping through tcs::iterator, even though pv::iterator was found! " << endl;
                     return (*itcs).handle;
                 }
+                //Maybe called from within thread with null context
+                else if (!strcmp((*itcs).getPV(), _pv) && 0 == ccc)
+                {
+                    return (*itcs).handle;
+                }
             }
         }
     }
-    else {
+    else
+    {
         // Loop through all elements and search for pv/ca_client_context match
-        for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-            if((*itcs).getGroupHandle()!=gh) {
+        for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+        {
+            if((*itcs).getGroupHandle()!=gh)
+            {
                 continue;   // Channels within a group don't count!
             }
 
-            if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext() == ccc) {
+            if (!strcmp((*itcs).getPV(), _pv) && (*itcs).getClientContext() == ccc)
+            {
                 //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 //cout << " INFORMATION to author: MATCHed Handle= " << (*itcs).handle << " to PV= " << _pv << endl;
                 //cout << " by looping through tcs::iterator, while the pv::iterator was NOT found! " << endl;
@@ -1416,20 +1844,26 @@ vector<unsigned int>   HandleHelper::getHandlesFromWithinGroupV(unsigned int _gr
 
     vector<unsigned int> vhg;
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
         vhg.reserve( (*it_groupHandle).getNMember());
-        for (unsigned int i=0; i <(*it_groupHandle).getNMember(); ++i ) {
+        for (unsigned int i=0; i <(*it_groupHandle).getNMember(); ++i )
+        {
             vhg.push_back((*it_groupHandle).mHandle[i]);
         }
         return vhg;
     }
-    else {
+    else
+    {
         // Loop through all elements and search for grouphandle match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
 
-            if ((*itgs).getGroupHandle() == _groupHandle ) {
+            if ((*itgs).getGroupHandle() == _groupHandle )
+            {
                 vhg.reserve( (*itgs).getNMember());
-                for (unsigned int i=0; i <(*itgs).getNMember(); ++i ) {
+                for (unsigned int i=0; i <(*itgs).getNMember(); ++i )
+                {
                     vhg.push_back((*itgs).mHandle[i]);
                 }
                 return vhg;
@@ -1458,15 +1892,19 @@ unsigned int *   HandleHelper::getHandlesFromWithinGroup(unsigned int _groupHand
 
     it_groupHandle = groupHandle_index.find(_groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
         return (*it_groupHandle).mHandle;
     }
-    else {
+    else
+    {
         // Loop through all elements and search for grouphandle match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
             //ConduitGroup cg = *itgs;
 
-            if ((*itgs).getGroupHandle() == _groupHandle ) {
+            if ((*itgs).getGroupHandle() == _groupHandle )
+            {
                 return (*itgs).mHandle;
                 //    cout << " MATCH FOUND Handle Number is= " << (cg).groupHandle << endl;
             }
@@ -1503,40 +1941,50 @@ vector<unsigned int>   HandleHelper::getDisconnectedHandlesFromWithinGroupV(unsi
 
     vector<unsigned int> vhg;
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
         vhg.reserve( (*it_groupHandle).getNMember());
 
         cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
         cafeConduit_set_by_handle::iterator it_handle;
 
-        for (unsigned int i=0; i <(*it_groupHandle).getNMember(); ++i ) {
+        for (unsigned int i=0; i <(*it_groupHandle).getNMember(); ++i )
+        {
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[i]);
 
-            if (it_handle != handle_index.end()) {
-                if ( ! ((*it_handle).isConnected()) ) {
+            if (it_handle != handle_index.end())
+            {
+                if ( ! ((*it_handle).isConnected()) )
+                {
                     vhg.push_back((*it_groupHandle).mHandle[i]);
                 }
             }
         }
         return vhg;
     }
-    else {
+    else
+    {
         // Loop through all elements and search for grouphandle match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
 
-            if ((*itgs).getGroupHandle() == _groupHandle ) {
+            if ((*itgs).getGroupHandle() == _groupHandle )
+            {
                 vhg.reserve( (*itgs).getNMember());
 
                 cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
                 cafeConduit_set_by_handle::iterator it_handle;
 
 
-                for (unsigned int i=0; i <(*itgs).getNMember(); ++i ) {
+                for (unsigned int i=0; i <(*itgs).getNMember(); ++i )
+                {
 
                     it_handle = handle_index.find((*itgs).mHandle[i]);
-                    if (it_handle != handle_index.end()) {
-                        if ( !((*it_handle).isConnected() ) ) {
+                    if (it_handle != handle_index.end())
+                    {
+                        if ( !((*it_handle).isConnected() ) )
+                        {
                             vhg.push_back((*itgs).mHandle[i]);
                         }
                     }
@@ -1553,8 +2001,6 @@ vector<unsigned int>   HandleHelper::getDisconnectedHandlesFromWithinGroupV(unsi
 }
 
 
-
-
 /**
  *  \brief  Method returns true if channel is connected, else false
  *  \param  handle input: handle
@@ -1562,19 +2008,94 @@ vector<unsigned int>   HandleHelper::getDisconnectedHandlesFromWithinGroupV(unsi
  */
 bool HandleHelper::isChannelConnected(unsigned int handle)
 {
+#define __METHOD__ "HandleHelper::isChannelConnected"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         return (*it_handle).isConnected();
     }
-    else {
+    else
+    {
         //if (printErrorPolicy.getInvalidHandle()) {
-        std::cout<< "Input handle " << handle << " does not exist! " << std::endl;
+        std::cout << __METHOD__  << " Input handle " << handle << " does not exist! " << std::endl;
         //}
         return false;
     }
+#undef __METHOD__
 }
+
+
+/**
+ *  \brief  Method returns true if all given channels are connected, else false
+ *  \parameter handleArray input: array of handles to test connection state of
+ *  \parameter nHandles input: no of handles in array
+ *  \return bool
+ */
+bool HandleHelper::areChannelsConnected(unsigned int * handleArray, const unsigned int nHandles)
+{
+#define __METHOD__ "HandleHelper::areChannelsConnected"
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    for (int i=0; i < nHandles; ++i)
+    {
+        it_handle = handle_index.find(handleArray[i]);
+        if (it_handle != handle_index.end())
+        {
+            if (!(*it_handle).isConnected())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            //if (printErrorPolicy.getInvalidHandle()) {
+            std::cout << __METHOD__ << " Input handle " << handleArray[i] << " does not exist! " << std::endl;
+            //}
+            return false;
+        }
+    }
+
+    return true;
+#undef __METHOD__
+}
+
+
+/**
+ *  \brief  Method returns true if all given channels are connected, else false
+ *  \parameter handleV input: vector of handles to test connection state of
+ *  \return bool
+ */
+bool HandleHelper::areChannelsConnectedV(std::vector<unsigned int> handleV)
+{
+#define __METHOD__ "HandleHelper::areChannelsConnectedV"
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+
+    for (int i=0; i < handleV.size(); ++i)
+    {
+        it_handle = handle_index.find(handleV[i]);
+        if (it_handle != handle_index.end())
+        {
+            if (!(*it_handle).isConnected())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            //if (printErrorPolicy.getInvalidHandle()) {
+            std::cout << __METHOD__ << " Input handle " << handleV[i] << " does not exist! " << std::endl;
+            //}
+            return false;
+        }
+    }
+    return true;
+#undef __METHOD__
+}
+
 
 
 
@@ -1587,14 +2108,18 @@ bool HandleHelper::allChannelsConnected()
 #define __METHOD__ "HandleHelper::allChannelsConnected"
     ca_client_context * ccc = ca_current_context();
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-        if (!(*itcs).isConnected() && (ccc ==(*itcs).getClientContext()) ) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
+        if (!(*itcs).isConnected() && (ccc ==(*itcs).getClientContext()) )
+        {
             return false;
         }
     }
     return true;
 #undef __METHOD__
 }
+
+
 
 
 /**
@@ -1606,8 +2131,10 @@ bool HandleHelper::allChannelsWithinGroupConnected()
 #define __METHOD__ "HandleHelper::allChannelsWithinGroupConnected"
     ca_client_context * ccc = ca_current_context();
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-        if (!(*itcs).isConnected() && (ccc ==(*itcs).getClientContext()) && (*itcs).getGroupHandle()>0 ) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
+        if (!(*itcs).isConnected() && (ccc ==(*itcs).getClientContext()) && (*itcs).getGroupHandle()>0 )
+        {
             return false;
         }
     }
@@ -1624,14 +2151,17 @@ bool HandleHelper::allChannelsWithinGroupConnected()
 bool HandleHelper::allChannelsWithinGroupConnectedV(std::vector<unsigned int> grpID)
 {
 #define __METHOD__ "HandleHelper::allChannelsWithinGroupConnectedV"
-    if (grpID.size()==0) {
+    if (grpID.size()==0)
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "Input vector listing group handles is of zero size " << endl;
     }
 
-    for (size_t i=0; i<grpID.size(); ++i) {
+    for (size_t i=0; i<grpID.size(); ++i)
+    {
         unsigned int nMem= HandleHelper::getDisconnectedHandlesFromWithinGroupV(grpID[i]).size();
-        if ( nMem > 0) {
+        if ( nMem > 0)
+        {
             //cout << "group handle " << grpID[i] << " NOT all members connected " << endl;
             return false;
         }
@@ -1658,14 +2188,17 @@ int HandleHelper::getStatus(unsigned int _handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         return (*it_handle).getStatus();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
-            cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+            cout <<  "Handle=" << _handle << " either never existed or no longer exists " << endl;
         }
         return ECAFE_INVALID_HANDLE;
     }
@@ -1687,12 +2220,15 @@ int HandleHelper::getTimeStamp(unsigned int _handle, epicsTimeStamp &ts)
     it_handle = handle_index.find(_handle);
     ts.secPastEpoch=0;
     ts.nsec=0;
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         ts= (*it_handle).getTimeStamp();
         return ICAFE_NORMAL;
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -1704,9 +2240,9 @@ int HandleHelper::getTimeStamp(unsigned int _handle, epicsTimeStamp &ts)
 
 
 /**
- *  \brief  Checks for nan values in HIHI HIGH LOW LOLO fields. 
+ *  \brief  Checks for nan values in HIHI HIGH LOW LOLO fields.
  *  \param  _handle input: handle
- *  \return true if one of HIHI|HIGH|LOW|LOLO is not nan, else false if all are nan 
+ *  \return true if one of HIHI|HIGH|LOW|LOLO is not nan, else false if all are nan
  */
 bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
 {
@@ -1715,38 +2251,171 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    //Only these have alarm/severity
+    std::vector<std::string>alarmSeverityRecordTypes;
+    alarmSeverityRecordTypes.reserve(10);
+    alarmSeverityRecordTypes.push_back( std::string ( "ai"));
+    alarmSeverityRecordTypes.push_back( std::string ( "ao"));
+    alarmSeverityRecordTypes.push_back( std::string ( "calc"));
+    alarmSeverityRecordTypes.push_back( std::string ( "dfanout"));
+    alarmSeverityRecordTypes.push_back( std::string ( "longin"));
+    alarmSeverityRecordTypes.push_back( std::string ( "longout"));
+   
+    alarmSeverityRecordTypes.push_back( std::string ( "pid"));
+    alarmSeverityRecordTypes.push_back( std::string ( "sel"));
+    alarmSeverityRecordTypes.push_back( std::string ( "steppermotor"));
+    alarmSeverityRecordTypes.push_back( std::string ( "sub"));
+
+
+    if (it_handle != handle_index.end())
+    {
+        //Never connected so do not know
+        if  (!(*it_handle).isConnected() &&  (*it_handle).getStatus() == ICAFE_CS_NEVER_CONN )
+        {
+            return false;
+        }
+
+	PVDataHolder  _pvd;
+        unsigned int nelem=getNelemRequest(_handle);
+
+        if (nelem >1)
+        {
+            setNelemToRetrieveFromCache(_handle,1);
+        }
+
+        _pvd.setNelem(nelem);
+
+        //return to previous
+        if (nelem != 1)
+        {
+            setNelemToRetrieveFromCtrlCache(_handle,nelem);
+        }
+
+	bool returnFlag = false;
+        int _status = (*it_handle).getPVDataHolder(_pvd) ;
+	
+        if (_status == ICAFE_NORMAL) 
+	{
+	  if (_pvd.getAlarmSeverity() == EPICS_GLOBAL_ALARM_SEVERITY::SEV_MAJOR || 
+	      _pvd.getAlarmSeverity() == EPICS_GLOBAL_ALARM_SEVERITY::SEV_MINOR) 
+	    {
+	      returnFlag = true;
+	    }
+	}
+	
+        //return to previous
+        if (nelem != 1)
+        {
+            setNelemToRetrieveFromCache(_handle,nelem);
+        }
+
+	if (returnFlag == true)
+        {
+	    return true;
+        }
+
+
+        std::string className= (std::string) (*it_handle).getClassName();
+        std::vector<std::string>::const_iterator it = std::find(alarmSeverityRecordTypes.begin(), alarmSeverityRecordTypes.end(), className);
+
+       
+        // if never connected getStatus is 600 ICAFE_CS_NEVER_CONN
+        // std::cout << (*it_handle).getPV() << " is Connected " << (*it_handle).isConnected()     << std::endl;
+        // std::cout << "getStatus    " << (*it_handle).getStatus()       << std::endl;
+
+        // Check if handle has already been supplemented
+        if  ((*it_handle).hasAlarmSeverityStruct())
+        {
+            std::cout << __METHOD__ << " is true " << std::endl;
+            return (*it_handle).hasAlarmSeverity();
+        }
+
+       
+	if (it == alarmSeverityRecordTypes.end())
+        {
+            return false;
+        }
+
+
         PVCtrlHolder  _pvc;
-        unsigned int nelem=getNelemRequestCtrl(_handle);
-        if (nelem >1) {
+
+        nelem=getNelemRequestCtrl(_handle);
+
+        if (nelem >1)
+        {
             setNelemToRetrieveFromCtrlCache(_handle,1);
         }
         _pvc.setNelem(nelem);
 
+
         int _stat = (*it_handle).getPVCtrlHolder(_pvc) ;
-      
+
+        // Should already have been caught by first check above
+        if  (!(*it_handle).isConnected() &&  _pvc.getStatus() == ICAFE_CS_NEVER_CONN )
+        {
+            return false;
+        }
+
+        // if Never connected getStatus is 600 ICAFE_CS_NEVER_CONN
+        // std::cout << "status from getPVCtrlHolder // " << _stat << std::endl;
+        // std::cout << "status from getPVCtrlHolder // " << _pvc.getStatus() << std::endl;
+        //_pvc.print();
+
         //return to previous
-        if (nelem!=1) {
+        if (nelem!=1)
+        {
             setNelemToRetrieveFromCtrlCache(_handle,nelem);
         }
-				
-        if (_stat==ICAFE_NORMAL) {
-						//if (_pvc.getLowerAlarmLimit_AsDouble()==0 && _pvc.getLowerWarningLimit_AsDouble()==0 &&
-						//  _pvc.getUpperWarningLimit_AsDouble()==0 && _pvc.getUpperAlarmLimit_AsDouble()==0) {return false;}
-						
-            if      (!((boost::math::isnan)(_pvc.getLowerAlarmLimit_AsDouble())))   { return true; }
-            else if (!((boost::math::isnan)(_pvc.getLowerWarningLimit_AsDouble()))) { return true; }  
-            else if (!((boost::math::isnan)(_pvc.getUpperWarningLimit_AsDouble()))) { return true; }
-            else if (!((boost::math::isnan)(_pvc.getUpperAlarmLimit_AsDouble())))   { return true; }  
+ 
+
+	
+
+        if (_stat==ICAFE_NORMAL)
+        {
+            //Special test for ENUM value - should never reach here as is mbbi/o record
+            //if (_pvc.getNoEnumStrings()>0 )
+            //{
+            //    return false;
+            //}
+	    //enums can have alarms states!!!
+
+            if      (!((boost::math::isnan)(_pvc.getLowerAlarmLimit_AsDouble())))
+            {
+	      if (_pvc.getLowerAlarmLimit_AsDouble() != 0) {
+                 return true;
+	      }
+            }
+            else if (!((boost::math::isnan)(_pvc.getLowerWarningLimit_AsDouble())))
+            {
+               if (_pvc.getLowerWarningLimit_AsDouble() != 0) {
+                   return true;
+	       } 
+            }
+            else if (!((boost::math::isnan)(_pvc.getUpperWarningLimit_AsDouble())))
+            {
+                if (_pvc.getUpperWarningLimit_AsDouble() != 0) {
+                   return true;
+	       } 
+            }
+            else if (!((boost::math::isnan)(_pvc.getUpperAlarmLimit_AsDouble())))
+            {
+                if (_pvc.getUpperAlarmLimit_AsDouble() != 0) {
+                   return true;
+	       } 
+            }
+
+	    
             return false;
-						
         }
-        else {
+        else
+        {
             return false;
         }
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -1769,13 +2438,16 @@ int HandleHelper::getAlarmStatusSeverity(unsigned int _handle, dbr_short_t as[2]
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         as[0]= (*it_handle).getAlarmStatus();
         as[1]= (*it_handle).getAlarmSeverity();
         return ICAFE_NORMAL;
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -1798,13 +2470,16 @@ int HandleHelper::getAlarmStatusSeverityAsString(unsigned int _handle, std::stri
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         asas[0]= (*it_handle).getAlarmStatusAsString();
         asas[1]= (*it_handle).getAlarmSeverityAsString();
         return ICAFE_NORMAL;
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -1850,7 +2525,8 @@ std::vector<unsigned int> HandleHelper::getHandlesFromPVs(std::vector<std::strin
     cafeConduit_set_by_pv & pv_index = cs.get<by_pv> ();
     cafeConduit_set_by_pv::iterator it_pv;
 
-    for (unsigned int i=0; i<pvV.size(); ++i) {
+    for (unsigned int i=0; i<pvV.size(); ++i)
+    {
 
 
         char pv[PVNAME_SIZE];
@@ -1859,21 +2535,27 @@ std::vector<unsigned int> HandleHelper::getHandlesFromPVs(std::vector<std::strin
         it_pv = pv_index.find(pv);
 
         // Possibilities of getting a match!
-        if (it_pv != pv_index.end()) {
+        if (it_pv != pv_index.end())
+        {
 
             // Examine ca_client_context noting that channels within a group don't count!
-            if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 ) {
+            if (ccc == (*it_pv).getClientContext() &&  (*it_pv).getGroupHandle()==0 )
+            {
                 handleV.push_back((*it_pv).handle);
             }
         }
-        else {
+        else
+        {
             // Loop through all elements and search for pv/ca_client_context match
-            for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-                if((*itcs).getGroupHandle()>0) {
+            for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+            {
+                if((*itcs).getGroupHandle()>0)
+                {
                     continue;   // Channels within a group don't count!
                 }
 
-                if (!strcmp((*itcs).getPV(), pvV[i].c_str()) && (*itcs).getClientContext()== ccc) {
+                if (!strcmp((*itcs).getPV(), pvV[i].c_str()) && (*itcs).getClientContext()== ccc)
+                {
 
                     handleV.push_back((*itcs).handle);
                     break;
@@ -1903,22 +2585,27 @@ int HandleHelper::printHandlesV(std::vector<unsigned int> handleV)
 
     long lStatus=ICAFE_NORMAL;
 
-    for (unsigned int i=0; i<handleV.size(); ++i) {
+    for (unsigned int i=0; i<handleV.size(); ++i)
+    {
 
         it_handle = handle_index.find(handleV[i]);
 
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             cout << "--------------------------------------------------" << endl;
             cout << "HANDLE=            " << (*it_handle).handle << "   " ;
-            if ((*it_handle).getGroupHandle()>0) {
+            if ((*it_handle).getGroupHandle()>0)
+            {
                 cout << "groupHandle= " << (*it_handle).getGroupHandle() << endl;
             }
-            else {
+            else
+            {
                 cout << endl;
             }
 
             cout << "PV Name:           " << (*it_handle).getPV() << endl;
-            if ( strcmp((*it_handle).getPV(),(*it_handle).getPVAlias()) ) {
+            if ( strcmp((*it_handle).getPV(),(*it_handle).getPVAlias()) )
+            {
                 cout << "PV Alias=          " << (*it_handle).getPVAlias() << endl;
             }
             cout << "Data Type:         "
@@ -1939,13 +2626,15 @@ int HandleHelper::printHandlesV(std::vector<unsigned int> handleV)
             cout << "Timeouts put/get:  " << p << "/" << g << " sec. " << endl;
 
 
-            if ((*it_handle).getGroupHandle()>0) {
+            if ((*it_handle).getGroupHandle()>0)
+            {
                 cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
                 cafeGroup_set_by_groupHandle::iterator it_groupHandle;
                 it_groupHandle = groupHandle_index.find((*it_handle).getGroupHandle());
 
 
-                if (it_groupHandle != groupHandle_index.end()) {
+                if (it_groupHandle != groupHandle_index.end())
+                {
                     ph.getSGTimeout((*it_groupHandle).getGroupHandle(),p,g);
                     cout << "Syn. Grp put/get:  " << p << "/" << g << " sec. " << endl;
                 }
@@ -1954,29 +2643,35 @@ int HandleHelper::printHandlesV(std::vector<unsigned int> handleV)
 
 
             cout << "isConnected?:      " ;
-            if ((*it_handle).isConnected()) {
+            if ((*it_handle).isConnected())
+            {
                 cout << "Yes" << endl;
             }
-            else {
+            else
+            {
                 cout << "No" << endl;
             }
             cout << "--------------------------------------------------" << endl;
 
             vector<unsigned int> mids=getMonitorIDs((*it_handle).getHandle());
-            if (mids.size()>0) {
+            if (mids.size()>0)
+            {
                 cout << "Monitor ID:        " ;
-                for (int i=0; i< mids.size(); ++i) {
+                for (unsigned int i=0; i< mids.size(); ++i)
+                {
                     cout << mids[i] << " " ;
                 }
                 cout << endl;
             }
             vector<unsigned int> midsiw=getMonitorIDsInWaiting((*it_handle).getHandle());
-            if (midsiw.size()>0) {
+            if (midsiw.size()>0)
+            {
                 cout << "Monitors to start: "  << midsiw.size() << endl;
             }
 
         }
-        else {
+        else
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << handleV[i] << " either never existed or no longer exists " << endl;
@@ -2000,22 +2695,27 @@ int HandleHelper::printHandles(unsigned int * handleArray, unsigned int nHandles
 
     long lStatus=ICAFE_NORMAL;
 
-    for (unsigned int i=0; i<nHandles; ++i) {
+    for (unsigned int i=0; i<nHandles; ++i)
+    {
 
         it_handle = handle_index.find(handleArray[i]);
 
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
             cout << "--------------------------------------------------" << endl;
             cout << "HANDLE=            " << (*it_handle).handle << "   " ;
-            if ((*it_handle).getGroupHandle()>0) {
+            if ((*it_handle).getGroupHandle()>0)
+            {
                 cout << "groupHandle= " << (*it_handle).getGroupHandle() << endl;
             }
-            else {
+            else
+            {
                 cout << endl;
             }
 
             cout << "PV Name:           " << (*it_handle).getPV() << endl;
-            if ( strcmp((*it_handle).getPV(),(*it_handle).getPVAlias()) ) {
+            if ( strcmp((*it_handle).getPV(),(*it_handle).getPVAlias()) )
+            {
                 cout << "PV Alias=          " << (*it_handle).getPVAlias() << endl;
             }
             cout << "Data Type:         "
@@ -2037,13 +2737,15 @@ int HandleHelper::printHandles(unsigned int * handleArray, unsigned int nHandles
 
 
 
-            if ((*it_handle).getGroupHandle()>0) {
+            if ((*it_handle).getGroupHandle()>0)
+            {
                 cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
                 cafeGroup_set_by_groupHandle::iterator it_groupHandle;
                 it_groupHandle = groupHandle_index.find((*it_handle).getGroupHandle());
 
 
-                if (it_groupHandle != groupHandle_index.end()) {
+                if (it_groupHandle != groupHandle_index.end())
+                {
                     ph.getSGTimeout((*it_groupHandle).getGroupHandle(),p,g);
                     cout << "Syn. Grp put/get:  " << p << "/" << g << " sec. " << endl;
                 }
@@ -2055,30 +2757,36 @@ int HandleHelper::printHandles(unsigned int * handleArray, unsigned int nHandles
 
             //Find Group
             cout << "isConnected?:      " ;
-            if ((*it_handle).isConnected()) {
+            if ((*it_handle).isConnected())
+            {
                 cout << "Yes" << endl;
             }
-            else {
+            else
+            {
                 cout << "No" << endl;
             }
 
             vector<unsigned int> mids=getMonitorIDs((*it_handle).getHandle());
-            if (mids.size()>0) {
+            if (mids.size()>0)
+            {
                 cout << "Monitor ID:        " ;
-                for (int i=0; i< mids.size(); ++i) {
+                for (unsigned int i=0; i< mids.size(); ++i)
+                {
                     cout << mids[i] << " " ;
                 }
                 cout << endl;
             }
             vector<unsigned int> midsiw=getMonitorIDsInWaiting((*it_handle).getHandle());
-            if (midsiw.size()>0) {
+            if (midsiw.size()>0)
+            {
                 cout << "Monitors to start: "  << midsiw.size() << endl;
             }
 
             cout << "--------------------------------------------------" << endl;
 
         }
-        else {
+        else
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << handleArray[i] << " either never existed or no longer exists " << endl;
@@ -2101,18 +2809,22 @@ int HandleHelper::printHandle(unsigned int _handle)
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "HANDLE=            " << (*it_handle).handle << "   " ;
-        if ((*it_handle).getGroupHandle()>0) {
+        if ((*it_handle).getGroupHandle()>0)
+        {
             cout << "groupHandle= " << (*it_handle).getGroupHandle() << endl;
         }
-        else {
+        else
+        {
             cout << endl;
         }
 
         cout << "PV Name:           " << (*it_handle).getPV() << endl;
-        if ( strcmp((*it_handle).getPV(),(*it_handle).getPVAlias()) ) {
+        if ( strcmp((*it_handle).getPV(),(*it_handle).getPVAlias()) )
+        {
             cout << "PV Alias=          " << (*it_handle).getPVAlias() << endl;
         }
         cout << "Data Type:         "
@@ -2132,13 +2844,15 @@ int HandleHelper::printHandle(unsigned int _handle)
 
         cout << "Timeouts put/get:  " << p << "/" << g << " sec. " << endl;
 
-        if ((*it_handle).getGroupHandle()>0) {
+        if ((*it_handle).getGroupHandle()>0)
+        {
             cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
             cafeGroup_set_by_groupHandle::iterator it_groupHandle;
             it_groupHandle = groupHandle_index.find((*it_handle).getGroupHandle());
 
 
-            if (it_groupHandle != groupHandle_index.end()) {
+            if (it_groupHandle != groupHandle_index.end())
+            {
                 ph.getSGTimeout((*it_groupHandle).getGroupHandle(),p,g);
                 cout << "Syn. Grp put/get:  " << p << "/" << g << " sec. " << endl;
             }
@@ -2147,30 +2861,36 @@ int HandleHelper::printHandle(unsigned int _handle)
 
 
         cout << "isConnected?:      " ;
-        if ((*it_handle).isConnected()) {
+        if ((*it_handle).isConnected())
+        {
             cout << "Yes" << endl;
         }
-        else {
+        else
+        {
             cout << "No" << endl;
         }
 
         vector<unsigned int> mids=getMonitorIDs((*it_handle).getHandle());
-        if (mids.size()>0) {
+        if (mids.size()>0)
+        {
             cout << "Monitor ID:        " ;
-            for (int i=0; i< mids.size(); ++i) {
+            for (unsigned int i=0; i< mids.size(); ++i)
+            {
                 cout << mids[i] << " " ;
             }
             cout << endl;
         }
         vector<unsigned int> midsiw=getMonitorIDsInWaiting((*it_handle).getHandle());
-        if (midsiw.size()>0) {
+        if (midsiw.size()>0)
+        {
             cout << "Monitors to start: "  << midsiw.size() << endl;
         }
 
         cout << "--------------------------------------------------" << endl;
         return ICAFE_NORMAL;
     }
-    else {
+    else
+    {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -2193,25 +2913,32 @@ unsigned int HandleHelper::printHandles()
     unsigned int noHandles = 0;
 
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
-        if (noHandles==0) {
+        if (noHandles==0)
+        {
             cout << endl << "--------------------------------------------------" << endl;
             cout << "              PRINTING ALL HANDLES                " << endl;
             cout << "--------------------------------------------------" << endl;
         }
         cout << "--------------------------------------------------" << endl;
+
         cout << "HANDLE=            " << (*itcs).handle << "   " ;
 
-        if ((*itcs).getGroupHandle()>0) {
+
+        if ((*itcs).getGroupHandle()>0)
+        {
             cout << "groupHandle= " << (*itcs).getGroupHandle() << endl;
         }
-        else {
+        else
+        {
             cout << endl;
         }
 
         cout << "PV Name=           " << (*itcs).getPV() << endl;
-        if ( strcmp((*itcs).getPV(),(*itcs).getPVAlias()) ) {
+        if ( strcmp((*itcs).getPV(),(*itcs).getPVAlias()) )
+        {
             cout << "PV Alias=          " << (*itcs).getPVAlias() << endl;
         }
         cout << "Data Type =        "
@@ -2224,6 +2951,7 @@ unsigned int HandleHelper::printHandles()
         // Returns normal completion
         // cout << "status=         " << cafeStatus.csi.message(cc.getStatus()) << endl;
 
+
         double p,g;
         PolicyHelper ph;
         ph.getTimeout((*itcs).getHandle(),p,g);
@@ -2231,13 +2959,15 @@ unsigned int HandleHelper::printHandles()
         cout << "Timeouts put/get=  " << p << "/" << g << " sec. " << endl;
 
 
-        if ((*itcs).getGroupHandle()>0) {
+        if ((*itcs).getGroupHandle()>0)
+        {
             cafeGroup_set_by_groupHandle & groupHandle_index = gs.get<by_groupHandle> ();
             cafeGroup_set_by_groupHandle::iterator it_groupHandle;
             it_groupHandle = groupHandle_index.find((*itcs).getGroupHandle());
 
 
-            if (it_groupHandle != groupHandle_index.end()) {
+            if (it_groupHandle != groupHandle_index.end())
+            {
                 ph.getSGTimeout((*it_groupHandle).getGroupHandle(),p,g);
                 cout << "Syc. Grp timeouts put/get:  " << p << "/" << g << " sec. " << endl;
             }
@@ -2247,23 +2977,28 @@ unsigned int HandleHelper::printHandles()
 
 
         cout << "isConnected?:      " ;
-        if ((*itcs).isConnected()) {
+        if ((*itcs).isConnected())
+        {
             cout << "Yes" << endl;
         }
-        else {
+        else
+        {
             cout << "No" << endl;
         }
 
         vector<unsigned int> mids=getMonitorIDs((*itcs).getHandle());
-        if (mids.size()>0) {
+        if (mids.size()>0)
+        {
             cout << "Monitor ID:        " ;
-            for (int i=0; i< mids.size(); ++i) {
+            for (unsigned int i=0; i< mids.size(); ++i)
+            {
                 cout << mids[i] << " ";
             }
             cout << endl;
         }
         vector<unsigned int> midsiw=getMonitorIDsInWaiting((*itcs).getHandle());
-        if (midsiw.size()>0) {
+        if (midsiw.size()>0)
+        {
             cout << "Monitors to start: "  << midsiw.size() << endl;
         }
 
@@ -2271,17 +3006,20 @@ unsigned int HandleHelper::printHandles()
         ++noHandles;
     }
 
-    if (noHandles==0) {
+    if (noHandles==0)
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "          THERE ARE NO HANDLES TO PRINT           " << endl;
         cout << "--------------------------------------------------" << endl;
     }
-    else {
+    else
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "          END PRINTING ALL HANDLES                " << endl;
         cout << "--------------------------------------------------" << endl << endl;
 
     }
+    std::cout.flush();
     return noHandles;
 #undef __METHOD__
 }
@@ -2304,18 +3042,22 @@ vector<unsigned int> HandleHelper::getHandlesWithMonitors()
     handleV.reserve(cs.size());
 
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
         vector<unsigned int> mids=getMonitorIDs((*itcs).getHandle());
         vector<unsigned int> midsiw=getMonitorIDsInWaiting((*itcs).getHandle());
-        if (mids.size()==0 && midsiw.size()==0) {
+        if (mids.size()==0 && midsiw.size()==0)
+        {
             continue;
         }
 
-        for (int i=0; i<mids.size(); ++i)   {
+        for (unsigned int i=0; i<mids.size(); ++i)
+        {
             handleV.push_back((*itcs).handle);
         };
-        for (int i=0; i<midsiw.size(); ++i) {
+        for (unsigned int i=0; i<midsiw.size(); ++i)
+        {
             handleV.push_back((*itcs).handle);
         };
     }
@@ -2337,15 +3079,18 @@ unsigned int HandleHelper::printMonitors()
     unsigned int noHandles = 0;
 
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
         vector<unsigned int> mids=getMonitorIDs((*itcs).getHandle());
         vector<unsigned int> midsiw=getMonitorIDsInWaiting((*itcs).getHandle());
-        if (mids.size()==0 && midsiw.size()==0) {
+        if (mids.size()==0 && midsiw.size()==0)
+        {
             continue;
         }
 
-        if (noHandles==0) {
+        if (noHandles==0)
+        {
             cout << endl << "--------------------------------------------------" << endl;
             cout << "        PRINTING ALL HANDLES WITH MONITORS                " << endl;
             cout << "--------------------------------------------------" << endl;
@@ -2353,15 +3098,18 @@ unsigned int HandleHelper::printMonitors()
         cout << "--------------------------------------------------" << endl;
         cout << "HANDLE=            " << (*itcs).handle << "   " ;
 
-        if ((*itcs).getGroupHandle()>0) {
+        if ((*itcs).getGroupHandle()>0)
+        {
             cout << "groupHandle= " << (*itcs).getGroupHandle() << endl;
         }
-        else {
+        else
+        {
             cout << endl;
         }
 
         cout << "PV Name=           " << (*itcs).getPV() << endl;
-        if ( strcmp((*itcs).getPV(),(*itcs).getPVAlias()) ) {
+        if ( strcmp((*itcs).getPV(),(*itcs).getPVAlias()) )
+        {
             cout << "PV Alias=          " << (*itcs).getPVAlias() << endl;
         }
         cout << "Data Type =        "
@@ -2382,21 +3130,25 @@ unsigned int HandleHelper::printMonitors()
 
 
         cout << "isConnected?:      " ;
-        if ((*itcs).isConnected()) {
+        if ((*itcs).isConnected())
+        {
             cout << "Yes" << endl;
         }
-        else {
+        else
+        {
             cout << "No" << endl;
         }
 
 
 
         cout << "Monitor ID:        " ;
-        for (int i=0; i< mids.size(); ++i) {
+        for (unsigned int i=0; i< mids.size(); ++i)
+        {
             cout << mids[i] << " ";
         }
         cout << endl;
-        if (midsiw.size()>0) {
+        if (midsiw.size()>0)
+        {
             cout << "Monitors to start: "  << midsiw.size() << endl;
         }
 
@@ -2404,12 +3156,14 @@ unsigned int HandleHelper::printMonitors()
         ++noHandles;
     }
 
-    if (noHandles==0) {
+    if (noHandles==0)
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "          THERE ARE NO HANDLES TO PRINT           " << endl;
         cout << "--------------------------------------------------" << endl;
     }
-    else {
+    else
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "          END PRINTING ALL HANDLES                " << endl;
         cout << "--------------------------------------------------" << endl << endl;
@@ -2436,7 +3190,8 @@ unsigned int HandleHelper::getHandles(std::vector<unsigned int> &dhV, std::vecto
     dhV.reserve(cs.size());
     pvV.reserve(cs.size());
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         dhV.push_back((*itcs).handle);
         pvV.push_back((*itcs).getPV());
     }
@@ -2464,7 +3219,8 @@ unsigned int HandleHelper::getHandleStates(std::vector<unsigned int> &dhV, std::
     pvV.reserve(cs.size());
     connV.reserve(cs.size());
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         dhV.push_back((*itcs).handle);
         pvV.push_back((*itcs).getPV());
         connV.push_back( (unsigned short) (*itcs).isConnected());
@@ -2489,8 +3245,10 @@ unsigned int HandleHelper::getConnectedHandles(std::vector<unsigned int> &dhV, s
     dhV.reserve(cs.size());
     pvV.reserve(cs.size());
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-        if (!(*itcs).isConnected()) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
+        if (!(*itcs).isConnected())
+        {
             continue;
         };
         dhV.push_back((*itcs).handle);
@@ -2516,8 +3274,10 @@ unsigned int HandleHelper::getDisconnectedHandles(std::vector<unsigned int> &dhV
     dhV.reserve(cs.size());
     pvV.reserve(cs.size());
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-        if ((*itcs).isConnected()) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
+        if ((*itcs).isConnected())
+        {
             continue;
         };
         dhV.push_back((*itcs).handle);
@@ -2539,27 +3299,33 @@ unsigned int HandleHelper::printDisconnectedHandles()
     unsigned int noDisconnectedHandles = 0;
 
     // Loop through all elements and search for pv/ca_client_context match
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
-        if ((*itcs).isConnected()) {
+        if ((*itcs).isConnected())
+        {
             continue;
         };
 
-        if (noDisconnectedHandles==0) {
+        if (noDisconnectedHandles==0)
+        {
             cout << endl << "--------------------------------------------------" << endl;
             cout << "              DISCONNECTED HANDLES                " << endl;
             cout << "--------------------------------------------------" << endl;
         }
         cout << "--------------------------------------------------" << endl;
         cout << "HANDLE=            " << (*itcs).handle << "   ";
-        if ((*itcs).getGroupHandle()>0) {
+        if ((*itcs).getGroupHandle()>0)
+        {
             cout << "groupHandle= " << (*itcs).getGroupHandle() << endl;
         }
-        else {
+        else
+        {
             cout << endl;
         }
         cout << "PV Name=           " << (*itcs).getPV() << endl;
-        if ( strcmp((*itcs).getPV(),(*itcs).getPVAlias()) ) {
+        if ( strcmp((*itcs).getPV(),(*itcs).getPVAlias()) )
+        {
             cout << "PV Alias=          " << (*itcs).getPVAlias() << endl;
         }
         cout << "cxt/chid: " << (*itcs).getClientContext()
@@ -2568,17 +3334,21 @@ unsigned int HandleHelper::printDisconnectedHandles()
         // Returns normal completion
         // cout << "status=         " << cafeStatus.csi.message((*itcs).getStatus()) << endl;
         cout << "isConnected?:      " ;
-        if ((*itcs).isConnected()) {
+        if ((*itcs).isConnected())
+        {
             cout << "Yes" << endl;
         }
-        else {
+        else
+        {
             cout << "No" << endl;
         }
 
         vector<unsigned int> mids=getMonitorIDs((*itcs).getHandle());
-        if (mids.size()>0) {
+        if (mids.size()>0)
+        {
             cout << "Monitor ID:       " ;
-            for (int i=0; i< mids.size(); ++i) {
+            for (unsigned int i=0; i< mids.size(); ++i)
+            {
                 cout << mids[i] << " " << endl;
             }
         }
@@ -2590,12 +3360,14 @@ unsigned int HandleHelper::printDisconnectedHandles()
 
     }
 
-    if (noDisconnectedHandles==0) {
+    if (noDisconnectedHandles==0)
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "   GOOD NEWS: THERE ARE NO DISCONNECTED HANDLES   " << endl;
         cout << "--------------------------------------------------" << endl;
     }
-    else {
+    else
+    {
         cout << "--------------------------------------------------" << endl;
         cout << "          END DISCONNECTED HANDLES                " << endl;
         cout << "--------------------------------------------------" << endl << endl;
@@ -2624,21 +3396,26 @@ int HandleHelper::setSTS(unsigned int _handle, dbr_short_t a, dbr_short_t s, epi
 
     int status=ICAFE_NORMAL;
 
-    if (it_handle != handle_index.end()) {
-        if(MUTEX) {
+    if (it_handle != handle_index.end())
+    {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_alarmStatus(a));
         handle_index.modify(it_handle, change_alarmSeverity(s));
         handle_index.modify(it_handle, change_epicsTimeStamp(ets));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
     }
-    else {
+    else
+    {
 
         status=ECAFE_INVALID_HANDLE;
-        if (printErrorPolicy.getInvalidHandle()) {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(status);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -2665,32 +3442,38 @@ int HandleHelper::setCafeDbrTypeV(std::vector<unsigned int> _handleV, CAFENUM::D
 
     int status=ICAFE_NORMAL;
 
-    for (unsigned int i=0; i<_handleV.size(); ++i ) {
+    for (unsigned int i=0; i<_handleV.size(); ++i )
+    {
 
         it_handle = handle_index.find(_handleV[i]);
 
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
 
             channelRequestMetaDataClient=(*it_handle).getChannelRequestMetaDataClient();
             channelRequestMetaDataClient.setDbrTypesFromCafeDbrType(cdt);
             channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
             channelRequestMetaData.setDbrTypesFromCafeDbrType(cdt);
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(it_handle, change_channelRequestMetaDataClient(
                                     channelRequestMetaDataClient));
             handle_index.modify(it_handle, change_channelRequestMetaData(
                                     channelRequestMetaData));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
 
         }
-        else {
+        else
+        {
             status=ECAFE_INVALID_HANDLE;
-            if (printErrorPolicy.getInvalidHandle()) {
+            if (printErrorPolicy.getInvalidHandle())
+            {
                 cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(status);
                 cout << "Handle=" << _handleV[i] << " either never existed or no longer exists " << endl;
@@ -2720,28 +3503,33 @@ int HandleHelper::setCafeDbrType(unsigned int _handle, CAFENUM::DBR_TYPE cdt )
 
     int status=ICAFE_NORMAL;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         channelRequestMetaDataClient=(*it_handle).getChannelRequestMetaDataClient();
         channelRequestMetaDataClient.setDbrTypesFromCafeDbrType(cdt);
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
         channelRequestMetaData.setDbrTypesFromCafeDbrType(cdt);
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaDataClient(
                                 channelRequestMetaDataClient));
         handle_index.modify(it_handle, change_channelRequestMetaData(
                                 channelRequestMetaData));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
+    else
+    {
         status=ECAFE_INVALID_HANDLE;
-        if (printErrorPolicy.getInvalidHandle()) {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(status);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -2771,12 +3559,14 @@ int HandleHelper::getCafeDbrType(unsigned int _handle, CAFENUM::DBR_TYPE &cdt )
 
     int status=ICAFE_NORMAL;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
         cdt=channelRequestMetaData.getCafeDbrType();
     }
-    else {
+    else
+    {
         status=ECAFE_INVALID_HANDLE;
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cafeStatus.report(status);
@@ -2803,14 +3593,17 @@ int HandleHelper::getDataTypeRequest(unsigned int _handle, chtype &rdt )
 
     int status=ICAFE_NORMAL;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
         rdt=channelRequestMetaData.getDataType();
     }
-    else {
+    else
+    {
         status=ECAFE_INVALID_HANDLE;
-        if (printErrorPolicy.getInvalidHandle()) {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(status);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -2838,10 +3631,12 @@ int HandleHelper::addMonitorAction(unsigned int _handle, std::string monitorActi
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         handle_index.modify(it_handle, change_monitorAction(monitorAction));
     }
-    else {
+    else
+    {
         cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         return ECAFE_INVALID_HANDLE;
     }
@@ -2866,10 +3661,12 @@ int HandleHelper::clearMonitorAction()
     int localStatus;
 
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
         localStatus=clearMonitorAction( (*itcs).getHandle());
-        if (localStatus !=ICAFE_NORMAL) {
+        if (localStatus !=ICAFE_NORMAL)
+        {
             gStatus=localStatus;
         }
     }
@@ -2894,10 +3691,12 @@ int HandleHelper::clearMonitorAction(unsigned int _handle)
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         handle_index.modify(it_handle, change_monitorActionClear());
     }
-    else {
+    else
+    {
         cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         return ECAFE_INVALID_HANDLE;
     }
@@ -2926,13 +3725,16 @@ int HandleHelper::eraseMonitorAction(unsigned int _handle)
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         msV=(*it_handle).getMonitorAction();
-        for (unsigned int i=0; i<msV.size(); ++i) {
+        for (unsigned int i=0; i<msV.size(); ++i)
+        {
             handle_index.modify(it_handle, change_monitorActionErase(msV[i]));
         }
     }
-    else {
+    else
+    {
         cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         return ECAFE_INVALID_HANDLE;
     }
@@ -2962,11 +3764,13 @@ int HandleHelper::getMonitorAction(unsigned int _handle, std::vector<std::string
     cafeConduit_set_by_handle::iterator it_handle;
 
     it_handle = handle_index.find(_handle);
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         msV=(*it_handle).getMonitorAction();
         return ICAFE_NORMAL;
     }
-    else {
+    else
+    {
 
         cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         return ECAFE_INVALID_HANDLE;
@@ -2995,27 +3799,33 @@ vector<string> HandleHelper::getMonitorAction(bool onlyIfNewData)
     std::vector<string>::iterator pos;
     vector<string> msLocal;
     // Loop through all elements and search for handles
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-        if ( ((*itcs).getHasNewData() && onlyIfNewData) || !onlyIfNewData) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
+        if ( ((*itcs).getHasNewData() && onlyIfNewData) || !onlyIfNewData)
+        {
             msLocal.clear();
             msLocal.reserve(2);
             msLocal=(*itcs).getMonitorAction();
             //Add to global vector
-            for (size_t i=0;  i< msLocal.size(); ++i)  {
+            for (size_t i=0;  i< msLocal.size(); ++i)
+            {
                 pos = find(msActionV.begin(), msActionV.end(), msLocal.begin()[i]);
                 //No duplicates!
-                if(pos==msActionV.end()) {
+                if(pos==msActionV.end())
+                {
                     msActionV.push_back(msLocal.begin()[i]);
                 }
             }
             cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
 
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(itcs, change_hasNewData(false));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
         }
@@ -3046,24 +3856,28 @@ int HandleHelper::getMonitorHandlesAndActions(std::vector<unsigned int> & handle
     actionV.reserve(nReserve); //conservative
     handleV.reserve(nReserve); //conservative
     // Loop through all elements and search for handles
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
         //if Monitor check action
 
         vector<unsigned int> mids=getMonitorIDs((*itcs).getHandle());
         vector<unsigned int> midsiw=getMonitorIDsInWaiting((*itcs).getHandle());
-        if (mids.size()==0 && midsiw.size()==0) {
+        if (mids.size()==0 && midsiw.size()==0)
+        {
             continue;
         }
 
         vector<string> msV;
         HandleHelper::getMonitorAction((*itcs).getHandle(), msV);
 
-        for (int i=0; i<msV.size(); ++i)   {
+        for (unsigned int i=0; i<msV.size(); ++i)
+        {
             handleV.push_back((*itcs).handle);
             actionV.push_back(msV[i]);
         };
 
-        if ( (mids.size()+midsiw.size())>msV.size()) {
+        if ( (mids.size()+midsiw.size())>msV.size())
+        {
             handleV.push_back((*itcs).handle);
             actionV.push_back("");
         }
@@ -3092,7 +3906,8 @@ vector<unsigned int> HandleHelper::getMonitorIDsInWaiting(unsigned int _handle)
     vector<unsigned int> monidList;
     monidList.clear();
     monidList.reserve(mpVec.size());
-    for (unsigned int i=0; i<mpVec.size(); ++i) {
+    for (unsigned int i=0; i<mpVec.size(); ++i)
+    {
         monidList.push_back(mpVec[i].getMonitorID());	//Will be zero!
     }
     return monidList;
@@ -3111,7 +3926,8 @@ vector<unsigned int> HandleHelper::getMonitorIDs(unsigned int _handle)
     vector<unsigned int> monidList;
     monidList.clear();
     monidList.reserve(mpVec.size());
-    for (unsigned int i=0; i<mpVec.size(); ++i) {
+    for (unsigned int i=0; i<mpVec.size(); ++i)
+    {
         monidList.push_back(mpVec[i].getMonitorID());
     }
     return monidList;
@@ -3144,8 +3960,10 @@ int HandleHelper::getNmonitorData(unsigned int _handle)
     getMonitorPolicyVector(_handle, mpVec);
     unsigned int nmonData=0;
     //Loop mpVec
-    for (unsigned int i=0; i<mpVec.size(); ++i) {
-        if (mpVec[i].getCafeDbrType()<= CAFENUM::DBR_TIME) {
+    for (unsigned int i=0; i<mpVec.size(); ++i)
+    {
+        if (mpVec[i].getCafeDbrType()<= CAFENUM::DBR_TIME)
+        {
             ++nmonData;
         }
     }
@@ -3166,8 +3984,10 @@ int HandleHelper::getNmonitorCtrl(unsigned int _handle)
     getMonitorPolicyVector(_handle, mpVec);
     unsigned int nmonCtrl=0;
     //Loop mpVec
-    for (unsigned int i=0; i<mpVec.size(); ++i) {
-        if (mpVec[i].getCafeDbrType() >= CAFENUM::DBR_GR && mpVec[i].getCafeDbrType()<= CAFENUM::DBR_CTRL) {
+    for (unsigned int i=0; i<mpVec.size(); ++i)
+    {
+        if (mpVec[i].getCafeDbrType() >= CAFENUM::DBR_GR && mpVec[i].getCafeDbrType()<= CAFENUM::DBR_CTRL)
+        {
             ++nmonCtrl;
         }
     }
@@ -3190,12 +4010,15 @@ int HandleHelper::getMonitorPolicyVector(unsigned int _handle, std::vector<Monit
 
     int status=ICAFE_NORMAL;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         mpV=(*it_handle).getMonitorPolicyVector();
     }
-    else {
+    else
+    {
         status=ECAFE_INVALID_HANDLE;
-        if (printErrorPolicy.getInvalidHandle()) {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cafeStatus.report(status);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         }
@@ -3221,12 +4044,15 @@ int HandleHelper::getMonitorPolicyInWaitingVector(unsigned int _handle, std::vec
 
     int status=ICAFE_NORMAL;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         mpV=(*it_handle).getMonitorPolicyInWaitingVector();
     }
-    else {
+    else
+    {
         status=ECAFE_INVALID_HANDLE;
-        if (printErrorPolicy.getInvalidHandle()) {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cafeStatus.report(status);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
         }
@@ -3249,10 +4075,12 @@ int HandleHelper::setNelem()
     int localStatus;
 
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
         localStatus=setNelem( (*itcs).getHandle());
-        if (localStatus !=ICAFE_NORMAL) {
+        if (localStatus !=ICAFE_NORMAL)
+        {
             gStatus=localStatus;
         }
     }
@@ -3278,7 +4106,8 @@ unsigned int HandleHelper::setNelem(unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         nelemForDataTransfer=(*it_handle).getChannelRegalia().getNelem() ;
 
@@ -3287,18 +4116,22 @@ unsigned int HandleHelper::setNelem(unsigned int _handle)
         channelRequestMetaDataClient=(*it_handle).getChannelRequestMetaDataClient();
         channelRequestMetaDataClient.setNelem( nelemForDataTransfer );
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaDataClient(
                                 channelRequestMetaDataClient));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3326,7 +4159,8 @@ unsigned int HandleHelper::setNelem(unsigned int _handle, unsigned int _nelem)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         nelemForDataTransfer=  min( (*it_handle).getChannelRegalia().getNelem(),_nelem);
         nelemForDataTransfer=  max(nelemForDataTransfer, (unsigned int) 1);
@@ -3334,12 +4168,14 @@ unsigned int HandleHelper::setNelem(unsigned int _handle, unsigned int _nelem)
 
         channelRequestMetaDataClient.setNelem( nelemForDataTransfer );
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaDataClient(
                                 channelRequestMetaDataClient));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
         /*
@@ -3365,8 +4201,10 @@ unsigned int HandleHelper::setNelem(unsigned int _handle, unsigned int _nelem)
         }
         */
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3392,33 +4230,38 @@ unsigned int   HandleHelper::setNelemToRetrieveFromCache (unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-		
 
-    if (it_handle != handle_index.end()) {
+
+    if (it_handle != handle_index.end())
+    {
 
         nelemForDataTransfer=   (*it_handle).getChannelRegalia().getNelem();
         nelemForDataTransfer=  max(nelemForDataTransfer, (unsigned int) 1);
 
-				
+
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
-				
+
         //lessen the number if less in buffer
         nelemForDataTransfer=  min(nelemForDataTransfer, channelRequestMetaData.getNelem()-channelRequestMetaData.getOffset());
-				
+
         channelRequestMetaData.setNelemCache( nelemForDataTransfer );
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaData(
                                 channelRequestMetaData));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3446,31 +4289,36 @@ unsigned int   HandleHelper::setNelemToRetrieveFromCache (unsigned int _handle, 
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         nelemForDataTransfer=  min( (*it_handle).getChannelRegalia().getNelem(),_nelem);
-			
+
         nelemForDataTransfer=  max(nelemForDataTransfer, (unsigned int) 1);
-				
+
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
         //lessen the number if less in buffer
-			
+
         nelemForDataTransfer=  min(nelemForDataTransfer,channelRequestMetaData.getNelem()-channelRequestMetaData.getOffset() );
-			
+
         channelRequestMetaData.setNelemCache( nelemForDataTransfer );
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaData(
                                 channelRequestMetaData));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3496,7 +4344,8 @@ unsigned int   HandleHelper::setNelemToRetrieveFromCtrlCache (unsigned int _hand
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
 
         nelemForDataTransfer=  min(nelemForDataTransfer, MAX_NELEM_FOR_CTRL_BUFFER);
@@ -3506,18 +4355,22 @@ unsigned int   HandleHelper::setNelemToRetrieveFromCtrlCache (unsigned int _hand
         nelemForDataTransfer=  min(nelemForDataTransfer, channelRequestMetaCtrl.getNelem()-channelRequestMetaCtrl.getOffset());
         channelRequestMetaCtrl.setNelemCache( nelemForDataTransfer );
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaCtrl(
                                 channelRequestMetaCtrl));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3545,7 +4398,8 @@ unsigned int   HandleHelper::setNelemToRetrieveFromCtrlCache (unsigned int _hand
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         nelemForDataTransfer=  min( (*it_handle).getChannelRegalia().getNelem(),_nelem);
         nelemForDataTransfer=  min(nelemForDataTransfer, MAX_NELEM_FOR_CTRL_BUFFER);
@@ -3555,18 +4409,22 @@ unsigned int   HandleHelper::setNelemToRetrieveFromCtrlCache (unsigned int _hand
         nelemForDataTransfer=  min(nelemForDataTransfer, channelRequestMetaCtrl.getNelem()-channelRequestMetaCtrl.getOffset());
         channelRequestMetaCtrl.setNelemCache( nelemForDataTransfer );
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaCtrl(
                                 channelRequestMetaCtrl));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3593,7 +4451,8 @@ unsigned int HandleHelper::getNelemToRetrieveFromCache (unsigned int _handle)
 
     unsigned int nelemFromCache=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
 
         //There may be less in buffer than requested
@@ -3601,8 +4460,10 @@ unsigned int HandleHelper::getNelemToRetrieveFromCache (unsigned int _handle)
         //cout << channelRequestMetaData.getNelemCache() << " // " << channelRequestMetaData.getNelem() << endl;
         nelemFromCache=min(channelRequestMetaData.getNelemCache(),channelRequestMetaData.getNelem()-channelRequestMetaData.getOffset()) ;
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3629,14 +4490,17 @@ unsigned int   HandleHelper::getNelemToRetrieveFromCtrlCache (unsigned int _hand
 
     unsigned int nelemFromCache=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         channelRequestMetaCtrl=(*it_handle).getChannelRequestMetaCtrl();
         //There may be less in buffer than requested
         nelemFromCache=min(channelRequestMetaCtrl.getNelemCache(),channelRequestMetaCtrl.getNelem()-channelRequestMetaCtrl.getOffset()) ;
         //nelemFromCache=channelRequestMetaCtrl.getNelemCache();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
@@ -3665,11 +4529,14 @@ unsigned int HandleHelper::getNelemClient(unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         nelemForDataTransfer=  (*it_handle).getChannelRequestMetaDataClient().getNelem();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3696,11 +4563,14 @@ unsigned int HandleHelper::getNelemRequest(unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         nelemForDataTransfer=  (*it_handle).getChannelRequestMetaData().getNelem();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3726,11 +4596,14 @@ unsigned int HandleHelper::getNelemNative(unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         nelemForDataTransfer=  (*it_handle).getChannelRegalia().getNelem();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3759,13 +4632,16 @@ int HandleHelper::getNelem(unsigned int _handle,
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         c=  (*it_handle).getChannelRequestMetaDataClient().getNelem();
         n=  (*it_handle).getChannelRegalia().getNelem();
         r=  (*it_handle).getChannelRequestMetaData().getNelem();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3793,11 +4669,14 @@ unsigned int HandleHelper::getNelemRequestCtrl(unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         nelemForDataTransfer=  (*it_handle).getChannelRequestMetaCtrl().getNelem();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3825,11 +4704,14 @@ unsigned int HandleHelper::getNelemClientCtrl(unsigned int _handle)
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         nelemForDataTransfer=  (*it_handle).getChannelRequestMetaCtrlClient().getNelem();
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3857,7 +4739,8 @@ unsigned int HandleHelper::setNelemCtrl(unsigned int _handle, unsigned int _nele
 
     unsigned int nelemForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         nelemForDataTransfer=  min( (*it_handle).getChannelRegalia().getNelem(),_nelem);
         nelemForDataTransfer=  min(nelemForDataTransfer, MAX_NELEM_FOR_CTRL_BUFFER);
@@ -3867,18 +4750,22 @@ unsigned int HandleHelper::setNelemCtrl(unsigned int _handle, unsigned int _nele
 
 
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaCtrlClient(
                                 channelRequestMetaCtrlClient));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
 
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3903,21 +4790,26 @@ unsigned int HandleHelper::setOffset(unsigned int _handle, unsigned int _offset)
 
     unsigned int offsetForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         offsetForDataTransfer= min( (*it_handle).getChannelRegalia().getNelem()-1, _offset);
         channelRequestMetaDataClient=(*it_handle).getChannelRequestMetaDataClient();
         channelRequestMetaDataClient.setOffset( offsetForDataTransfer);
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_channelRequestMetaDataClient(
                                 channelRequestMetaDataClient));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3943,12 +4835,15 @@ unsigned int HandleHelper::getOffset(unsigned int _handle)
 
     unsigned int offsetForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         channelRequestMetaDataClient=(*it_handle).getChannelRequestMetaDataClient();
         offsetForDataTransfer=channelRequestMetaDataClient.getOffset( );
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -3973,12 +4868,15 @@ unsigned int HandleHelper::getOffsetLast(unsigned int _handle)
 
     unsigned int offsetForDataTransfer=0;
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
         channelRequestMetaData=(*it_handle).getChannelRequestMetaData();
         offsetForDataTransfer=channelRequestMetaData.getOffset( );
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;
@@ -4004,25 +4902,42 @@ unsigned int HandleHelper::getGroupHandleFromGroupName(const char * _groupName, 
 
     it_groupName = groupName_index.find(_groupName);
 
-    if (it_groupName != groupName_index.end()) {
-        if (ccc == (*it_groupName).getClientContext()) {
+    if (it_groupName != groupName_index.end())
+    {
+      //std::cout << __METHOD__ << std::endl;
+      //std::cout << ccc << " " <<  (*it_groupName).getClientContext() << std::endl;
+        if (ccc == (*it_groupName).getClientContext())
+        {
             return (*it_groupName).groupHandle;
         }
-        else {
+        else
+        {
             // Loop through all elements and search for pv/ca_client_context match
-            for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
-                //cout << "overload-1 " << *itgs << " " << (*itgs).getClientContext() << endl;
-                if (!strcmp((*itgs).getGroupName(), _groupName) && (*itgs).getClientContext() == ccc) {
+            for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+            {
+	      //std::cout << __METHOD__ << std::endl;
+	      // std::cout << "overload-1 " << *itgs << " " << std:: endl;
+	      //std::cout << (*itgs).getClientContext() << std::endl;
+                if (!strcmp((*itgs).getGroupName(), _groupName) && (*itgs).getClientContext() == ccc)
+                {
+                    return (*itgs).groupHandle;
+                }
+                //Should we be closing from a thread (!!)
+                else if (!strcmp((*itgs).getGroupName(), _groupName) &&  0 == ccc)
+                {
                     return (*itgs).groupHandle;
                 }
             }
         }
     }
-    else {
+    else
+    {
         // Loop through all elements and search for pv/ca_client_context match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
-            if ((strcmp((*itgs).getGroupName(), _groupName) == 0) && ((*itgs).getClientContext() == ccc)) {
-                // cout << " MATCH FOUND Handle Number is= " << (*itgs).groupHandle << endl;
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
+            if ((strcmp((*itgs).getGroupName(), _groupName) == 0) && ((*itgs).getClientContext() == ccc))
+            {
+                cout << " MATCH FOUND Handle Number is= " << (*itgs).groupHandle << endl;
                 return (*itgs).groupHandle;
             }
         }
@@ -4048,17 +4963,21 @@ std::string HandleHelper::getGroupNameFromGroupHandle(unsigned int _groupHandle)
 
     it_groupHandle = groupHandle_index.find(_groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         return (*it_groupHandle).groupName;
 
     }
-    else {
+    else
+    {
         // Loop through all elements and search for grouphandle match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
             //ConduitGroup cg = *itgs;
 
-            if ((*itgs).getGroupHandle() == _groupHandle ) {
+            if ((*itgs).getGroupHandle() == _groupHandle )
+            {
                 //    cout << " MATCH FOUND Handle Number is= " << (cg).groupHandle << endl;
                 return (*itgs).groupName;
             }
@@ -4085,15 +5004,19 @@ unsigned int HandleHelper::getGroupNPV(unsigned int _groupHandle)
 
     it_groupHandle = groupHandle_index.find(_groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
         return (*it_groupHandle).getNMember();
 
     }
-    else {
+    else
+    {
         // Loop through all elements and search for grouphandle match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
 
-            if ((*itgs).getGroupHandle() == _groupHandle ) {
+            if ((*itgs).getGroupHandle() == _groupHandle )
+            {
                 //    cout << " MATCH FOUND Handle Number is= " << (cg).groupHandle << endl;
                 return (*itgs).getNMember();
             }
@@ -4120,25 +5043,33 @@ unsigned int HandleHelper::getGroupNPV(const char * _groupName, ca_client_contex
 
     it_groupName = groupName_index.find(_groupName);
 
-    if (it_groupName != groupName_index.end()) {
-        if (ccc == (*it_groupName).getClientContext()) {
+    if (it_groupName != groupName_index.end())
+    {
+        if (ccc == (*it_groupName).getClientContext())
+        {
             return (*it_groupName).getNMember();
         }
-        else {
+        else
+        {
             // Loop through all elements and search for pv/ca_client_context match
-            for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+            for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+            {
                 //cout << "overload-1 " << *itgs << " " << (*itgs).getClientContext() << endl;
-                if (!strcmp((*itgs).getGroupName(), _groupName) && (*itgs).getClientContext() == ccc) {
+                if (!strcmp((*itgs).getGroupName(), _groupName) && (*itgs).getClientContext() == ccc)
+                {
                     return (*itgs).getNMember();
                 }
             }
         }
     }
-    else {
+    else
+    {
         // Loop through all elements and search for pv/ca_client_context match
-        for (itgs = gs.begin(); itgs != gs.end(); ++itgs) {
+        for (itgs = gs.begin(); itgs != gs.end(); ++itgs)
+        {
 
-            if ((strcmp((*itgs).getGroupName(), _groupName) == 0) && ((*itgs).getClientContext() == ccc)) {
+            if ((strcmp((*itgs).getGroupName(), _groupName) == 0) && ((*itgs).getClientContext() == ccc))
+            {
                 // cout << " MATCH FOUND Handle Number is= " << (*itgs).groupHandle << endl;
                 return (*itgs).getNMember();
             }
@@ -4164,14 +5095,17 @@ int HandleHelper::setMapPulseIDBufferSizeAll(unsigned short _bufferSize)
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
 
     // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
+    for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
+    {
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(itcs, change_mapPulseIDBufferSize(
                                 std::max(1,(int)_bufferSize)));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
     }
@@ -4195,19 +5129,24 @@ int HandleHelper::setMapPulseIDBufferSize(unsigned int _handle, unsigned short _
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.lock();
         }
         handle_index.modify(it_handle, change_mapPulseIDBufferSize(
                                 std::max(1,(int)_bufferSize)));
-        if(MUTEX) {
+        if(MUTEX)
+        {
             cafeMutex.unlock();
         }
     }
-    else {
-        if (printErrorPolicy.getInvalidHandle()) {
+    else
+    {
+        if (printErrorPolicy.getInvalidHandle())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_INVALID_HANDLE);
             cout << "Handle=" << _handle << " either never existed or no longer exists! " << endl;

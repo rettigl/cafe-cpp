@@ -28,7 +28,8 @@ int  Transpose<dbr_string_t>::putString
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         PVDataL  = (*it_handle).getPutBuffer  ();
         nelem    = (*it_handle).getChannelRequestMetaPrimitive().getNelem();
@@ -46,25 +47,30 @@ int  Transpose<dbr_string_t>::putString
 
         istringstream ss;
 
-        switch(dbrTypeRequest_DataBuffer) {
+        switch(dbrTypeRequest_DataBuffer)
+        {
 
         case DBR_STRING://0
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy( *((dbr_string_t *) (PVDataL) +i), val[i]);
             }
             break;
 
         case DBR_SHORT://1
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_short_t s=0;
                 ss.clear();
                 ss.str(val[i]);
                 ss>>s;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_short_t *) (PVDataL) + i ) = s;
                 }
-                else {
+                else
+                {
                     cout << __FILE__<< "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_SHORT CONVERSION for ELEMENT " << i
                          << " of " << nelem << " !! " << endl;
@@ -78,16 +84,19 @@ int  Transpose<dbr_string_t>::putString
             break;
 
         case DBR_FLOAT://2
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_float_t f=0;
                 ss.clear();
                 ss.str(val[i]);
                 ss>>f;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_float_t *) (PVDataL) + i ) = f;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_FLOAT CONVERSION for ELEMENT " << i << " of " << nelem << " !! " << endl;
                     cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -108,7 +117,8 @@ int  Transpose<dbr_string_t>::putString
             memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
 
 
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
 
                 //Remove leading and blank spaces
                 dbr_string_t  valTrimmed; //Previously referred to as varaible a;
@@ -146,9 +156,11 @@ int  Transpose<dbr_string_t>::putString
                 						*/
 
                 bool isValidString=false;
-                for (int j=0; j<noStrings; ++j) {
+                for (int j=0; j<noStrings; ++j)
+                {
 
-                    if (strcmp((char *)valTrimmed, stig[j] ) ==0) {
+                    if (strcmp((char *)valTrimmed, stig[j] ) ==0)
+                    {
 
                         dbr_enum_t us= (unsigned short) j;
                         *((dbr_enum_t *) (PVDataL) + i ) = us;
@@ -160,7 +172,8 @@ int  Transpose<dbr_string_t>::putString
 
                 // Check for ENUM values given in "string" form
 
-                if (!isValidString) {
+                if (!isValidString)
+                {
 
                     bool isValidStringAnew=false;
 
@@ -170,14 +183,17 @@ int  Transpose<dbr_string_t>::putString
                     ss>>us;
 
                     // Is this a valid number?
-                    if ( !ss.fail()) {
-                        if (us==0 || (us>0 && us <noStrings)) {
+                    if ( !ss.fail())
+                    {
+                        if (us==0 || (us>0 && us <noStrings))
+                        {
                             *((dbr_enum_t *) (PVDataL) + i ) = us;
                             isValidStringAnew=true;
                         }
                     }
 
-                    if (!isValidStringAnew) {
+                    if (!isValidStringAnew)
+                    {
 
                         cout << __FILE__  << "//" << __METHOD__ << "//" << __LINE__ << endl;
                         cout << "***WARNING*** NO STRING TO DBR_ENUM MATCHING for ELEMENT " << i << " of " << nelem << " !! " << endl;
@@ -186,7 +202,8 @@ int  Transpose<dbr_string_t>::putString
                         cout << "' TO A VALID ENUM INDEX; PUT REQUEST NOT MADE!" << endl; //AT THE MERCY OF THE CA SERVER!" << endl;
                         cout << "VALID ENUM OPTIONS ARE: " << endl;
 
-                        for (int ij=0; ij<noStrings;   ++ij) {
+                        for (int ij=0; ij<noStrings;   ++ij)
+                        {
                             cout << "Index= " << ij << " '" << stig[ij] << "';  ";
                         }
                         cout << endl;
@@ -201,28 +218,42 @@ int  Transpose<dbr_string_t>::putString
             break;
 
         case DBR_CHAR: //4
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_char_t ch=0;
                 ss.clear();
                 ss.str(val[i]);
                 ss>>ch;
                 char *b = (char *)  val[i];
-
-
+               
+	        //cout << "Transpose putString: " << endl; 
+                //cout << i << " " << val[i] << " " << (dbr_char_t) ch << endl; 
                 //cout << b << " " << *b << endl;
-                //cout << (unsigned short *) b << " " << (unsigned short *) *b << endl;
+                //cout << (unsigned short *) b << " " << (unsigned short) *b << endl;
+          
 
-
-                if ( !ss.fail()) {
-                    *((dbr_char_t *) (PVDataL) + i ) = ch;
+                if ( !ss.fail())
+                {
+	
+		  *((dbr_char_t *) (PVDataL) + i ) =(dbr_char_t) ch;
                 }
 
-                else if (*b != '\0') {
+                else //if (*b != '\0')
+                {
+                
+		  *( (dbr_char_t *)(PVDataL) + i ) = (dbr_char_t) *b;
+
+                }
+                
+                /*
+                else if (*b == '\0')
+                {
 
                     *((dbr_char_t *) (PVDataL) + i ) =  *b;
 
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_CHAR CONVERSION for ELEMENT index " << i << " in array of length " << nelem;
                     cout <<	", i.e., with index range [0-"	<< (nelem-1) << "] "	<<  " !! " << endl;
@@ -231,20 +262,24 @@ int  Transpose<dbr_string_t>::putString
                     cout << " TO UNSIGNED CHAR; PUT REQUEST NOT MADE!" << endl; //AT THE MERCY OF THE CA SERVER!" << endl; //NOT MADE!" << endl;
                     allStringsAreValid=false;
                 }
+                */ 
             }
             break;
 
         case DBR_LONG: //5
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_long_t l=0;
                 ss.clear();
                 ss.str(val[i]);
                 ss>>l;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_long_t *) (PVDataL) + i ) = l;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_LONG  CONVERSION for ELEMENT " << i << " of " << nelem << " !! " << endl;
                     cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -257,16 +292,19 @@ int  Transpose<dbr_string_t>::putString
             break;
 
         case DBR_DOUBLE: //6
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_double_t d=0;
                 ss.clear();
                 ss.str(val[i]);
                 ss>>d;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_double_t *) (PVDataL) + i ) = d;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION for ELEMENT " << i << " of " << nelem << " !! " << endl;
                     cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -282,15 +320,18 @@ int  Transpose<dbr_string_t>::putString
             break;
         } //switch
 
-        if(!allStringsAreValid) {
+        if(!allStringsAreValid)
+        {
             return ECAFE_NO_CONVERT;
         }
-        else {
+        else
+        {
             return ICAFE_NORMAL;
         }
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -315,7 +356,8 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         PVDataL  = (*it_handle).getPutBuffer  ();
         nelem    = (*it_handle).getChannelRequestMetaPrimitive().getNelem();
@@ -334,26 +376,31 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
 
         istringstream ss;
 
-        switch(dbrTypeRequest_DataBuffer) {
+        switch(dbrTypeRequest_DataBuffer)
+        {
 
         case DBR_STRING://0
 
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy( *((dbr_string_t *) (PVDataL) +i), val[i].str);
             }
             break;
 
         case DBR_SHORT://1
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_short_t s=0;
                 ss.clear();
                 ss.str(val[i].str);
                 ss>>s;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_short_t *) (PVDataL) + i ) = s;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_SHORT CONVERSION for ELEMENT " << i
                          << " of " << nelem << " !! " << endl;
@@ -367,16 +414,19 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
             break;
 
         case DBR_FLOAT://2
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_float_t f=0;
                 ss.clear();
                 ss.str(val[i].str);
                 ss>>f;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_float_t *) (PVDataL) + i ) = f;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_FLOAT CONVERSION for ELEMENT " << i << " of " << nelem << " !! " << endl;
                     cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -397,7 +447,8 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
             memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
 
 
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 //dbr_string_t a;
 
                 dbr_string_t  valTrimmed; //Previously referred to as varaible a;
@@ -432,9 +483,11 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
                 sprintf(a, "%s", b);
                 */
                 bool isValidString=false;
-                for (int j=0; j<noStrings; ++j) {
+                for (int j=0; j<noStrings; ++j)
+                {
 
-                    if (strcmp((char *)valTrimmed, stig[j] ) ==0) { // previously a
+                    if (strcmp((char *)valTrimmed, stig[j] ) ==0)   // previously a
+                    {
 
                         dbr_enum_t us= (unsigned short) j;
                         *((dbr_enum_t *) (PVDataL) + i ) = us;
@@ -446,7 +499,8 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
 
                 // Check for ENUM values given in "string" form
 
-                if (!isValidString) {
+                if (!isValidString)
+                {
 
                     bool isValidStringAnew=false;
 
@@ -456,14 +510,17 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
                     ss>>us;
 
                     // Is this a valid number?
-                    if ( !ss.fail()) {
-                        if (us==0 || (us>0 && us <noStrings)) {
+                    if ( !ss.fail())
+                    {
+                        if (us==0 || (us>0 && us <noStrings))
+                        {
                             *((dbr_enum_t *) (PVDataL) + i ) = us;
                             isValidStringAnew=true;
                         }
                     }
 
-                    if (!isValidStringAnew) {
+                    if (!isValidStringAnew)
+                    {
 
                         cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                         cout << "***WARNING*** NO STRING TO DBR_ENUM MATCHING for ELEMENT " << i << " of " << nelem << " !! " << endl;
@@ -472,7 +529,8 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
                         cout << "' TO UNSIGNED SHORT; PUT REQUEST NOT MADE!" << endl; //AT THE MERCY OF THE CA SERVER!" << endl;
                         cout << "VALID ENUM OPTIONS ARE: " << endl;
 
-                        for (int ij=0; ij<noStrings;   ++ij) {
+                        for (int ij=0; ij<noStrings;   ++ij)
+                        {
                             cout << "Index=" << ij << " '" << stig[ij] << "';  ";
                         }
                         cout << endl;
@@ -487,7 +545,8 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
             break;
 
         case DBR_CHAR: //4
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_char_t ch=0;
                 ss.clear();
                 ss.str(val[i].str);
@@ -495,13 +554,16 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
 
                 char *b = (char *)  val[i].str;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_char_t *) (PVDataL) + i ) = ch;
                 }
-                else if (*b != '\0') {
+                else if (*b != '\0')
+                {
                     *((dbr_char_t *) (PVDataL) + i ) =  *b;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_CHAR CONVERSION for ELEMENT index " << i << " in array of length " << nelem;
                     cout <<	", i.e., with index range [0-"	<< (nelem-1) << "] "	<<  " !! " << endl;
@@ -515,16 +577,19 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
             break;
 
         case DBR_LONG: //5
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_long_t l=0;
                 ss.clear();
                 ss.str(val[i].str);
                 ss>>l;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_long_t *) (PVDataL) + i ) = l;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__ << "//" << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_int  CONVERSION for ELEMENT " << i << " of " << nelem << " !! " << endl;
                     cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -537,16 +602,19 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
             break;
 
         case DBR_DOUBLE: //6
-            for (unsigned int  i=0; i<nelem; ++i)  {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 dbr_double_t d=0;
                 ss.clear();
                 ss.str(val[i].str);
                 ss>>d;
 
-                if ( !ss.fail()) {
+                if ( !ss.fail())
+                {
                     *((dbr_double_t *) (PVDataL) + i ) = d;
                 }
-                else {
+                else
+                {
                     cout << __FILE__ << "//" << __METHOD__<< "//"  << __LINE__ << endl;
                     cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION for ELEMENT " << i << " of " << nelem << " !! " << endl;
                     cout << "***WARNING*** COULD NOT CONVERT: ";
@@ -562,15 +630,18 @@ int  Transpose<dbr_string_t>::putString(const unsigned int  _handle, CAFE_DATATY
             break;
         } //switch
 
-        if(!allStringsAreValid) {
+        if(!allStringsAreValid)
+        {
             return ECAFE_NO_CONVERT;
         }
-        else {
+        else
+        {
             return ICAFE_NORMAL;
         }
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -599,24 +670,29 @@ int  Transpose<dbr_string_t>::get(
 {
 #define __METHOD__ "Transpose<dbr_string_t>::get()"
 
+    //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
 
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         PVDataL  = (*it_handle).getDataBuffer  ();
         offset   = (*it_handle).getChannelRequestMetaDataClient().getOffset();
 
 
 
-        if(isCacheRequest) {
+        if(isCacheRequest)
+        {
             offset = (*it_handle).getChannelRequestMetaData().getOffset( );
             nelem  = (*it_handle).getChannelRequestMetaData().getNelemCache(); //-(*it_handle).getChannelRequestMetaData().getOffset(); //-offset;
             //nelem  = min(nelem, (*it_handle).getChannelRequestMetaData().getNelem()-offset);
         }
-        else {
+        else
+        {
             nelem  = (*it_handle).getChannelRequestMetaData().getNelem()-offset;
 
         }
@@ -624,16 +700,19 @@ int  Transpose<dbr_string_t>::get(
 
 
         //Something wrong, just read last element
-        if (nelem <=0) {
+        if (nelem <=0)
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "Something funny with the offset; just read last element! " << endl;
             cout << "Changing offset from=" << offset;
 
             offset = (*it_handle).getChannelRequestMetaData().getNelem()-1;
-            if(isCacheRequest) {
+            if(isCacheRequest)
+            {
                 nelem  = (*it_handle).getChannelRequestMetaData().getNelemCache(); //-(*it_handle).getChannelRequestMetaData().getOffset(); //-offset;
             }
-            else {
+            else
+            {
                 nelem  = (*it_handle).getChannelRequestMetaData().getNelem()-offset;
             }
 
@@ -642,6 +721,7 @@ int  Transpose<dbr_string_t>::get(
 
         dbrTypeRequest_DataBuffer = (*it_handle).getChannelRequestMetaData().getDbrDataType();
 
+        //std::cout << __METHOD__ << " // " <<  dbrTypeRequest_DataBuffer  << std::endl;
 
         dbr_ctrl_enum *  dataEnum;
         dbr_short_t noStrings =0;
@@ -656,33 +736,39 @@ int  Transpose<dbr_string_t>::get(
         //Only ever fille the Union with the native type as
 
 
-        switch (dbrTypeRequest_DataBuffer) {
+        switch (dbrTypeRequest_DataBuffer)
+        {
         case DBR_CHAR:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%u", (*(&((PVDataL)->charval)+i+offset)));
             }
             break;
 
         case DBR_FLOAT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%f", (*(&((PVDataL)->fltval)+i+offset)));
             }
             break;
 
         case DBR_DOUBLE:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%.15f",(*(&((PVDataL)->doubleval)+i+offset)));
             }
             break;
 
         case DBR_SHORT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%d",(*(&((PVDataL)->shrtval)+i+offset)));
             }
             break;
 
         case DBR_LONG:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%d",(*(&((PVDataL)->longval)+i+offset)));
             }
             break;
@@ -695,14 +781,17 @@ int  Transpose<dbr_string_t>::get(
 
             memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig  )) ;
 
-            unsigned int noEmptyStrings=0;
+            int noEmptyStrings=0;
             //Check for empty strings:
-            for (unsigned int j=0; j<noStrings; ++j) {
-                if (strcmp(stig[j],"")==0) {
+            for (int j=0; j<noStrings; ++j)
+            {
+                if (strcmp(stig[j],"")==0)
+                {
                     ++noEmptyStrings;
                 }
             }
-            if (noStrings==noEmptyStrings) {
+            if (noStrings==noEmptyStrings)
+            {
                 cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
                 cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
                 cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
@@ -710,34 +799,40 @@ int  Transpose<dbr_string_t>::get(
             }
 
 
-            for (unsigned int  i=0; i<nelem; ++i) {
-                if ( ((*(&((PVDataL)->enmval)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
+                if ( ((*(&((PVDataL)->enmval)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings))
+                {
                     sprintf(val[i], "%s", stig[(*(&((PVDataL)->enmval)+i+offset))] );
                 }
-                else {
+                else
+                {
                     sprintf(val[i], "%d", (*(&((PVDataL)->enmval)+i+offset)) );
-                    if ( ((*(&((PVDataL)->enmval)+i+offset)) >=  noStrings) ) {
+                    if ( ((*(&((PVDataL)->enmval)+i+offset)) >=  noStrings) )
+                    {
                         cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
                         cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
                         cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->enmval)+i+offset)) << endl;
                         cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
-                        for (unsigned int j=0; j<noStrings; ++j) {
+                        for (int j=0; j<noStrings; ++j)
+                        {
                             cout << stig[j] << " ["  <<j << "]  ";
                         }
                         cout << endl;
                     }
                 }
             }
-            
+
             break;
-        } 
+        }
         case DBR_STRING:
             memcpy( val, &(&((PVDataL)->strval))[offset],  sizeof(dbr_string_t)*nelem) ;
             break;
 
 
         case DBR_STS_CHAR:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%u", (*(&((PVDataL)->schrval.value)+i+offset)));
             }
             alarmStatus   = ((struct dbr_sts_char *) PVDataL)->status;
@@ -745,7 +840,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_STS_FLOAT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%f", (*(&((PVDataL)->sfltval.value)+i+offset)));
             }
             alarmStatus   = ((struct dbr_sts_float *) PVDataL)->status;
@@ -753,7 +849,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_STS_DOUBLE:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%.15f",(*(&((PVDataL)->sdblval.value)+i+offset)));
             }
             alarmStatus   = ((struct dbr_sts_double *) PVDataL)->status;
@@ -761,7 +858,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_STS_SHORT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%d",(*(&((PVDataL)->sshrtval.value)+i+offset)));
             }
             alarmStatus   = ((struct dbr_sts_short *) PVDataL)->status;
@@ -769,7 +867,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_STS_LONG:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%d",(*(&((PVDataL)->slngval.value)+i+offset)));
             }
             alarmStatus   = ((struct dbr_sts_int  *) PVDataL)->status;
@@ -777,60 +876,72 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_STS_ENUM:
-        {  
+        {
             //Special treatment of ENUM: Transform VAL to String equivalent
             dataEnum   =   (dbr_ctrl_enum *) (*it_handle).getCtrlBuffer();
             noStrings  =   ((struct dbr_ctrl_enum *) dataEnum)->no_str;
             memcpy( stig,  &(((struct dbr_ctrl_enum *) dataEnum)->strs),  sizeof(stig)) ;
 
-            unsigned int noEmptyStrings=0;
+            int noEmptyStrings=0;
             //Check for empty strings:
-            for (unsigned int j=0; j<noStrings; ++j) {
-                if (strcmp(stig[j],"")==0) {
+            for (int j=0; j<noStrings; ++j)
+            {
+                if (strcmp(stig[j],"")==0)
+                {
                     ++noEmptyStrings;
                 }
             }
-            if (noStrings==noEmptyStrings) {
+            if (noStrings==noEmptyStrings)
+            {
                 cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
                 cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
                 cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
                 cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
             }
 
-            for (unsigned int  i=0; i<nelem; ++i) {
-                if ( ((*(&((PVDataL)->senmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
+                if ( ((*(&((PVDataL)->senmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings))
+                {
                     sprintf(val[i], "%s", stig[(*(&((PVDataL)->senmval.value)+i+offset))] );
                 }
-                else {
+                else
+                {
                     sprintf(val[i], "%d", (*(&((PVDataL)->senmval.value)+i+offset)) );
-                    if ( ((*(&((PVDataL)->senmval.value)+i+offset)) >=  noStrings) ) {
+                    if ( ((*(&((PVDataL)->senmval.value)+i+offset)) >=  noStrings) )
+                    {
                         cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
                         cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
                         cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->senmval.value)+i+offset)) << endl;
                         cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
-                        for (unsigned int j=0; j<noStrings; ++j) {
+                        for (int j=0; j<noStrings; ++j)
+                        {
                             cout << stig[j] << " ["  <<j << "]  ";
                         }
                         cout << endl;
                     }
                 }
             }
-            
+
             alarmStatus   = ((struct dbr_sts_enum *) PVDataL)->status;
             alarmSeverity = ((struct dbr_sts_enum *) PVDataL)->severity;
             break;
         }
         case DBR_STS_STRING:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy(val[i],   (*(&((PVDataL)->sstrval.value)+i+offset))) ;
             }
+
+
             alarmStatus   = ((struct dbr_sts_string *) PVDataL)->status;
             alarmSeverity = ((struct dbr_sts_string *) PVDataL)->severity;
             break;
 
 
         case DBR_TIME_CHAR:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%u", (*(&((PVDataL)->tchrval.value)+i+offset)));
             }
             ts            = ((struct dbr_time_char *) PVDataL)->stamp;
@@ -840,7 +951,8 @@ int  Transpose<dbr_string_t>::get(
 
         case DBR_TIME_FLOAT:
 
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%f", (*(&((PVDataL)->tfltval.value)+i+offset)));
             }
             ts            = ((struct dbr_time_float *) PVDataL)->stamp;
@@ -851,7 +963,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_TIME_DOUBLE:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%.15f", (*(&((PVDataL)->tdblval.value)+i+offset)));
             }
             ts            = ((struct dbr_time_double *) PVDataL)->stamp;
@@ -860,7 +973,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_TIME_SHORT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%d", (*(&((PVDataL)->tshrtval.value)+i+offset)));
             }
             ts            = ((struct dbr_time_short *) PVDataL)->stamp;
@@ -869,7 +983,8 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_TIME_LONG:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 sprintf(val[i], "%d", (*(&((PVDataL)->tlngval.value)+i+offset)));
             }
             ts            = ((struct dbr_time_long  *) PVDataL)->stamp;
@@ -878,7 +993,7 @@ int  Transpose<dbr_string_t>::get(
             break;
 
         case DBR_TIME_ENUM:
-        { 
+        {
 
             //Special treatment of ENUM: Transform VAL to String equivalent
             dataEnum   =   (dbr_ctrl_enum *) (*it_handle).getCtrlBuffer();
@@ -891,51 +1006,70 @@ int  Transpose<dbr_string_t>::get(
             //Check data type
             //cout << "Classname " << (*it_handle).getChannelRegalia().getClassName() << endl;
 
-            unsigned int noEmptyStrings=0;
+            int noEmptyStrings=0;
             //Check for empty strings:
-            for (unsigned int j=0; j<noStrings; ++j) {
-                if (strcmp(stig[j],"")==0) {
+            for (int j=0; j<noStrings; ++j)
+            {
+                if (strcmp(stig[j],"")==0)
+                {
                     ++noEmptyStrings;
                 }
             }
-            if (noStrings==noEmptyStrings) {
+            if (noStrings==noEmptyStrings)
+            {
                 cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
                 cout << "ENUM STRING OPTIONS ARE ALL EMPTY! " << endl;
                 cout << "BADLY CONFIGURED EPICS " <<  (*it_handle).getChannelRegalia().getClassName()  << " RECORD. " << endl;
                 cout << "CHANNEL:  " <<  (*it_handle).getPV() << " (handle=" << (*it_handle).getHandle() <<") "  << endl;
             }
 
-            for (unsigned int  i=0; i<nelem; ++i) {
-                if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings)) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
+                if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) <  noStrings) && (noStrings!=noEmptyStrings))
+                {
                     sprintf(val[i], "%s", stig[(*(&((PVDataL)->tenmval.value)+i+offset))] );
                 }
-                else {
+                else
+                {
                     sprintf(val[i], "%d", (*(&((PVDataL)->tenmval.value)+i+offset)) );
-                    if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) >=  noStrings) ) {
+                    if ( ((*(&((PVDataL)->tenmval.value)+i+offset)) >=  noStrings) )
+                    {
                         cout << "*** WARNING FROM " << __METHOD__ << " *** " << endl;
                         cout << "ENUM UNSIGNED SHORT VALUE IS GREATER THAN THE NO OF ENUMERATED TYPES" << endl;
                         cout << "VALUE (unsigned short) = " << (*(&((PVDataL)->tenmval.value)+i+offset)) << endl;
                         cout << "NO OF ENUMERATED STRINGS = " << noStrings << " WITH VALUES: " << endl;
-                        for (unsigned int j=0; j<noStrings; ++j) {
+                        for (int j=0; j<noStrings; ++j)
+                        {
                             cout << stig[j] << " ["  <<j << "]  ";
                         }
                         cout << endl;
                     }
                 }
-            }      
+            }
             ts            = ((struct dbr_time_enum *) PVDataL)->stamp;
             alarmStatus   = ((struct dbr_time_enum *) PVDataL)->status;
             alarmSeverity = ((struct dbr_time_enum *) PVDataL)->severity;
             break;
-        } 
+        }
 
         case DBR_TIME_STRING:
-            for (unsigned int  i=0; i<nelem; ++i) {
+
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy(val[i], (*(&((PVDataL)->tstrval.value)+i+offset)));
             }
+            //std::cout << val[0] << std::endl;
+
+            //dbr_string_t val2[4096];
+            //std::cout << __METHOD__ << std::endl;
+
+            //memcpy( val2, &(&((PVDataL)->tstrval.value))[offset], sizeof(dbr_string_t)*nelem);
+            //std::cout << val2[0] << std::endl;
+
             ts            = ((struct dbr_time_string *) PVDataL)->stamp;
             alarmStatus   = ((struct dbr_time_string *) PVDataL)->status;
             alarmSeverity = ((struct dbr_time_string *) PVDataL)->severity;
+
             break;
         }
 
@@ -944,13 +1078,15 @@ int  Transpose<dbr_string_t>::get(
         //cout << "_dbrType" << _dbrTypeRequest_DataBuffer<< endl;
         //cout << ts.secPastEpoch << " " << ts.nsec << endl;
 
-        if(!isCacheRequest) {
+        if(!isCacheRequest)
+        {
             HandleHelper handleHelper;
             handleHelper.setSTS(_handle, alarmStatus, alarmSeverity, ts);
         }
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -983,32 +1119,38 @@ int  Transpose<dbr_string_t>::getCtrl(
     it_handle = handle_index.find(_handle);
 
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         PVDataL  = (*it_handle).getCtrlBuffer  ();
 
         offset   = (*it_handle).getChannelRequestMetaCtrlClient().getOffset();
 
-        if (isCacheRequest) {
+        if (isCacheRequest)
+        {
             offset = (*it_handle).getChannelRequestMetaCtrl().getOffset( );
             nelem  = (*it_handle).getChannelRequestMetaCtrl().getNelemCache(); //-(*it_handle).getChannelRequestMetaCtrl().getOffset();   //-offset;
             //nelem  = min(nelem, (*it_handle).getChannelRequestMetaCtrl().getNelem()-offset);
 
         }
-        else {
+        else
+        {
             nelem    = (*it_handle).getChannelRequestMetaCtrl().getNelem()-offset;
         }
         //Something wrong, just read last element
-        if (nelem <=0) {
+        if (nelem <=0)
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "Something funny with the offset; just read last element! " << endl;
             cout << "Changing offset from=" << offset;
 
             offset = (*it_handle).getChannelRequestMetaCtrl().getNelem()-1;
-            if(isCacheRequest) {
+            if(isCacheRequest)
+            {
                 nelem  = (*it_handle).getChannelRequestMetaCtrl().getNelemCache(); //-(*it_handle).getChannelRequestMetaCtrl().getOffset(); //-offset;
             }
-            else {
+            else
+            {
                 nelem  = (*it_handle).getChannelRequestMetaCtrl().getNelem()-offset;
             }
             cout << " to=" << offset << endl;
@@ -1025,7 +1167,8 @@ int  Transpose<dbr_string_t>::getCtrl(
         alarmStatus     = -1;
         alarmSeverity   = -1;
 
-        switch (dbrTypeRequest_CtrlBuffer) {
+        switch (dbrTypeRequest_CtrlBuffer)
+        {
         case DBR_CTRL_STRING:
             memcpy(val, &(&((PVDataL)->cstrval.value))[offset],  sizeof(dbr_string_t)*nelem);
             alarmStatus   = ((struct dbr_sts_string *) PVDataL)->status;
@@ -1037,7 +1180,8 @@ int  Transpose<dbr_string_t>::getCtrl(
         }
 
     }
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }
@@ -1073,7 +1217,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
     it_handle = handle_index.find(_handle);
 
 
-    if (it_handle != handle_index.end()) {
+    if (it_handle != handle_index.end())
+    {
 
         PVDataL  = (*it_handle).getDataBuffer  ();
 
@@ -1081,29 +1226,34 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
 
 
 
-        if(isCacheRequest) {
+        if(isCacheRequest)
+        {
             offset = (*it_handle).getChannelRequestMetaData().getOffset( );
             nelem  = (*it_handle).getChannelRequestMetaData().getNelemCache(); //-offset;
             //nelem  = min(nelem, (*it_handle).getChannelRequestMetaData().getNelem()-offset);
 
         }
-        else {
+        else
+        {
             nelem  = (*it_handle).getChannelRequestMetaData().getNelem()-offset;
         }
 
 
         //Something wrong, just read last element
-        if (nelem <=0) {
+        if (nelem <=0)
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "Something funny with the offset; just read last element! " << endl;
             cout << "Changing offset from=" << offset;
             //offset = cc.getNelemRequest()-1;
             //nelem  = cc.getNelemRequest()-offset;
             offset = (*it_handle).getChannelRequestMetaData().getNelem()-1;
-            if(isCacheRequest) {
+            if(isCacheRequest)
+            {
                 nelem  = (*it_handle).getChannelRequestMetaData().getNelemCache(); //-offset;
             }
-            else {
+            else
+            {
                 nelem  = (*it_handle).getChannelRequestMetaData().getNelem()-offset;
             }
             cout << " to=" << offset << endl;
@@ -1120,53 +1270,62 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
         //dbrTypeRequest_DataBuffer is the chtype used in ca_get
         //Only ever fille the Union with the native type as
 
-        switch (dbrTypeRequest_DataBuffer) {
+        switch (dbrTypeRequest_DataBuffer)
+        {
         case DBR_CHAR:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].ch =   (*(&((PVDataL)->charval)+i+offset));
             }
             break;
 
         case DBR_FLOAT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].f  =   (*(&((PVDataL)->fltval)+i+offset));
             }
 
             break;
 
         case DBR_DOUBLE:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].d  =   (*(&((PVDataL)->doubleval)+i+offset));
             }
             break;
 
         case DBR_SHORT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].s  =   (*(&((PVDataL)->shrtval)+i+offset));
             }
             break;
 
         case DBR_LONG:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].l  =   (*(&((PVDataL)->longval)+i+offset));
             }
             break;
 
         case DBR_ENUM:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].us =   (*(&((PVDataL)->enmval)+i+offset));
             }
             break;
 
         case DBR_STRING:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy(val[i].str, (*(&((PVDataL)->strval)+i+offset)));
             }
             break;
 
 
         case DBR_STS_CHAR:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].ch =   (*(&((PVDataL)->schrval.value)+i+offset));
             }
             alarmStatus   = ((struct dbr_sts_char *) PVDataL)->status;
@@ -1174,7 +1333,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_STS_FLOAT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].f =   (*(&((PVDataL)->sfltval.value)+i+offset));
             }
             alarmStatus   = ((struct dbr_sts_float *) PVDataL)->status;
@@ -1182,7 +1342,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_STS_DOUBLE:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].d =   (*(&((PVDataL)->sdblval.value)+i+offset));
             }
             alarmStatus   = ((struct dbr_sts_double *) PVDataL)->status;
@@ -1190,7 +1351,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_STS_SHORT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].s =   (*(&((PVDataL)->sshrtval.value)+i+offset));
             }
             alarmStatus   = ((struct dbr_sts_short *) PVDataL)->status;
@@ -1198,7 +1360,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_STS_LONG:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].l =   (*(&((PVDataL)->slngval.value)+i+offset));
             }
             alarmStatus   = ((struct dbr_sts_int  *) PVDataL)->status;
@@ -1206,7 +1369,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_STS_ENUM:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].us =   (*(&((PVDataL)->senmval.value)+i+offset));
             }
             alarmStatus   = ((struct dbr_sts_enum *) PVDataL)->status;
@@ -1214,7 +1378,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_STS_STRING:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy(val[i].str,   (*(&((PVDataL)->sstrval.value)+i+offset))) ;
             }
             alarmStatus   = ((struct dbr_sts_string *) PVDataL)->status;
@@ -1223,7 +1388,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
 
 
         case DBR_TIME_CHAR:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].ch =   (*(&((PVDataL)->tchrval.value)+i+offset)) ;
             }
             ts            = ((struct dbr_time_char *) PVDataL)->stamp;
@@ -1232,7 +1398,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_TIME_FLOAT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].f =   (*(&((PVDataL)->tfltval.value)+i+offset)) ;
             }
             ts            = ((struct dbr_time_float *) PVDataL)->stamp;
@@ -1242,7 +1409,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
 
         case DBR_TIME_DOUBLE:
 
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].d =   (*(&((PVDataL)->tdblval.value)+i+offset)) ;
 
             }
@@ -1252,7 +1420,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_TIME_SHORT:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].s =   (*(&((PVDataL)->tshrtval.value)+i+offset));
             }
             ts            = ((struct dbr_time_short *) PVDataL)->stamp;
@@ -1261,7 +1430,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_TIME_LONG:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].l =   (*(&((PVDataL)->tlngval.value)+i+offset));
             }
             ts            = ((struct dbr_time_long *) PVDataL)->stamp;
@@ -1270,7 +1440,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_TIME_ENUM:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 val[i].us =   (*(&((PVDataL)->tenmval.value)+i+offset));
             }
             ts            = ((struct dbr_time_enum *) PVDataL)->stamp;
@@ -1279,7 +1450,8 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
             break;
 
         case DBR_TIME_STRING:
-            for (unsigned int  i=0; i<nelem; ++i) {
+            for (unsigned int  i=0; i<nelem; ++i)
+            {
                 strcpy(val[i].str, (*(&((PVDataL)->tstrval.value)+i+offset)));
             }
             ts            = ((struct dbr_time_string *) PVDataL)->stamp;
@@ -1293,12 +1465,14 @@ int  Transpose<CAFE_DATATYPE_UNION>::get(//const CAFEConduit &cc,
     //cout << "_dbrType" << _dbrTypeRequest_DataBuffer<< endl;
     //cout << ts.secPastEpoch << " " << ts.nsec << endl;
 
-    if(!isCacheRequest) {
+    if(!isCacheRequest)
+    {
         HandleHelper handleHelper;
         handleHelper.setSTS(_handle, alarmStatus, alarmSeverity, ts);
     }
 
-    else {
+    else
+    {
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }

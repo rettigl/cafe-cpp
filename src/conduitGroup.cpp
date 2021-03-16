@@ -64,7 +64,8 @@ ConduitGroup::ConduitGroup(const char * _groupName, ca_client_context * _ccc,  C
 
     mStatus = new int [nMember];
     mRule = new bool[nMember];
-    for (unsigned int i=0; i<nMember; ++i) {
+    for (unsigned int i=0; i<nMember; ++i)
+    {
         mRule[i]=true;
         mStatus[i]=ICAFE_NORMAL;
     }
@@ -84,13 +85,16 @@ int ConduitGroup::get(void) const
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
-    for (unsigned int i=0; i<nMember; ++i) {
+    for (unsigned int i=0; i<nMember; ++i)
+    {
 
         it_handle = handle_index.find(mHandle[i]);
 
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
 
-            if (mStatus[i]==ICAFE_NORMAL) {
+            if (mStatus[i]==ICAFE_NORMAL)
+            {
                 //Returns ECA_NORMAL, ECA_BADSYNCGRP, ECA_BADCHID, ECA_BADCOUNT,
                 //ECA_BADTYPE, ECA_GETFAIL, or 192 if not connected!
                 mStatus[i]=ca_sg_array_get (groupID,
@@ -115,12 +119,14 @@ int ConduitGroup::get(void) const
     //                                && ntries<channelTimeoutPolicySGGet.getNtries()
     //)
 
-    if (groupStatus== ECA_TIMEOUT) {
+    if (groupStatus== ECA_TIMEOUT)
+    {
         CAFEStatus cafeStatus;
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cafeStatus.report(ECA_TIMEOUT);
     }
-    else if (groupStatus!= ECA_NORMAL) {
+    else if (groupStatus!= ECA_NORMAL)
+    {
         CAFEStatus cafeStatus;
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "groupID = " << groupID << " groupName = " << groupName << endl;
@@ -143,13 +149,16 @@ int ConduitGroup::put(void) const
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
-    for (unsigned int i=0; i<nMember; ++i) {
+    for (unsigned int i=0; i<nMember; ++i)
+    {
 
         it_handle = handle_index.find(mHandle[i]);
 
-        if (it_handle != handle_index.end()) {
+        if (it_handle != handle_index.end())
+        {
 
-            if (mStatus[i]==ICAFE_NORMAL) {
+            if (mStatus[i]==ICAFE_NORMAL)
+            {
                 //Returns ECA_NORMAL, ECA_BADSYNCGRP, ECA_BADCHID, ECA_BADCOUNT,
                 //ECA_BADTYPE, ECA_GETFAIL, or 192 if not connected!
                 mStatus[i]=ca_sg_array_put (groupID,
@@ -198,7 +207,8 @@ int ConduitGroup::put(void) const
 
 
 
-    if (groupStatus== ECA_TIMEOUT) {
+    if (groupStatus== ECA_TIMEOUT)
+    {
         CAFEStatus cafeStatus;
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cafeStatus.report(ECA_TIMEOUT);

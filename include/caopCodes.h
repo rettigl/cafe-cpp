@@ -17,7 +17,8 @@
  *  Provides methods to convert between
  *  the CA_OP_xx and text equivalent
  */
-class CAOPCodes {
+class CAOPCodes
+{
     typedef std::map<int, std::string> mapIntString;
 private:
     mapIntString   mapDataType;
@@ -62,7 +63,8 @@ public:
         std::cout << "------------------"   << std::endl;
         std::cout << "CA_OP_LIST" << std::endl;
         std::cout << "-----------------"   << std::endl;
-        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos) {
+        for (pos=mapDataType.begin(); pos != mapDataType.end(); ++pos)
+        {
             std::cout << pos->first << " " << pos->second << std::endl;
         }
         std::cout << "-----------------" << std::endl;

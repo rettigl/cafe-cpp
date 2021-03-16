@@ -20,44 +20,63 @@ using namespace std;
  *  \param ln input: line number of file from where the error originates
  *  \return struct CAFEException_pv
  */
-CAFEException_pv ExceptionsHelper::prepareCAFEException_pv(const char *pv, const char *pvAlias,
+CAFEException_pv ExceptionsHelper::prepareCAFEException_pv (
+        const char pv[PVNAME_SIZE], const char pvAlias[PVNAME_SIZE],
         unsigned int  handle, chid pCh, int  status,
-        const char * source, unsigned int  ln)
+        string source, unsigned int  ln)
 {
 #define __METHOD__ "Connect::prepareCAFEException_pv"
+
+    CAFEStatus cafeStatus;
 
     CAFEException_pv e;
     // handle, pv, pvAlias
     e.handle=handle;
-    if (pv!=NULL) {
+    
+    
+    
+    if (pv != NULL)
+    {
         strcpy(e.pv, (char *) pv);
     }
-    else {
+    else
+    {
         strcpy(e.pv, "");
     }
-    if (pvAlias!=NULL) {
+    if (pvAlias != NULL)
+    {
         strcpy(e.pvAlias, (char *) pvAlias);
     }
-    else {
+    else
+    {
         strcpy(e.pvAlias, "");
     }
+    
     // native datatype
-    if (pCh == NULL) {
+    if (pCh == NULL)
+    {
         e.dataTypeNative = (CAFE_DATATYPE) CAFE_NO_ACCESS;
     }
-    else if (status == ECAFE_RULE_FALSE || status == ICAFE_RULE_FALSE) {
+    else if (status == ECAFE_RULE_FALSE || status == ICAFE_RULE_FALSE)
+    {
         e.dataTypeNative = (CAFE_DATATYPE) CAFE_NOT_REQUESTED;
     }
-    else {
+    else
+    {
         e.dataTypeNative = (CAFE_DATATYPE) dbf_type_to_DBR(ca_field_type(pCh));
     }
     e.dataTypeNativeText = cafeDataTypeCode.message(e.dataTypeNative).c_str();
     // status code, message, description
     e.statusCode     = status;
-    e.statusCodeText = (const char *) cafeStatus.csc.message(status).c_str();
-    e.statusMessage  = (const char *) cafeStatus.csi.message(status).c_str();
+
+    std::cout << status << " " << (const char*) cafeStatus.csc.message(status).c_str() << std::endl;
+    std::cout << status << " " << (const char*) cafeStatus.csi.message(status).c_str() << std::endl;
+    e.statusCodeText = cafeStatus.csc.message(status);
+    e.statusMessage  = cafeStatus.csi.message(status);
+
+   
     // method and line no of error source
-    e.source = (const char *) source;
+    e.source = source;
     e.ln = ln;
     return e;
 
@@ -77,7 +96,8 @@ void ExceptionsHelper::printCAFEException_pv(CAFEException_pv & e)
     cout << "------------------------------------" << endl;
     cout << "Handle               : " << e.handle << endl;
     cout << "Process Variable (PV): " << e.pv << endl;
-    if ( strcmp(e.pv,e.pvAlias) ) {
+    if ( strcmp(e.pv,e.pvAlias) )
+    {
         cout << "PV Alias             : " << e.pvAlias << endl;
     }
     cout << "PV Native Type       : " << e.dataTypeNative << " ("
@@ -102,27 +122,30 @@ void ExceptionsHelper::printCAFEException_pv(CAFEException_pv & e)
  *  \param ln input: line number of file from where the error originates
  *  \return struct CAFEException_group
  */
-CAFEException_group ExceptionsHelper::prepareCAFEException_group(char groupName[PVNAME_SIZE],
+CAFEException_group ExceptionsHelper::prepareCAFEException_group(const char groupName[PVNAME_SIZE],
         unsigned int  ghandle, int  status,
-        const char * source, unsigned int  ln)
+	std::string source, unsigned int ln)
 {
 #define __METHOD__ "Connect::prepareCAFEExceptionGroup"
 
     CAFEException_group e;
     // handle, pv, pvAlias
     e.groupHandle=ghandle;
-    if (groupName!=NULL) {
-        strcpy(e.groupName, groupName);
+    
+    if (groupName != NULL)
+    {
+      strcpy(e.groupName, groupName);   
     }
-    else {
-        strcpy(e.groupName, "");
+    else
+    {
+      strcpy(e.groupName, "");     
     }
-
+    
     e.statusCode     = status;
-    e.statusCodeText = (const char *) cafeStatus.csc.message(status).c_str();
-    e.statusMessage  = (const char *) cafeStatus.csi.message(status).c_str();
+    e.statusCodeText = cafeStatus.csc.message(status);
+    e.statusMessage  = cafeStatus.csi.message(status);
     // method and line no of error source
-    e.source = (const char *) source;
+    e.source =  source;
     e.ln = ln;
     return e;
 

@@ -1,3 +1,6 @@
+rm -f configure.ac
+ln -s configureCafe.ac configure.ac
+
 aclocal  --force -I m4
 libtoolize --force --copy
 autoconf --force
@@ -26,7 +29,7 @@ export CAFE_EPICS_V_MINOR=$EBMIN
 export CAFE_EPICS_V_PATCH=$EBPAT
 
 
-CAFE_VERSION=cafe-noqt-1.8.0
+CAFE_VERSION=cafe-noqt-1.12.5-gcc-6.3.0
 
 
 ./configure \

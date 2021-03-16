@@ -27,7 +27,8 @@
 * \brief The base class from which the PVDataHolder and PVCtrlHolder
 * classes are derived
 */
-class PVHolder {
+class PVHolder
+{
 
 protected:
     char  pv     [PVNAME_SIZE];
@@ -81,7 +82,8 @@ protected:
 
     void verifyIndex(unsigned int  idx)
     {
-        if(idx >= size) {
+        if(idx >= size)
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -270,11 +272,13 @@ public:
 
     void setDataType(CAFE_DATATYPE cdt)
     {
-        if (cdt > CAFE_DOUBLE || cdt < CAFE_STRING) {
+        if (cdt > CAFE_DOUBLE || cdt < CAFE_STRING)
+        {
             std::cout << "WARNING: INPUT VALUE NOT A VALID CAFE DATATYPE " << std::endl;
             return;
         }
-        else {
+        else
+        {
             dataType=cdt;
             return;
         }
@@ -297,13 +301,15 @@ public:
     };
     void set(long long l)
     {
-        if (l > std::numeric_limits<dbr_long_t>::max()) {
+        if (l > std::numeric_limits<dbr_long_t>::max())
+        {
             std::cout << "WARNING: INPUT VALUE GREATER THAN MAX LIMIT OF dbr_long_t " << std::endl;
             std::cout << "TYPE CASTING TO DOUBLE! " << std::endl;
             val[0].d= (double) l;
             dataType=CAFE_DOUBLE;
         }
-        else {
+        else
+        {
             val[0].l= (int) l;
             dataType=CAFE_LONG;
         };
@@ -315,13 +321,15 @@ public:
     };
     void set(unsigned long long  l)
     {
-        if (l > (unsigned long long) std::numeric_limits<dbr_long_t>::max()) {
+        if (l > (unsigned long long) std::numeric_limits<dbr_long_t>::max())
+        {
             std::cout << "WARNING: INPUT VALUE GREATER THAN MAX LIMIT OF dbr_long_t " << std::endl;
             std::cout << "TYPE CASTING TO DOUBLE! " << std::endl;
             val[0].d= (double) l;
             dataType=CAFE_DOUBLE;
         }
-        else {
+        else
+        {
             val[0].l= (int) l;
             dataType=CAFE_LONG;
         };
@@ -347,30 +355,36 @@ public:
 
     void setVString(std::vector<std::string>  Vstr)
     {
-        if(Vstr.size()!=nelem) {
+        if(Vstr.size()!=nelem)
+        {
             nelem=Vstr.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             strcpy(val[i].str,Vstr[i].c_str());
         }
         dataType=CAFE_STRING;
     };
     void setVDouble(std::vector<double> Vd)
     {
-        if(Vd.size()!=nelem) {
+        if(Vd.size()!=nelem)
+        {
             nelem=Vd.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].d=Vd[i];
         }
         dataType=CAFE_DOUBLE;
     };
     void setVInt   (std::vector<int>    Vl)
     {
-        if(Vl.size()!=nelem) {
+        if(Vl.size()!=nelem)
+        {
             nelem=Vl.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].l=Vl[i];
         }
         dataType=CAFE_LONG;
@@ -381,30 +395,36 @@ public:
 
     void set(std::vector<std::string>  Vstr)
     {
-        if(Vstr.size()!=nelem) {
+        if(Vstr.size()!=nelem)
+        {
             nelem=Vstr.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             strcpy(val[i].str,Vstr[i].c_str());
         }
         dataType=CAFE_STRING;
     };
     void set(std::vector<double> Vd)
     {
-        if(Vd.size()!=nelem) {
+        if(Vd.size()!=nelem)
+        {
             nelem=Vd.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].d=Vd[i];
         }
         dataType=CAFE_DOUBLE;
     };
     void set(std::vector<float> Vf)
     {
-        if(Vf.size()!=nelem) {
+        if(Vf.size()!=nelem)
+        {
             nelem=Vf.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].f=Vf[i];
         }
         dataType=CAFE_FLOAT;
@@ -412,10 +432,12 @@ public:
 
     void set   (std::vector<int>    Vl)
     {
-        if(Vl.size()!=nelem) {
+        if(Vl.size()!=nelem)
+        {
             nelem=Vl.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].l=Vl[i];
         }
         dataType=CAFE_LONG;
@@ -423,10 +445,12 @@ public:
 
     void set   (std::vector<long>    Vl)
     {
-        if(Vl.size()!=nelem) {
+        if(Vl.size()!=nelem)
+        {
             nelem=Vl.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].l=Vl[i];
         }
         dataType=CAFE_LONG;
@@ -434,10 +458,12 @@ public:
 
     void set   (std::vector<unsigned long>    Vul)
     {
-        if(Vul.size()!=nelem) {
+        if(Vul.size()!=nelem)
+        {
             nelem=Vul.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].d=Vul[i];
         }
         dataType=CAFE_DOUBLE;
@@ -445,10 +471,12 @@ public:
 
     void set   (std::vector<long long>    Vll)
     {
-        if(Vll.size()!=nelem) {
+        if(Vll.size()!=nelem)
+        {
             nelem=Vll.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].d=Vll[i];
         }
         dataType=CAFE_DOUBLE;
@@ -456,10 +484,12 @@ public:
 
     void set   (std::vector<unsigned long long>    Vull)
     {
-        if(Vull.size()!=nelem) {
+        if(Vull.size()!=nelem)
+        {
             nelem=Vull.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].d=Vull[i];
         }
         dataType=CAFE_DOUBLE;
@@ -467,10 +497,12 @@ public:
 
     void set   (std::vector<short>    Vs)
     {
-        if(Vs.size()!=nelem) {
+        if(Vs.size()!=nelem)
+        {
             nelem=Vs.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].s=Vs[i];
         }
         dataType=CAFE_SHORT;
@@ -478,10 +510,12 @@ public:
 
     void set   (std::vector<unsigned short>    Vus)
     {
-        if(Vus.size()!=nelem) {
+        if(Vus.size()!=nelem)
+        {
             nelem=Vus.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].us=Vus[i];
         }
         dataType=CAFE_ENUM;
@@ -489,10 +523,12 @@ public:
 
     void set   (std::vector<unsigned char>    Vc)
     {
-        if(Vc.size()!=nelem) {
+        if(Vc.size()!=nelem)
+        {
             nelem=Vc.size();
         }
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].ch=Vc[i];
         }
         dataType=CAFE_CHAR;
@@ -529,21 +565,24 @@ public:
 
     void set(double * d)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].d=d[i];
         }
         dataType=CAFE_DOUBLE;
     };
     void set(float  * f)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].f=f[i];
         }
         dataType=CAFE_FLOAT;
     };
     void set(short  * s)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].s=s[i];
         }
         dataType=CAFE_SHORT;
@@ -551,11 +590,14 @@ public:
     //Examine this!
     void set(long long * ll)
     {
-        if ( nelem==1) {
+        if ( nelem==1)
+        {
             set((long long) ll[0]);
         }
-        else {
-            for (unsigned int  i=0; i<nelem; ++ i) {
+        else
+        {
+            for (unsigned int  i=0; i<nelem; ++ i)
+            {
                 val[i].d= ll[i];
             }
             dataType=CAFE_DOUBLE;
@@ -563,11 +605,14 @@ public:
     };
     void set(unsigned long long * ll)
     {
-        if ( nelem==1) {
+        if ( nelem==1)
+        {
             set((unsigned long long) ll[0]);
         }
-        else {
-            for (unsigned int  i=0; i<nelem; ++ i) {
+        else
+        {
+            for (unsigned int  i=0; i<nelem; ++ i)
+            {
                 val[i].d= ll[i];
             }
             dataType=CAFE_DOUBLE;
@@ -576,42 +621,48 @@ public:
 
     void set(int    * l)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].l=l[i];
         }
         dataType=CAFE_LONG;
     };
     void set(unsigned int   * l)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].l= (int) l[i];
         }
         dataType=CAFE_LONG;
     };
     void set(unsigned short * us)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].us=us[i];
         }
         dataType=CAFE_ENUM;
     };
     void set(unsigned char  * ch)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             val[i].ch=ch[i];
         }
         dataType=CAFE_CHAR;
     };
     void set(dbr_string_t   * str)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             strcpy(val[i].str,str[i]);
         }
         dataType=CAFE_STRING;
     };
     void set(std::string    * str)
     {
-        for (unsigned int  i=0; i<nelem; ++ i) {
+        for (unsigned int  i=0; i<nelem; ++ i)
+        {
             strcpy(val[i].str,str[i].c_str());
         }
         dataType=CAFE_STRING;
@@ -620,9 +671,12 @@ public:
     std::string concatToString()
     {
         std::string psWF = "";
-        if (dataTypeNative==CAFE_CHAR) {
-            for (unsigned int i=0; i<nelem; ++i) {
-                if (val[i].ch != '\0') {
+        if (dataTypeNative==CAFE_CHAR)
+        {
+            for (unsigned int i=0; i<nelem; ++i)
+            {
+                if (val[i].ch != '\0')
+                {
                     psWF.append(1, (dbr_char_t) val[i].ch);
                 }
             }
@@ -633,9 +687,12 @@ public:
     std::string getWFAsString()
     {
         std::string psWF = "";
-        if (dataTypeNative==CAFE_CHAR) {
-            for (unsigned int i=0; i<nelem; ++i) {
-                if (val[i].ch != '\0') {
+        if (dataTypeNative==CAFE_CHAR)
+        {
+            for (unsigned int i=0; i<nelem; ++i)
+            {
+                if (val[i].ch != '\0')
+                {
                     psWF.append(1, (dbr_char_t) val[i].ch);
                 }
             }
@@ -682,7 +739,8 @@ public:
     dbr_string_t  * getString(unsigned int  idx)
     {
 #define __METHOD__  "PVHolder::getString "
-        if (dataType!=CAFE_STRING) {
+        if (dataType!=CAFE_STRING)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout << __METHOD__ << __LINE__ << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -703,40 +761,48 @@ public:
         ValVD_ptr.reset(new std::vector<double>());
         ValVD_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back(val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back(val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back(val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back(val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back(val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back(val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back( getAsDouble(i));
             }
             break;
@@ -753,40 +819,48 @@ public:
         ValVF_ptr.reset(new std::vector<float>());
         ValVF_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVF_ptr->push_back((float) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVF_ptr->push_back(val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVF_ptr->push_back(val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVF_ptr->push_back(val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVF_ptr->push_back(val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVF_ptr->push_back(val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVD_ptr->push_back( getAsFloat(i));
             }
             break;
@@ -814,40 +888,48 @@ public:
         ValVI_ptr.reset(new std::vector<int>());
         ValVI_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back((int) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back((int) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back(val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back(val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back(val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back(val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVI_ptr->push_back( getAsInt(i));
             }
             break;
@@ -866,40 +948,48 @@ public:
         ValVL_ptr.reset(new std::vector<long>());
         ValVL_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back((long) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back((long) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back((long) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back((long) val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back((long) val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back((long) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVL_ptr->push_back( getAsLong(i));
             }
             break;
@@ -917,40 +1007,48 @@ public:
         ValVUL_ptr.reset(new std::vector<unsigned long>());
         ValVUL_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back((unsigned long) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back((unsigned long) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back((unsigned long) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back((unsigned long) val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back((unsigned long) val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back((unsigned long) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUL_ptr->push_back( getAsULong(i));
             }
             break;
@@ -970,40 +1068,48 @@ public:
         ValVLL_ptr.reset(new std::vector<long long>());
         ValVLL_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back((long long) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back((long long) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back((long long) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back((long long) val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back((long long) val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back((long long) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVLL_ptr->push_back( getAsLongLong(i));
             }
             break;
@@ -1021,40 +1127,48 @@ public:
         ValVULL_ptr.reset(new std::vector<unsigned long long>());
         ValVULL_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back((unsigned long long) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back((unsigned long long) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back((unsigned long long) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back((unsigned long long) val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back((unsigned long long) val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back((unsigned long long) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVULL_ptr->push_back( getAsULongLong(i));
             }
             break;
@@ -1075,40 +1189,48 @@ public:
         ValVS_ptr.reset(new std::vector<short>());
         ValVS_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back((short) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back((short) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back((short) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back(val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back((short) val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back((unsigned short) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVS_ptr->push_back( getAsShort(i));
             }
             break;
@@ -1127,40 +1249,48 @@ public:
         ValVUS_ptr.reset(new std::vector<unsigned short>());
         ValVUS_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back((unsigned short) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back((unsigned short) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back((unsigned short) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back((unsigned short)val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back( val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back((unsigned short) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVUS_ptr->push_back( getAsUShort(i));
             }
             break;
@@ -1178,40 +1308,48 @@ public:
         ValVC_ptr.reset(new std::vector<unsigned char>());
         ValVC_ptr->reserve(nelem);
 
-        switch (dataType) {
+        switch (dataType)
+        {
         case CAFE_DOUBLE:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back((unsigned char) val[i].d);
             }
             break;
         case CAFE_FLOAT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back((unsigned char) val[i].f);
             }
             break;
         case CAFE_LONG:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back((unsigned char) val[i].l);
             }
             break;
         case CAFE_SHORT:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back((unsigned char)val[i].s);
             }
             break;
         case CAFE_ENUM:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back( (unsigned char)val[i].us);
             }
             break;
         case CAFE_CHAR:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back((unsigned char) val[i].ch);
             }
             break;
         case CAFE_STRING:
         default:
-            for (unsigned i=0; i<nelem; ++i) {
+            for (unsigned i=0; i<nelem; ++i)
+            {
                 ValVC_ptr->push_back( (unsigned char) getAsChar(i));
             }
             break;
@@ -1227,7 +1365,8 @@ public:
 
         ValVStr_ptr.reset(new std::vector<std::string>());
         ValVStr_ptr->reserve(nelem);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValVStr_ptr->push_back( getAsString(i));
         }
 
@@ -1304,7 +1443,8 @@ public:
     ValDPtr getDouble()
     {
 #define __METHOD__  "PVHolder::getDouble "
-        if (dataType!=CAFE_DOUBLE) {
+        if (dataType!=CAFE_DOUBLE)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1315,7 +1455,8 @@ public:
 
         ValD_ptr.reset(new double[nelem]);
 
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValD_ptr[i] = val[i].d;
         }
 
@@ -1326,7 +1467,8 @@ public:
     ValFPtr getFloat()
     {
 #define __METHOD__  "PVHolder::getFloat "
-        if (dataType!=CAFE_FLOAT) {
+        if (dataType!=CAFE_FLOAT)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1335,7 +1477,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValF_ptr.reset(new float[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValF_ptr[i] = val[i].f;
         }
         return  ValF_ptr;
@@ -1346,7 +1489,8 @@ public:
     ValSPtr getShort()
     {
 #define __METHOD__  "PVHolder::getShort "
-        if (dataType==CAFE_SHORT) {
+        if (dataType==CAFE_SHORT)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1355,7 +1499,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValS_ptr.reset(new short[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValS_ptr[i] = val[i].s;
         }
         return  ValS_ptr;
@@ -1366,7 +1511,8 @@ public:
     ValIPtr getInt()
     {
 #define __METHOD__  "PVHolder::getInt (meaning dbr_long_t)  "
-        if (dataType!=CAFE_LONG) {
+        if (dataType!=CAFE_LONG)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1375,7 +1521,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValI_ptr.reset(new int[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValI_ptr[i] = val[i].l;
         }
         return  ValI_ptr;
@@ -1385,7 +1532,8 @@ public:
     ValIPtr getLong()
     {
 #define __METHOD__  "PVHolder::getLong (meaning dbr_long_t)  "
-        if (dataType!=CAFE_LONG) {
+        if (dataType!=CAFE_LONG)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1394,7 +1542,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValI_ptr.reset(new int[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValI_ptr[i] = val[i].l;
         }
         return  ValI_ptr;
@@ -1404,7 +1553,8 @@ public:
     ValUSPtr getEnum()
     {
 #define __METHOD__  "PVHolder::getEnum "
-        if (dataType!=CAFE_ENUM) {
+        if (dataType!=CAFE_ENUM)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1413,7 +1563,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValUS_ptr.reset(new unsigned short[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValUS_ptr[i] = val[i].us;
         }
         return  ValUS_ptr;
@@ -1423,7 +1574,8 @@ public:
     ValUSPtr getUShort()
     {
 #define __METHOD__  "PVHolder::getUShort "
-        if (dataType!=CAFE_USHORT) {
+        if (dataType!=CAFE_USHORT)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1432,7 +1584,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValUS_ptr.reset(new unsigned short[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValUS_ptr[i] = val[i].us;
         }
         return  ValUS_ptr;
@@ -1442,7 +1595,8 @@ public:
     ValChPtr getChar()
     {
 #define __METHOD__  "PVHolder::getChar "
-        if (dataType!=CAFE_CHAR) {
+        if (dataType!=CAFE_CHAR)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout <<  __METHOD__ << __LINE__  << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1451,7 +1605,8 @@ public:
             std::cout << "**********************" << std::endl;
         }
         ValCh_ptr.reset(new unsigned char[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             ValCh_ptr[i] = val[i].ch;
         }
         return  ValCh_ptr;
@@ -1461,7 +1616,8 @@ public:
     ValStrPtr getString()
     {
 #define __METHOD__  "PVHolder::getString "
-        if (dataType!=CAFE_STRING) {
+        if (dataType!=CAFE_STRING)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout << __METHOD__ << __LINE__ << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1471,7 +1627,8 @@ public:
             //return (dbr_string_t *) "";
         }
         ValStr_ptr.reset(new dbr_string_t[nelem]);
-        for (unsigned i=0; i<nelem; ++i) {
+        for (unsigned i=0; i<nelem; ++i)
+        {
             strcpy(ValStr_ptr[i], val[i].str);
         }
         return  ValStr_ptr;
@@ -1483,9 +1640,10 @@ public:
         return (double)  renderDouble.get(0, dataType, val.get())[0];
     }
 
-    double getAsDouble(unsigned int  idx) throw(std::out_of_range)
+    double getAsDouble(unsigned int  idx) noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1499,9 +1657,10 @@ public:
         return (float)  renderFloat.get(0, dataType, val.get())[0];
     }
 
-    float getAsFloat(unsigned int  idx) throw(std::out_of_range)
+    float getAsFloat(unsigned int  idx) noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1515,9 +1674,10 @@ public:
         return (short)  renderShort.get(0, dataType, val.get())[0];
     }
 
-    short getAsShort(unsigned int  idx)  throw(std::out_of_range)
+    short getAsShort(unsigned int  idx)  noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1531,9 +1691,10 @@ public:
         return (int)  renderLong.get(0, dataType, val.get())[0];
     }
 
-    int  getAsLong(unsigned int  idx)  throw(std::out_of_range)
+    int  getAsLong(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1547,9 +1708,10 @@ public:
         return (unsigned short)  renderEnum.get(0, dataType, val.get())[0];
     }
 
-    unsigned short  getAsEnum(unsigned int  idx)  throw(std::out_of_range)
+    unsigned short  getAsEnum(unsigned int  idx)  noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1563,9 +1725,10 @@ public:
         return (unsigned short)  renderEnum.get(0, dataType, val.get())[0];
     }
 
-    unsigned short getAsUShort(unsigned int  idx)  throw(std::out_of_range)
+    unsigned short getAsUShort(unsigned int  idx)  noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1579,9 +1742,10 @@ public:
         return (char) renderChar.get(0, dataType, val.get())[0];
     }
 
-    unsigned char getAsChar(unsigned int  idx)  throw(std::out_of_range)
+    unsigned char getAsChar(unsigned int  idx)  noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1595,9 +1759,10 @@ public:
         return (unsigned char) renderUChar.get(0, dataType, val.get())[0];
     }
 
-    unsigned char getAsUChar(unsigned int  idx)  throw(std::out_of_range)
+    unsigned char getAsUChar(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1611,9 +1776,10 @@ public:
         return (unsigned int)  renderULong.get(0, dataType, val.get())[0];
     }
 
-    unsigned int  getAsULong(unsigned int  idx)  throw(std::out_of_range)
+    unsigned int  getAsULong(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1627,9 +1793,10 @@ public:
         return (long  long)  renderLongLong.get(0, dataType, val.get())[0];
     }
 
-    long long  getAsLongLong(unsigned int  idx)  throw(std::out_of_range)
+    long long  getAsLongLong(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1643,9 +1810,10 @@ public:
         return (unsigned long  long)  renderULongLong.get(0, dataType, val.get())[0];
     }
 
-    unsigned long  long  getAsULongLong(unsigned int  idx)  throw(std::out_of_range)
+    unsigned long  long  getAsULongLong(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1659,9 +1827,10 @@ public:
         return (int)  renderInt.get(0, dataType, val.get())[0];
     }
 
-    int getAsInt(unsigned int  idx)  throw(std::out_of_range)
+    int getAsInt(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1675,9 +1844,10 @@ public:
         return (unsigned int)  renderInt.get(0, dataType, val.get())[0];
     }
 
-    unsigned int getAsUInt(unsigned int  idx)  throw(std::out_of_range)
+    unsigned int getAsUInt(unsigned int  idx)  noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
@@ -1690,7 +1860,8 @@ public:
     std::string getEnumIntegerValueAsString()
     {
 #define __METHOD__  "PVHolder::getEnumIntegerValueAsString"
-        if (dataType!=CAFE_ENUM) {
+        if (dataType!=CAFE_ENUM)
+        {
             std::cout << "******* WARNING *******" << std::endl;
             std::cout << __METHOD__ << __LINE__ << std::endl;
             std::cout << "DataType is " << (cafeDataTypeCode.message((CAFE_DATATYPE)dataType)).c_str() <<
@@ -1704,27 +1875,32 @@ public:
 
     std::string getAsString()
     {
-        if(dataTypeNative==DBR_ENUM && dataType==DBR_ENUM) {
+        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM)
+        {
 
             return  (std::string) renderString.getStringFromEnum(0,  noStr, val.get(), strs)[0];
         }
-        else {
+        else
+        {
             return (std::string) renderString.getString(0, dataType, val.get())[0];
         }
     }
 
-    std::string getAsString(unsigned int  idx) throw(std::out_of_range)
+    std::string getAsString(unsigned int  idx) noexcept(false) //throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
             throw std::out_of_range(oss.str());
         }
-        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM) {
+        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM)
+        {
             return  (std::string) renderString.getStringFromEnum(idx,  noStr, val.get(), strs)[0];
         }
-        else {
+        else
+        {
             return (std::string) renderString.getString(idx, dataType, val.get())[0];
         }
     }
@@ -1732,28 +1908,33 @@ public:
 
     char * getAsDbr_string_t()
     {
-        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM) {
+        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM)
+        {
             return (char *) renderString.getStringFromEnum(0,  noStr, val.get(), strs)[0];
 
         }
-        else {
+        else
+        {
             return (char *) renderString.getString(0, dataType, val.get())[0];
         }
     }
 
 
-    char *  getAsDbr_string_t(unsigned int  idx)  throw(std::out_of_range)
+    char *  getAsDbr_string_t(unsigned int  idx) noexcept(false) // throw(std::out_of_range)
     {
-        if(isIndexOutOfRange(idx)) {
+        if(isIndexOutOfRange(idx))
+        {
             std::ostringstream oss;
             oss << "Exception! Index " << idx
                 << " to PVHolder method is out of range. Valid range is from 0 to " << size-1;
             throw std::out_of_range(oss.str());
         }
-        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM) {
+        if(dataTypeNative==DBR_ENUM && dataType==CAFE_ENUM)
+        {
             return  (char *) renderString.getStringFromEnum(idx, noStr, val.get(), strs)[0];
         }
-        else {
+        else
+        {
             return (char *) renderString.getString(idx, dataType, val.get())[0];
         }
     }

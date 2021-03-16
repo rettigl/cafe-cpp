@@ -1,4 +1,3 @@
-
 ///
 /// \file   cafeGroup.cpp
 ///
@@ -25,24 +24,29 @@ int  CAFE::groupFetch(const unsigned int _groupHandle, PVGroup &pvgroup)
 
     string s = handleHelper.getGroupNameFromGroupHandle(_groupHandle);
 
-    if (s!="") {
+    if (s!="")
+    {
         bool groupExists=false;
 
-        for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
-            if (strcmp(PVGroupV[i].name, s.c_str()) == 0) {
+        for (unsigned short i = 0; i < PVGroupV.size(); ++i)
+        {
+            if (strcmp(PVGroupV[i].name, s.c_str()) == 0)
+            {
                 pvgroup = PVGroupV[i];
                 pvgroup.groupHandle=_groupHandle;
                 groupExists=true;
                 break;
             }
         }
-        if (!groupExists) {
+        if (!groupExists)
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_UNKNOWN_GROUP);
             return ECAFE_UNKNOWN_GROUP;
         }
     }
-    else {
+    else
+    {
         return ECAFE_UNKNOWN_GROUP;
     }
     return ICAFE_NORMAL;
@@ -65,11 +69,14 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
 
     unsigned int iIdx;
 
-    if (s!="") {
+    if (s!="")
+    {
         bool groupExists=false;
 
-        for (unsigned short i = 0; i < PVGroupV.size(); ++i) {
-            if (strcmp(PVGroupV[i].name, s.c_str()) == 0) {
+        for (unsigned short i = 0; i < PVGroupV.size(); ++i)
+        {
+            if (strcmp(PVGroupV[i].name, s.c_str()) == 0)
+            {
                 pvgroup = PVGroupV[i];
                 iIdx=i;
                 groupExists=true;
@@ -77,13 +84,15 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
             }
         }
 
-        if (!groupExists) {
+        if (!groupExists)
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(ECAFE_UNKNOWN_GROUP);
             return ECAFE_UNKNOWN_GROUP;
         }
     }
-    else {
+    else
+    {
         return ECAFE_UNKNOWN_GROUP;
     }
 
@@ -95,11 +104,13 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
     it_groupHandle = groupHandle_index.find(_groupHandle);
 
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         unsigned int  nGroupMember = (*it_groupHandle).getNMember();
 
-        if (pvgroup.npv != (*it_groupHandle).getNMember()) {
+        if (pvgroup.npv != (*it_groupHandle).getNMember())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "A MISMATCH IN THE NUMBER OF GROUP MEMBERS DETECTED " << endl;
             cout << "CLIENT (pvgroup.npv) CLAIMS "  <<  pvgroup.npv
@@ -112,7 +123,8 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
         cafeConduit_set_by_handle::iterator it_handle;
 
 
-        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember) {
+        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember)
+        {
 
             bool hf=false;
             //reset
@@ -127,19 +139,23 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 hf=true;
             }
 
-            if (!hf) {
+            if (!hf)
+            {
                 pvgroup.pvdata[iMember].status=ECAFE_INVALID_HANDLE;
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
 
@@ -152,9 +168,11 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
                 continue;
             }
 
-            if (!(*it_handle).getChannelRegalia().getConnectFlag()) {
+            if (!(*it_handle).getChannelRegalia().getConnectFlag())
+            {
 
-                if (pvgroup.statusGroup==ICAFE_NORMAL) {
+                if (pvgroup.statusGroup==ICAFE_NORMAL)
+                {
                     pvgroup.statusGroup=(*it_handle).getChannelRegalia().getCafeConnectionState();
                 }
             }
@@ -168,12 +186,14 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
             ChannelDeviceAttribute channelDeviceAttribute;
             channelDeviceAttribute.init((*it_handle).pv, deviceAttributeDeliminator);
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(it_handle, change_channelDeviceAttribute(
                                     channelDeviceAttribute));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
 
@@ -191,7 +211,8 @@ int  CAFE::groupAttach(const unsigned int _groupHandle, PVGroup &pvgroup)
 
         return pvgroup.statusGroup;
     }
-    else {
+    else
+    {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
 #undef __METHOD__
@@ -222,12 +243,14 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 {
 #define __METHOD__ "groupSet( _groupHandle,  &pvgroup)"
 
-    if (pvgroup.npv==0) {
+    if (pvgroup.npv==0)
+    {
         cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cafeStatus.report(ECAFE_EMPTY_GROUP);
         return ECAFE_EMPTY_GROUP;
     }
-    else if (pvgroup.groupHandle!=_groupHandle) {
+    else if (pvgroup.groupHandle!=_groupHandle)
+    {
         cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "Input groupHandle " << _groupHandle << " does not match that within pvgroup "
              << pvgroup.groupHandle << endl;
@@ -242,11 +265,13 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
     it_groupHandle = groupHandle_index.find(_groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         unsigned int  nGroupMember = (*it_groupHandle).getNMember();
 
-        if (pvgroup.npv != (*it_groupHandle).getNMember()) {
+        if (pvgroup.npv != (*it_groupHandle).getNMember())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "A MISMATCH IN THE NUMBER OF GROUP MEMBERS DETECTED " << endl;
             cout << "CLIENT (pvgroup.npv) CLAIMS "  <<  pvgroup.npv
@@ -262,7 +287,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
         unsigned int * nelemPrevious = new unsigned int [nGroupMember];
 
 
-        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember) {
+        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember)
+        {
 
             bool hf=false;
             //reset
@@ -274,46 +300,56 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 hf=true;
 
-                if (pvgroup.pvdata[iMember].getRule() != (*it_groupHandle).getRule(iMember)) {
-                    if(MUTEX) {
+                if (pvgroup.pvdata[iMember].getRule() != (*it_groupHandle).getRule(iMember))
+                {
+                    if(MUTEX)
+                    {
                         cafeMutex.lock();
                     }
                     groupHandle_index.modify(it_groupHandle,
                                              change_sg_rule(pvgroup.pvdata[iMember].rule, iMember));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();
                     }
                 }
-                if (!pvgroup.pvdata[iMember].getRule() ) {
+                if (!pvgroup.pvdata[iMember].getRule() )
+                {
                     pvgroup.pvdata[iMember].status=ICAFE_RULE_FALSE;
                 }
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
             }
 
-            if (!hf) {
+            if (!hf)
+            {
 
                 nelemPrevious[iMember]=0;
                 nelemPreviousFlag[iMember]=false;
 
                 pvgroup.pvdata[iMember].status=ECAFE_INVALID_HANDLE;
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
 
@@ -332,14 +368,17 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
             //Find Native DataType
             if ( (pvgroup.pvdata[iMember].status=cafeGranules.channelVerifyPut(handle,
-                                                 pvgroup.pvdata[iMember].dataType)) != ICAFE_NORMAL) {
+                                                 pvgroup.pvdata[iMember].dataType)) != ICAFE_NORMAL)
+            {
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
 
@@ -354,7 +393,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
 
             // Examine No of elements and set accordingly....
-            if (handleHelper.getNelemClient(handle) !=  pvgroup.pvdata[iMember].getNelem()) {
+            if (handleHelper.getNelemClient(handle) !=  pvgroup.pvdata[iMember].getNelem())
+            {
 
                 nelemPreviousFlag[iMember]=true;
                 handleHelper.setNelem(handle, pvgroup.pvdata[iMember].getNelem());
@@ -367,13 +407,16 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
 
             if ( (pvgroup.pvdata[iMember].status=cafeGranules.channelPreparePut(handle))
-                    != ICAFE_NORMAL) {
-                if(MUTEX) {
+                    != ICAFE_NORMAL)
+            {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
@@ -385,7 +428,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
                 ((*it_handle).getChannelRequestMetaPrimitive().getDbrDataType());
 
 
-            switch ((*it_handle).getChannelRequestMetaPrimitive().getDbrDataType()) {
+            switch ((*it_handle).getChannelRequestMetaPrimitive().getDbrDataType())
+            {
 
             case DBR_STRING:
                 renderString.putString(handle, pvgroup.pvdata[iMember].val.get());
@@ -428,7 +472,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         channelTimeoutPolicySGPut = (*it_groupHandle).getChannelTimeoutPolicySGPut();
 
-        if (gStatus!=ECA_NORMAL && channelTimeoutPolicySGPut.getSelfGoverningTimeout()) {
+        if (gStatus!=ECA_NORMAL && channelTimeoutPolicySGPut.getSelfGoverningTimeout())
+        {
             cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cafeStatus.report(gStatus);
         }
@@ -450,7 +495,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         while ( (gStatus == ECA_TIMEOUT) && channelTimeoutPolicySGPut.getSelfGoverningTimeout()
                 && ntries<channelTimeoutPolicySGPut.getNtries()
-              ) {
+              )
+        {
             ++ntries;
             //CAFEStatus cafeStatus;
 
@@ -459,7 +505,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
             //    cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             //    cafeStatus.report(ECA_IOINPROGRESS);
             //}
-            if (gStatus == ECA_TIMEOUT) {
+            if (gStatus == ECA_TIMEOUT)
+            {
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(ECA_TIMEOUT);
             }
@@ -474,42 +521,50 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
             channelTimeoutPolicySGPut.setTimeout( (originalTimeOut +
                                                    channelTimeoutPolicySGPut.getDeltaTimeout()*ntries));
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();   //lock
             }
             groupHandle_index.modify(it_groupHandle,
                                      change_channelTimeoutPolicySGPut(channelTimeoutPolicySGPut));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();   //unlock
             }
 
-            if (gStatus == ECA_TIMEOUT) {
+            if (gStatus == ECA_TIMEOUT)
+            {
                 gStatus=(*it_groupHandle).put();
             }
         } //while
 
-        if (ntries > 0 ) {
+        if (ntries > 0 )
+        {
             //if (ntries >= channelTimeoutPolicySGPut.getNtries() ) {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             std::cout << "No of(additional) tries=" << ntries << std::endl;
 
-            if (gStatus==ECAFE_TIMEOUT) {
+            if (gStatus==ECAFE_TIMEOUT)
+            {
                 std::cout << "is the MAXIMUM allowed as configured through SGTimeoutPolicy! "  << std::endl;
                 std::cout << "SETTING SELF-GOVERNING TIMEOUT FOR SG PUT OPERATIONS FOR THIS CHANNEL TO FALSE"  << std::endl;
                 std::cout << "RESTORING TIMEOUT TO ORIGINAL SG PUT VALUE OF: " << originalTimeOut << " SECONDS " << std::endl;
                 channelTimeoutPolicySGPut.setSelfGoverningTimeout(false);
                 channelTimeoutPolicySGPut.setTimeout( originalTimeOut );
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();   //lock
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_channelTimeoutPolicySGPut(channelTimeoutPolicySGPut));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();   //unlock
                 }
 
             }
-            else {
+            else
+            {
                 cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cout << "Changed SG PUT from intitial " << originalTimeOut << " to: "  <<
                      (originalTimeOut +
@@ -535,28 +590,34 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         bool groupStatusFlag = false;
         pvgroup.statusGroup= gStatus; //ICAFE_NORMAL;
-        if (pvgroup.statusGroup==ECA_TIMEOUT) {
+        if (pvgroup.statusGroup==ECA_TIMEOUT)
+        {
             groupStatusFlag = true;
         }
 
-        for (unsigned int  iMember = 0; iMember< (*it_groupHandle).getNMember(); ++iMember) {
+        for (unsigned int  iMember = 0; iMember< (*it_groupHandle).getNMember(); ++iMember)
+        {
 
-            if (pvgroup.pvdata[iMember].status == ECAFE_INVALID_HANDLE) {
+            if (pvgroup.pvdata[iMember].status == ECAFE_INVALID_HANDLE)
+            {
                 continue;
             }
 
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 //do nothing as handle exists
 
-                if (nelemPreviousFlag[iMember]==true) {
+                if (nelemPreviousFlag[iMember]==true)
+                {
                     handleHelper.setNelem((*it_groupHandle).mHandle[iMember], nelemPrevious[iMember]);
                 }
 
             }
-            else {
+            else
+            {
                 //Should not get this far if invalid handle
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(ECAFE_INVALID_HANDLE);
@@ -564,20 +625,24 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
                 continue;
             }
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(it_handle, change_status(   mstatus[iMember] ));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
 
-            if (mstatus[iMember]!=ICAFE_NORMAL) {
+            if (mstatus[iMember]!=ICAFE_NORMAL)
+            {
                 pvgroup.pvdata[iMember].status = mstatus[iMember];
 
                 if (pvgroup.pvdata[iMember].status != ICAFE_NORMAL
                         && pvgroup.pvdata[iMember].status != ICAFE_RULE_FALSE
-                        && !groupStatusFlag) {
+                        && !groupStatusFlag)
+                {
                     pvgroup.statusGroup = pvgroup.pvdata[iMember].status;
                     groupStatusFlag = true;
                 }
@@ -592,7 +657,8 @@ int  CAFE::groupSet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         return pvgroup.statusGroup;
     }
-    else {
+    else
+    {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
 #undef __METHOD__
@@ -623,7 +689,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<std::str
 
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         cout << pvgroup.pvdata[iMember].getAsString(0)
              << " ts " << pvgroup.pvdata[iMember].ts.secPastEpoch << " " << pvgroup.pvdata[iMember].ts.nsec
              << " STATUS " << pvgroup.pvdata[iMember].status
@@ -633,13 +700,15 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<std::str
     }
 
 
-    if (pvgroup.statusGroup==ECA_TIMEOUT) {
+    if (pvgroup.statusGroup==ECA_TIMEOUT)
+    {
         cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cafeStatus.report(ECA_TIMEOUT);
         cout << "SG TIMEOUT OCCURRED. REVERTING TO ASYNCHRNOUS GET" << endl;
         return CAFE::getScalars(CAFE::getHandlesFromWithinGroupV(_groupHandle), valV, statusV);
     }
-    else {
+    else
+    {
         return pvgroup.statusGroup;
     }
 
@@ -670,7 +739,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<double> 
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsDouble(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -699,7 +769,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<float> &
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsFloat(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -729,7 +800,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<short> &
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsShort(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -758,7 +830,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<long> &v
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsLong(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -787,7 +860,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<long lon
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsLongLong(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -816,7 +890,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<unsigned
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsUShort(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -846,7 +921,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<unsigned
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsUChar(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -875,7 +951,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::vector<char> &v
     CAFE::groupGet(_groupHandle, pvgroup);
     valV.reserve(pvgroup.npv);
     statusV.reserve(pvgroup.npv);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         valV.push_back(pvgroup.pvdata[iMember].getAsChar(0));
         statusV.push_back(pvgroup.pvdata[iMember].status);
     }
@@ -901,7 +978,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, std::string * val, i
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsString(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -927,7 +1005,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, double * val, int * 
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsDouble(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -953,7 +1032,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, float * val, int * s
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsFloat(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -979,7 +1059,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, short * val, int * s
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsShort(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -1005,7 +1086,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, long * val, int * st
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsLong(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -1031,7 +1113,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, long long * val, int
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsLongLong(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -1057,7 +1140,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, unsigned short * val
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsUShort(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -1083,7 +1167,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, unsigned char * val,
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsUChar(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -1116,7 +1201,8 @@ int  CAFE::groupGetScalar(const unsigned int  _groupHandle, char * val, int * st
     pvgroup.setHasTS(false);
 
     CAFE::groupGet(_groupHandle, pvgroup);
-    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember) {
+    for (unsigned int  iMember = 0; iMember < pvgroup.npv; ++iMember)
+    {
         val[iMember]=pvgroup.pvdata[iMember].getAsChar(0);
         statusArray[iMember]=pvgroup.pvdata[iMember].status;
     }
@@ -1155,14 +1241,17 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
     int  gStatus=ICAFE_NORMAL;
 
-    if (pvgroup.npv==0 || pvgroup.groupHandle==0) {
+    if (pvgroup.npv==0 || pvgroup.groupHandle==0)
+    {
         gStatus=groupAttach(_groupHandle, pvgroup);
-        if (gStatus != ICAFE_NORMAL) {
+        if (gStatus != ICAFE_NORMAL)
+        {
             return gStatus;
         }
     };
 
-    if (pvgroup.groupHandle != _groupHandle) {
+    if (pvgroup.groupHandle != _groupHandle)
+    {
         return ECAFE_PVGROUP_GROUPHANDLE_MISMATCH;
     }
 
@@ -1171,11 +1260,13 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
     it_groupHandle = groupHandle_index.find(_groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         unsigned int  nGroupMember = (*it_groupHandle).getNMember();
 
-        if (pvgroup.npv != (*it_groupHandle).getNMember()) {
+        if (pvgroup.npv != (*it_groupHandle).getNMember())
+        {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             cout << "A MISMATCH IN THE NUMBER OF GROUP MEMBERS DETECTED " << endl;
             cout << "CLIENT (pvgroup.npv) CLAIMS "  <<  pvgroup.npv
@@ -1187,7 +1278,8 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
         cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
         cafeConduit_set_by_handle::iterator it_handle;
 
-        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember) {
+        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember)
+        {
 
             bool hf=false;
             //reset
@@ -1200,41 +1292,51 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 hf=true;
-                if (pvgroup.pvdata[iMember].getRule() != (*it_groupHandle).getRule(iMember)) {
-                    if(MUTEX) {
+                if (pvgroup.pvdata[iMember].getRule() != (*it_groupHandle).getRule(iMember))
+                {
+                    if(MUTEX)
+                    {
                         cafeMutex.lock();
                     }
                     groupHandle_index.modify(it_groupHandle,
                                              change_sg_rule(pvgroup.pvdata[iMember].rule, iMember));
-                    if(MUTEX) {
+                    if(MUTEX)
+                    {
                         cafeMutex.unlock();
                     }
                 }
-                if (!pvgroup.pvdata[iMember].getRule() ) {
+                if (!pvgroup.pvdata[iMember].getRule() )
+                {
                     pvgroup.pvdata[iMember].status=ICAFE_RULE_FALSE;
                 }
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
             }
 
-            if (!hf) {
+            if (!hf)
+            {
                 pvgroup.pvdata[iMember].status=ECAFE_INVALID_HANDLE;
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
 
@@ -1253,7 +1355,8 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
             //Check groupDataType
             if (pvgroup.pvdata[iMember].dataType<CAFE_STRING ||
-                    pvgroup.pvdata[iMember].dataType>CAFE_DOUBLE) {
+                    pvgroup.pvdata[iMember].dataType>CAFE_DOUBLE)
+            {
                 cdt=CAFE_STRING;
             }
 
@@ -1263,15 +1366,18 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
             chtype _chtype= cdt;
 
 
-            if (!pvgroup.pvdata[iMember].hasAlarm && !pvgroup.pvdata[iMember].hasTS) {
+            if (!pvgroup.pvdata[iMember].hasAlarm && !pvgroup.pvdata[iMember].hasTS)
+            {
                 handleHelper.setCafeDbrType(handle, CAFENUM::DBR_PRIMITIVE);
             }
-            else if (pvgroup.pvdata[iMember].hasAlarm && !pvgroup.pvdata[iMember].hasTS) {
+            else if (pvgroup.pvdata[iMember].hasAlarm && !pvgroup.pvdata[iMember].hasTS)
+            {
                 _chtype=dbf_type_to_DBR_STS (cdt);
                 handleHelper.setCafeDbrType(handle, CAFENUM::DBR_STS) ;
 
             }
-            else if (pvgroup.pvdata[iMember].hasTS) {
+            else if (pvgroup.pvdata[iMember].hasTS)
+            {
                 _chtype=dbf_type_to_DBR_TIME (cdt);
                 handleHelper.setCafeDbrType(handle, CAFENUM::DBR_TIME) ;
             }
@@ -1279,15 +1385,18 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
             //Always Return to Native DataType for now
             if ( (pvgroup.pvdata[iMember].status=cafeGranules.channelVerifyGet(handle,
-                                                 _chtype)) != ICAFE_NORMAL) {
+                                                 _chtype)) != ICAFE_NORMAL)
+            {
                 //dbf_type_to_DBR_TIME (cdt))) != ICAFE_NORMAL) {
 
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
 
@@ -1300,24 +1409,34 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
 
             // Examine the No of elements and set accordingly....
-            if ( handleHelper.getNelemClient(handle) !=  pvgroup.pvdata[iMember].getNelem()) {
-                //handleHelper.setNelem(handle, pvgroup.pvdata[iMember].getNelem()); //Change made 17 March 2017
+            if ( handleHelper.getNelemClient(handle) !=  pvgroup.pvdata[iMember].getNelem())
+            {
 
+                cout << "INFO: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+                cout << "Changing handleHelper.getNelemClient(handle) to that given in  pvgroup.pvdata[iMember].nelem" << endl;
+                cout << "i.e., From: " << handleHelper.getNelemClient(handle)  << " To: " <<  pvgroup.pvdata[iMember].nelem  << endl;
+                handleHelper.setNelem(handle, pvgroup.pvdata[iMember].getNelem()); //Change made back 12 September 2019
+                /*
+                //Change made 17 March 2017
                 cout << "INFO: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cout << "Changing pvgroup.pvdata[iMember].nelem to that given in handleHelper.getNelemClient(handle)" << endl;
                 cout << "i.e., From: " << pvgroup.pvdata[iMember].nelem << " To: " << handleHelper.getNelemClient(handle)  << endl;
                 pvgroup.pvdata[iMember].nelem=handleHelper.getNelemClient(handle);
+                */
             }
 
 
             if ( (pvgroup.pvdata[iMember].status=cafeGranules.channelPrepareGet(handle))
-                    != ICAFE_NORMAL) {
-                if(MUTEX) {
+                    != ICAFE_NORMAL)
+            {
+                if(MUTEX)
+                {
                     cafeMutex.lock();
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_sg_status(pvgroup.pvdata[iMember].status, iMember));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();
                 }
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
@@ -1336,11 +1455,13 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         //this returns normal even if a channel is not connected
 
-        if (gStatus!=ECA_NORMAL && channelTimeoutPolicySGGet.getSelfGoverningTimeout()) {
+        if (gStatus!=ECA_NORMAL && channelTimeoutPolicySGGet.getSelfGoverningTimeout())
+        {
             cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
 
             cafeStatus.report(gStatus);
-            if (gStatus == ECA_TIMEOUT) {
+            if (gStatus == ECA_TIMEOUT)
+            {
                 cout << "ENABLING AUTO- CORRECTIVE PROCEDURE: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             }
         }
@@ -1364,7 +1485,8 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         while ( (gStatus == ECA_TIMEOUT) && channelTimeoutPolicySGGet.getSelfGoverningTimeout()
                 && ntries<channelTimeoutPolicySGGet.getNtries()
-              ) {
+              )
+        {
 
             ++ntries;
             //Withdraw this test for now; not required
@@ -1386,45 +1508,53 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
             channelTimeoutPolicySGGet.setTimeout( (originalTimeOut +
                                                    channelTimeoutPolicySGGet.getDeltaTimeout()*ntries));
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();   //lock
             }
             groupHandle_index.modify(it_groupHandle,
                                      change_channelTimeoutPolicySGGet(channelTimeoutPolicySGGet));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();   //unlock
             }
 
 
-            if (gStatus == ECA_TIMEOUT) {
+            if (gStatus == ECA_TIMEOUT)
+            {
                 gStatus=(*it_groupHandle).get();
             }
 
         } //while
 
-        if (ntries>0) {
+        if (ntries>0)
+        {
             //if (ntries >= channelTimeoutPolicySGGet.getNtries() ) {
             cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
             std::cout << "No of(additional) tries=" << ntries << std::endl;
 
-            if (gStatus==ECAFE_TIMEOUT) {
+            if (gStatus==ECAFE_TIMEOUT)
+            {
                 std::cout << "is the MAXIMUM allowed as configured through SGTimeoutPolicy! "  << std::endl;
                 std::cout << "SETTING SELF-GOVERNING TIMEOUT FOR SG GET OPERATIONS FOR THIS CHANNEL TO FALSE"  << std::endl;
                 std::cout << "RESTORING TIMEOUT TO ORIGINAL SG GET VALUE OF: " << originalTimeOut << " SECONDS " << std::endl;
                 channelTimeoutPolicySGGet.setSelfGoverningTimeout(false);
                 channelTimeoutPolicySGGet.setTimeout( originalTimeOut );
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.lock();   //lock
                 }
                 groupHandle_index.modify(it_groupHandle,
                                          change_channelTimeoutPolicySGGet(channelTimeoutPolicySGGet));
-                if(MUTEX) {
+                if(MUTEX)
+                {
                     cafeMutex.unlock();   //unlock
                 }
 
             }
 
-            else {
+            else
+            {
 
                 cout << "Changed SG GET from intitial " << originalTimeOut << " to: "  <<
                      (originalTimeOut +
@@ -1453,22 +1583,27 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
 
         bool groupStatusFlag = false;
         pvgroup.statusGroup= gStatus; //ICAFE_NORMAL;
-        if ( pvgroup.statusGroup==ECA_TIMEOUT) {
+        if ( pvgroup.statusGroup==ECA_TIMEOUT)
+        {
             groupStatusFlag = true;
         }
 
 
-        for (unsigned int  iMember = 0; iMember< (*it_groupHandle).getNMember(); ++iMember) {
+        for (unsigned int  iMember = 0; iMember< (*it_groupHandle).getNMember(); ++iMember)
+        {
 
-            if (pvgroup.pvdata[iMember].status == ECAFE_INVALID_HANDLE) {
+            if (pvgroup.pvdata[iMember].status == ECAFE_INVALID_HANDLE)
+            {
                 continue;
             }
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 //do nothing as handle exists
             }
-            else {
+            else
+            {
                 //Should not get this far if invalid handle
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(ECAFE_INVALID_HANDLE);
@@ -1477,20 +1612,24 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
                 continue;
             }
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(it_handle, change_status(mstatus[iMember]));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
 
-            if (mstatus[iMember]!=ICAFE_NORMAL) {
+            if (mstatus[iMember]!=ICAFE_NORMAL)
+            {
                 pvgroup.pvdata[iMember].status = mstatus[iMember];
 
                 if (pvgroup.pvdata[iMember].status != ICAFE_NORMAL
                         && pvgroup.pvdata[iMember].status != ICAFE_RULE_FALSE
-                        && !groupStatusFlag) {
+                        && !groupStatusFlag)
+                {
                     pvgroup.statusGroup = pvgroup.pvdata[iMember].status;
                     groupStatusFlag = true;
                 }
@@ -1505,13 +1644,15 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
             //handleHelper.setSTS((*it_groupHandle).mHandle[iMember],pvgroup.pvdata[iMember].alarmStatus, \
             //pvgroup.pvdata[iMember].alarmSeverity,	pvgroup.pvdata[iMember].ts);
 
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.lock();
             }
             handle_index.modify(it_handle, change_alarmStatus(pvgroup.pvdata[iMember].alarmStatus));
             handle_index.modify(it_handle, change_alarmSeverity(pvgroup.pvdata[iMember].alarmSeverity));
             handle_index.modify(it_handle, change_epicsTimeStamp(pvgroup.pvdata[iMember].ts));
-            if(MUTEX) {
+            if(MUTEX)
+            {
                 cafeMutex.unlock();
             }
 
@@ -1521,7 +1662,8 @@ int  CAFE::groupGet(const unsigned int  _groupHandle, PVGroup &pvgroup)
         return pvgroup.statusGroup;
 
     }
-    else {
+    else
+    {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
 
@@ -1545,7 +1687,8 @@ int  CAFE::groupMonitorStart(const unsigned int  groupHandle, std::vector<int> &
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
     it_groupHandle = groupHandle_index.find(groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         unsigned int  nGroupMember = (*it_groupHandle).getNMember();
 
@@ -1556,14 +1699,17 @@ int  CAFE::groupMonitorStart(const unsigned int  groupHandle, std::vector<int> &
         cafeConduit_set_by_handle::iterator it_handle;
 
         // fill vector of member handles
-        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember) {
+        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember)
+        {
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 handleV.push_back((*it_groupHandle).mHandle[iMember]);
             }
-            else {
+            else
+            {
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(ECAFE_INVALID_HANDLE);
                 cout <<  "Invalid handle = " << (*it_groupHandle).mHandle[iMember]
@@ -1574,7 +1720,8 @@ int  CAFE::groupMonitorStart(const unsigned int  groupHandle, std::vector<int> &
         // issue monitorStart command
         return monitorStart(handleV, statusV, mpV);
     }
-    else {
+    else
+    {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
 
@@ -1599,7 +1746,8 @@ int  CAFE::groupMonitorStart(const unsigned int  groupHandle, std::vector<int> &
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
     it_groupHandle = groupHandle_index.find(groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         unsigned int  nGroupMember = (*it_groupHandle).getNMember();
 
@@ -1610,14 +1758,17 @@ int  CAFE::groupMonitorStart(const unsigned int  groupHandle, std::vector<int> &
         cafeConduit_set_by_handle::iterator it_handle;
 
         // fill vector of member handles
-        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember) {
+        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember)
+        {
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 handleV.push_back((*it_groupHandle).mHandle[iMember]);
             }
-            else {
+            else
+            {
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(ECAFE_INVALID_HANDLE);
                 cout <<  "Invalid handle = " << (*it_groupHandle).mHandle[iMember]
@@ -1630,7 +1781,8 @@ int  CAFE::groupMonitorStart(const unsigned int  groupHandle, std::vector<int> &
         return monitorStart(handleV, statusV, monitorIDV);
 
     }
-    else {
+    else
+    {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
 #undef __METHOD__
@@ -1652,7 +1804,8 @@ int  CAFE::groupMonitorStop (const unsigned int  groupHandle, std::vector<int> &
     cafeGroup_set_by_groupHandle::iterator it_groupHandle;
     it_groupHandle = groupHandle_index.find(groupHandle);
 
-    if (it_groupHandle != groupHandle_index.end()) {
+    if (it_groupHandle != groupHandle_index.end())
+    {
 
         unsigned int  nGroupMember = (*it_groupHandle).getNMember();
 
@@ -1663,14 +1816,17 @@ int  CAFE::groupMonitorStop (const unsigned int  groupHandle, std::vector<int> &
         cafeConduit_set_by_handle::iterator it_handle;
 
         // fill vector of member handles
-        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember) {
+        for (unsigned int  iMember = 0; iMember < nGroupMember; ++iMember)
+        {
 
             it_handle = handle_index.find((*it_groupHandle).mHandle[iMember]);
 
-            if (it_handle != handle_index.end()) {
+            if (it_handle != handle_index.end())
+            {
                 handleV.push_back((*it_groupHandle).mHandle[iMember]);
             }
-            else {
+            else
+            {
                 cout << "WARNING: " << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
                 cafeStatus.report(ECAFE_INVALID_HANDLE);
                 cout <<  "Invalid handle = " << (*it_groupHandle).mHandle[iMember]
@@ -1682,7 +1838,8 @@ int  CAFE::groupMonitorStop (const unsigned int  groupHandle, std::vector<int> &
         // issue monitorStart command
         return monitorStop(handleV, statusV);
     }
-    else {
+    else
+    {
         return ECAFE_INVALID_GROUP_HANDLE;
     }
 

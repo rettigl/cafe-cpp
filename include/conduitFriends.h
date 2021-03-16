@@ -15,7 +15,8 @@
 /**
  *   Friend to Conduit/CAFEGroup permitting fast modification to STS recorded in hash table
  */
-struct change_alarmStatus {
+struct change_alarmStatus
+{
     change_alarmStatus (const dbr_short_t  & new_alarmStatus): new_alarmStatus(new_alarmStatus) {}
 
     void operator() (Conduit& c)
@@ -28,7 +29,8 @@ struct change_alarmStatus {
 private:
     dbr_short_t  new_alarmStatus;
 };
-struct change_alarmSeverity {
+struct change_alarmSeverity
+{
     change_alarmSeverity (const dbr_short_t  & new_alarmSeverity): new_alarmSeverity(new_alarmSeverity) {}
 
     void operator() (Conduit& c)
@@ -41,7 +43,8 @@ struct change_alarmSeverity {
 private:
     dbr_short_t  new_alarmSeverity;
 };
-struct change_epicsTimeStamp {
+struct change_epicsTimeStamp
+{
     change_epicsTimeStamp (const epicsTimeStamp  & new_epicsTimeStamp): new_epicsTimeStamp(new_epicsTimeStamp) {}
 
     void operator() (Conduit& c)
@@ -50,7 +53,8 @@ struct change_epicsTimeStamp {
         c.ts =  new_epicsTimeStamp;
         //Do this to prevent overflow error in epicsTime time(ts) routines!
         //This bad number can occur in timeouts
-        if(c.ts.nsec>1000000000) {
+        if(c.ts.nsec>1000000000)
+        {
             c.ts.nsec=0;
         }
         ///////////////////////////////////////////////////////////////////////////
@@ -64,7 +68,8 @@ private:
 /**
  *   Friend to Conduit/CAFEGroup permitting fast modification to access rights state recorded in hash table
  */
-struct change_accessRead {
+struct change_accessRead
+{
     change_accessRead (const unsigned int  & new_accessRead): new_accessRead(new_accessRead) {}
 
     void operator() (Conduit& c)
@@ -82,7 +87,8 @@ private:
 /**
  *   Friend to Conduit/CAFEGroup permitting fast modification to access rights state recorded in hash table
  */
-struct change_accessWrite {
+struct change_accessWrite
+{
     change_accessWrite (const unsigned int  & new_accessWrite): new_accessWrite(new_accessWrite) {}
 
     void operator() (Conduit& c)
@@ -101,7 +107,8 @@ private:
  *   Friend toConduit/CAFEGroup permitting the access_rights_handler_args struct from callback fns
  *   to be recorded in hash table
  */
-struct change_accessRightsHandlerArgs {
+struct change_accessRightsHandlerArgs
+{
     change_accessRightsHandlerArgs (const struct access_rights_handler_args & new_accessRightsHandlerArgs):
         new_accessRightsHandlerArgs(new_accessRightsHandlerArgs) {}
 
@@ -111,6 +118,8 @@ struct change_accessRightsHandlerArgs {
         ///////////////////////////////////////////////////////////////////////////
         c.channelRegalia.accessRead =  new_accessRightsHandlerArgs.ar.read_access;
         c.channelRegalia.accessWrite=  new_accessRightsHandlerArgs.ar.write_access;
+        //std::cout << "change_accessRightsHandlerArgs " <<  new_accessRightsHandlerArgs.ar.read_access <<  new_accessRightsHandlerArgs.ar.write_access << std:: endl;
+        //std::cout << "change_accessRightsHandlerArgs " <<  c.channelRegalia.accessRead << c.channelRegalia.accessWrite << std:: endl;
         ///////////////////////////////////////////////////////////////////////////
     }
 
@@ -122,7 +131,8 @@ private:
 /**
  *   Friend to Conduit permitting pulse_id f to be set in hash table
  */
-struct change_beamEventNo {
+struct change_beamEventNo
+{
     change_beamEventNo (const unsigned long long  & new_beamEventNo): new_beamEventNo(new_beamEventNo) {}
 
     void operator() (Conduit& c)
@@ -134,10 +144,14 @@ private:
     unsigned long long new_beamEventNo;
 };
 
+
+
+
 /**
  *   Friend to Conduit/CAFEGroup records the channelRegalia class members in hash table
  */
-struct change_channelDeviceAttribute {
+struct change_channelDeviceAttribute
+{
     change_channelDeviceAttribute (const ChannelDeviceAttribute  & new_channelDeviceAttribute):
         new_channelDeviceAttribute(new_channelDeviceAttribute) {}
 
@@ -155,7 +169,8 @@ private:
 /**
  *   Friend to Conduit/CAFEGroup records the channelID in hash table
  */
-struct change_channelID {
+struct change_channelID
+{
     change_channelID (const chid & new_channelID): new_channelID(new_channelID) {}
 
     void operator() (Conduit& c)
@@ -173,7 +188,8 @@ private:
 /**
  *   Friend to Conduit records the channelGetActionWhenMonitorPolicy in hash table
  */
-struct change_channelGetActionWhenMonitorPolicy {
+struct change_channelGetActionWhenMonitorPolicy
+{
     change_channelGetActionWhenMonitorPolicy (
         const ChannelGetActionWhenMonitorPolicy & new_channelGetActionWhenMonitorPolicy):
         new_channelGetActionWhenMonitorPolicy(new_channelGetActionWhenMonitorPolicy) {}
@@ -191,7 +207,8 @@ private:
 /**
  *   Friend to Conduit records the channelGetCacheWaitPolicy in hash table
  */
-struct change_channelGetCacheWaitPolicy {
+struct change_channelGetCacheWaitPolicy
+{
     change_channelGetCacheWaitPolicy (
         const ChannelGetCacheWaitPolicy & new_channelGetCacheWaitPolicy):
         new_channelGetCacheWaitPolicy(new_channelGetCacheWaitPolicy) {}
@@ -212,7 +229,8 @@ private:
 /**
  *   Friend to Conduit permitting hasNewData flag to be set in hash table
  */
-struct change_hasNewData {
+struct change_hasNewData
+{
     change_hasNewData (const bool  & new_hasNewData): new_hasNewData(new_hasNewData) {}
 
     void operator() (Conduit& c)
@@ -229,7 +247,8 @@ private:
 /**
  *   Friend to Conduit/CAFEGroup records the channelRegalia class members in hash table
  */
-struct change_channelRegalia {
+struct change_channelRegalia
+{
     change_channelRegalia (const ChannelRegalia  & new_channelRegalia): new_channelRegalia(new_channelRegalia) {}
 
     void operator() (Conduit& c)
@@ -245,7 +264,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestDataTypePolicy in hash table
  */
-struct change_channelRequestDataTypePolicy {
+struct change_channelRequestDataTypePolicy
+{
     change_channelRequestDataTypePolicy (
         const ChannelRequestDataTypePolicy & new_channelRequestDataTypePolicy):
         new_channelRequestDataTypePolicy(new_channelRequestDataTypePolicy) {}
@@ -264,7 +284,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestMetaCtrl in hash table
  */
-struct change_channelRequestMetaCtrl {
+struct change_channelRequestMetaCtrl
+{
     change_channelRequestMetaCtrl (const ChannelRequestMetaData & new_channelData):
         new_channelData(new_channelData) {}
 
@@ -282,7 +303,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestMetaCtrlClient in hash table
  */
-struct change_channelRequestMetaCtrlClient {
+struct change_channelRequestMetaCtrlClient
+{
     change_channelRequestMetaCtrlClient (const ChannelRequestMetaDataClient & new_channelData):
         new_channelData(new_channelData) {}
 
@@ -303,7 +325,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestMetaData in hash table
  */
-struct change_channelRequestMetaData {
+struct change_channelRequestMetaData
+{
     change_channelRequestMetaData (const ChannelRequestMetaData & new_channelData):
         new_channelData(new_channelData) {}
 
@@ -324,7 +347,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestMetaDataClient in hash table
  */
-struct change_channelRequestMetaDataClient {
+struct change_channelRequestMetaDataClient
+{
     change_channelRequestMetaDataClient (const ChannelRequestMetaDataClient & new_channelData):
         new_channelData(new_channelData) {}
 
@@ -343,7 +367,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestMetaPrimitive in hash table
  */
-struct change_channelRequestMetaPrimitive {
+struct change_channelRequestMetaPrimitive
+{
     change_channelRequestMetaPrimitive (const ChannelRequestMetaData & new_channelData):
         new_channelData(new_channelData) {}
 
@@ -360,7 +385,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestPolicyGet in hash table
  */
-struct change_channelRequestPolicyGet {
+struct change_channelRequestPolicyGet
+{
     change_channelRequestPolicyGet (const ChannelRequestPolicy & new_ChannelRequestPolicy):
         new_ChannelRequestPolicy(new_ChannelRequestPolicy) {}
 
@@ -377,7 +403,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestPolicyGetCtrl in hash table
  */
-struct change_channelRequestPolicyGetCtrl {
+struct change_channelRequestPolicyGetCtrl
+{
     change_channelRequestPolicyGetCtrl (const ChannelRequestPolicy & new_ChannelRequestPolicy):
         new_ChannelRequestPolicy(new_ChannelRequestPolicy) {}
 
@@ -395,7 +422,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestPolicyPut in hash table
  */
-struct change_channelRequestPolicyPut {
+struct change_channelRequestPolicyPut
+{
     change_channelRequestPolicyPut (const ChannelRequestPolicy & new_ChannelRequestPolicy):
         new_ChannelRequestPolicy(new_ChannelRequestPolicy) {}
 
@@ -414,7 +442,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestStatusGet in hash table
  */
-struct change_channelRequestStatusGet {
+struct change_channelRequestStatusGet
+{
     change_channelRequestStatusGet (const ChannelRequestStatus & new_ChannelRequestStatus):
         new_ChannelRequestStatus(new_ChannelRequestStatus) {}
 
@@ -434,7 +463,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestStatusGetCtrl in hash table
  */
-struct change_channelRequestStatusGetCtrl {
+struct change_channelRequestStatusGetCtrl
+{
     change_channelRequestStatusGetCtrl (const ChannelRequestStatus & new_ChannelRequestStatus):
         new_ChannelRequestStatus(new_ChannelRequestStatus) {}
 
@@ -451,7 +481,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestStatusGetSTSACK in hash table
  */
-struct change_channelRequestStatusGetSTSACK {
+struct change_channelRequestStatusGetSTSACK
+{
     change_channelRequestStatusGetSTSACK (const ChannelRequestStatus & new_ChannelRequestStatus):
         new_ChannelRequestStatus(new_ChannelRequestStatus) {}
 
@@ -469,7 +500,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestStatusGetClassName in hash table
  */
-struct change_channelRequestStatusGetClassName {
+struct change_channelRequestStatusGetClassName
+{
     change_channelRequestStatusGetClassName (const ChannelRequestStatus & new_ChannelRequestStatus):
         new_ChannelRequestStatus(new_ChannelRequestStatus) {}
 
@@ -486,7 +518,8 @@ private:
 /**
  *   Friend to Conduit records the channelRequestStatusPut in hash table
  */
-struct change_channelRequestStatusPut {
+struct change_channelRequestStatusPut
+{
     change_channelRequestStatusPut (const ChannelRequestStatus & new_ChannelRequestStatus):
         new_ChannelRequestStatus(new_ChannelRequestStatus) {}
 
@@ -505,7 +538,8 @@ private:
 /**
  *   Friend to Conduit records the channelTimeoutPolicyGet in hash table
  */
-struct change_channelTimeoutPolicyGet {
+struct change_channelTimeoutPolicyGet
+{
     change_channelTimeoutPolicyGet (const ChannelTimeoutPolicy & new_channelTimeoutPolicy):
         new_channelTimeoutPolicy(new_channelTimeoutPolicy) {}
 
@@ -522,7 +556,8 @@ private:
 /**
  *   Friend to Conduit records the channelTimeoutPolicyPut in hash table
  */
-struct change_channelTimeoutPolicyPut {
+struct change_channelTimeoutPolicyPut
+{
     change_channelTimeoutPolicyPut (const ChannelTimeoutPolicy & new_channelTimeoutPolicy):
         new_channelTimeoutPolicy(new_channelTimeoutPolicy) {}
 
@@ -540,31 +575,31 @@ private:
 /**
  *   Friend to Conduit permitting pvdata to be entered in queue
  */
-struct change_dequePulseID {
+struct change_dequePulseID
+{
     change_dequePulseID (const PVDataHolder  & new_pvd): new_pvd(new_pvd) {}
 
     void operator() (Conduit& c)
     {
 
-
-
-        try {
+        try
+        {
             c.dequePulseID.push_back(new_pvd);
 
-            if (c.dequePulseID.size() > c.mapPulseIDBufferSize) {
+            if (c.dequePulseID.size() > c.mapPulseIDBufferSize)
+            {
                 c.dequePulseID.pop_front();
             }
 
         }
-        catch (std::bad_alloc &e) {
+        catch (std::bad_alloc &e)
+        {
 
-            std::cout << "change_dequeuPulseID" << " //" << e.what() << std:: endl;
+            std::cout << "Critical error in change_dequeuPulseID. Force Exit" << std::endl;
+            std::cout << e.what() << std:: endl;
             exit(1);
 
         }
-
-
-
     }
 
 private:
@@ -576,36 +611,41 @@ private:
 /**
  *   Friend to Conduit permitting pulse_id/pvdata to be set in hash table
  */
-struct change_mapPulseID {
+struct change_mapPulseID
+{
     change_mapPulseID (const PVDataHolder  & new_pvd): new_pvd(new_pvd) {}
 
     void operator() (Conduit& c)
     {
 
-        try {
+        try
+        {
 
             //std::pair<unsigned long long, PVDataHolder> p = std::make_pair(new_pvd.getPulseID(), new_pvd);
-
             //Check if make_pair is a success
 
             c.mapPulseID.insert(std::make_pair(new_pvd.getPulseID(), new_pvd));
 
 
-            if (c.mapPulseID.size() > c.mapPulseIDBufferSize) {
+            if (c.mapPulseID.size() > c.mapPulseIDBufferSize)
+            {
 
                 std::map<unsigned long long, PVDataHolder>::iterator pos=c.mapPulseID.begin();
-                if (pos != c.mapPulseID.end()) {
+                if (pos != c.mapPulseID.end())
+                {
                     c.mapPulseID.erase(pos);
                 }
-                else {
+                else
+                {
                     std::cout << "ITERATOR NOT FOUND in change_mapPulseID" << std::endl;
                 }
             }
 
         }
-        catch (std::bad_alloc &e) {
-
-            std::cout << "change_mapPulseID" << " //" << e.what() << std:: endl;
+        catch (std::bad_alloc &e)
+        {
+            std::cout << "Critical error in change_mapPulseID. Force Exit" << std::endl;
+            std::cout << e.what() << std:: endl;
             exit(1);
 
         }
@@ -617,26 +657,29 @@ private:
 };
 
 
-
-
 /**
  *   Friend to Conduit permitting size of map<pulseID, pvdata> size to be set;
  *   if new buffer size if smaller than previous, then erase excess elements
  */
-struct change_mapPulseIDBufferSize {
+struct change_mapPulseIDBufferSize
+{
     change_mapPulseIDBufferSize (const unsigned short  & new_mapPulseIDBufferSize): new_mapPulseIDBufferSize(new_mapPulseIDBufferSize) {}
 
     void operator() (Conduit& c)
     {
         ipos=0;
-        if (c.mapPulseIDBufferSize > new_mapPulseIDBufferSize) {
+        if (c.mapPulseIDBufferSize > new_mapPulseIDBufferSize)
+        {
             std::map<unsigned long long, PVDataHolder>::iterator pos;
-            for (pos=c.mapPulseID.begin();  pos != c.mapPulseID.end();) {
+            for (pos=c.mapPulseID.begin();  pos != c.mapPulseID.end();)
+            {
                 ++ipos;
-                if (ipos > new_mapPulseIDBufferSize) {
+                if (ipos > new_mapPulseIDBufferSize)
+                {
                     c.mapPulseID.erase(pos++);
                 }
-                else {
+                else
+                {
                     ++pos;
                 }
             }
@@ -654,7 +697,8 @@ private:
  *   Friend to Conduit permitting fast modification to std::vector<std::string> monitorAction
  *   (for CAFE Extensions)
  */
-struct change_monitorAction {
+struct change_monitorAction
+{
     change_monitorAction (std::string  &new_monitorAction): new_monitorAction(new_monitorAction) {}
 
     void operator() (Conduit& c)
@@ -671,7 +715,8 @@ private:
  *   Friend to Conduit permitting fast removal of all elements in std::vector<std::string> monitorAction
  *   (for CAFE Extensions)
  */
-struct change_monitorActionClear {
+struct change_monitorActionClear
+{
     change_monitorActionClear () {}
 
     void operator() (Conduit& c)
@@ -687,7 +732,8 @@ struct change_monitorActionClear {
  *   Friend to Conduit permitting fast removal of an entry in std::vector<std::string> monitorAction
  *   (for CAFE Extensions)
  */
-struct change_monitorActionErase {
+struct change_monitorActionErase
+{
     change_monitorActionErase (std::string  &new_monitorAction): new_monitorAction(new_monitorAction) {}
 
     void operator() (Conduit& c)
@@ -696,17 +742,21 @@ struct change_monitorActionErase {
         std::vector<std::string>::iterator it;
 
 
-        for (it = c.monitorAction.begin(); it != c.monitorAction.end(); ) {
-            if( (*it)==new_monitorAction) {
+        for (it = c.monitorAction.begin(); it != c.monitorAction.end(); )
+        {
+            if( (*it)==new_monitorAction)
+            {
                 it = c.monitorAction.erase(it);
                 maFound=true;
             }
-            else {
+            else
+            {
                 ++it;
             }
         }
 
-        if (!maFound) {
+        if (!maFound)
+        {
             std::cout << "monitorAction " << new_monitorAction << " NOT FOUND! " << std::endl;
             std::cout << "Could not delete entry!" << std::endl;
         }
@@ -717,40 +767,93 @@ private:
 };
 
 
+
+
+
+
+
+
 /**
- *   Friend to Conduit permitting fast removal of an entry in the  monitorPolicy vector
+ *   Friend to Conduit permitting fast modification to monitorPolicy parameters
  *
  */
-struct change_monitorPolicyErase {
-    change_monitorPolicyErase (unsigned int  & new_evid): new_evid(new_evid) {}
+struct change_monitorPolicy
+{
+    change_monitorPolicy (class MonitorPolicy & new_monitorPolicy): new_monitorPolicy(new_monitorPolicy) {}
 
     void operator() (Conduit& c)
     {
 
-        bool evidFound=false;
-        std::vector<MonitorPolicy>::iterator it;
+        bool mpidFound=false;
+      
         //Iterate
-        for (it = c.mpV.begin(); it != c.mpV.end();) {
+        for (size_t i=0; i < c.mpV.size(); ++i)
+        {
             //std::cout << "ID " << (*it).getID() << " " << std::endl;
 
-            if ( (*it).getID()==new_evid) {
-                evidFound=true;
+	  if (c.mpV[i].getID()==new_monitorPolicy.getID())
+            {
+                mpidFound=true;
+                c.mpV[i] = new_monitorPolicy; //Must be a deep copy.
+                break;
+            }
+          
+        }
+
+        if (!mpidFound)
+        {
+	    std::cout << "mpid " << new_monitorPolicy.getID() << " NOT FOUND! " << std::endl;
+            std::cout << "Could not modify entry!" << std::endl;
+        }
+    }
+
+private:
+    class MonitorPolicy  new_monitorPolicy;
+};
+
+
+
+
+
+/**
+ *   Friend to Conduit permitting fast removal of an entry in the  monitorPolicy vector
+ *
+ */
+struct change_monitorPolicyErase
+{
+    change_monitorPolicyErase (unsigned int  & new_mpid): new_mpid(new_mpid) {}
+
+    void operator() (Conduit& c)
+    {
+
+        bool mpidFound=false;
+        std::vector<MonitorPolicy>::iterator it;
+        //Iterate
+        for (it = c.mpV.begin(); it != c.mpV.end();)
+        {
+            //std::cout << "ID " << (*it).getID() << " " << std::endl;
+
+            if ( (*it).getID()==new_mpid)
+            {
+                mpidFound=true;
                 it=(c.mpV).erase(it);
                 break;
             }
-            else {
+            else
+            {
                 ++it;
             }
         }
 
-        if (!evidFound) {
-            std::cout << "evid " << new_evid << " NOT FOUND! " << std::endl;
+        if (!mpidFound)
+        {
+            std::cout << "mpid " << new_mpid << " NOT FOUND! " << std::endl;
             std::cout << "Could not delete entry!" << std::endl;
         }
     }
 
 private:
-    unsigned int  new_evid;
+    unsigned int  new_mpid;
 };
 
 
@@ -760,21 +863,21 @@ private:
  *   Friend to Conduit permitting fast insertion into the monitorPolicy vector
  *
  */
-struct change_monitorPolicyInsert {
+struct change_monitorPolicyInsert
+{
     change_monitorPolicyInsert (class MonitorPolicy & new_monitorPolicy): new_monitorPolicy(new_monitorPolicy) {}
 
     void operator() (Conduit& c)
     {
 
-
         //insert into mpV
         (c.mpV).push_back(new_monitorPolicy);
 
-        if (c.mpV.size()>(MAX_NO_MONITORS_PER_CHANNEL/2)) {
+        if (c.mpV.size()>(MAX_NO_MONITORS_PER_CHANNEL/2))
+        {
             std::cout << "HEY DUDE - YOU NOW HAVE " << c.mpV.size() << " MONITORS " << std::endl;
             std::cout << "for channel " << c.pv << " with handle " << c.handle << std::endl;
         }
-
 
     }
 
@@ -788,32 +891,36 @@ private:
  *   Friend to Conduit permitting fast removal of an entry in the  monitorPolicyInWaiting vector
  *
  */
-struct change_monitorPolicyInWaitingErase {
-    change_monitorPolicyInWaitingErase (unsigned int  & new_evid): new_evid(new_evid) {}
+struct change_monitorPolicyInWaitingErase
+{
+    change_monitorPolicyInWaitingErase (unsigned int  & new_mpid): new_mpid(new_mpid) {}
 
     void operator() (Conduit& c)
     {
 
-        bool evidFound=false;
+        bool mpidFound=false;
         std::vector<MonitorPolicy>::iterator it;
         //Iterate
-        for (it = c.mpInWaitingV.begin(); it != c.mpInWaitingV.end(); ++it) {
+        for (it = c.mpInWaitingV.begin(); it != c.mpInWaitingV.end(); ++it)
+        {
 
-            if ( (*it).getID()==new_evid) {
-                evidFound=true;
+            if ( (*it).getID()==new_mpid)
+            {
+                mpidFound=true;
                 (c.mpInWaitingV).erase(it);
                 break;
             }
         }
 
-        if (!evidFound) {
-            std::cout << "evid " << new_evid << " NOT FOUND! " << std::endl;
+        if (!mpidFound)
+        {
+            std::cout << "mpid " << new_mpid << " NOT FOUND! " << std::endl;
             std::cout << "Could not delete entry!" << std::endl;
         }
     }
 
 private:
-    unsigned int  new_evid;
+    unsigned int  new_mpid;
 };
 
 
@@ -822,7 +929,8 @@ private:
  *   Friend to Conduit permitting fast insertion into the monitorPolicyInWaiting vector
  *
  */
-struct change_monitorPolicyInWaitingInsert {
+struct change_monitorPolicyInWaitingInsert
+{
     change_monitorPolicyInWaitingInsert (class MonitorPolicy & new_monitorPolicy): new_monitorPolicy(new_monitorPolicy) {}
 
     void operator() (Conduit& c)
@@ -831,7 +939,8 @@ struct change_monitorPolicyInWaitingInsert {
         //insert into mpnWaitingV
         (c.mpInWaitingV).push_back(new_monitorPolicy);
 
-        if (c.mpInWaitingV.size()>6) {
+        if (c.mpInWaitingV.size()>4)
+        {
             std::cout << "HEY DUDE - YOU NOW HAVE " << c.mpInWaitingV.size()
                       << " MONITORS IN WAITING" << std::endl;
             std::cout << "for channel " << c.pv << " with handle " << c.handle << std::endl;
@@ -846,13 +955,11 @@ private:
 
 
 
-
-
-
 /**
  *   Friend to Conduit/CAFEGroup permitting fast modification to pvAlias in hash table
  */
-struct change_pvAlias {
+struct change_pvAlias
+{
     change_pvAlias (const char * & new_pvAlias): new_pvAlias(new_pvAlias) {}
 
     void operator() (Conduit& c)
@@ -867,6 +974,88 @@ private:
     const char * new_pvAlias;
 };
 
+
+
+
+#if HAVE_PYTHON_H
+
+/**
+ *   Friend to Conduit permitting fast modification to pyGetCallbackFn in hash table
+ */
+struct change_pyGetCallbackFn
+{
+    change_pyGetCallbackFn (void * & new_pyGetCallbackFn): new_pyGetCallbackFn(new_pyGetCallbackFn) {}
+
+    void operator() (Conduit& c)
+    {
+        c.pyGetCallbackFn =  new_pyGetCallbackFn;
+    }
+
+private:
+    void * new_pyGetCallbackFn;
+};
+
+
+/**
+ *   Friend to Conduit permitting fast modification to pyPutCallbackFn in hash table
+ */
+struct change_pyPutCallbackFn
+{
+    change_pyPutCallbackFn (void * & new_pyPutCallbackFn): new_pyPutCallbackFn(new_pyPutCallbackFn) {}
+
+    void operator() (Conduit& c)
+    {
+        c.pyPutCallbackFn =  new_pyPutCallbackFn;
+    }
+
+private:
+    void * new_pyPutCallbackFn;
+};
+
+/**
+ *   Friend to Conduit permitting fast modification to pyConnectCallbackFn in hash table
+ */
+struct change_pyConnectCallbackFn
+{
+    change_pyConnectCallbackFn (void * & new_pyConnectCallbackFn): new_pyConnectCallbackFn(new_pyConnectCallbackFn) {}
+
+    void operator() (Conduit& c)
+    {
+ 
+        //c.pyConnectCallbackFn =  new_pyConnectCallbackFn;
+        //insert into mpV
+        (c.pyConnectCallbackVector).push_back(new_pyConnectCallbackFn);	
+
+	//for (unsigned int i=0; i < c.pyConnectCallbackVector.size(); ++i) {
+	//    std::cout << "change_pyConnectCallbackFn: " << i << " " << c.pyConnectCallbackVector[i] << std::endl;
+        //}
+
+    }
+
+private:
+    void * new_pyConnectCallbackFn;
+};
+
+
+/**
+ *   Friend to Conduit permitting fast modification to pyOpenCallbackFlag in hash table
+ */
+struct change_pyOpenCallbackFlag
+{
+    change_pyOpenCallbackFlag (bool & new_pyOpenCallbackFlag): new_pyOpenCallbackFlag(new_pyOpenCallbackFlag) {}
+
+    void operator() (Conduit& c)
+    {
+        c.pyOpenCallbackFlag =  new_pyOpenCallbackFlag;
+
+    }
+
+private:
+    bool new_pyOpenCallbackFlag;
+};
+
+
+#endif
 
 
 
@@ -888,7 +1077,8 @@ private:
 /**
  *   Friend to Conduit/CAFEGroup permitting fast modification to the status as given by the last method invocation
  */
-struct change_status {
+struct change_status
+{
     change_status (const int  & new_status): new_status(new_status) {}
     void operator() (Conduit& c)
     {
@@ -906,42 +1096,82 @@ private:
 /**
  *   Friend to Conduit permitting associated alarm Severity levels together with channel description to be entered into container
  */
-struct change_supplementHandle {
+struct change_supplementHandle
+{
     change_supplementHandle (const alarmSeverityStruct  & new_alarmSeverity, const std::string & new_desc): new_alarmSeverity(new_alarmSeverity), new_desc(new_desc) {}
 
     void operator() (Conduit& c)
     {
 
-      c.aSevStruct.hhsv=new_alarmSeverity.hhsv;
-      c.aSevStruct.hsv=new_alarmSeverity.hsv;
-			c.aSevStruct.lsv=new_alarmSeverity.lsv;
-      c.aSevStruct.llsv=new_alarmSeverity.llsv;
-			c.desc=new_desc;
-			c.hasDesc=true;
-			c.hasAlarmSevStruct=true;
-			 
+        c.aSevStruct.hhsv=new_alarmSeverity.hhsv;
+        c.aSevStruct.hsv=new_alarmSeverity.hsv;
+        c.aSevStruct.lsv=new_alarmSeverity.lsv;
+        c.aSevStruct.llsv=new_alarmSeverity.llsv;
+        c.desc=new_desc;
+        c.hasDesc=true;
+        c.hasAlarmSevStruct=true;
+
     }
 
 private:
     alarmSeverityStruct new_alarmSeverity;
-		std::string new_desc;
+    std::string new_desc;
 };
 
 
 
+/**
+ *   Friend to Conduit permitting associated alarm Severity levels together with channel description to be entered into container
+ */
+struct change_supplementAlarmSeverity
+{
+    change_supplementAlarmSeverity (const alarmSeverityStruct  & new_alarmSeverity): new_alarmSeverity(new_alarmSeverity) {}
 
+    void operator() (Conduit& c)
+    {
+
+        c.aSevStruct.hhsv=new_alarmSeverity.hhsv;
+        c.aSevStruct.hsv=new_alarmSeverity.hsv;
+        c.aSevStruct.lsv=new_alarmSeverity.lsv;
+        c.aSevStruct.llsv=new_alarmSeverity.llsv;
+        c.hasAlarmSevStruct=true;
+
+    }
+
+private:
+    alarmSeverityStruct new_alarmSeverity;
+};
+
+
+
+/**
+ *   Friend to Conduit permitting associated alarm channel description to be entered into container
+ */
+struct change_supplementDescription
+{
+    change_supplementDescription (const std::string & new_desc): new_desc(new_desc) {}
+
+    void operator() (Conduit& c)
+    {
+        c.desc=new_desc;
+        c.hasDesc=true;
+    }
+
+private:
+    std::string new_desc;
+};
 
 
 /**
  *   Friend to Conduit/CAFEGroup permitting fast modification to the usrArgs as given by the last method invocation
  */
-struct change_usrArgs {
+struct change_usrArgs
+{
     change_usrArgs (const unsigned int  & new_usrArgs): new_usrArgs(new_usrArgs) {}
     void operator() (Conduit& c)
     {
         c.usrArgs = (void *) (unsigned long) new_usrArgs;   // APRIL2018 - added to remove C++11 compiler warning
     }
-
 
 private:
     unsigned int  new_usrArgs;
@@ -949,9 +1179,76 @@ private:
 
 
 /**
- *   friend to Conduit/CAFEGroup permitting the groupHandle to which the channel belongs to be recorded in hash table
+ *   Friend to Conduit permitting fast removal of an entry in the widgetV vector
+ *
  */
-struct change_groupHandle {
+struct change_widgetErase
+{
+    change_widgetErase (void *  & new_widget): new_widget(new_widget) {}
+
+    void operator() (Conduit& c)
+    {
+
+        bool widgetFound=false;
+        std::vector<void *>::iterator it;
+        //Iterate
+        for (it = c.widgetV.begin(); it != c.widgetV.end(); ++it)
+        {
+            if ( (*it)==new_widget)
+            {
+                widgetFound=true;
+                (c.widgetV).erase(it);
+                break;
+            }
+        }
+
+        if (!widgetFound)
+        {
+            std::cout << "widget " << new_widget << " NOT FOUND! " << std::endl;
+            std::cout << "Could not delete entry from std::vector widgetV!" << std::endl;
+        }
+    }
+
+private:
+    void *  new_widget;
+};
+
+/**
+ *   Friend to Conduit permitting fast insertion into the monitorPolicyInWaiting vector
+ *
+ */
+struct change_widgetInsert
+{
+    change_widgetInsert (void * & new_widget): new_widget(new_widget) {}
+
+    void operator() (Conduit& c)
+    {
+
+        //insert into widgetV
+        (c.widgetV).push_back((void *)new_widget);
+        /*
+          std::vector<void *>::iterator it;
+          //Iterate
+          for (it = c.widgetV.begin(); it != c.widgetV.end(); ++it) {
+
+        std::cout << "widget in change " << (*it) << std::endl;
+
+          }
+        */
+
+    }
+
+private:
+    void * new_widget;
+};
+
+
+
+/**
+ *   friend to Conduit/CAFEgroup permitting the groupHandle to which the channel belongs to be recorded in hash table
+ */
+struct change_groupHandle
+{
     change_groupHandle (const unsigned int  & new_groupHandle): new_groupHandle(new_groupHandle) {}
 
     void operator() (Conduit& c)
