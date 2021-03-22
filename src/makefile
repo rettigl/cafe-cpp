@@ -41,8 +41,8 @@ host_triplet = x86_64-unknown-linux-gnu
 #am__append_1 = zbsCafeService.cpp zbsDataHolders.cpp \
 #		bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c bitshuffle/iochain.c
 
-##am__append_2 = pycafe/PyCafe_sf.cpp
-#am__append_3 = pycafe/PyCafe.cpp
+#am__append_2 = pycafe/PyCafe_sf.cpp
+am__append_3 = pycafe/PyCafe.cpp
 subdir = src
 DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -91,11 +91,15 @@ am__libcafe_la_SOURCES_DIST = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	zbsDataHolders.cpp bitshuffle/bitshuffle_core.c \
 	bitshuffle/bitshuffle.c bitshuffle/iochain.c \
 	pycafe/PyCafe_sf.cpp pycafe/PyCafe.cpp
+am__dirstamp = $(am__leading_dot)dirstamp
 #am__objects_1 = zbsCafeService.lo zbsDataHolders.lo \
-#	bitshuffle_core.lo bitshuffle.lo iochain.lo
-##am__objects_2 =  \
-##	PyCafe_sf.lo
-#am__objects_3 = PyCafe.lo
+#	bitshuffle/bitshuffle_core.lo \
+#	bitshuffle/bitshuffle.lo \
+#	bitshuffle/iochain.lo
+#am__objects_2 =  \
+#	pycafe/PyCafe_sf.lo
+am__objects_3 =  \
+	pycafe/PyCafe.lo
 am_libcafe_la_OBJECTS = cafe.lo cafeCache.lo cafeGroup.lo \
 	cafeVectors.lo cafeXML.lo callbackHandlerCreate.lo \
 	callbackHandlerMonitor.lo conduit.lo connect.lo \
@@ -138,21 +142,21 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run aclocal-1.11
 AMTAR = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run tar
-AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
-AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
+AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoheader
 AUTOMAKE = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run automake-1.11
 AWK = gawk
 CAFE_CPPFLAGS = -I$(top_srcdir)/include 
-CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
+CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /opt/psi/Programming/gcc/6.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
-CXX = /opt/psi/Programming/gcc/6.3.0/bin/g++
-CXXCPP = /opt/psi/Programming/gcc/6.3.0/bin/g++ -E
+CPP = /opt/psi/Programming/gcc/7.3.0/bin/gcc -E
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
+CXX = /opt/psi/Programming/gcc/7.3.0/bin/g++
+CXXCPP = /opt/psi/Programming/gcc/7.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
@@ -174,9 +178,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 LIBOBJS = 
-LIBS = -lQt5Xml 
+LIBS = -lQt5Xml -lpython3.7m 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -209,7 +213,7 @@ abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_top_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 ac_ct_AR = ar
-ac_ct_CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
+ac_ct_CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 ac_ct_CXX = 
 ac_ct_DUMPBIN = 
 am__include = include
@@ -238,7 +242,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.13.0-gcc-6.3.0/lib/SL6-x86_64
+libdir = /opt/gfa/cafe/cpp/cafe-1.13.0/lib/SL6-x86_64
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -246,7 +250,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.13.0-gcc-6.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-1.13.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -341,19 +345,47 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+bitshuffle/$(am__dirstamp):
+	@$(MKDIR_P) bitshuffle
+	@: > bitshuffle/$(am__dirstamp)
+bitshuffle/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) bitshuffle/$(DEPDIR)
+	@: > bitshuffle/$(DEPDIR)/$(am__dirstamp)
+bitshuffle/bitshuffle_core.lo: bitshuffle/$(am__dirstamp) \
+	bitshuffle/$(DEPDIR)/$(am__dirstamp)
+bitshuffle/bitshuffle.lo: bitshuffle/$(am__dirstamp) \
+	bitshuffle/$(DEPDIR)/$(am__dirstamp)
+bitshuffle/iochain.lo: bitshuffle/$(am__dirstamp) \
+	bitshuffle/$(DEPDIR)/$(am__dirstamp)
+pycafe/$(am__dirstamp):
+	@$(MKDIR_P) pycafe
+	@: > pycafe/$(am__dirstamp)
+pycafe/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) pycafe/$(DEPDIR)
+	@: > pycafe/$(DEPDIR)/$(am__dirstamp)
+pycafe/PyCafe_sf.lo: pycafe/$(am__dirstamp) \
+	pycafe/$(DEPDIR)/$(am__dirstamp)
+pycafe/PyCafe.lo: pycafe/$(am__dirstamp) \
+	pycafe/$(DEPDIR)/$(am__dirstamp)
 libcafe.la: $(libcafe_la_OBJECTS) $(libcafe_la_DEPENDENCIES) 
 	$(libcafe_la_LINK) -rpath $(libdir) $(libcafe_la_OBJECTS) $(libcafe_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f bitshuffle/bitshuffle.$(OBJEXT)
+	-rm -f bitshuffle/bitshuffle.lo
+	-rm -f bitshuffle/bitshuffle_core.$(OBJEXT)
+	-rm -f bitshuffle/bitshuffle_core.lo
+	-rm -f bitshuffle/iochain.$(OBJEXT)
+	-rm -f bitshuffle/iochain.lo
+	-rm -f pycafe/PyCafe.$(OBJEXT)
+	-rm -f pycafe/PyCafe.lo
+	-rm -f pycafe/PyCafe_sf.$(OBJEXT)
+	-rm -f pycafe/PyCafe_sf.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/PyCafe.Plo
-include ./$(DEPDIR)/PyCafe_sf.Plo
-include ./$(DEPDIR)/bitshuffle.Plo
-include ./$(DEPDIR)/bitshuffle_core.Plo
 include ./$(DEPDIR)/cafe.Plo
 include ./$(DEPDIR)/cafeCache.Plo
 include ./$(DEPDIR)/cafeGroup.Plo
@@ -370,7 +402,6 @@ include ./$(DEPDIR)/exceptionsHelper.Plo
 include ./$(DEPDIR)/granules.Plo
 include ./$(DEPDIR)/handleHelper.Plo
 include ./$(DEPDIR)/helper.Plo
-include ./$(DEPDIR)/iochain.Plo
 include ./$(DEPDIR)/loadCollectionXMLParser.Plo
 include ./$(DEPDIR)/loadGroupXMLParser.Plo
 include ./$(DEPDIR)/methodCallbacks.Plo
@@ -379,89 +410,67 @@ include ./$(DEPDIR)/restorePVGroupXMLParser.Plo
 include ./$(DEPDIR)/transpose.Plo
 include ./$(DEPDIR)/zbsCafeService.Plo
 include ./$(DEPDIR)/zbsDataHolders.Plo
+include bitshuffle/$(DEPDIR)/bitshuffle.Plo
+include bitshuffle/$(DEPDIR)/bitshuffle_core.Plo
+include bitshuffle/$(DEPDIR)/iochain.Plo
+include pycafe/$(DEPDIR)/PyCafe.Plo
+include pycafe/$(DEPDIR)/PyCafe_sf.Plo
 
 .c.o:
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(COMPILE) -c $<
+#	$(COMPILE) -c -o $@ $<
 
 .c.obj:
-	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+#	$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
 #	source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(LTCOMPILE) -c -o $@ $<
 
-bitshuffle_core.lo: bitshuffle/bitshuffle_core.c
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bitshuffle_core.lo -MD -MP -MF $(DEPDIR)/bitshuffle_core.Tpo -c -o bitshuffle_core.lo `test -f 'bitshuffle/bitshuffle_core.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle_core.c
-	$(am__mv) $(DEPDIR)/bitshuffle_core.Tpo $(DEPDIR)/bitshuffle_core.Plo
-#	source='bitshuffle/bitshuffle_core.c' object='bitshuffle_core.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bitshuffle_core.lo `test -f 'bitshuffle/bitshuffle_core.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle_core.c
-
-bitshuffle.lo: bitshuffle/bitshuffle.c
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bitshuffle.lo -MD -MP -MF $(DEPDIR)/bitshuffle.Tpo -c -o bitshuffle.lo `test -f 'bitshuffle/bitshuffle.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle.c
-	$(am__mv) $(DEPDIR)/bitshuffle.Tpo $(DEPDIR)/bitshuffle.Plo
-#	source='bitshuffle/bitshuffle.c' object='bitshuffle.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bitshuffle.lo `test -f 'bitshuffle/bitshuffle.c' || echo '$(srcdir)/'`bitshuffle/bitshuffle.c
-
-iochain.lo: bitshuffle/iochain.c
-	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT iochain.lo -MD -MP -MF $(DEPDIR)/iochain.Tpo -c -o iochain.lo `test -f 'bitshuffle/iochain.c' || echo '$(srcdir)/'`bitshuffle/iochain.c
-	$(am__mv) $(DEPDIR)/iochain.Tpo $(DEPDIR)/iochain.Plo
-#	source='bitshuffle/iochain.c' object='iochain.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o iochain.lo `test -f 'bitshuffle/iochain.c' || echo '$(srcdir)/'`bitshuffle/iochain.c
-
 .cpp.o:
-	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
 #	source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LTCXXCOMPILE) -c -o $@ $<
-
-PyCafe_sf.lo: pycafe/PyCafe_sf.cpp
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PyCafe_sf.lo -MD -MP -MF $(DEPDIR)/PyCafe_sf.Tpo -c -o PyCafe_sf.lo `test -f 'pycafe/PyCafe_sf.cpp' || echo '$(srcdir)/'`pycafe/PyCafe_sf.cpp
-	$(am__mv) $(DEPDIR)/PyCafe_sf.Tpo $(DEPDIR)/PyCafe_sf.Plo
-#	source='pycafe/PyCafe_sf.cpp' object='PyCafe_sf.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PyCafe_sf.lo `test -f 'pycafe/PyCafe_sf.cpp' || echo '$(srcdir)/'`pycafe/PyCafe_sf.cpp
-
-PyCafe.lo: pycafe/PyCafe.cpp
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PyCafe.lo -MD -MP -MF $(DEPDIR)/PyCafe.Tpo -c -o PyCafe.lo `test -f 'pycafe/PyCafe.cpp' || echo '$(srcdir)/'`pycafe/PyCafe.cpp
-	$(am__mv) $(DEPDIR)/PyCafe.Tpo $(DEPDIR)/PyCafe.Plo
-#	source='pycafe/PyCafe.cpp' object='PyCafe.lo' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PyCafe.lo `test -f 'pycafe/PyCafe.cpp' || echo '$(srcdir)/'`pycafe/PyCafe.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf bitshuffle/.libs bitshuffle/_libs
+	-rm -rf pycafe/.libs pycafe/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -573,6 +582,10 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f bitshuffle/$(DEPDIR)/$(am__dirstamp)
+	-rm -f bitshuffle/$(am__dirstamp)
+	-rm -f pycafe/$(DEPDIR)/$(am__dirstamp)
+	-rm -f pycafe/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -583,7 +596,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) bitshuffle/$(DEPDIR) pycafe/$(DEPDIR)
 	-rm -f makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -629,7 +642,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) bitshuffle/$(DEPDIR) pycafe/$(DEPDIR)
 	-rm -f makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

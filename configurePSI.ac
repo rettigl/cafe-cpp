@@ -16,7 +16,7 @@ AC_CONFIG_AUX_DIR(./)
 AC_CONFIG_MACRO_DIR([m4])
 m4_pattern_allow([AC_CONFIG_MACRO])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([gnu subdir-objects])
 AC_CONFIG_SRCDIR([./include/cafe.h])
 
 AC_LANG_CPLUSPLUS
@@ -156,7 +156,7 @@ echo EPICS_PATCH=$EPICS_PATCH_REL
 ##
 AC_LANG_PUSH([C++])
 
-if test $HAVE_EPICS == true; then
+if test x$HAVE_EPICS == xtrue; then
 
   # Change flags: if all tests are successfull, accept these changes; if
   # the tests are not successfull, use the old flags.
@@ -564,7 +564,7 @@ fi
 ##
 AC_LANG_PUSH([C++])
 
-if test $HAVE_QT_ == true ; then
+if test x$HAVE_QT_ == xtrue ; then
 
   # Change flags: if all tests are successfull, accept this changes; if 
   # the tests are not successfull, use the old flags.

@@ -24,7 +24,7 @@ export CAFE_HOST_FLAG_DARWIN=$CAFE_HOST_FLAG_DARWIN
 EPICS_BASE=$(readlink ${EPICS}/base)
 #EB=$(readlink /afs/psi.ch/project/cafe/gitworkspace/CAFE/cpp/base)
 echo $EPICS_BASE
-if [ -z "$EB" ]
+if [ -z "$EPICS_BASE" ]
 then
     EPICS_BASE='base-7.4.1' #7.0 = 7+0 = 7 for major release
 fi

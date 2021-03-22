@@ -42,8 +42,8 @@ host_triplet = x86_64-unknown-linux-gnu
 #if HAVE_PYTHON_
 #include_HEADERS += PyCafe_api.h
 #endif
-#am__append_2 = PyCafe.h 
-am__append_3 = PyCafe_api.h
+am__append_2 = PyCafe.h 
+#am__append_3 = PyCafe_api.h
 subdir = include
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/makefile.am \
 	$(srcdir)/makefile.in
@@ -104,21 +104,21 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run aclocal-1.11
 AMTAR = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run tar
-AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
-AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
+AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoheader
 AUTOMAKE = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run automake-1.11
 AWK = gawk
 CAFE_CPPFLAGS = -I$(top_srcdir)/include 
-CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
+CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /opt/psi/Programming/gcc/6.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
-CXX = /opt/psi/Programming/gcc/6.3.0/bin/g++
-CXXCPP = /opt/psi/Programming/gcc/6.3.0/bin/g++ -E
+CPP = /opt/psi/Programming/gcc/7.3.0/bin/gcc -E
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
+CXX = /opt/psi/Programming/gcc/7.3.0/bin/g++
+CXXCPP = /opt/psi/Programming/gcc/7.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
@@ -140,9 +140,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 LIBOBJS = 
-LIBS = -lQt5Xml 
+LIBS = -lQt5Xml -lpython3.7m 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -175,7 +175,7 @@ abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/include
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_top_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 ac_ct_AR = ar
-ac_ct_CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
+ac_ct_CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 ac_ct_CXX = 
 ac_ct_DUMPBIN = 
 am__include = include
@@ -204,7 +204,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.13.0-gcc-6.3.0/lib/SL6-x86_64
+libdir = /opt/gfa/cafe/cpp/cafe-1.13.0/lib/SL6-x86_64
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -212,7 +212,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.13.0-gcc-6.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-1.13.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
