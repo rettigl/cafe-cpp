@@ -53,16 +53,17 @@ EPICS_LIB_PATH=""
 
 
 ## Host Arch
-if test "${HOST_ARCH}" == ""; then
+if test x"${HOST_ARCH}" == x""; then
   HOST_ARCH=Linux 
   #echo ${EPICS_HOST_ARCH} | grep -c 'SL6' 
   #echo ${EPICS_HOST_ARCH} | grep -c 'darwin'   
-  if test ${CAFE_HOST_FLAG_DARWIN} == 1; then
+  if test x"${CAFE_HOST_FLAG_DARWIN}" == x"1"; then
     HOST_ARCH=Darwin  
   fi
   echo "HOST_ARCH="${HOST_ARCH}
 fi
 
+echo "HOST_ARCH="${HOST_ARCH}
 
 
 AC_ARG_ENABLE(
@@ -127,13 +128,13 @@ EPICS_MINOR_REL=${EPICS_MINOR_DEFAULT}
 EPICS_PATCH_REL=${EPICS_PATCH_DEFAULT}
   
 #overwrite default with actual if determined
-if test "${CAFE_EPICS_V_MAJOR}" != ""; then
+if test x"${CAFE_EPICS_V_MAJOR}" != x""; then
   EPICS_MAJOR_REL=${CAFE_EPICS_V_MAJOR} 
 fi
-if test "${CAFE_EPICS_V_MINOR}" != ""; then
+if test x"${CAFE_EPICS_V_MINOR}" != x""; then
   EPICS_MINOR_REL=${CAFE_EPICS_V_MINOR}
 fi
-if test "${CAFE_EPICS_V_PATCH}" != ""; then
+if test x"${CAFE_EPICS_V_PATCH}" != x""; then
   EPICS_PATCH_REL=${CAFE_EPICS_V_PATCH} 
 fi
 
@@ -160,7 +161,7 @@ if test x$HAVE_EPICS == xtrue; then
 
   # Change flags: if all tests are successfull, accept these changes; if
   # the tests are not successfull, use the old flags.
-  if test "${EPICS_PREFIX}" != "" ; then
+  if test x"${EPICS_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${EPICS_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -209,7 +210,7 @@ if test x$HAVE_EPICS == xtrue; then
   # If all checks are OK we add rlog to the CXXFLAGS.
   if test x$HAVE_EPICS != xtrue ; then
 
-    if test "${EPICS_PREFIX}" != "" ; then
+    if test x"${EPICS_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       LDFLAGS=${TEMP_LDFLAGS}
     fi   
@@ -318,7 +319,7 @@ if test x$HAVE_BOOST_ == xtrue ; then
 
   # Change flags: if all tests are successful, accept these additions, 
   # else use the old flags.
-  if test "${BOOST_PREFIX}" != "" ; then
+  if test x"${BOOST_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${BOOST_INCL_PATH}
     echo ${BOOST_INCL_PATH}
@@ -335,7 +336,7 @@ if test x$HAVE_BOOST_ == xtrue ; then
   fi
 
   if test x$HAVE_BOOST_ != xtrue ; then
-    if test "${BOOST_PREFIX}" != "" ; then
+    if test x"${BOOST_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       echo ${CPPFLAGS}
     fi
@@ -431,7 +432,7 @@ if test x$HAVE_PYTHON_ == xtrue ; then
 
   #Change flags: if all tests are successful, accept these additions,
   # else use the old flags.
-  if test "${PYTHON_PREFIX}" != "" ; then
+  if test x"${PYTHON_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${PYTHON_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -468,7 +469,7 @@ if test x$HAVE_PYTHON_ == xtrue ; then
   # If all checks are OK we add Qt version 4 to the FLAGS.
 		
   if test x$HAVE_PYTHON_ != xtrue ; then
-    if test "${PYTHON_PREFIX}" != "" ; then
+    if test x"${PYTHON_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       LDFLAGS=${TEMP_LDFLAGS}
       echo ${CPPFLAGS}
@@ -568,7 +569,7 @@ if test x$HAVE_QT_ == xtrue ; then
 
   # Change flags: if all tests are successfull, accept this changes; if 
   # the tests are not successfull, use the old flags.
-  if test "${QT_PREFIX}" != "" ; then
+  if test x"${QT_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${QT_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -617,7 +618,7 @@ if test x$HAVE_QT_ == xtrue ; then
 
   # If all checks are OK we add Qt version 5 to the FLAGS.
   if test x$HAVE_QT_ != xtrue ; then	
-    if test "${QT_PREFIX}" != "" ; then
+    if test x"${QT_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       LDFLAGS=${TEMP_LDFLAGS}
     fi
@@ -686,7 +687,7 @@ if test x$HAVE_JSON_ == xtrue ; then
 
   # Change flags: if all tests are successful, accept these additions,
   # else use the old flags.
-  if test "${JSON_PREFIX}" != "" ; then
+  if test x"${JSON_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${JSON_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -715,7 +716,7 @@ if test x$HAVE_JSON_ == xtrue ; then
 
     # If all checks are OK we add json to the FLAGS.
     if test x$HAVE_JSON_ != xtrue ; then
-      if test "${JSON_PREFIX}" != "" ; then
+      if test x"${JSON_PREFIX}" != x"" ; then
 	CPPFLAGS=${TEMP_CPPFLAGS}
 	LDFLAGS=${TEMP_LDFLAGS}
 	echo ${CPPFLAGS}
@@ -781,7 +782,7 @@ if test x"$HAVE_ZEROMQ_" == xtrue ; then
 
   # Change flags: if all tests are successful, accept these additions,
   # else use the old flags.
-  if test "${ZEROMQ_PREFIX}" != "" ; then
+  if test x"${ZEROMQ_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${ZEROMQ_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -810,7 +811,7 @@ if test x"$HAVE_ZEROMQ_" == xtrue ; then
   # If all checks are OK we add Zeromq to the FLAGS.
 		
   if test x$HAVE_ZEROMQ_ != xtrue ; then
-    if test "${ZEROMQ_PREFIX}" != "" ; then
+    if test x"${ZEROMQ_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       LDFLAGS=${TEMP_LDFLAGS}
       echo ${CPPFLAGS}
@@ -877,7 +878,7 @@ if test x$HAVE_CURL_ == xtrue ; then
 
   # Change flags: if all tests are successful, accept these additions,
   # else use the old flags.
-  if test "${CURL_PREFIX}" != "" ; then
+  if test x"${CURL_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${CURL_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -906,7 +907,7 @@ if test x$HAVE_CURL_ == xtrue ; then
   # If all checks are OK we add curl to the FLAGS.
 		
   if test x$HAVE_CURL_ != xtrue ; then
-    if test "${CURL_PREFIX}" != "" ; then
+    if test x"${CURL_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       LDFLAGS=${TEMP_LDFLAGS}
       echo ${CPPFLAGS}
@@ -975,7 +976,7 @@ if test x$HAVE_LZ4_ == xtrue ; then
 
   # Change flags: if all tests are successful, accept these additions,
   # else use the old flags.
-  if test "${LZ4_PREFIX}" != "" ; then
+  if test x"${LZ4_PREFIX}" != x"" ; then
     TEMP_CPPFLAGS=${CPPFLAGS}
     CPPFLAGS=${CPPFLAGS}" "${LZ4_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
@@ -1004,7 +1005,7 @@ if test x$HAVE_LZ4_ == xtrue ; then
   # If all checks are OK we add LZ4 to the FLAGS.
 		
   if test x$HAVE_LZ4_ != xtrue ; then
-    if test "${LZ4_PREFIX}" != "" ; then
+    if test x"${LZ4_PREFIX}" != x"" ; then
       CPPFLAGS=${TEMP_CPPFLAGS}
       LDFLAGS=${TEMP_LDFLAGS}
         echo ${CPPFLAGS}

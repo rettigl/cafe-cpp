@@ -19,6 +19,7 @@ CAFE_V="cafe-1.13.0"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 
+echo 'darwin' $CAFE_HOST_FLAG_DARWIN
 export CAFE_HOST_FLAG_DARWIN=$CAFE_HOST_FLAG_DARWIN
 
 EPICS_BASE=$(readlink ${EPICS}/base)
