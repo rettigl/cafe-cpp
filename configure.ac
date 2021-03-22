@@ -1,1 +1,1 @@
-configureCafe.ac
+configurePSI.ac

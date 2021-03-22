@@ -18,12 +18,13 @@ include_HEADERS += zbsread.h zbsHash.h zbsdtHelper.h zbsDataHolders.h \
                    bitshuffle/bitshuffle_core.h bitshuffle/bitshuffle.h bitshuffle/iochain.h \
 		   bitshuffle/bitshuffle_internals.h 									
 endif
-#bitshuffle/bshuf_h5filter.h 
 
-if HAVE_PYTHON_
-include_HEADERS += PyCafe_api.h
-endif
+#if HAVE_PYTHON_
+#include_HEADERS += PyCafe_api.h
+#endif
 
 if HAVE_PYCAFE_EXT_
 include_HEADERS += PyCafe.h 
+else
+include_HEADERS += PyCafe_api.h
 endif

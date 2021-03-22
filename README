@@ -4,8 +4,17 @@ autogen_rel_py3_noqt.sh  ==>  generates library for use from within python and C
 autogen_rel_noqt.sh   ==>  generates library for building a mex file (remove Qt4 dependence as matlab requires Qt5)
 autogen_rel.sh        ==>  normal c++ release
 
-##
+Libraries are only made available when the appropriate is enabld
+#ENABLE_OPTIONS+=" --enable-qt5"
+##ENABLE_OPTIONS+=" --enable-qt4"
+#ENABLE_OPTIONS+=" --enable-python37"
+##ENABLE_OPTIONS+=" --enable-python35"
+#ENABLE_OPTIONS+=" --enable-json"
+#ENABLE_OPTIONS+=" --enable-zeromq"
+#ENABLE_OPTIONS+=" --enable-curl"
+#ENABLE_OPTIONS+=" --enable-lz4"
 
+##
 ## --------------------------------------------------------------------------
 ## autogen.sh
 ##
@@ -16,18 +25,21 @@ autogen_rel.sh        ==>  normal c++ release
 ##           installed 
 
 ## --with-boost: base directory for the boost header files
-## --with-epics: epics top level directory 
-##               Note that configure.ac assume that the architecture is
-##               base/lib/${EPICS_HOST_ARCH}
-## --with-qt-inc Qt include directory (optional)
-## --with-qt-lib Qt lib directory (optional)
-## --with-python-inc Python include directory, if building PyCafe  
-## --with-python-lib Python lib directory, if bulding PyCafe
+## --with-epics7: epics7 top level directory
+## --with-epics3: epics3 top level directory 
+##                Note that configure.ac assume that the architecture is
+##                base/lib/${EPICS_HOST_ARCH}
+
+## --with-qt5: Qt5 base directory (optional)
+## --with-python37:  Python 3.7 directory, if building PyCafe  
+## --with-python35:  Python 3.5 directory, if bulding PyCafe
+## Remaining libraries are specific to swissfel zmq streams
 ## --------------------------------------------------------------------------
 
 1) Modify autogen.sh according to above
 2) 'source autogen.sh'
-3) 'make install'  This installs cafe headers/libraries to the directories 
+3) 'make'
+4) 'make install'  This installs cafe headers/libraries to the directories 
    specified by --prefix/--libdir in the above
                 
  

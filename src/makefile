@@ -34,10 +34,15 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
-#am__append_1 = PyCafe.cpp
-#am__append_2 = zbsCafeService.cpp zbsDataHolders.cpp \
-#		bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c bitshuffle/iochain.c 									  
 
+#if HAVE_PYCAFE_EXT_
+#libcafe_la_SOURCES += PyCafe.cpp
+#endif
+#am__append_1 = zbsCafeService.cpp zbsDataHolders.cpp \
+#		bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c bitshuffle/iochain.c
+
+##am__append_2 = pycafe/PyCafe_sf.cpp
+#am__append_3 = pycafe/PyCafe.cpp
 subdir = src
 DIST_COMMON = $(srcdir)/makefile.am $(srcdir)/makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -82,13 +87,15 @@ am__libcafe_la_SOURCES_DIST = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	handleHelper.cpp loadCollectionXMLParser.cpp \
 	loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp \
 	policyHelper.cpp conduitGroup.cpp connectGroup.cpp \
-	transpose.cpp restorePVGroupXMLParser.cpp PyCafe.cpp \
-	zbsCafeService.cpp zbsDataHolders.cpp \
-	bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c \
-	bitshuffle/iochain.c
-#am__objects_1 = PyCafe.lo
-#am__objects_2 = zbsCafeService.lo zbsDataHolders.lo \
+	transpose.cpp restorePVGroupXMLParser.cpp zbsCafeService.cpp \
+	zbsDataHolders.cpp bitshuffle/bitshuffle_core.c \
+	bitshuffle/bitshuffle.c bitshuffle/iochain.c \
+	pycafe/PyCafe_sf.cpp pycafe/PyCafe.cpp
+#am__objects_1 = zbsCafeService.lo zbsDataHolders.lo \
 #	bitshuffle_core.lo bitshuffle.lo iochain.lo
+##am__objects_2 =  \
+##	PyCafe_sf.lo
+#am__objects_3 = PyCafe.lo
 am_libcafe_la_OBJECTS = cafe.lo cafeCache.lo cafeGroup.lo \
 	cafeVectors.lo cafeXML.lo callbackHandlerCreate.lo \
 	callbackHandlerMonitor.lo conduit.lo connect.lo \
@@ -96,7 +103,8 @@ am_libcafe_la_OBJECTS = cafe.lo cafeCache.lo cafeGroup.lo \
 	handleHelper.lo loadCollectionXMLParser.lo \
 	loadGroupXMLParser.lo methodCallbacks.lo helper.lo \
 	policyHelper.lo conduitGroup.lo connectGroup.lo transpose.lo \
-	restorePVGroupXMLParser.lo $(am__objects_1) $(am__objects_2)
+	restorePVGroupXMLParser.lo $(am__objects_1) $(am__objects_2) \
+	$(am__objects_3)
 libcafe_la_OBJECTS = $(am_libcafe_la_OBJECTS)
 libcafe_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -130,8 +138,8 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run aclocal-1.11
 AMTAR = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run tar
-AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I$(top_srcdir)/include 
-AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
+AM_LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing --run autoheader
@@ -142,7 +150,7 @@ CC = /opt/psi/Programming/gcc/6.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = /opt/psi/Programming/gcc/6.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
 CXX = /opt/psi/Programming/gcc/6.3.0/bin/g++
 CXXCPP = /opt/psi/Programming/gcc/6.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -166,9 +174,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64
+LDFLAGS =  -L/usr/local/epics/base/lib/SL6-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/SL6-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 LIBOBJS = 
-LIBS = 
+LIBS = -lQt5Xml 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -186,16 +194,16 @@ OTOOL64 =
 PACKAGE = cafe
 PACKAGE_BUGREPORT = Bug reports to: jan.chrin@psi.ch
 PACKAGE_NAME = CAFE
-PACKAGE_STRING = CAFE 1.12.5
+PACKAGE_STRING = CAFE 1.13.0
 PACKAGE_TARNAME = cafe
-PACKAGE_VERSION = 1.12.5
+PACKAGE_VERSION = 1.13.0
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.12.5
+VERSION = 1.13.0
 abs_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
@@ -230,7 +238,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-noqt-1.12.5-gcc-6.3.0/lib
+libdir = /opt/gfa/cafe/cpp/cafe-1.13.0-gcc-6.3.0/lib/SL6-x86_64
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -238,7 +246,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-noqt-1.12.5-gcc-6.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-1.13.0-gcc-6.3.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -258,7 +266,7 @@ lib_LTLIBRARIES = libcafe.la
 #2nd: age
 #3rd: revision
 #1.9.1   1.10.2     1.11.0 1.11.1   1.12.0 1.12.1 1.12.2    1.12.4
-libcafe_la_LDFLAGS = -version-info 13:4:12
+libcafe_la_LDFLAGS = -version-info 14:0:13
 libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	cafeVectors.cpp cafeXML.cpp callbackHandlerCreate.cpp \
 	callbackHandlerMonitor.cpp conduit.cpp connect.cpp \
@@ -267,7 +275,7 @@ libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	loadGroupXMLParser.cpp methodCallbacks.cpp helper.cpp \
 	policyHelper.cpp conduitGroup.cpp connectGroup.cpp \
 	transpose.cpp restorePVGroupXMLParser.cpp $(am__append_1) \
-	$(am__append_2)
+	$(am__append_2) $(am__append_3)
 all: all-am
 
 .SUFFIXES:
@@ -343,6 +351,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/PyCafe.Plo
+include ./$(DEPDIR)/PyCafe_sf.Plo
 include ./$(DEPDIR)/bitshuffle.Plo
 include ./$(DEPDIR)/bitshuffle_core.Plo
 include ./$(DEPDIR)/cafe.Plo
@@ -433,6 +442,20 @@ iochain.lo: bitshuffle/iochain.c
 #	source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LTCXXCOMPILE) -c -o $@ $<
+
+PyCafe_sf.lo: pycafe/PyCafe_sf.cpp
+	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PyCafe_sf.lo -MD -MP -MF $(DEPDIR)/PyCafe_sf.Tpo -c -o PyCafe_sf.lo `test -f 'pycafe/PyCafe_sf.cpp' || echo '$(srcdir)/'`pycafe/PyCafe_sf.cpp
+	$(am__mv) $(DEPDIR)/PyCafe_sf.Tpo $(DEPDIR)/PyCafe_sf.Plo
+#	source='pycafe/PyCafe_sf.cpp' object='PyCafe_sf.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PyCafe_sf.lo `test -f 'pycafe/PyCafe_sf.cpp' || echo '$(srcdir)/'`pycafe/PyCafe_sf.cpp
+
+PyCafe.lo: pycafe/PyCafe.cpp
+	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PyCafe.lo -MD -MP -MF $(DEPDIR)/PyCafe.Tpo -c -o PyCafe.lo `test -f 'pycafe/PyCafe.cpp' || echo '$(srcdir)/'`pycafe/PyCafe.cpp
+	$(am__mv) $(DEPDIR)/PyCafe.Tpo $(DEPDIR)/PyCafe.Plo
+#	source='pycafe/PyCafe.cpp' object='PyCafe.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PyCafe.lo `test -f 'pycafe/PyCafe.cpp' || echo '$(srcdir)/'`pycafe/PyCafe.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
