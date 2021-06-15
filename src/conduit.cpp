@@ -277,19 +277,29 @@ void * Conduit::PyConnectHandler() const
 
 void * Conduit::PyGetHandler() const
 {
-    //PVDataHolder pvd(channelRequestMetaData.nelem);
-    //size is set in conduitEventHandlerArgs.h
-    //getPVDataHolder(pvd);
-    //std::cout << "PyGetHandler" << pvd.getAsString(0) << std::endl;
-    py_cb_handle_get_wrapper(handle);
+    void * cythonCallback=channelRequestPolicyGet.getCyCallback();
+    if (cythonCallback == NULL) {
+     std::cout << " NO CYTHON CALLBACK MATCH FOUND in Conduit::PyGetHandler()" << std::endl;
+     return (void *) 0; ;  
+    }
+
+    cy_cb_handle_get_wrapper(cythonCallback, handle);
+    //py_cb_handle_get_wrapper(handle);
 
     return (void *) 0;
 }
 
 void * Conduit::PyPutHandler() const
 {
+  
+  void * cythonCallback=channelRequestPolicyPut.getCyCallback();
+   if (cythonCallback == NULL) {
+     std::cout << " NO CYTHON CALLBACK MATCH FOUND in Conduit::PyPutHandler()" << std::endl;
+     return (void *) 0; ;  
+   }
 
-    py_cb_handle_put_wrapper(handle);
+  cy_cb_handle_put_wrapper(cythonCallback, handle);
+      //py_cb_handle_put_wrapper(handle);
 
     return (void *) 0;
 }
@@ -302,7 +312,8 @@ void * Conduit::PyPutHandler() const
     py_cb_handle_monid_wrapper(handle, (unsigned long) usrArgs);
 
     return (void *) 0;
-}*/
+}
+*/
 
 
 /*void * Conduit::PyEventHandler(unsigned int monid) const
@@ -312,7 +323,30 @@ void * Conduit::PyPutHandler() const
     py_cb_handle_monid_wrapper(handle, monid);
 
     return (void *) 0;
-}*/
+}
+*/
+
+/*
+
+void * Conduit::CyHandleHandler() const
+{
+    void * cythonCallback = NULL;
+    
+    for (int i=0; i < mpV.size(); ++i) {
+        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {
+	    cythonCallback = mpV[i].getCyCallback(); 	    
+	    break;  
+        }        
+    }
+    //std::cout << "  cythonCallback " << cythonCallback << std:: endl;
+    if (cythonCallback == NULL) {
+      //std::cout << " NO CYTHON CALLBACK MATCH FOUND in Conduit::CyEventHandler()" << std::endl;
+        return (void *) 0; ;  
+    }
+    cy_handle_handler_wrapper(cythonCallback, handle);
+    return (void *) 0;
+}
+
 
 
 void * Conduit::CyEventHandler() const
@@ -335,6 +369,41 @@ void * Conduit::CyEventHandler() const
 }
 
 
+void * Conduit::CyDataEventHandler() const
+{
+   
+  //std::cout << " void * Conduit::CyDataEventHandler() " << std::endl;
+    PVDataHolder pvd(channelRequestMetaData.nelem);
+    //size is set in conduitEventHandlerArgs.h
+    void * cythonCallback = NULL;
+    
+    for (int i=0; i < mpV.size(); ++i) {
+      //std::cout << i << " " <<   mpV[i].getCyCallback() 
+      //		<< " " <<   mpV[i].getID() << " " << pv << " " << handle 
+      //	         << std::endl; 
+      //std::cout << "user args " << (unsigned long) usrArgs << std::endl;
+        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {
+	     
+	    cythonCallback = mpV[i].getCyCallback(); 	    
+	    break;  
+        }        
+    }
+
+
+    if (cythonCallback == NULL) {
+      std::cout << " NO CYTHON CALLBACK MATCH FOUND Conduit::CyDataEventHandler()" << std::endl;
+        return (void *) 0; 
+    }
+   
+    getPVDataHolder(pvd);
+   
+    cy_data_event_handler_wrapper(cythonCallback, handle, pv, pvd);
+    //std::cout << " CYTHON CALLBACK MATCH FOUND Conduit::CyDataEventHandler()" << std::endl;
+    return (void *) 0;
+}
+*/
+
+
 /*void * Conduit::PyDataEventHandler() const
 {
     PVDataHolder pvd(channelRequestMetaData.nelem);
@@ -344,36 +413,62 @@ void * Conduit::CyEventHandler() const
     return (void *) 0;
 }*/
 
-void * Conduit::CyDataEventHandler() const
+void * Conduit::CyMonitorHandler() const
 {
-   
-    PVDataHolder pvd(channelRequestMetaData.nelem);
-    //size is set in conduitEventHandlerArgs.h
+#define __METHOD__ "Conduit::CyMonitorHandler( "
+
     void * cythonCallback = NULL;
+    unsigned int ncbparameters = 1;
     
     for (int i=0; i < mpV.size(); ++i) {
-      //std::cout << i << " " <<   mpV[i].getCyCallback() 
-      //	         << " " <<   mpV[i].getID() 
-      //	         << std::endl;  
-        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {
+        if  ((unsigned long) mpV[i].getID() == (unsigned long) usrArgs) {	     
 	    cythonCallback = mpV[i].getCyCallback(); 	    
+	    ncbparameters = mpV[i].getNoCyCallbackParameters(); 
 	    break;  
         }        
     }
 
-   
-
     if (cythonCallback == NULL) {
-      //std::cout << " NO CYTHON CALLBACK MATCH FOUND Conduit::CyDataEventHandler()" << std::endl;
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ <<  std::endl;
+        std::cout << " NO CYTHON CALLBACK MATCH FOUND " << std::endl;
         return (void *) 0; ;  
     }
 
-    getPVDataHolder(pvd);
-   
-    cy_data_event_handler_wrapper(cythonCallback, handle, pv, pvd);
-    //std::cout << " CYTHON CALLBACK MATCH FOUND Conduit::CyDataEventHandler()" << std::endl;
-    return (void *) 0;
+    //ptime timeStart(microsec_clock::local_time());
+    //double  timeElapsed=0;
+           
+     if (ncbparameters == 0) {
+        cy_monitor_handler_wrapper(cythonCallback);
+     }     
+
+     else if (ncbparameters == 1) {
+        cy_handle_handler_wrapper(cythonCallback, handle);
+    }
+    else if (ncbparameters == 2) {
+        cy_event_handler_wrapper(cythonCallback, handle, pv);
+    }
+    else if (ncbparameters == 3) {
+        PVDataHolder pvd(channelRequestMetaData.nelem);
+        getPVDataHolder(pvd);   
+	cy_data_event_handler_wrapper(cythonCallback, handle, pv, pvd);
+    }
+    else {
+        std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ <<  std::endl;
+        std::cout << " Wrong no. cb parameters " << ncbparameters << std::endl; 
+        std::cout << " Allowed are 1 (handle) 2 (+pv) 3 (+pvdata) "  << std::endl;
+    }
+     
+    //ptime timeEnd(microsec_clock::local_time());
+    //time_duration duration(timeEnd-timeStart);
+    //timeElapsed= (double) duration.total_microseconds()/1000000.0;
+    //std::cout << "timeElapsed  " << timeElapsed << std::endl;
+
+    return (void *) 0; 
+
+#undef __METHOD__
 }
+
+
 
 
 /*void * Conduit::PyCtrlEventHandler() const
@@ -1163,7 +1258,8 @@ int  Conduit::monitorStart(MonitorPolicy &mp) const
     }
 
     evid eventID;
-    int  status = ca_create_subscription(mp.getDbrDataType(), mp.getNelem(), channelRegalia.channelID, mp.getMask(),
+    int  status = ca_create_subscription(mp.getDbrDataType(), mp.getNelem(), 
+					 channelRegalia.channelID, mp.getMask(),
                                          mp.getHandler(), (void *) mp.getUserArgs(), &eventID);
 
     mp.setEventID(eventID);

@@ -8,8 +8,8 @@
 
 #  Standard macros
 AC_PREREQ(2.63)
-AC_COPYRIGHT([CAFE,Jan Chrin, 2018])
-AC_INIT([CAFE], [1.13.0], [Bug reports to: jan.chrin@psi.ch])
+AC_COPYRIGHT([CAFE,Jan Chrin, 2010-2021])
+AC_INIT([CAFE], [1.14.1], [Bug reports to: jan.chrin@psi.ch])
 
 AC_CONFIG_AUX_DIR(./)
 
@@ -601,18 +601,18 @@ if test x$HAVE_QT_ == xtrue ; then
 		 AC_MSG_WARN(libQtXml not found!)])
   fi
 
-  #if test x$HAVE_QT_5_ == xtrue ; then
-  #  AC_CHECK_LIB(Qt5Core,[write],
-  #	         [],
-  #		 [HAVE_QT_=false #force true if there but not found
-  #		 AC_MSG_WARN(libQt5Core... no check)])
-  #fi
+  if test x$HAVE_QT_5_ == xtrue ; then
+    AC_CHECK_LIB(Qt5Core,[write],
+  	         [],
+   		 [HAVE_QT_=true #force true if there but not found
+  		 AC_MSG_WARN(libQt5Core not checked for!)])
+  fi
 
   if test x$HAVE_QT_5_ == xtrue ; then
     AC_CHECK_LIB(Qt5Xml,[qt_version_tag],
-	         [],
-		 [HAVE_QT_=false
-		 AC_MSG_WARN(libQt5Xml not found!)])
+  	         [],
+  		 [HAVE_QT_=true
+  		 AC_MSG_WARN(libQt5Xml not checked for!)])
   fi
 	
 

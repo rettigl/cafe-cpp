@@ -1,6 +1,6 @@
 #! /bin/sh
-# Generated automatically by config.status (cafe) 1.13.0
-# Libtool was configured on host gfa-lc6-64:
+# Generated automatically by config.status (cafe) 1.14.1
+# Libtool was configured on host sf-lc7a.psi.ch:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -76,19 +76,19 @@ build=x86_64-unknown-linux-gnu
 build_os=linux-gnu
 
 # A sed program that does not truncate output.
-SED="/bin/sed"
+SED="/usr/bin/sed"
 
 # Sed that helps us avoid accidentally triggering echo(1) options like -n.
 Xsed="$SED -e 1s/^X//"
 
 # A grep program that handles long lines.
-GREP="/bin/grep"
+GREP="/usr/bin/grep"
 
 # An ERE matcher.
-EGREP="/bin/grep -E"
+EGREP="/usr/bin/grep -E"
 
 # A literal string matcher.
-FGREP="/bin/grep -F"
+FGREP="/usr/bin/grep -F"
 
 # A BSD- or MS-compatible name lister.
 NM="/usr/bin/nm -B"
@@ -97,7 +97,7 @@ NM="/usr/bin/nm -B"
 LN_S="ln -s"
 
 # What is the maximum length of a command?
-max_cmd_len=1966080
+max_cmd_len=1572864
 
 # Object file suffix (normally "o").
 objext=o
@@ -192,7 +192,7 @@ nm_file_list_spec="@"
 lt_sysroot=
 
 # Command to truncate a binary pipe.
-lt_truncate_bin="/bin/dd bs=4096 count=1"
+lt_truncate_bin="/usr/bin/dd bs=4096 count=1"
 
 # The name of the directory that contains temporary libtool files.
 objdir=.libs
@@ -285,7 +285,7 @@ hardcode_into_libs=yes
 sys_lib_search_path_spec="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0 /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc /opt/psi/Programming/gcc/7.3.0/lib64 /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib64 /lib64 /usr/lib64 /opt/psi/Programming/gcc/7.3.0/lib /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib /lib /usr/lib "
 
 # Detected run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib64/atlas /usr/lib64/ctapi /usr/lib64/llvm /usr/lib64/mysql /usr/lib64/papi-4.1.3 /usr/lib64/papi-5.1.1/usr/lib /usr/lib/qt-3.3/lib /usr/lib64/qt-3.3/lib /usr/lib64/tcl8.5/tclx8.4 /usr/lib64/tcl8.5 /usr/lib64/xulrunner "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib64/atlas /usr/lib64//bind9-export/ /usr/lib64/dyninst /usr/lib64/mysql /usr/lib64/tcl8.5/tclx8.4 "
 
 # Explicit LT_SYS_LIBRARY_PATH set during ./configure time.
 configure_time_lt_sys_library_path=""
@@ -11819,8 +11819,8 @@ compiler_lib_search_dirs="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/../lib64/crti.o /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtbeginS.o"
-postdep_objects="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtendS.o /usr/lib/../lib64/crtn.o"
+predep_objects="/lib/../lib64/crti.o /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtbeginS.o"
+postdep_objects="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtendS.o /lib/../lib64/crtn.o"
 predeps=""
 postdeps="-lstdc++ -lm -lgcc_s -lc -lgcc_s"
 

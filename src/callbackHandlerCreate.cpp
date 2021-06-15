@@ -25,8 +25,9 @@ using namespace std;
 /**
  *   \brief Callback function for ca_create_channel.
  *   Modifies Conduit object accordingly
+ *   Function is not invoked on closechannel by user
  *   \param args returns connection handler parameters \n
- *   i.e. args.chid, args.op{CA_OP_CONN_UP, CA_OP_CONN_DOWN}
+ *   i.e. args.chid, args.op{CA_OP_CONN_UP, CA_OP_CONN_DOWN}   
  */
 void ChannelCreatePolicy::callbackHandlerCreate(struct connection_handler_args args)
 {
@@ -315,6 +316,8 @@ void ChannelCreatePolicy::callbackHandlerCreate(struct connection_handler_args a
                 cafeMutex.unlock();
             }
 
+	    //std::cout << "DISCONNECT - has pycafe " << (*it_handle).getPyCafe() << std::endl;
+
 #if HAVE_PYTHON_H
             // monitors
             if ((*it_handle).getPyCafe() )
@@ -339,7 +342,8 @@ void ChannelCreatePolicy::callbackHandlerCreate(struct connection_handler_args a
                     //std::cout << __METHOD__ << __LINE__ << " (*it_handle).CyDataeventHandler(); at DISCCONNECT " << (*it_handle).pv << std::endl;
                     //cout << "(*it_handle).PyEventHandler();  " << (*itmp).getMonitorID()    << endl;
                     //(*it_handle).PyEventHandler((*itmp).getMonitorID());
-                    (*it_handle).CyDataEventHandler();
+                    //(*it_handle).CyDataEventHandler();
+		    (*it_handle).CyMonitorHandler();
                 }
                 //Disconnect signal
                 if ( (*it_handle).getPyOpenCallbackFlag() )

@@ -15,6 +15,7 @@
 /**
  *   Friend to Conduit/CAFEGroup records the connection_handler_args struct from callback fns
  *   in hash table
+ *   Function is not invoked on closechannel by user
  */
 struct change_connectionHandlerArgs
 {
@@ -34,7 +35,7 @@ struct change_connectionHandlerArgs
         // but we do not overwrite it upon disconnect.
 
 	//std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
-
+      	//std::cout <<   new_connectionHandlerArgs.op << std::endl;
         //connectFlag
         if  (new_connectionHandlerArgs.op == CA_OP_CONN_UP)
         {

@@ -696,7 +696,7 @@ public:
         }
         else
         {
-            std::cout<< "Input handle " << handle << " does not exists! " << std::endl;
+            std::cout<< "Input handle " << handle << " does not exist! " << std::endl;
             return false;
         }
     }

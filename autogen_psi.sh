@@ -3,12 +3,11 @@
 #<facility = sls sls2 sf>  default is sf
 #<target_language = cpp matlab python> 
 module unload gcc
-module load gcc/6.3.0
+module load gcc/7.3.0
 ### psi specific - end
 
 rm -f configure.ac
 ln -s configurePSI.ac configure.ac
-
 
 rm -f ./aclocal.m4
 rm -rf ./autom4te.cache
@@ -23,7 +22,7 @@ automake --force --add-missing --copy
 #Used by ./configure
 #Assumes format ${EPICS}/base-3.14.12
 #source cafeVersion-gcc-7.3.0
-CAFE_V="cafe-1.13.0"
+CAFE_V="cafe-1.14.1"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 

@@ -32,7 +32,7 @@ void CALLBACK_CAFE::PyHandlerPut( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        return;
+        //return;
     }
 
 
@@ -47,26 +47,13 @@ void CALLBACK_CAFE::PyHandlerPut( struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)cafeMutex.lock();
-
         //Change Channel Policy to NO_WAIT(?)
-
         ChannelRequestStatus  channelRequestStatusPut=(*it_handle).getChannelRequestStatusPut();
-
         channelRequestStatusPut.setCallbackKind(false, true);
-
         handle_index.modify(it_handle, change_channelRequestStatusPut(channelRequestStatusPut));
-
-        if(MUTEX)cafeMutex.unlock();
-
-
-        //if HAVE_PYTHON_H
-
+        if(MUTEX)cafeMutex.unlock();      
         (*it_handle).PyPutHandler();
-
-        //endif
-
     }
     else
     {
@@ -76,7 +63,6 @@ void CALLBACK_CAFE::PyHandlerPut( struct event_handler_args args)
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -87,12 +73,8 @@ void CALLBACK_CAFE::PyHandlerPut( struct event_handler_args args)
                 ChannelRequestStatus  channelRequestStatusPut=(*itcs).getChannelRequestStatusPut();
                 channelRequestStatusPut.setCallbackKind(false, true);
                 handle_index.modify(itcs, change_channelRequestStatusPut(channelRequestStatusPut));
-                if(MUTEX)cafeMutex.unlock();
-
-                //if HAVE_PYTHON_H
+                if(MUTEX)cafeMutex.unlock();                
                 (*it_handle).PyPutHandler();
-                //endif
-
                 internalFlag=true;
                 break;
             }
@@ -125,12 +107,11 @@ void CALLBACK_CAFE::PyHandlerGet( struct event_handler_args args)
 
 #define __METHOD__  "CALLBACK_CAFE::PyHandlerGet"
 
-
     if (args.status !=ECA_NORMAL)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        return;
+        //return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -156,22 +137,15 @@ void CALLBACK_CAFE::PyHandlerGet( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
-
-
-        //if HAVE_PYTHON_H
         (*it_handle).PyGetHandler();
-        //endif
-
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -231,16 +205,14 @@ void CALLBACK_CAFE::handlerPulseID( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        return;
+        //return;
     }
 
     unsigned int _handle = (unsigned long) args.usr;
     unsigned long long pulse_id=0;
 
-
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
-
 
     it_handle = handle_index.find((unsigned int) _handle);
 
@@ -262,7 +234,6 @@ void CALLBACK_CAFE::handlerPulseID( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
-
     }
     else
     {
@@ -270,28 +241,6 @@ void CALLBACK_CAFE::handlerPulseID( struct event_handler_args args)
         cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << endl;
         return;
     }
-
-
-    /*
-    PVDataHolder pvd;
-    (*it_handle).getPVDataHolder(pvd);
-
-    */
-
-
-    /*
-    cafeConduit_set::iterator itcs;
-
-    // Loop through all elements
-    for (itcs = cs.begin(); itcs != cs.end(); ++itcs) {
-    if ((*itcs).getChannelID() != NULL) {
-    		if(MUTEX){cafeMutex.lock();}
-    handle_index.modify(itcs, change_beamEventNo(pulse_id));
-    if(MUTEX){cafeMutex.unlock();}
-    }
-    }
-    */
-
 
     return;
 #undef __METHOD__
@@ -310,14 +259,13 @@ void CALLBACK_CAFE::handlerPut( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        return;
+        //return;
     }
      
     unsigned int _handle = (unsigned long) args.usr;
 
     //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
     //cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << " handle " << _handle << endl;
-
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -326,30 +274,20 @@ void CALLBACK_CAFE::handlerPut( struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)cafeMutex.lock();
-
         //Change Channel Policy to NO_WAIT(?)
-
         ChannelRequestStatus  channelRequestStatusPut=(*it_handle).getChannelRequestStatusPut();
-
         channelRequestStatusPut.setCallbackKind(false, true);
-
         handle_index.modify(it_handle, change_channelRequestStatusPut(channelRequestStatusPut));
-
         if(MUTEX)cafeMutex.unlock();       
-
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -361,8 +299,6 @@ void CALLBACK_CAFE::handlerPut( struct event_handler_args args)
                 channelRequestStatusPut.setCallbackKind(false, true);
                 handle_index.modify(itcs, change_channelRequestStatusPut(channelRequestStatusPut));
                 if(MUTEX)cafeMutex.unlock();
-
-
                 internalFlag=true;
                 break;
             }
@@ -373,7 +309,6 @@ void CALLBACK_CAFE::handlerPut( struct event_handler_args args)
             cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
             cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << endl;
         }
-
     }
 
     return;
@@ -395,8 +330,7 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-
-        return;
+        //return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -408,10 +342,8 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
         ChannelRequestStatus  channelRequestStatusGet=(*it_handle).getChannelRequestStatusGet();
         channelRequestStatusGet.setCallbackKind(false, true);
-
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -423,23 +355,19 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
-
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
                 cout << " INFORMATION to author: MATCHed Handle= " << _handle << " to PV= " << (*itcs).getPV() << endl;
                 cout << " by looping through tcs::iterator, since the by_handle::iterator was NOT found! " << endl;
-
                 ChannelRequestStatus  channelRequestStatusGet=(*itcs).getChannelRequestStatusGet();
                 channelRequestStatusGet.setCallbackKind(false, true);
                 if(MUTEX)
@@ -452,7 +380,6 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
                 {
                     cafeMutex.unlock();
                 }
-
                 internalFlag=true;
                 break;
             }
@@ -487,7 +414,8 @@ void CALLBACK_CAFE::handlerGetCtrlAtConnect( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-
+	//JC May 2021 Still want to update multi-index container even if status has error
+	/*
 #if HAVE_PYTHON_H
         unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
 
@@ -506,8 +434,8 @@ void CALLBACK_CAFE::handlerGetCtrlAtConnect( struct event_handler_args args)
             }
         }
 #endif
-
-        return;
+	*/
+        //return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -517,10 +445,8 @@ void CALLBACK_CAFE::handlerGetCtrlAtConnect( struct event_handler_args args)
 
     it_handle = handle_index.find(_handle);
 
-
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -569,7 +495,6 @@ void CALLBACK_CAFE::handlerGetCtrlAtConnect( struct event_handler_args args)
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -634,8 +559,7 @@ void CALLBACK_CAFE::handlerGetCtrl( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-
-        return;
+        //return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -645,10 +569,8 @@ void CALLBACK_CAFE::handlerGetCtrl( struct event_handler_args args)
 
     it_handle = handle_index.find(_handle);
 
-
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -673,13 +595,11 @@ void CALLBACK_CAFE::handlerGetCtrl( struct event_handler_args args)
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -738,8 +658,7 @@ void CALLBACK_CAFE::handlerGetSTSACK( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-
-        return;
+        //return;
     }
 
 
@@ -752,7 +671,6 @@ void CALLBACK_CAFE::handlerGetSTSACK( struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -774,17 +692,14 @@ void CALLBACK_CAFE::handlerGetSTSACK( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
-
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -822,8 +737,6 @@ void CALLBACK_CAFE::handlerGetSTSACK( struct event_handler_args args)
             cout << " Internal CAFE ERROR! Unknown Handle! handle=" <<  _handle << endl;
         }
     }
-
-
     return;
 #undef __METHOD__
 };
@@ -839,13 +752,11 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
 {
 #define __METHOD__  "CALLBACK_CAFE::handlerGetClassName "
 
-  
-
     if (args.status !=ECA_NORMAL)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        return;
+        //return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -853,12 +764,10 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
-
     it_handle = handle_index.find(_handle);
 
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -870,7 +779,6 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
         }
 
         ChannelRequestStatus  channelRequestStatusGetClassName=(*it_handle).getChannelRequestStatusGetClassName();
-
         channelRequestStatusGetClassName.setCallbackKind(false, true);
 
         if(MUTEX)
@@ -882,17 +790,14 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
-
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
@@ -919,7 +824,6 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
                 {
                     cafeMutex.unlock();
                 }
-
                 internalFlag=true;
                 break;
             }
@@ -939,19 +843,19 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
 
 
 /**
- *  Callback function for handlerClassName method is invoked
+ *  Callback function for handlerGetDescription method is invoked
  *  with a pointer to the retrieved value
  *  \param args input: event handler arguments
  */
 void CALLBACK_CAFE::handlerGetDescription( struct event_handler_args args)
 {
-#define __METHOD__  "CALLBACK_CAFE::handlerGetDesscription "
+#define __METHOD__  "CALLBACK_CAFE::handlerGetDescription "
 
     if (args.status !=ECA_NORMAL)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        return;
+        //return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -963,7 +867,6 @@ void CALLBACK_CAFE::handlerGetDescription( struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -973,17 +876,14 @@ void CALLBACK_CAFE::handlerGetDescription( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
-
     }
     else
     {
-
         bool internalFlag=false;
         cafeConduit_set::iterator itcs;
         // Loop through all elements and search for handle
         for (itcs = cs.begin(); itcs != cs.end(); ++itcs)
         {
-
             if ( (*itcs).getHandle()==_handle)
             {
                 cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;

@@ -61,7 +61,8 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
 
     cafeConduit_set_by_handle &  handle_index= cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-    
+    int _status = ICAFE_NORMAL;
+
     it_handle =handle_index.find(handle);
 
     if (it_handle != handle_index.end())
@@ -73,7 +74,7 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
         //
         Moved to create Handle
       */     
-        status = ca_create_channel(pv, channelCreatePolicy.getHandler(), (void *) (unsigned long) handle,
+        _status = ca_create_channel(pv, channelCreatePolicy.getHandler(), (void *) (unsigned long) handle,
                                    channelCreatePolicy.getPriority(), &pCh);
 
         if (pCh!=NULL)
@@ -119,25 +120,25 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
             ca_replace_access_rights_event(pCh, callbackHandlerAccessRights);
         }
 
-        if (status != ECA_NORMAL)
+        if (_status != ECA_NORMAL)
         {
             cout << __FILE__ << ":" << __LINE__ << endl;
             cout << __METHOD__ << " ca_create_channel failed: " << endl;
-            if (status == ECA_EVDISALLOW)
+            if (_status == ECA_EVDISALLOW)
             {
                 cout << " due to inappropriate function " << endl;
             }
-            cafeStatus.report(status);
+            cafeStatus.report(_status);
             if(MUTEX)
             {
                 cafeMutex.lock();   //lock
             }
-            handle_index.modify(it_handle, change_status (status) );
+            handle_index.modify(it_handle, change_status (_status) );
             if(MUTEX)
             {
                 cafeMutex.unlock();   //unlock
             }
-            return (int) status;
+            return (int) _status;
         }
 
         //To Flush Send Buffer or not? Examine channelOpenPolicy.
@@ -218,7 +219,8 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
     {
         return ECAFE_INVALID_HANDLE;
     }
-    return (int) status;
+
+    return (int) _status;
 
 #undef __METHOD__
 };
@@ -238,6 +240,7 @@ int Connect::createHandle(const char * pv, ca_client_context * ccc,  unsigned in
 
     chid pCh = NULL;
     std::pair<cafeConduit_set::iterator, bool> p;
+    int _status = ICAFE_NORMAL;
 
     // CAFEConduit object initialized and placed into hash map
   
@@ -346,8 +349,9 @@ int Connect::createHandle(const char * pv, ca_client_context * ccc,  unsigned in
 #endif
     
     // Normal return is ECA_TIMEOUT if pend_io/pend_event is instigated!!
-    status=createChannel(handle, pv, pCh);
+    _status=createChannel(handle, pv, pCh);
 
+  
     // Channel Access will spit out an Invalid String Error if pv not a string!
     // Possible Errors from ca_create_channel: ECA_NORMAL, ECA_BADTYPE, ECA_STRTOBIG, ECA_ALLOCMEM
     // Possible Error from ca_pend_event: ECA_EVDISALLOW
@@ -355,27 +359,28 @@ int Connect::createHandle(const char * pv, ca_client_context * ccc,  unsigned in
 
     // IF FAILED THROW EXCEPTION
     
-    if (status == ECA_BADSTR)
+    if (_status == ECA_BADSTR)
     {
         //Cannot Connect::close(handle) in this event else segmentation fault
         CAFEException_pv e;
-        e = exceptionsHelper.prepareCAFEException_pv("empty", "empty", (*(p.first)).getHandle(), pCh, status,
-                __METHOD__, __LINE__);
+        e = exceptionsHelper.prepareCAFEException_pv("empty", "empty", (*(p.first)).getHandle(), 
+						     pCh, _status, __METHOD__, __LINE__);
         throw (e);
-        return status;
+        return _status;
     }
-    else if (status != ECA_NORMAL && status != ECA_TIMEOUT)
+    else if (_status != ECA_NORMAL && _status != ECA_TIMEOUT)
     {
         //Connect::close(handle);
         CAFEException_pv e;
         e = exceptionsHelper.prepareCAFEException_pv((*(p.first)).pv.c_str(), (*(p.first)).pvAlias.c_str(),
-                (*(p.first)).getHandle(), pCh, status,
+                (*(p.first)).getHandle(), pCh, _status,
                 __METHOD__, __LINE__);
         throw (e);
-        return status;
+        return _status;
     }
     else if (pCh == NULL)
     {    
+
         //Connect::close(handle); Close channel in createHandle	
         CAFEException_pv e;
         e = exceptionsHelper.prepareCAFEException_pv( (*(p.first)).pv.c_str(), (*(p.first)).pvAlias.c_str(),
@@ -387,7 +392,7 @@ int Connect::createHandle(const char * pv, ca_client_context * ccc,  unsigned in
         return ECAFE_NULLCHID;
     }
 
-    return status;
+    return _status;
 
 #undef __METHOD__
 };
@@ -406,6 +411,8 @@ int Connect::createHandle(const char * pv, ca_client_context * ccc,  unsigned in
 int Connect::init() //throw (CAFEException_init)
 {
 #define __METHOD__ "Connect::init()"
+
+    int status=ICAFE_NORMAL;
 
     try
     {
@@ -441,8 +448,8 @@ int Connect::init() //throw (CAFEException_init)
 int  Connect::init(ca_preemptive_callback_select select) //throw (CAFEException_init)
 {
 #define __METHOD__ "Connect::init(ca_preemptive_callback_select)"
-
-
+    int status=ICAFE_NORMAL;
+ 
 #if HAVE_PYTHON_H
 #if HAVE_PYCAFE_EXT
     int pyStatus = PyImport_AppendInittab("PyCafe", PyInit_PyCafe); //Python 3
@@ -456,7 +463,8 @@ int  Connect::init(ca_preemptive_callback_select select) //throw (CAFEException_
       std::cout <<  "PyCafe import failed!!" << std::endl;
       exit(1);
     } 
-    PyInit_PyCafe();
+    PyInit_PyCafe;
+    //PyInit_PyCafe_sf();
     //Py_Finalize();
     //Python 2
     //Py_Initialize();
@@ -516,6 +524,8 @@ bool Connect::initCallbackComplete(unsigned int * hArray, unsigned int nHandles)
 {
 #define __METHOD__ "Connect:initCallbackComplete(unsigned int * hArray, unsigned int nHandle) "
 
+    int status=ICAFE_NORMAL;
+
     ChannelRequestStatus cre, crc, crs, crn;
     for (unsigned int i=0; i < nHandles; ++i)
     {
@@ -573,7 +583,7 @@ int Connect::open(const char ** pvArray, unsigned int * handleArray, const unsig
 //throw (CAFEException_open)
 {
 #define __METHOD__ "Connect::open(const char **, unsigned int *, const unsigned int)"
-
+    int status=ICAFE_NORMAL;
     bool flushAtEndFlag=false;
 
     if (channelOpenPolicy.getWhenToFlushSendBuffer()==FLUSH_AFTER_EACH_CHANNEL_CREATION)
@@ -630,7 +640,7 @@ int Connect::open(const std::string *pvArrayS, unsigned int *handleArray, const 
 //throw (CAFEException_open)
 {
 #define __METHOD__ "Connect::open(const std::string *, unsigned int *, unsigned int)"
-
+    int status=ICAFE_NORMAL;
     bool flushAtEndFlag=false;
     if (channelOpenPolicy.getWhenToFlushSendBuffer()==FLUSH_AFTER_EACH_CHANNEL_CREATION)
     {
@@ -687,7 +697,7 @@ int  Connect::open(std::vector<std::string> pvV, std::vector<unsigned int> &hand
 //throw (CAFEException_open)
 {
 #define __METHOD__ "Connect::open(vector<string>, vector<unsigned int> &)"
-
+    int status=ICAFE_NORMAL;
     unsigned int  _h=0;
     bool flushAtEndFlag=false;
     handleV.clear();
@@ -746,7 +756,7 @@ int Connect::open(std::vector<const char *> pvV, std::vector<unsigned int> &hand
 //throw (CAFEException_open)
 {
 #define __METHOD__ "Connect::open(vector<char *>, vector<unsigned int> &)"
-
+    int status=ICAFE_NORMAL;
     unsigned int _h=0;
     bool flushAtEndFlag=false;
     handleV.clear();
@@ -806,7 +816,7 @@ int Connect::open(const char * _pv, const char * _pvAlias, unsigned int  & handl
 //throw (CAFEException_open)
 {
 #define __METHOD__ "Connect::open(const char * pv, const char * _pvAlias, unsigned int  & _handle)"
-
+    int status=ICAFE_NORMAL;
     try
     {
         status = open (_pv, handle);
@@ -850,13 +860,12 @@ int Connect::open(const char * _pv, unsigned int &handle)
 //throw (CAFEException_open)
 {
 #define __METHOD__ "Connect::open(const char * _pv, unsigned int &handle)"
-
+    int status=ICAFE_NORMAL;
     char pv[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(_pv, pv);
 
     // Determine ca-client context
     ca_client_context * ccc = ca_current_context();
-
 
     if (ccc == NULL)
     {
@@ -885,7 +894,7 @@ int Connect::open(const char * _pv, unsigned int &handle)
     // Handles for pvs that are members of a group are treated separately!
 
     handle = handleHelper.getHandleFromPV(pv,ccc);
- 
+
     if (handle != 0)
     {
         return ICAFE_NORMAL;
@@ -899,7 +908,8 @@ int Connect::open(const char * _pv, unsigned int &handle)
     }
     catch (CAFEException_pv & e)
     {    
-       
+         std::cout << __METHOD__ << " EXCEPTION "  << std::endl;
+
         if (e.statusCode != ECA_BADSTR)
 	{ 
 	    //ca_flush_io(); // Better Flush or not. Seems that there is not a need.
@@ -916,7 +926,7 @@ int Connect::open(const char * _pv, unsigned int &handle)
        
 	std::string ewhat ="CAFEException_open," + std::string(e.pv)  + ","  + std::to_string(e.handle) +  "," \
             + std::to_string(e.statusCode) + "," + e.statusCodeText + "," + e.statusMessage; 
-	
+		
 	CAFEException_open badpv(ewhat);
         badpv.pvEx=e;
 
@@ -940,7 +950,7 @@ int Connect::open(const char * _pv, unsigned int &handle)
 int Connect::setPVAlias(unsigned int handle, const char * _pvAlias) //throw(CAFEException_open)
 {
 #define __METHOD__ "Connect::setPVAlias(unsigned int  * _handle, const char * _pv)"
-
+    int status=ICAFE_NORMAL;
     Helper helper;
     char pvAlias[PVNAME_SIZE];
     helper.removeLeadingAndTrailingSpaces(_pvAlias, pvAlias);
@@ -1033,7 +1043,7 @@ int Connect::setPVAlias(unsigned int handle, const char * _pvAlias) //throw(CAFE
 int Connect::closeChannels(unsigned int * handleArray, unsigned int nHandles)
 {
 #define __METHOD__ "Connect::closeChannels(unsigned int * handleArray, unsigned int nHandles)"
-
+    
     ca_client_context * cctLocal=  ca_current_context();
     if (cctLocal == NULL )
     {
@@ -1137,7 +1147,7 @@ int Connect::close(unsigned int handle)
         // We do not know if this channel belongs to this context!
         return ECAFE_NULLCONTEXT;
     }
-    status=ICAFE_NORMAL;
+    int status=ICAFE_NORMAL;
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -1271,7 +1281,7 @@ int Connect::closeChannels(ca_client_context * cctLocal)
     {
         return ECAFE_NULLCONTEXT;
     }
-
+    int status = ICAFE_NORMAL;
     int statusGroup = ICAFE_NORMAL;
     bool isClearChannel=false;
 
@@ -1361,7 +1371,7 @@ int Connect::closeChannels(ca_client_context * cctLocal)
 int  Connect::closeHandle(unsigned int handle)
 {
 #define __METHOD__ "Connect::closeHandle(unsigned int handle)"
-
+    int status = ICAFE_NORMAL;
     //We can close handle irrespective of ca_current_context!
     ca_client_context * cctLocal=  ca_current_context();
     status=ICAFE_NORMAL;
@@ -1574,7 +1584,7 @@ int Connect::closeHandles(unsigned int * handleArray, unsigned int nHandles)
 int Connect::closeHandles()
 {
 #define __METHOD__ "Connect::closeHandles()"
-
+    int  status      = ICAFE_NORMAL;
     int  statusGroup = ECA_NORMAL;
     bool   isClearChannel   =false;
     bool   isCS             =false;
@@ -1649,7 +1659,7 @@ int Connect::closeChannelKeepHandle(unsigned int handle)
 {
 #define __METHOD__ "Connect::closeChannelKeepHandle(unsigned int handle)"
 
-    status=ICAFE_NORMAL;
+    int status=ICAFE_NORMAL;
     //We can close handle irrespective of ca_current_context!
     ca_client_context * cctLocal=  ca_current_context();
     ChannelRegalia channelRegalia;
@@ -2437,7 +2447,7 @@ int  Connect::monitorStart(unsigned int handle, MonitorPolicy &mp)
 {
 #define __METHOD__ "monitorStart(unsigned int handle, MonitorPolicy &mp)"
 
-    status = ICAFE_NORMAL;
+    int status = ICAFE_NORMAL;
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -2602,7 +2612,7 @@ int  Connect::monitorStart(unsigned int handle, unsigned int  & monitorID)
 {
 #define __METHOD__ "monitorStart(unsigned int handle, unsigned int  & monitorID)"
 
-    status = ICAFE_NORMAL;
+    int status = ICAFE_NORMAL;
     evid eventID = NULL;
     monitorID = (unsigned int) 0;
 
@@ -2711,7 +2721,7 @@ int  Connect::monitorPulseID()
         throw(e);
     }
 
-    status = ICAFE_NORMAL;
+    int status = ICAFE_NORMAL;
     MonitorPolicy mp;
 
     mp.setUserArgs((void *) (long long) (hPulseID));
@@ -2738,7 +2748,7 @@ int  Connect::monitorStopPulseID()
 #define __METHOD__ "monitorStopPulseID()"
 
     std::string pulseID=SF_PULSE_ID_PV;
-    status = ICAFE_NORMAL;
+    int status = ICAFE_NORMAL;
     status = monitorStop(handleHelper.getHandleFromPV(pulseID.c_str()));
     return status;
 
@@ -2755,7 +2765,7 @@ int  Connect::monitorStop()
 #define __METHOD__ "monitorStop()"
 
     int  statusGroup = ECA_NORMAL;
-
+    int status = ICAFE_NORMAL;
     bool   isClearChannel   =false;
 
     if (ca_current_context() != NULL)
@@ -2804,7 +2814,7 @@ int  Connect::monitorStop(ca_client_context * cctLocal)
     {
         return ECAFE_NULLCONTEXT;
     }
-
+    int status = ICAFE_NORMAL;
     int  statusGroup = ECA_NORMAL;
     bool   isClearChannel   =false;
 
@@ -2913,7 +2923,7 @@ int  Connect::monitorStop(unsigned int handle)
 {
 #define __METHOD__ "monitorStop(unsigned int  _handle)"
 
-    status = ICAFE_NORMAL;
+    int status = ICAFE_NORMAL;
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
@@ -3035,7 +3045,7 @@ int  Connect::monitorStop (unsigned int handle, unsigned int  monitorID)
 {
 #define __METHOD__ "monitorStop(unsigned int handle, unsigned int  monitorID)"
 
-    status = ICAFE_NORMAL;
+    int status = ICAFE_NORMAL;
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;

@@ -506,7 +506,7 @@ private:
 
     pCallback handler;    // for blockingKind=WITH_CALLBACK_DEFAULT or WITH_CALLBACK_USER_SUPPLIED
     int  callbackStatus;  // used by CAFE::waitForGetEvent() to record status of callback
-
+    void * cyCallback;   // callback provide by python client
 public:
 
     ChannelWhenToFlushSendBufferPolicyKind  getWhenToFlushSendBuffer() const
@@ -533,6 +533,7 @@ public:
         return callbackStatus;
     };
 
+
     void setHandler(pCallback h)
     {
         if (h!=NULL)
@@ -543,16 +544,26 @@ public:
     };
 
 #if HAVE_PYTHON_H
-    void setPyHandlerGet()
+    void setPyHandlerGet(void * cythonCallback)
     {
+        cyCallback=cythonCallback;
         handler= CALLBACK_CAFE::PyHandlerGet;
         methodKind=WITH_CALLBACK_USER_SUPPLIED;
-    }; //CAFE_CALLBACK::PyHandlerGet
-    void setPyHandlerPut()
+    }; 
+    //CAFE_CALLBACK::PyHandlerGet
+    void setPyHandlerPut(void * cythonCallback)
     {
+        cyCallback=cythonCallback;
         handler= CALLBACK_CAFE::PyHandlerPut;
         methodKind=WITH_CALLBACK_USER_SUPPLIED;
-    }; //CAFE_CALLBACK::PyHandlerPut
+    }; 
+    //CAFE_CALLBACK::PyHandlerPut
+
+    void * getCyCallback() const
+    {
+        return cyCallback;
+    }; 
+
 #endif
 
     void setMethodKind(ChannelRequestPolicyKind m)
@@ -642,7 +653,7 @@ public:
     //Constructors
     ChannelRequestPolicy():
         whenKind(FLUSH_AFTER_EACH_MESSAGE),waitKind(WAIT),methodKind(WITH_CALLBACK_DEFAULT), //WITHOUT_CALLBACK),
-        callbackStatus(ICAFE_NORMAL)
+	  callbackStatus(ICAFE_NORMAL), cyCallback(NULL)
     {
         handler=NULL;
 
@@ -659,6 +670,7 @@ public:
             std::cout << b << " is anINVALID ChannelRequestPolicyKind" << std::endl;
         }
         handler=NULL;
+	cyCallback=NULL;
         callbackStatus=ICAFE_NORMAL;
         whenKind=FLUSH_AFTER_EACH_MESSAGE;
         waitKind=WAIT;
@@ -667,6 +679,7 @@ public:
     ChannelRequestPolicy(pCallback h)
     {
         handler=h;
+	cyCallback=NULL;
         methodKind=WITH_CALLBACK_DEFAULT;
         whenKind=FLUSH_AFTER_EACH_MESSAGE;
         waitKind=WAIT;
@@ -699,6 +712,7 @@ private:
     unsigned int  mask;          //4
     pCallback     handler;       //5
     void *        cyCallback;
+    unsigned short nCyCallbackParameters; // 1=handle, 2=handle,pv 3=handle,pv,pvdata
     void *        userArgs;      //6 handle
     evid          eventID;       //output
     int           status;        //output
@@ -706,8 +720,10 @@ private:
     unsigned short notifyDeltaMilliSeconds; // Nov. 2020; push to Python Widgets 
     ptime         lastUpdate;
 
-    static void PyCallbackHandlerMonitorData(struct event_handler_args args); //pushes pvd,handle,pvname
-    static void PyCallbackHandlerMonitor(struct event_handler_args args); //pushes handle
+    static void PyCallbackHandlerMonitorData(struct event_handler_args args); //pushes handle, pvname, pvdata
+    static void PyCallbackHandlerMonitor(struct event_handler_args args); //pushes handle, pvname
+    //static void PyCallbackHandlerHandle(struct event_handler_args args); //pushes handle
+
 
     void setEventID(evid e)
     {
@@ -720,8 +736,8 @@ public:
         cafeDbrType((CAFENUM::DBR_TYPE) CAFENUM::DBR_TIME),
         nelem(0), mask(DBE_VALUE | DBE_LOG | DBE_ALARM),
         handler(callbackHandlerMonitor), cyCallback(NULL), 
-        userArgs(NULL), eventID(NULL), status(ICAFE_NORMAL),
-        notifyDeltaMilliSeconds(0)
+        nCyCallbackParameters(1), userArgs(NULL), eventID(NULL), 
+        status(ICAFE_NORMAL), notifyDeltaMilliSeconds(0)
     {
         ++idNext;
         id = idNext;
@@ -783,6 +799,11 @@ public:
     void * getCyCallback() const
     {
         return cyCallback;
+    };
+
+    unsigned short getNoCyCallbackParameters() const
+    {
+        return nCyCallbackParameters;
     };
 
     pCallback getHandler() const
@@ -848,6 +869,18 @@ public:
     void setCyCallback(void * cythonCallback){
         cyCallback=cythonCallback;
     }
+
+    void setNoCyCallbackParameters(unsigned int nCyCbParam){
+        nCyCallbackParameters = nCyCbParam;
+    }
+    
+
+    //void setPyCyHandlerHandle(void * cythonCallback)
+    //{
+    //    handler= PyCallbackHandlerHandle;
+    //    cyCallback=cythonCallback;
+    //};
+
 
     void setPyCyHandler(void * cythonCallback)
     {

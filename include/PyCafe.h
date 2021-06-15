@@ -18,15 +18,19 @@
   #define DL_IMPORT(_T) _T
 #endif
 
+__PYX_EXTERN_C void cy_monitor_handler_wrapper(void *);
 __PYX_EXTERN_C void cy_data_event_handler_wrapper(void *, unsigned int, std::string, PVDataHolder);
 __PYX_EXTERN_C void cy_ctrl_event_handler_wrapper(void *, unsigned int, std::string, PVCtrlHolder);
 __PYX_EXTERN_C void cy_event_handler_wrapper(void *, unsigned int, std::string);
+__PYX_EXTERN_C void cy_handle_handler_wrapper(void *, unsigned int);
 __PYX_EXTERN_C void cy_connect_handler_wrapper(void *, unsigned int, std::string, int);
 __PYX_EXTERN_C void py_cb_wrapper(PVDataHolder, unsigned int, std::string);
 __PYX_EXTERN_C void py_cb_ctrl_wrapper(PVCtrlHolder, unsigned int, std::string);
 __PYX_EXTERN_C void py_cb_handle_wrapper(unsigned int);
 __PYX_EXTERN_C void py_cb_handle_monid_wrapper(unsigned int, unsigned long);
+__PYX_EXTERN_C void cy_cb_handle_get_wrapper(void *, unsigned int);
 __PYX_EXTERN_C void py_cb_handle_get_wrapper(unsigned int);
+__PYX_EXTERN_C void cy_cb_handle_put_wrapper(void *, unsigned int);
 __PYX_EXTERN_C void py_cb_handle_put_wrapper(unsigned int);
 __PYX_EXTERN_C void py_cb_handle_open_wrapper(unsigned int, int);
 __PYX_EXTERN_C void py_cb_handle_connect_wrapper(unsigned int, std::string, int);

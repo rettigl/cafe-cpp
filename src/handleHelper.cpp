@@ -3891,7 +3891,35 @@ int HandleHelper::getMonitorHandlesAndActions(std::vector<unsigned int> & handle
 }
 
 
+int HandleHelper::updateMonitorPolicyDeltaMS(unsigned int _handle, unsigned int _monid, 
+					     unsigned short _deltaMS)
+{
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(_handle);
 
+    int status=ICAFE_NORMAL;
+
+    if (it_handle != handle_index.end())
+    {
+        MonitorPolicy mp = (*it_handle).getMonitorPolicy(_monid);
+	mp.setNotifyDeltaMilliSeconds(_deltaMS);
+        if(MUTEX) { cafeMutex.lock();}
+	handle_index.modify(it_handle, change_monitorPolicy(mp));  
+	if(MUTEX) { cafeMutex.unlock();}
+    }
+    else
+    {    
+        status=ECAFE_INVALID_HANDLE;
+        if (printErrorPolicy.getInvalidHandle())
+        {
+            cafeStatus.report(status);
+            cout << "Handle=" << _handle << " either never existed or no longer exists " << endl;
+        }
+	
+    }
+    return status;
+}
 
 /**
  *  \brief Gets vector of MonitorIDs in waiting (value=0), i.e., waiting for channel connection

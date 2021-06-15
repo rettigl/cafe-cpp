@@ -327,6 +327,9 @@ public:
     int  getMonitorAction(unsigned int  _handle, std::vector<std::string> &msV);
     std::vector<std::string> getMonitorAction(bool onlyIfNewData); //all handles; false gives all
 
+    int updateMonitorPolicyDeltaMS(unsigned int _handle, unsigned int _monid, 
+				   unsigned short deltaMS);
+
     int  getMonitorPolicyVector(unsigned int  _handle, std::vector<MonitorPolicy> &mpV);
     int  getMonitorPolicyInWaitingVector(unsigned int  _handle, std::vector<MonitorPolicy> &mpV);
     int  getNmonitor(unsigned int _handle);

@@ -237,9 +237,12 @@ private:
     //void * PyDataEventHandler() const;
     //void * PyCtrlEventHandler() const;
 
-    void * CyEventHandler() const;
-    void * CyDataEventHandler() const;
-    void * CyCtrlEventHandler() const;
+    void * CyMonitorHandler() const; //can handle all three cb signatures
+ 
+    //void * CyHandleHandler() const; //handle
+    //void * CyEventHandler() const;  //handle, pv
+    //void * CyDataEventHandler() const; //handle, pv, pvdata
+    void * CyCtrlEventHandler() const; //handle, pv, pvctrl
 
     bool   pyOpenCallbackFlag;
 
