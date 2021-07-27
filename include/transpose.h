@@ -28,7 +28,7 @@
 template <class CTYPE> class Transpose {
 
 public:
-    Transpose () {};
+  Transpose () {useHandleHelper = true;};
     ~Transpose () {};
 
     HandleHelper handleHelper;
@@ -108,6 +108,8 @@ private:
     chtype dbrTypeRequest_CtrlBuffer;
     chtype _dataTypeClient;
     char stig [MAX_ENUM_STATES][MAX_ENUM_STRING_SIZE];
+
+    bool useHandleHelper; //instantiating global extern cs for use in pybind11 
 
 };
 
@@ -269,8 +271,15 @@ template <class CTYPE> int  Transpose<CTYPE>::put(const unsigned int  _handle,
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
 
+   
+   
+    if (useHandleHelper) {
+        it_handle =  handleHelper.getIterFromHandle(_handle);
+    } 
+    else {
+        it_handle = handle_index.find(_handle);
+    }
 
-    it_handle = handle_index.find(_handle);
 
     if (it_handle != handle_index.end()) {
 
@@ -711,7 +720,7 @@ template <class CTYPE> int  Transpose<CTYPE>::put(const unsigned int  _handle,
 //long Transpose<CAFE_DATATYPE_UNION>::put( const unsigned int  _handle,
 //                                         CAFE_DATATYPE_UNION_SEQ val, CAFE_DATATYPE cdt)
 
-template <class CTYPE> int  Transpose<CTYPE>::put( const unsigned int  _handle,
+template <class CTYPE> int  Transpose<CTYPE>::put( const unsigned int _handle,
         CAFE_DATATYPE_UNION_SEQ val, CAFE_DATATYPE cdt)
 {
 #define __METHOD__ "Transpose<CTYPE>::put()"
@@ -720,7 +729,13 @@ template <class CTYPE> int  Transpose<CTYPE>::put( const unsigned int  _handle,
 
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-    it_handle = handle_index.find(_handle);
+   
+    if (useHandleHelper) {
+        it_handle =  handleHelper.getIterFromHandle(_handle);
+    } 
+    else {
+        it_handle = handle_index.find(_handle);
+    }
 
     if (it_handle != handle_index.end()) {
 
@@ -987,7 +1002,14 @@ template <class CTYPE> int  Transpose<CTYPE>::putString
 
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-    it_handle = handle_index.find(_handle);
+
+   
+    if (useHandleHelper) {
+        it_handle =  handleHelper.getIterFromHandle(_handle);
+    } 
+    else {
+        it_handle = handle_index.find(_handle);
+    }
 
     if (it_handle != handle_index.end()) {
 
@@ -1264,7 +1286,7 @@ template <class CTYPE> int  Transpose<CTYPE>::putString
 
 /**
  * \brief Retrieves data transmitted by CA with dbrTypeRequest_DataBuffer
- * and then converts to CTYPE i.e.  _dataTypeClient
+ * and then converts to CTYPE i.e. _dataTypeClient
  * \param  _handle  input: handle to Conduit object
  * \param val output: CTYPE datatype
  * \param  alarmStatus   output: dbr_short_t
@@ -1281,7 +1303,19 @@ template <class CTYPE> int  Transpose<CTYPE>::get(
 
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-    it_handle = handle_index.find(_handle);
+    
+  
+    //pybind11 fix
+    //cafeConduit_set_by_handle & handle_index = helper.getcsHandleIndex();       
+  
+  
+    if (useHandleHelper) {
+        it_handle =  handleHelper.getIterFromHandle(_handle);
+    } 
+    else {
+        it_handle = handle_index.find(_handle);
+    }
+
 
     //std::cout << __FILE__ << "//" << __METHOD__ << std::endl;
 
@@ -1840,7 +1874,14 @@ template <class CTYPE> int  Transpose<CTYPE>::getCtrl (
 
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
-    it_handle = handle_index.find(_handle);
+  
+   
+    if (useHandleHelper) {
+        it_handle =  handleHelper.getIterFromHandle(_handle);
+    } 
+    else {
+        it_handle = handle_index.find(_handle);
+    }
 
 
     if (it_handle != handle_index.end()) {

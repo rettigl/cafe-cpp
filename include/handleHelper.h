@@ -83,6 +83,17 @@ public:
     ca_client_context *  getContextFromPV     (const char * _pv);
     ca_client_context *  getContextFromHandle (unsigned int _handle);
 
+    cafeConduit_set_by_handle::iterator getIterFromHandle(unsigned int handle);
+    cafeConduit_set_by_handle & getcsHandleIndex();
+    int modifyHandleIndexStatus(unsigned int handle, long status);
+    int modifyChannelRequestMetaDataClient(unsigned int handle, 
+                                           ChannelRequestMetaDataClient channelRequestMetaDataClient);
+    int modifyChannelRequestStatusGet(unsigned int handle, 
+                                           ChannelRequestStatus channelRequestStatusGet);
+                               
+    int modifyChannelTimeoutPolicyGet(unsigned int handle, 
+                                           ChannelTimeoutPolicy channelTimeoutPolicyGet);
+
     const char * getPVFromHandle     (unsigned int  _handle);
     const char * getPVFromHandle     (unsigned int  _handle, ca_client_context * ccc);
 
@@ -92,6 +103,8 @@ public:
     }
     const char * getPVAlias (unsigned int  _handle);
     const char * getPVAlias (unsigned int  _handle,  ca_client_context * ccc);
+
+
 
     unsigned int  getHandleFromPV     (const char * _pv);
     unsigned int  getHandleFromPV     (const char * _pv, ca_client_context * ccc);

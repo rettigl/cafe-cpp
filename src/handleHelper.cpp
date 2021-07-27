@@ -1657,6 +1657,123 @@ const char * HandleHelper::getPVAlias(unsigned int handle, ca_client_context * c
 #undef __METHOD__
 }
 
+cafeConduit_set_by_handle::iterator HandleHelper::getIterFromHandle(unsigned int handle)
+{
+#define __METHOD__ "HandleHelper::getIterFromHandle(unsigned int handle)"
+  
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(handle);
+    if (it_handle != handle_index.end()) {
+      //std::cout << __METHOD__ << " pv " << (*it_handle).getPV() << " // " << (*it_handle).handle << std::endl;  
+      return it_handle;
+    }
+    else {return it_handle;}
+
+#undef __METHOD__
+}
+
+
+cafeConduit_set_by_handle & HandleHelper::getcsHandleIndex()
+{
+#define __METHOD__ "HandleHelper::getcsHandleIndex()"
+  
+    return  cs.get<by_handle>();
+    
+#undef __METHOD__
+}
+
+
+int HandleHelper::modifyHandleIndexStatus(unsigned int handle, long status)
+{
+#define __METHOD__ "HandleHelper::modifyHandleIndexStatus()"
+  
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(handle);
+    if (it_handle != handle_index.end()) {
+         handle_index.modify(it_handle, change_status(status));
+    }                                 
+    else
+    {
+        std::cout << "Handle=" << handle << " either never existed or no longer exists " << std::endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+    
+#undef __METHOD__
+}
+
+
+int HandleHelper::modifyChannelTimeoutPolicyGet(unsigned int handle, 
+        ChannelTimeoutPolicy channelTimeoutPolicyGet)
+{
+#define __METHOD__ "HandleHelper::modifyChannelTimeoutPolicyGet()"
+  
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(handle);
+    if (it_handle != handle_index.end()) {
+         handle_index.modify(it_handle, 
+             change_channelTimeoutPolicyGet(channelTimeoutPolicyGet));
+    }                                 
+    else
+    {
+        std::cout << "Handle=" << handle << " either never existed or no longer exists " << std::endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+int HandleHelper::modifyChannelRequestStatusGet(unsigned int handle, 
+        ChannelRequestStatus channelRequestStatusGet)
+{
+#define __METHOD__ "HandleHelper::modifyChannelRequestStatusGet()"
+  
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(handle);
+    if (it_handle != handle_index.end()) {
+         handle_index.modify(it_handle, 
+             change_channelRequestStatusGet(channelRequestStatusGet));
+    }                                 
+    else
+    {
+        std::cout << "Handle=" << handle << " either never existed or no longer exists " << std::endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
+int HandleHelper::modifyChannelRequestMetaDataClient(unsigned int handle, 
+        ChannelRequestMetaDataClient channelRequestMetaDataClient)
+{
+#define __METHOD__ "HandleHelper::modifyChannelRequestMetaDataClient()"
+  
+    cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
+    cafeConduit_set_by_handle::iterator it_handle;
+    it_handle = handle_index.find(handle);
+    if (it_handle != handle_index.end()) {
+         handle_index.modify(it_handle, 
+             change_channelRequestMetaDataClient(channelRequestMetaDataClient));
+    }                                 
+    else
+    {
+      std::cout << "Handle=" << handle << " either never existed or no longer exists " << std::endl;
+        return ECAFE_INVALID_HANDLE;
+    }
+    return ICAFE_NORMAL;
+
+#undef __METHOD__
+}
+
+
 
 /**
  *  \brief Retrieves the process variable from a given handle
@@ -1689,9 +1806,14 @@ const char * HandleHelper::getPVFromHandle(unsigned int handle, ca_client_contex
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(handle);
 
+    //std::cout << __METHOD__ <<  "handle_index ==> " << &handle_index << std::endl;
+    //std::cout << __METHOD__ <<  "handle_index ==> " << &handle_index << std::endl;
+    //std::cout << __METHOD__ <<  "cs " << &cs << std::endl;
 
     if (it_handle != handle_index.end())
     {
+        //std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        //std::cout << "Client context: " << ccc << std::endl;
         return (*it_handle).getPV();
     }
     else
@@ -1706,9 +1828,9 @@ const char * HandleHelper::getPVFromHandle(unsigned int handle, ca_client_contex
 
             if ( (*itcs).getHandle()==handle && (*itcs).getClientContext() == ccc)
             {
-                //cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
-                //cout << " INFORMATION to author: MATCHed Handle= " << handle << " to PV= " << (*itcs).getPV() << endl;
-                //cout << " by looping through tcs::iterator, while the by_handle::iterator was NOT found! " << endl;
+                cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
+                cout << " INFORMATION to author: MATCHed Handle= " << handle << " to PV= " << (*itcs).getPV() << endl;
+                cout << " by looping through tcs::iterator, while the by_handle::iterator was NOT found! " << endl;
                 return (*itcs).getPV();
             }
         }
@@ -2488,7 +2610,6 @@ int HandleHelper::getAlarmStatusSeverityAsString(unsigned int _handle, std::stri
     }
 #undef __METHOD__
 }
-
 
 
 

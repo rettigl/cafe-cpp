@@ -18,6 +18,9 @@ EPICS_BASE=${EPICS}/base
 CAFE_BASE=/opt/gfa/cafe
 CAFE_CPP_BASE=${CAFE_BASE}/cpp
 
+CAFE_BASE=/afs/psi.ch/project/cafe/gitlab/CAFE/
+CAFE_CPP_BASE=${CAFE_BASE}
+CAFE_VERSION=cpp
 
 
 BOOST_BASE=${CAFE_BASE}/boost/boost_1_61_0/include
@@ -29,12 +32,10 @@ INCLUDE_PATH += -I$(CAFE_CPP_BASE)/$(CAFE_VERSION)/include \
 
 LIB_DIR += -L$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
  -Wl,-rpath,$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
- -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib/${EPICS_HOST_ARCH} \
- -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib/${EPICS_HOST_ARCH} \
- -L/opt/gfa/python-3.7/latest/lib \
- -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+ -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib \
+ -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib
 
-LIBS += -lcafe -lca -lCom -lQt5Core
+LIBS += -lcafe -lca -lCom 
 
 cafeTest: cafeTest.cc callbacks.h
 	g++ cafeTest.cc -o cafeTest \

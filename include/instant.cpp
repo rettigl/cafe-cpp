@@ -8,6 +8,8 @@
 #ifndef INSTANT_CPP
 #define INSTANT_CPP
 
+//include <instant.h>
+
 /**
  *  \brief Set values of data type CTYPE
  *  \param  _handle  input: handle to CAFEConduit object
@@ -44,6 +46,8 @@ template <class CTYPE> int  Instant<CTYPE>::set(const unsigned int  _handle, con
 
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
+
+    
     it_handle = handle_index.find(_handle);
 
     if (it_handle != handle_index.end())
@@ -139,11 +143,10 @@ template <class CTYPE> int  Instant<CTYPE>::get(const unsigned int  _handle,
         std::cout << "CAFE WILL THUS TAKE CONTROL OF ALLOCATING APPROPIATE DBR_TYPE" << std::endl;
     }
 
+
+
     cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
     cafeConduit_set_by_handle::iterator it_handle;
-
-
-    it_handle = handle_index.find(_handle);
 
     if (it_handle != handle_index.end())
     {
@@ -184,6 +187,8 @@ template <class CTYPE> int  Instant<CTYPE>::get(const unsigned int  _handle,
     else
     {
         std::cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << std::endl;
+        const char * _pv = helper.getPVFromHandle(_handle);
+        std::cout <<  "Failed to find handle " << _handle << " for pv " << _pv << std::endl;
         cafeStatus.report(ECAFE_INVALID_HANDLE);
         return ECAFE_INVALID_HANDLE;
     }

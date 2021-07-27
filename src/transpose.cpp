@@ -670,20 +670,17 @@ int  Transpose<dbr_string_t>::get(
 {
 #define __METHOD__ "Transpose<dbr_string_t>::get()"
 
-    //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+  //cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
 
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);
-
 
     if (it_handle != handle_index.end())
     {
 
         PVDataL  = (*it_handle).getDataBuffer  ();
         offset   = (*it_handle).getChannelRequestMetaDataClient().getOffset();
-
-
 
         if(isCacheRequest)
         {
@@ -696,8 +693,6 @@ int  Transpose<dbr_string_t>::get(
             nelem  = (*it_handle).getChannelRequestMetaData().getNelem()-offset;
 
         }
-
-
 
         //Something wrong, just read last element
         if (nelem <=0)

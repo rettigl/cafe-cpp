@@ -22,7 +22,7 @@ automake --force --add-missing --copy
 #Used by ./configure
 #Assumes format ${EPICS}/base-3.14.12
 #source cafeVersion-gcc-7.3.0
-CAFE_V="cafe-1.14.2"
+CAFE_V="cafe-1.14.1"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 
@@ -36,7 +36,7 @@ EPICS_BASE=$(readlink ${EPICS}/base)
 echo $EPICS_BASE
 if [ -z "$EPICS_BASE" ]
 then
-    EPICS_BASE='base-7' #7.0 = 7+0 = 7 for major release
+    EPICS_BASE='base-7.4.1' #7.0 = 7+0 = 7 for major release
 fi
 
 echo 'input' "$0" "$1" "$2"
@@ -204,8 +204,8 @@ then
     ENABLE_OPTIONS+=" --enable-python37"
     ENABLE_OPTIONS+=" --enable-qt5"
     CAFE_V+="-py37" 
-else
-    ENABLE_OPTIONS+=" --enable-qt5" 
+#else
+    #ENABLE_OPTIONS+=" --enable-qt5" 
 fi
 
 if [ "$FACILITY" = "sf" ] && [ "$CACLIENT" != "matlab" ]
@@ -223,7 +223,7 @@ fi
 
 CAFE_V+="-gcc-"$GCC_VERSION
 
-echo "$CAFE_V"
+echo "CAFE VERSION: $CAFE_V"
 
 #echo 'EPICS BASE IS='$EPICS_BASE
 #echo 'EPICS BASE DIR='${EPICS}/base-7.0.4.1
@@ -252,13 +252,14 @@ export CAFE_EPICS_V_PATCH=$EBPAT
 #ENABLE_OPTIONS+=" --enable-lz4"
 
 echo 'ENABLE_OPTIONS='$ENABLE_OPTIONS
+echo 'EPICS='${EPICS}
 
 ./configure \
     --prefix=/opt/gfa/cafe/cpp/${CAFE_V} \
     --libdir=/opt/gfa/cafe/cpp/${CAFE_V}/lib/${EPICS_HOST_ARCH} \
     ${ENABLE_OPTIONS} \
-    --with-boost-inc=/opt/gfa/cafe/boost/boost_1_61_0/include \
-    --with-epics7=${EPICS}/base-7 \
+    --with-boost-inc=/afs/psi.ch/project/cafe/gitlab/CAFE/boost/boost_1_61_0/include \
+    --with-epics7=${EPICS}/base-7.0.4.1 \
     --with-epics3=${EPICS}/base \
     --with-python37=/opt/gfa/python-3.7/latest \
     --with-python35=/opt/gfa/python-3.5/latest \
@@ -274,4 +275,3 @@ unset  CAFE_EPICS_V_MINOR
 unset  CAFE_EPICS_V_MAJOR 
 
 unset  CAFE_HOST_FLAG_DARWIN
-
