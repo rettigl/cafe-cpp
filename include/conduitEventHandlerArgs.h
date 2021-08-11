@@ -22,10 +22,10 @@ struct change_eventHandlerArgs
 #define __METHOD__ "change_eventHandlerArgs"
     change_eventHandlerArgs (const struct event_handler_args & new_eventHandlerArgs) :
         new_eventHandlerArgs(new_eventHandlerArgs) {}
-
+   
     void operator() (Conduit& c)
     {
-
+       
       //c.eventHandlerArgs = new_eventHandlerArgs;   
         c.status= new_eventHandlerArgs.status;
 
@@ -642,9 +642,16 @@ struct change_eventHandlerArgs
                 ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->precision;
             (*(&((c.ctrlBuffer)->cdblval.RISC_pad0))) =
                 (dbr_short_t) ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->RISC_pad0; //dbr_short_t
+	    //std::cout << __METHOD__ << __LINE__ << std::endl;
+	 
+	    //std::cout << ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->units << std::endl;
+            
             memcpy((*(&((c.ctrlBuffer)->cdblval.units))),
                    &(((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->units),
-                   sizeof(char[MAX_UNITS_SIZE]));
+                   sizeof( char[MAX_UNITS_SIZE])); //   (((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->units) )); 
+	    
+	  
+ 
             (*(&((c.ctrlBuffer)->cdblval.upper_disp_limit))) =
                 ((struct dbr_ctrl_double *) new_eventHandlerArgs.dbr)->upper_disp_limit;
             (*(&((c.ctrlBuffer)->cdblval.lower_disp_limit))) =

@@ -1077,6 +1077,8 @@ int HandleHelper::getUnits(unsigned int _handle, std::string & units)
     if (it_handle != handle_index.end())
     {
         units = (*it_handle).getUnits();
+	//cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
+	//cout << "units" << units << endl;
     }
     else
     {
@@ -2375,10 +2377,11 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
 
     //Only these have alarm/severity
     std::vector<std::string>alarmSeverityRecordTypes;
-    alarmSeverityRecordTypes.reserve(10);
+    alarmSeverityRecordTypes.reserve(12);
     alarmSeverityRecordTypes.push_back( std::string ( "ai"));
     alarmSeverityRecordTypes.push_back( std::string ( "ao"));
     alarmSeverityRecordTypes.push_back( std::string ( "calc"));
+    alarmSeverityRecordTypes.push_back( std::string ( "calcout"));
     alarmSeverityRecordTypes.push_back( std::string ( "dfanout"));
     alarmSeverityRecordTypes.push_back( std::string ( "longin"));
     alarmSeverityRecordTypes.push_back( std::string ( "longout"));
@@ -2388,6 +2391,8 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
     alarmSeverityRecordTypes.push_back( std::string ( "steppermotor"));
     alarmSeverityRecordTypes.push_back( std::string ( "sub"));
 
+    //else use RTYP to get true type
+    alarmSeverityRecordTypes.push_back( std::string ( "Not Supported by Gateway"));
 
     if (it_handle != handle_index.end())
     {
@@ -2442,8 +2447,8 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
 
        
         // if never connected getStatus is 600 ICAFE_CS_NEVER_CONN
-        // std::cout << (*it_handle).getPV() << " is Connected " << (*it_handle).isConnected()     << std::endl;
-        // std::cout << "getStatus    " << (*it_handle).getStatus()       << std::endl;
+        //std::cout << (*it_handle).getPV() << " is Connected " << (*it_handle).isConnected()     << std::endl;
+        //std::cout << "getStatus    " << (*it_handle).getStatus()       << std::endl;
 
         // Check if handle has already been supplemented
         if  ((*it_handle).hasAlarmSeverityStruct())
@@ -2458,6 +2463,7 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
             return false;
         }
 
+	//std::cout << "------ "  << std::endl;
 
         PVCtrlHolder  _pvc;
 
@@ -2479,8 +2485,7 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
         }
 
         // if Never connected getStatus is 600 ICAFE_CS_NEVER_CONN
-        // std::cout << "status from getPVCtrlHolder // " << _stat << std::endl;
-        // std::cout << "status from getPVCtrlHolder // " << _pvc.getStatus() << std::endl;
+       
         //_pvc.print();
 
         //return to previous
@@ -2489,8 +2494,6 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
             setNelemToRetrieveFromCtrlCache(_handle,nelem);
         }
  
-
-	
 
         if (_stat==ICAFE_NORMAL)
         {
@@ -2501,32 +2504,34 @@ bool HandleHelper::hasAlarmStatusSeverity(unsigned int _handle)
             //}
 	    //enums can have alarms states!!!
 
+
             if      (!((boost::math::isnan)(_pvc.getLowerAlarmLimit_AsDouble())))
             {
 	      if (_pvc.getLowerAlarmLimit_AsDouble() != 0) {
                  return true;
 	      }
             }
-            else if (!((boost::math::isnan)(_pvc.getLowerWarningLimit_AsDouble())))
+            if (!((boost::math::isnan)(_pvc.getLowerWarningLimit_AsDouble())))
             {
                if (_pvc.getLowerWarningLimit_AsDouble() != 0) {
                    return true;
 	       } 
             }
-            else if (!((boost::math::isnan)(_pvc.getUpperWarningLimit_AsDouble())))
+            if (!((boost::math::isnan)(_pvc.getUpperWarningLimit_AsDouble())))
             {
                 if (_pvc.getUpperWarningLimit_AsDouble() != 0) {
                    return true;
 	       } 
             }
-            else if (!((boost::math::isnan)(_pvc.getUpperAlarmLimit_AsDouble())))
+            if (!((boost::math::isnan)(_pvc.getUpperAlarmLimit_AsDouble())))
             {
                 if (_pvc.getUpperAlarmLimit_AsDouble() != 0) {
                    return true;
 	       } 
             }
 
-	    
+	   
+
             return false;
         }
         else

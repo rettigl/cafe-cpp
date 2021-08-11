@@ -249,9 +249,9 @@ AMTAR = $${TAR-tar}
 #if HAVE_PYTHON_
 #libcafe_la_SOURCES += pycafe/PyCafe.cpp
 #endif
-AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7/include/ -I/usr/local/epics/base-7/include/os/Linux -I/usr/local/epics/base-7/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7/include/ -I/usr/local/epics/base-7/include/os/Linux -I/usr/local/epics/base-7/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
 AM_DEFAULT_VERBOSITY = 1
-AM_LDFLAGS =  -L/usr/local/epics/base-7/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+AM_LDFLAGS =  -L/usr/local/epics/base-7/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing autoheader
@@ -262,7 +262,7 @@ CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = /opt/psi/Programming/gcc/7.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7/include/ -I/usr/local/epics/base-7/include/os/Linux -I/usr/local/epics/base-7/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7/include/ -I/usr/local/epics/base-7/include/os/Linux -I/usr/local/epics/base-7/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
 CXX = /opt/psi/Programming/gcc/7.3.0/bin/g++
 CXXCPP = /opt/psi/Programming/gcc/7.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -286,9 +286,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base-7/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+LDFLAGS =  -L/usr/local/epics/base-7/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 LIBOBJS = 
-LIBS = -lQt5Xml -lQt5Core 
+LIBS = -lQt5Xml -lQt5Core -lpython3.7m 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -351,7 +351,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.14.2-sls2-gcc-7.3.0/lib/RHEL7-x86_64
+libdir = /opt/gfa/cafe/cpp/cafe-1.14.2-sls2-py37-gcc-7.3.0/lib/RHEL7-x86_64
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -359,7 +359,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.14.2-sls2-gcc-7.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-1.14.2-sls2-py37-gcc-7.3.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
