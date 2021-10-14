@@ -1,5 +1,5 @@
 bitshuffle/bitshuffle_core.lo: bitshuffle/bitshuffle_core.c \
- /usr/include/stdc-predef.h bitshuffle/bitshuffle_core.h \
+ bitshuffle/bitshuffle_core.h \
  /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0/include/stdint.h \
  /usr/include/stdint.h /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
@@ -8,13 +8,12 @@ bitshuffle/bitshuffle_core.lo: bitshuffle/bitshuffle_core.c \
  /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0/include/stddef.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/endian.h /usr/include/bits/endian.h \
- /usr/include/bits/byteswap.h /usr/include/bits/types.h \
- /usr/include/bits/typesizes.h /usr/include/bits/byteswap-16.h \
- /usr/include/sys/types.h /usr/include/time.h /usr/include/sys/select.h \
- /usr/include/bits/select.h /usr/include/bits/sigset.h \
- /usr/include/bits/time.h /usr/include/sys/sysmacros.h \
- /usr/include/bits/pthreadtypes.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-float.h bitshuffle/bitshuffle_internals.h \
+ /usr/include/bits/byteswap.h /usr/include/sys/types.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/time.h /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/alloca.h bitshuffle/bitshuffle_internals.h \
  bitshuffle/iochain.h /usr/include/stdio.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/wchar.h \
  /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0/include/stdarg.h \
@@ -25,8 +24,6 @@ bitshuffle/bitshuffle_core.lo: bitshuffle/bitshuffle_core.c \
  /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0/include/xmmintrin.h \
  /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0/include/mmintrin.h \
  /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0/include/mm_malloc.h
-
-/usr/include/stdc-predef.h:
 
 bitshuffle/bitshuffle_core.h:
 
@@ -60,13 +57,11 @@ bitshuffle/bitshuffle_core.h:
 
 /usr/include/bits/byteswap.h:
 
+/usr/include/sys/types.h:
+
 /usr/include/bits/types.h:
 
 /usr/include/bits/typesizes.h:
-
-/usr/include/bits/byteswap-16.h:
-
-/usr/include/sys/types.h:
 
 /usr/include/time.h:
 
@@ -83,8 +78,6 @@ bitshuffle/bitshuffle_core.h:
 /usr/include/bits/pthreadtypes.h:
 
 /usr/include/alloca.h:
-
-/usr/include/bits/stdlib-float.h:
 
 bitshuffle/bitshuffle_internals.h:
 

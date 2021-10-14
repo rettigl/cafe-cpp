@@ -7,7 +7,7 @@ include_HEADERS = config.h cafe.h cafeCache.h cafeConvert.h cafeDataType.h cafeD
 		  cafeEnumStrings.h cafeRoast.h  cafeVectors.h cafeXML.h caopCodes.h channelRegalia.h \
 		  conduit.h conduitConnectionHandlerArgs.h conduitEventHandlerArgs.h conduitFriends.h \
                   connect.h defines.h deviceCollection.h exceptions.h exceptionsHelper.h global.h \
-                  enumStrings.h granules.h handleHelper.h hashConduit.h helper.h instant.h instant.cpp \
+                  enumStrings.h granules.h handleHelper.h hashConduit.h helper.h instant.h \
                   loadCollectionXMLParser.h loadGroupXMLParser.h methodCallbacks.h policies.h policyHelper.h \
                   PVCtrlHolder.h PVDataHolder.h PVGroup.h PVHolder.h statusCodes.h transpose.h \
 	          conduitGroup.h hashConduitGroup.h restorePVGroupXMLParser.h tmDateMap.h

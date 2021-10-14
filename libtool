@@ -1,6 +1,6 @@
 #! /bin/sh
-# Generated automatically by config.status (cafe) 1.14.2
-# Libtool was configured on host gfa-lc7.psi.ch:
+# Generated automatically by config.status (cafe) 1.14.4
+# Libtool was configured on host sf-lc7a.psi.ch:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -282,10 +282,10 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0 /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/lib/gcc /opt/psi/Programming/gcc/7.3.0/lib64 /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/lib64 /lib64 /usr/lib64 /opt/psi/Programming/gcc/7.3.0/lib /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/lib /lib /usr/lib "
+sys_lib_search_path_spec="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc/x86_64-pc-linux-gnu/7.3.0 /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib/gcc /opt/psi/Programming/gcc/7.3.0/lib64 /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib64 /lib64 /usr/lib64 /opt/psi/Programming/gcc/7.3.0/lib /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/lib /lib /usr/lib "
 
 # Detected run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib64/atlas /usr/lib64//bind9-export/ /opt/rh/devtoolset-6/root/usr/lib64/dyninst /usr/lib64/dyninst /usr/lib64/llvm /usr/lib64/mysql /usr/lib/oracle/12.2/client64/lib /usr/lib64/tcl8.5/tclx8.4 /usr/lib64/tcl8.5 /usr/lib64/wine/ "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib64/atlas /usr/lib64//bind9-export/ /usr/lib64/dyninst /usr/lib64/mysql /usr/lib/oracle/12.2/client64/lib /usr/lib64/tcl8.5/tclx8.4 "
 
 # Explicit LT_SYS_LIBRARY_PATH set during ./configure time.
 configure_time_lt_sys_library_path=""
@@ -11815,17 +11815,17 @@ file_list_spec=""
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0 /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc /opt/psi/Programming/gcc/7.3.0/lib64/../lib64 /opt/psi/Programming/gcc/7.3.0/lib/../lib64 /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../../../lib64 /lib/../lib64 /usr/lib/../lib64 /opt/psi/Programming/gcc/7.3.0/lib64 /opt/psi/Programming/gcc/7.3.0/lib /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../.."
+compiler_lib_search_dirs="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0 /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc /opt/psi/Programming/gcc/7.3.0/lib64/../lib64 /opt/psi/Programming/gcc/7.3.0/lib/../lib64 /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../../../lib64 /lib/../lib64 /usr/lib/../lib64 /opt/psi/Programming/gcc/7.3.0/lib64 /opt/psi/Programming/gcc/7.3.0/lib /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/lib/../lib64/crti.o /afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtbeginS.o"
-postdep_objects="/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtendS.o /lib/../lib64/crtn.o"
+predep_objects="/lib/../lib64/crti.o /afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtbeginS.o"
+postdep_objects="/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/crtendS.o /lib/../lib64/crtn.o"
 predeps=""
 postdeps="-lstdc++ -lm -lgcc_s -lc -lgcc_s"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0 -L/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc -L/opt/psi/Programming/gcc/7.3.0/lib64/../lib64 -L/opt/psi/Programming/gcc/7.3.0/lib/../lib64 -L/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/opt/psi/Programming/gcc/7.3.0/lib64 -L/opt/psi/Programming/gcc/7.3.0/lib -L/afs/psi.ch/sys/psi.ra/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../.."
+compiler_lib_search_path="-L/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0 -L/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc -L/opt/psi/Programming/gcc/7.3.0/lib64/../lib64 -L/opt/psi/Programming/gcc/7.3.0/lib/../lib64 -L/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/opt/psi/Programming/gcc/7.3.0/lib64 -L/opt/psi/Programming/gcc/7.3.0/lib -L/afs/psi.ch/sys/psi.x86_64_slp6/Programming/gcc/7.3.0/bin/../lib/gcc/x86_64-pc-linux-gnu/7.3.0/../../.."
 
 # ### END LIBTOOL TAG CONFIG: CXX

@@ -17,6 +17,7 @@ using namespace std;
 //#include <PyCafe_api.h>
 //#endif
 
+#define RETURN_ON_ERROR true
 
 #if HAVE_PYTHON_H
 
@@ -32,7 +33,7 @@ void CALLBACK_CAFE::PyHandlerPut( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+	if (RETURN_ON_ERROR == true) return;
     }
 
 
@@ -111,7 +112,7 @@ void CALLBACK_CAFE::PyHandlerGet( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -205,7 +206,7 @@ void CALLBACK_CAFE::handlerPulseID( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long) args.usr;
@@ -259,7 +260,7 @@ void CALLBACK_CAFE::handlerPut( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
      
     unsigned int _handle = (unsigned long) args.usr;
@@ -330,7 +331,7 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -435,7 +436,7 @@ void CALLBACK_CAFE::handlerGetCtrlAtConnect( struct event_handler_args args)
         }
 #endif
 	*/
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -559,7 +560,7 @@ void CALLBACK_CAFE::handlerGetCtrl( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -658,7 +659,7 @@ void CALLBACK_CAFE::handlerGetSTSACK( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
 
@@ -756,7 +757,7 @@ void CALLBACK_CAFE::handlerGetClassName( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -855,7 +856,7 @@ void CALLBACK_CAFE::handlerGetDescription( struct event_handler_args args)
     {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);

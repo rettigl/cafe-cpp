@@ -14,6 +14,7 @@
 #include <methodCallbacks.h>
 #include <granules.h>
 
+#define RETURN_ON_ERROR false
 
 using namespace std;
 using namespace boost::posix_time;
@@ -31,7 +32,7 @@ void MonitorPolicy::callbackHandlerMonitor( struct event_handler_args args)
     {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long) ca_puser(args.chid);// args.usr; // ca_puser(args.chid);
@@ -149,7 +150,7 @@ void MonitorPolicy::PyCallbackHandlerMonitor (struct event_handler_args args)
     {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        // return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long) ca_puser(args.chid);// args.usr; // ca_puser(args.chid);
@@ -236,7 +237,7 @@ void MonitorPolicy::PyCallbackHandlerMonitorData (struct event_handler_args args
     {
         cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
-        //  return;
+        if (RETURN_ON_ERROR == true) return;
     }
 
     unsigned int _handle = (unsigned long) ca_puser(args.chid);// args.usr; // ca_puser(args.chid);

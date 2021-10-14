@@ -31,8 +31,8 @@ struct change_eventHandlerArgs
 
         if(c.status!=ECA_NORMAL) {
 	  std::cout << __METHOD__ << " STATUS IS " << c.status << std::endl;
-          std::cout << __METHOD__ << " return from method ***NOT*** enforced " << std::endl;
-          //return;
+          std::cout << __METHOD__ << " return from method ***IS*** enforced " << std::endl;
+          return;
         }
 	//std::cout << __METHOD__ << " STATUS IS " << c.status << std::endl;
 

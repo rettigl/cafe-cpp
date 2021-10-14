@@ -812,6 +812,26 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
             return ICAFE_CS_CLOSED;
         }
 
+	
+	//Reset any put error
+	if ( (*it_handle).getStatus() == ECAFE_NOWTACCESS ||  
+	     (*it_handle).getStatus() == ECA_PUTFAIL || 
+	     (*it_handle).getStatus() == ECA_PUTCBINPROG) {
+	     if(MUTEX)
+	       {
+		 cafeMutex.lock();
+	       };   //lock
+	     //std::cout <<  "getStatus - before:" <<  (*it_handle).getStatus() << std::endl;
+	     handle_index.modify(it_handle, change_status(ICAFE_NORMAL));
+	     //std::cout <<  "getStatus - after:" <<  (*it_handle).getStatus() << std::endl;
+	     if(MUTEX)
+	       {
+		 cafeMutex.unlock();
+	       }; //unlock
+	}
+
+
+
 
         // Meant for use in callbacks in monitors!
         // Does not check what the client is requesting.

@@ -22,7 +22,7 @@ automake --force --add-missing --copy
 #Used by ./configure
 #Assumes format ${EPICS}/base-3.14.12
 #source cafeVersion-gcc-7.3.0
-CAFE_V="cafe-1.14.2"
+CAFE_V="cafe-1.14.4"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 
@@ -258,7 +258,7 @@ echo 'ENABLE_OPTIONS='$ENABLE_OPTIONS
     --libdir=/opt/gfa/cafe/cpp/${CAFE_V}/lib/${EPICS_HOST_ARCH} \
     ${ENABLE_OPTIONS} \
     --with-boost-inc=/opt/gfa/cafe/boost/boost_1_61_0/include \
-    --with-epics7=${EPICS}/base-7 \
+    --with-epics7=${EPICS}/base-7.0.6 \
     --with-epics3=${EPICS}/base \
     --with-python37=/opt/gfa/python-3.7/latest \
     --with-python35=/opt/gfa/python-3.5/latest \
