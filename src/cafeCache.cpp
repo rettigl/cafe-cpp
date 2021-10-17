@@ -650,6 +650,27 @@ int  CAFE::getCache(const unsigned int  handle, PVDataHolder & pvd)
     if (it_handle != handle_index.end())
     {
 
+      		
+	//Reset any possible put error that preceded call to getCache
+	if ( (*it_handle).getStatus() == ECAFE_NOWTACCESS ||  
+	     (*it_handle).getStatus() == ECA_PUTFAIL || 
+	     (*it_handle).getStatus() == ECA_PUTCBINPROG) {
+	     if(MUTEX)
+	       {
+		 cafeMutex.lock();
+	       };   //lock
+	     //std::cout <<  "getStatus - before:" <<  (*it_handle).getStatus() << std::endl;
+	     handle_index.modify(it_handle, change_status(ICAFE_NORMAL));
+	     pvd.status = ICAFE_NORMAL;
+	     //std::cout <<  "getStatus - after:" <<  (*it_handle).getStatus() << std::endl;
+	     if(MUTEX)
+	       {
+		 cafeMutex.unlock();
+	       }; //unlock
+	}
+
+
+
         //meant for use in callbacks in monitors!
         if ( (*it_handle).getChannelGetCacheWaitPolicy().getWaitKind()	== CAFENUM::GET_CACHE_NO_CHECK)
         {

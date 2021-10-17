@@ -721,8 +721,8 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
 {
 #define __METHOD__ "Instant::getCache(_handle, _dbrType, _val, alarmStatus, alarmSeverity, ts) "
 
-    //std::cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << std::endl;
-    //std::cout <<  "handle " << _handle << " dbr input type " <<  _dbrType  << std::endl;
+  //std::cout << __FILE__ << " " << __LINE__ << " " << __METHOD__ << std::endl;
+  //std::cout <<  "handle " << _handle << " dbr input type " <<  _dbrType  << std::endl;
 
     status=ICAFE_NORMAL;
 
@@ -801,19 +801,8 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
 
         }
 
-
-        //ifNeverConnected - return error
-        if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
-        {
-            return ICAFE_CS_NEVER_CONN;
-        }
-        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)
-        {
-            return ICAFE_CS_CLOSED;
-        }
-
-	
-	//Reset any put error
+		
+	//Reset any possible put error that preceded call to getCache
 	if ( (*it_handle).getStatus() == ECAFE_NOWTACCESS ||  
 	     (*it_handle).getStatus() == ECA_PUTFAIL || 
 	     (*it_handle).getStatus() == ECA_PUTCBINPROG) {
@@ -830,6 +819,17 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
 	       }; //unlock
 	}
 
+
+
+        //ifNeverConnected - return error
+        if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
+        {
+            return ICAFE_CS_NEVER_CONN;
+        }
+        else if ( (*it_handle).getChannelRegalia().getCafeConnectionState()==ICAFE_CS_CLOSED)
+        {
+            return ICAFE_CS_CLOSED;
+        }
 
 
 
@@ -1114,7 +1114,6 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
     {
 
 
-
         //Very possibly waveforems will need longer to report back!
         if(helper.getNelemNative(handleArray[i])!=1)
         {
@@ -1274,10 +1273,11 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int *handleA
         dbr_short_t  a1, a2;
         epicsTimeStamp ts1;
 
+	//std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
         statusArray[i]=Instant::getCache(handleArray[i], _dbrType, &val[i],
                                          a1, a2, ts1);
 
-
+        //std::cout << "status " << statusArray[i] << std::endl;
         chtype channelType= _dbrType;
 
         if (dbr_type_is_TIME(channelType))
