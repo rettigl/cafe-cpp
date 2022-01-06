@@ -16,7 +16,6 @@ configure
 depcomp
 install-sh
 ltmain.sh
-m4
 makefile
 makefile.in
 missing
