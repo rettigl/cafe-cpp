@@ -439,36 +439,6 @@ if test x$HAVE_PY38_ == xtrue ; then
     ]
   )
 fi
-
-
-AC_ARG_ENABLE(
-  [python310],
-  AC_HELP_STRING([--enable-python310],
-		 [enable python use [default=no]]),
-  [HAVE_PYTHON_=true 
-   HAVE_PY310_=true
-   HAVE_PY38_=false
-   HAVE_PY37_=false
-   HAVE_PY35_=false]
-)
-
-if test x$HAVE_PY310_ == xtrue ; then 
-  AC_ARG_WITH(
-    python310,
-    AC_HELP_STRING(
-      [--with-python310 = location of python],
-      [prefix giving the python base directory]),
-      [#HAVE_PYTHON_=true       
-       PYTHON_PREFIX=$withval
-       PYTHON_INCL_PATH="-I"${PYTHON_PREFIX}/include/python3.10
-       PYTHON_INCL_PATH=${PYTHON_INCL_PATH}" -I"${PYTHON_PREFIX}\
-"/lib/python3.10/site-packages/numpy/core/include" 
-       PYTHON_LIB_PATH=${PYTHON_PREFIX}"/lib" 
-    ]
-  )
-fi
-
-
    
 ##
 ##---------------------------------------------------------------------------
@@ -506,15 +476,6 @@ if test x$HAVE_PYTHON_ == xtrue ; then
       AC_MSG_WARN(Python.h not found!)],
 	          [])
   #fi
-
-
-  if test x$HAVE_PY310_ == xtrue ; then
-    
-    AC_CHECK_LIB(python3.10,[main], [],
-		 [HAVE_PYTHON_=false
-		 AC_MSG_WARN(libpython3.10 not found!)]
-    )
-  fi
 
   if test x$HAVE_PY38_ == xtrue ; then
     
@@ -659,38 +620,6 @@ if test x$HAVE_QT_5py38_ == xtrue ; then
     ]
   )
 fi
-
-
-
-AC_ARG_ENABLE(
-  [qt5py310],
-  AC_HELP_STRING([--enable-qt5py310],
-                 [enable Qt version 5 use [default=no]]),
-  [HAVE_QT_=true 
-   HAVE_QT_5py310_=true
-   HAVE_QT_5py38_=false	
-   HAVE_QT_5_=false
-   HAVE_QT_4_=false] 
-)
-   
-
-#Only if enable flag is set
-if test x$HAVE_QT_5py310_ == xtrue ; then
-  AC_ARG_WITH(
-    qt5py310,
-    AC_HELP_STRING([--with-qt5py310=PREFIX],
-      [prefix, parent directory where the Qt version 5 library is installed]),
-    [#HAVE_QT_=true
-     QT_PREFIX=$withval  
-     QT_INCL_BASE=" -I"${QT_PREFIX}"/include/qt"
-     QT_INCL_PATH=${QT_INCL_BASE}
-     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtCore"     
-     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtXml"   
-     QT_LIB_PATH=${QT_PREFIX}"/lib "
-    ]
-  )
-fi
-
    
 ##
 ##---------------------------------------------------------------------------

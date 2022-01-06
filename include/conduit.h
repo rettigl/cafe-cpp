@@ -741,6 +741,8 @@ public:
 	    std::cout << "getMonitorPolicyVector(monitor_id):  " << monitor_id << " NOT FOUND! " << std::endl;
             std::cout << "Could not modify entry!" << std::endl;
         }
+	MonitorPolicy mp;
+	return mp;
     };
 
     std::vector<MonitorPolicy> getMonitorPolicyVector(void) const
