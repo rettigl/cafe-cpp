@@ -31,7 +31,9 @@ LIB_DIR += -L$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
  -L$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib/${EPICS_HOST_ARCH} \
  -Wl,-rpath,$(CAFE_CPP_BASE)/$(CAFE_VERSION)/lib/${EPICS_HOST_ARCH} \
  -L/opt/gfa/python-3.7/latest/lib \
- -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+ -Wl,-rpath,/opt/gfa/python-3.7/latest/lib \
+ -L/opt/psi/Programming/gcc/10.3.0/lib64	\
+ -Wl,-rpath,/opt/psi/Programming/gcc/10.3.0/lib64
 
 LIBS += -lcafe -lca -lCom -lQt5Core
 

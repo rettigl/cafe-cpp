@@ -1,0 +1,1191 @@
+## CAFE (Channel Access interFacE)
+## Author: Jan Chrin, GFA, PSI 
+## 
+## configure.ac is processed by autoconf 
+##
+## output: configure.in file for building the cafe library 
+## 
+
+#  Standard macros
+AC_PREREQ(2.63)
+AC_COPYRIGHT([CAFE,Jan Chrin, 2010-2021])
+AC_INIT([CAFE], [1.15.0], [Bug reports to: jan.chrin@psi.ch])
+
+AC_CONFIG_AUX_DIR(./)
+
+AC_CONFIG_MACRO_DIR([m4])
+m4_pattern_allow([AC_CONFIG_MACRO])
+
+AM_INIT_AUTOMAKE([gnu subdir-objects])
+AC_CONFIG_SRCDIR([./include/cafe.h])
+
+AC_LANG_CPLUSPLUS
+
+AC_CONFIG_HEADER([./include/config.h:./include/config.in])
+AC_PROG_CXX
+
+# library creation
+AC_PROG_LIBTOOL
+AM_PROG_LIBTOOL
+
+LT_PREREQ([2.4.6])
+LT_INIT
+
+
+#AX_CHECK_COMPILE_FLAG([-std=c++14],  [CPPFLAGS="$CPPFLAGS -std=c++14"])
+
+AC_LANG([C++])
+
+AC_DEFINE_UNQUOTED(HAVE_LINUX, 1, [linux dependency (sleep)])  
+
+CPPFLAGS=" -fexceptions -fPIC -std=c++1z"
+
+# provide include directories
+AC_SUBST([CAFE_CPPFLAGS], '-I$(top_srcdir)/include ')
+
+##---------------------------------------------------------------------------
+##-- EPICS -- path and options
+##
+EPICS_PREFIX=""
+EPICS_INCL_PATH=""
+EPICS_LIB_PATH=""
+
+
+
+## Host Arch
+if test x"${HOST_ARCH}" == x""; then
+  HOST_ARCH=Linux 
+  #echo ${EPICS_HOST_ARCH} | grep -c 'SL6' 
+  #echo ${EPICS_HOST_ARCH} | grep -c 'darwin'   
+  if test x"${CAFE_HOST_FLAG_DARWIN}" == x"1"; then
+    HOST_ARCH=Darwin  
+  fi
+  echo "HOST_ARCH="${HOST_ARCH}
+fi
+
+echo "HOST_ARCH="${HOST_ARCH}
+
+
+AC_ARG_ENABLE(
+  [epics3],
+  AC_HELP_STRING([--enable-epics3],
+                 [enable epics use [default=no]]),
+  [HAVE_EPICS=true
+   HAVE_EPICS_3=true]
+)
+
+
+AC_ARG_ENABLE(
+  [epics7],
+  AC_HELP_STRING([--enable-epics7],
+                 [enable epics use [default=no]]),
+  [HAVE_EPICS=true
+   HAVE_EPICS_7=true]
+)
+
+if test x$HAVE_EPICS_3 == xtrue ; then
+  AC_ARG_WITH(
+    epics3,
+    AC_HELP_STRING(
+      [--with-epics3 location of EPICS],
+      [prefix where the epics libraries and include files are to be found]),
+      [#HAVE_EPICS=true
+       EPICS_PREFIX=$withval
+       EPICS_INCL_PATH="-I"${EPICS_PREFIX}"/include/ \
+-I"${EPICS_PREFIX}"/include/os/"${HOST_ARCH} 
+       EPICS_LIB_PATH=${EPICS_PREFIX}"/lib/"${EPICS_HOST_ARCH}
+       ## Add epics release  
+       EPICS_MAJOR_DEFAULT="3"
+       EPICS_MINOR_DEFAULT="14"
+       EPICS_PATCH_DEFAULT="12"
+      ]     
+)
+fi
+
+if test x$HAVE_EPICS_7 == xtrue ; then
+  AC_ARG_WITH(
+    epics7,
+    AC_HELP_STRING(
+      [--with-epics7 location of EPICS],
+      [prefix where the epics libraries and include files are to be found]),
+      [#HAVE_EPICS=true
+       EPICS_PREFIX=$withval
+       EPICS_INCL_PATH="-I"${EPICS_PREFIX}"/include/ \
+-I"${EPICS_PREFIX}"/include/os/"${HOST_ARCH} 
+       EPICS_INCL_PATH=${EPICS_INCL_PATH}" \
+-I"${EPICS_PREFIX}"/include/compiler/gcc"
+       EPICS_LIB_PATH=${EPICS_PREFIX}"/lib/"${EPICS_HOST_ARCH}    
+       ## Add epics release  
+       EPICS_MAJOR_DEFAULT="7"
+       EPICS_MINOR_DEFAULT="4"
+       EPICS_PATCH_DEFAULT="1"
+      ]
+)
+fi
+
+EPICS_MAJOR_REL=${EPICS_MAJOR_DEFAULT}
+EPICS_MINOR_REL=${EPICS_MINOR_DEFAULT}
+EPICS_PATCH_REL=${EPICS_PATCH_DEFAULT}
+  
+#overwrite default with actual if determined
+if test x"${CAFE_EPICS_V_MAJOR}" != x""; then
+  EPICS_MAJOR_REL=${CAFE_EPICS_V_MAJOR} 
+fi
+if test x"${CAFE_EPICS_V_MINOR}" != x""; then
+  EPICS_MINOR_REL=${CAFE_EPICS_V_MINOR}
+fi
+if test x"${CAFE_EPICS_V_PATCH}" != x""; then
+  EPICS_PATCH_REL=${CAFE_EPICS_V_PATCH} 
+fi
+
+echo EPICS_MAJOR=$EPICS_MAJOR_REL
+echo EPICS_MINOR=$EPICS_MINOR_REL
+echo EPICS_PATCH=$EPICS_PATCH_REL
+
+
+#echo "TEST ", $EPICS_LIB_PATH
+##
+##-- end EPICS -- path and options
+##---------------------------------------------------------------------------
+
+##===========================================================================
+##== Check for header files and libraries.
+##===========================================================================
+
+##---------------------------------------------------------------------------
+##-- EPICS -- check header files and libs
+##
+AC_LANG_PUSH([C++])
+
+if test x$HAVE_EPICS == xtrue; then
+
+  # Change flags: if all tests are successfull, accept these changes; if
+  # the tests are not successfull, use the old flags.
+  if test x"${EPICS_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${EPICS_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${EPICS_LIB_PATH}" -Wl,-rpath,"${EPICS_LIB_PATH}
+    #LDFLAGS=${LDFLAGS}" -L/opt/psi/Programming/gcc/7.3.0/lib64 -Wl,-rpath,/opt/psi/Programming/gcc/7.3.0/lib64"
+    #LDFLAGS=${LDFLAGS}" -L/opt/psi/Programming/gcc/7.3.0/lib -Wl,-rpath,/opt/psi/Programming/gcc/7.3.0/lib"
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_HEADERS(
+      [cadef.h],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=true
+       AC_MSG_WARN(cadef.h not not found!)],
+      [])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_HEADERS(
+      [epicsTypes.h],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=true
+       AC_MSG_WARN(epicsTypes.h not found!)],
+      [])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_LIB(ca,[main],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(libca either not found or not operational!)])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_LIB(Com,[main],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(libCom either not found or not operational!)])
+  fi
+
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_CHECK_LIB(dl,[main],
+      [HAVE_EPICS=true],
+      [HAVE_EPICS=false
+       AC_MSG_WARN(libdl either not found or not operational!)])
+  fi
+
+  # If all checks are OK we add rlog to the CXXFLAGS.
+  if test x$HAVE_EPICS != xtrue ; then
+
+    if test x"${EPICS_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+    fi   
+  fi
+    
+  echo "LDFLAGS__> $LDFLAGS "
+  
+  if test x$HAVE_EPICS == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_EPICS, ${EPICS_MAJOR_REL}.${EPICS_MINOR_REL}.${EPICS_PATCH_REL},[epics version])
+    AC_DEFINE_UNQUOTED(EPICS_MAJOR,${EPICS_MAJOR_REL}, [epics major release])
+    AC_DEFINE_UNQUOTED(EPICS_MINOR,${EPICS_MINOR_REL}, [epics minor release])
+    AC_DEFINE_UNQUOTED(EPICS_PATCH,${EPICS_PATCH_REL}, [epics patch release])
+    echo "EPICS PATH ====================================>" ${EPICS_INCL_PATH}
+    echo "EPICS LIB  ====================================>" ${EPICS_LIB_PATH}
+  fi
+fi
+
+AC_LANG_POP
+
+##
+##-- end EPICS -- check header files and libs
+##---------------------------------------------------------------------------
+
+
+##---------------------------------------------------------------------------
+##-- BOOST -- path and options - 
+##-- Boost libraries are mainly header-only, i.e. they consist of header files
+##-- containing templates and inline functions, and require no separately-compiled
+##-- library binaries or special treatment when linking
+##
+BOOST_PREFIX=""
+BOOST_INCL_PATH=""
+BOOST_LIB_PATH=""
+BOOST_OPTION=""
+
+AC_ARG_ENABLE(
+  [boost-inc],
+  AC_HELP_STRING([--enable-boost-inc],
+                 [enable boost use [default=no]]),
+  [HAVE_BOOST_=true]
+)
+
+AC_ARG_WITH(
+  boost-inc,
+  AC_HELP_STRING([--with-boost-inc = location of BOOST],
+                 [prefix giving the boost base directory]),
+  [#HAVE_BOOST_=true
+   BOOST_PREFIX=$withval
+   BOOST_INCL_PATH="-I"${BOOST_PREFIX}"/boost -I"${BOOST_PREFIX}
+  ]
+)
+  
+AC_ARG_ENABLE(
+  [boost-lib],
+  AC_HELP_STRING([--enable-boost-lib],
+                 [enable boost lib use [default=no]]),
+  [HAVE_BOOST_LIB_=true]
+)
+
+AC_ARG_WITH(
+  boost-lib,
+  AC_HELP_STRING([--with-boost-lib = location of BOOST],
+                 [prefix giving the boost base directory]),
+  [#HAVE_BOOST_LIB=true   
+   BOOST_LIB_PATH=$withval
+  ]
+)
+
+##
+##-- end BOOST -- path and options
+##---------------------------------------------------------
+
+
+
+##---------------------------------------------------------------------------
+##-- BOOST -- check header files (and lib if selected) only
+##
+AC_LANG_PUSH([C++])
+ 
+if test x$HAVE_BOOST_LIB_ == xtrue ; then
+ 
+  TEMP_LDFLAGS=${LDFLAGS}
+  LDFLAGS=${LDFLAGS}" -L"${BOOST_LIB_PATH}"  -Wl,-rpath,"${BOOST_LIB_PATH}
+  #echo ${BOOST_LIB_PATH}
+  #echo ${LDFLAGS}
+
+  if test x$HAVE_BOOST_LIB_ == xtrue ; then
+    AC_CHECK_LIB(boost_thread,[main],
+      [],
+      [HAVE_BOOST_LIB=false
+       AC_MSG_WARN(boost_thread not found!)])
+  fi
+
+  # If all checks are OK we add boost lib version to the FLAGS.
+  if test x$HAVE_BOOST_LIB_ != xtrue ; then            
+    LDFLAGS=${TEMP_LDFLAGS}
+  fi
+
+  if test x$HAVE_BOOST_LIB_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_BOOST_THREAD, 1, [boost thread library])  
+  fi
+fi
+
+
+if test x$HAVE_BOOST_ == xtrue ; then
+
+  # Change flags: if all tests are successful, accept these additions, 
+  # else use the old flags.
+  if test x"${BOOST_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${BOOST_INCL_PATH}
+    echo ${BOOST_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  if test x$HAVE_BOOST_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [multi_index_container.hpp],
+      [HAVE_BOOST_=true],
+      [HAVE_BOOST_=false
+      AC_MSG_WARN(multi_index_container.hpp not found!)],
+      [])
+  fi
+
+  if test x$HAVE_BOOST_ != xtrue ; then
+    if test x"${BOOST_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      echo ${CPPFLAGS}
+    fi
+  fi
+
+  if test x$HAVE_BOOST_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_BOOST, 1, [Availability of boost])
+    echo "BOOST PATH ====================================>" ${BOOST_INCL_PATH}
+  fi
+fi
+
+AC_LANG_POP
+
+##
+##-- end BOOST-- check header files only
+##-----------------------------
+
+
+PYTHON_PREFIX=""
+PYTHON_INCL_PATH=""
+PYTHON_LIB_PATH=""
+PYTHON_OPTION=""
+##---------------------------------------------------------------------------
+##-- Python 3.5/3.7 -- path and options
+##-- Python header files required for callbacks
+
+ 
+AC_ARG_ENABLE(
+  [python35],
+  AC_HELP_STRING([--enable-python35],
+		 [enable python use [default=no]]),
+  [HAVE_PYTHON_=true 
+   HAVE_PY35_=true]
+)
+
+if test x$HAVE_PY35_ == xtrue ; then
+  AC_ARG_WITH(
+    python35,
+    AC_HELP_STRING(
+      [--with-python35 = location of python],
+      [prefix giving the python base directory]),
+      [#HAVE_PYTHON_=true       
+       PYTHON_PREFIX=$withval
+       PYTHON_INCL_PATH="-I"${PYTHON_PREFIX}/include/python3.5m
+       PYTHON_INCL_PATH=${PYTHON_INCL_PATH}" -I"${PYTHON_PREFIX}\
+"/lib/python3.5/site-packages/numpy/core/include" 
+       PYTHON_LIB_PATH=${PYTHON_PREFIX}"/lib" 
+      ]
+  )
+fi
+
+AC_ARG_ENABLE(
+  [python37],
+  AC_HELP_STRING([--enable-python37],
+		 [enable python use [default=no]]),
+  [HAVE_PYTHON_=true 
+   HAVE_PY37_=true 
+   HAVE_PY35_=false]
+)
+
+if test x$HAVE_PY37_ == xtrue ; then 
+  AC_ARG_WITH(
+    python37,
+    AC_HELP_STRING(
+      [--with-python37 = location of python],
+      [prefix giving the python base directory]),
+      [#HAVE_PYTHON_=true       
+       PYTHON_PREFIX=$withval
+       PYTHON_INCL_PATH="-I"${PYTHON_PREFIX}/include/python3.7m
+       PYTHON_INCL_PATH=${PYTHON_INCL_PATH}" -I"${PYTHON_PREFIX}\
+"/lib/python3.7/site-packages/numpy/core/include" 
+       PYTHON_LIB_PATH=${PYTHON_PREFIX}"/lib" 
+    ]
+  )
+fi
+
+
+AC_ARG_ENABLE(
+  [python38],
+  AC_HELP_STRING([--enable-python38],
+		 [enable python use [default=no]]),
+  [HAVE_PYTHON_=true 
+   HAVE_PY38_=true
+   HAVE_PY37_=false
+   HAVE_PY35_=false]
+)
+
+if test x$HAVE_PY38_ == xtrue ; then 
+  AC_ARG_WITH(
+    python38,
+    AC_HELP_STRING(
+      [--with-python38 = location of python],
+      [prefix giving the python base directory]),
+      [#HAVE_PYTHON_=true       
+       PYTHON_PREFIX=$withval
+       PYTHON_INCL_PATH="-I"${PYTHON_PREFIX}/include/python3.8
+       PYTHON_INCL_PATH=${PYTHON_INCL_PATH}" -I"${PYTHON_PREFIX}\
+"/lib/python3.8/site-packages/numpy/core/include" 
+       PYTHON_LIB_PATH=${PYTHON_PREFIX}"/lib" 
+    ]
+  )
+fi
+
+
+AC_ARG_ENABLE(
+  [python310],
+  AC_HELP_STRING([--enable-python310],
+		 [enable python use [default=no]]),
+  [HAVE_PYTHON_=true 
+   HAVE_PY310_=true
+   HAVE_PY38_=false
+   HAVE_PY37_=false
+   HAVE_PY35_=false]
+)
+
+if test x$HAVE_PY310_ == xtrue ; then 
+  AC_ARG_WITH(
+    python310,
+    AC_HELP_STRING(
+      [--with-python310 = location of python],
+      [prefix giving the python base directory]),
+      [#HAVE_PYTHON_=true       
+       PYTHON_PREFIX=$withval
+       PYTHON_INCL_PATH="-I"${PYTHON_PREFIX}/include/python3.10
+       PYTHON_INCL_PATH=${PYTHON_INCL_PATH}" -I"${PYTHON_PREFIX}\
+"/lib/python3.10/site-packages/numpy/core/include" 
+       PYTHON_LIB_PATH=${PYTHON_PREFIX}"/lib" 
+    ]
+  )
+fi
+
+
+   
+##
+##---------------------------------------------------------------------------
+
+    
+##
+##-- end PYTHON -- path and options
+##---------------------------------------------------------------------------
+
+
+
+##---------------------------------------------------------------------------
+##-- Python -- check header files and library
+##
+AC_LANG_PUSH([C++])
+
+if test x$HAVE_PYTHON_ == xtrue ; then
+
+  #Change flags: if all tests are successful, accept these additions,
+  # else use the old flags.
+  if test x"${PYTHON_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${PYTHON_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${PYTHON_LIB_PATH}"  -Wl,-rpath,"${PYTHON_LIB_PATH}
+    echo ${PYTHON_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  #if test x$HAVE_PYTHON_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [Python.h],
+      [HAVE_PYTHON_=true],
+      [HAVE_PYTHON_=false
+      AC_MSG_WARN(Python.h not found!)],
+	          [])
+  #fi
+
+
+  if test x$HAVE_PY310_ == xtrue ; then
+    
+    AC_CHECK_LIB(python3.10,[main], [],
+		 [HAVE_PYTHON_=false
+		 AC_MSG_WARN(libpython3.10 not found!)]
+    )
+  fi
+
+  if test x$HAVE_PY38_ == xtrue ; then
+    
+    AC_CHECK_LIB(python3.8,[main], [],
+		 [HAVE_PYTHON_=false
+		 AC_MSG_WARN(libpython3.8 not found!)]
+    )
+  fi
+  
+  if test x$HAVE_PY37_ == xtrue ; then
+    
+    AC_CHECK_LIB(python3.7m,[main], [],
+		 [HAVE_PYTHON_=false
+		 AC_MSG_WARN(libpython3.7m not found!)]
+    )
+  fi
+  
+  if test x$HAVE_PY35_ == xtrue ; then
+    
+    AC_CHECK_LIB(python3.5m,[main], [],
+		 [HAVE_PYTHON_=false
+		 AC_MSG_WARN(libpython3.5m not found!)]
+    )
+  fi 	
+
+  # If all checks are OK we add Qt version 4 to the FLAGS.
+		
+  if test x$HAVE_PYTHON_ != xtrue ; then
+    if test x"${PYTHON_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+      echo ${CPPFLAGS}
+    fi
+  fi
+
+
+  if test x$HAVE_PYTHON_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_PYTHON, 1, [Availability of python])
+    ##_PYCAFE_EXT IF FLAG SET ELSE USE DEFAULT PYCAFE_API_H	
+    AC_DEFINE_UNQUOTED(HAVE_PYCAFE_EXT, 1, [pycafe extern C])
+    echo "PYTHON PATH ====================================>" ${PYTHON_INCL_PATH}
+    echo "PYTHON LIB  ====================================>" ${PYTHON_LIB_PATH}	   
+  fi
+fi
+
+AC_LANG_POP
+##
+##-- end Python 3.7(3.8 -- check header files and library
+##-----------------------------
+
+
+
+
+
+##---------------------------------------------------------------------------
+##-- Qt4/5 -- path and options
+##
+QT_PREFIX=""
+QT_INCL_PATH=""
+QT_LIB_PATH=""
+
+
+AC_ARG_ENABLE(
+  [qt4],
+  AC_HELP_STRING([--enable-qt4],
+                 [enable Qt version 4 use [default=no]]),
+  [HAVE_QT_=true 
+   HAVE_QT_4_=true] 
+)
+  
+
+#Only if enable flag is set
+if test x$HAVE_QT_4_ == xtrue ; then
+  AC_ARG_WITH(
+    qt4,
+    AC_HELP_STRING([--with-qt4=PREFIX],
+      [prefix, parent directory where the Qt version 4 library is installed]),
+    [#HAVE_QT_=true
+     QT_PREFIX=$withval  
+     QT_INCL_BASE=" -I"${QT_PREFIX}"/include"
+     QT_INCL_PATH=${QT_INCL_BASE}
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtCore"     
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtXml"   
+     QT_LIB_PATH=${QT_PREFIX}"/lib "
+    ]
+  )
+fi
+
+AC_ARG_ENABLE(
+  [qt5],
+  AC_HELP_STRING([--enable-qt5],
+                 [enable Qt version 5 use [default=no]]),
+  [HAVE_QT_=true 
+   HAVE_QT_5_=true
+   HAVE_QT_4_=false] 
+)
+
+  
+ 
+#Only if enable flag is set
+if test x$HAVE_QT_5_ == xtrue ; then
+  AC_ARG_WITH(
+    qt5,
+    AC_HELP_STRING([--with-qt5=PREFIX],
+      [prefix, parent directory where the Qt version 5 library is installed]),
+    [#HAVE_QT_=true
+     QT_PREFIX=$withval  
+     QT_INCL_BASE=" -I"${QT_PREFIX}"/include/qt"
+     QT_INCL_PATH=${QT_INCL_BASE}
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtCore"     
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtXml"   
+     QT_LIB_PATH=${QT_PREFIX}"/lib "
+    ]
+  )
+fi
+ 
+
+AC_ARG_ENABLE(
+  [qt5py38],
+  AC_HELP_STRING([--enable-qt5py38],
+                 [enable Qt version 5 use [default=no]]),
+  [HAVE_QT_=true 
+   HAVE_QT_5py38_=true	
+   HAVE_QT_5_=false
+   HAVE_QT_4_=false] 
+)
+   
+
+#Only if enable flag is set
+if test x$HAVE_QT_5py38_ == xtrue ; then
+  AC_ARG_WITH(
+    qt5py38,
+    AC_HELP_STRING([--with-qt5py38=PREFIX],
+      [prefix, parent directory where the Qt version 5 library is installed]),
+    [#HAVE_QT_=true
+     QT_PREFIX=$withval  
+     QT_INCL_BASE=" -I"${QT_PREFIX}"/include/qt"
+     QT_INCL_PATH=${QT_INCL_BASE}
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtCore"     
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtXml"   
+     QT_LIB_PATH=${QT_PREFIX}"/lib "
+    ]
+  )
+fi
+
+
+
+AC_ARG_ENABLE(
+  [qt5py310],
+  AC_HELP_STRING([--enable-qt5py310],
+                 [enable Qt version 5 use [default=no]]),
+  [HAVE_QT_=true 
+   HAVE_QT_5py310_=true
+   HAVE_QT_5py38_=false	
+   HAVE_QT_5_=false
+   HAVE_QT_4_=false] 
+)
+   
+
+#Only if enable flag is set
+if test x$HAVE_QT_5py310_ == xtrue ; then
+  AC_ARG_WITH(
+    qt5py310,
+    AC_HELP_STRING([--with-qt5py310=PREFIX],
+      [prefix, parent directory where the Qt version 5 library is installed]),
+    [#HAVE_QT_=true
+     QT_PREFIX=$withval  
+     QT_INCL_BASE=" -I"${QT_PREFIX}"/include/qt"
+     QT_INCL_PATH=${QT_INCL_BASE}
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtCore"     
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtXml"   
+     QT_LIB_PATH=${QT_PREFIX}"/lib "
+    ]
+  )
+fi
+
+   
+##
+##---------------------------------------------------------------------------
+
+##---------------------------------------------------------------------------
+##-- Qt version 5 -- check header files and libs
+##
+AC_LANG_PUSH([C++])
+
+if test x$HAVE_QT_ == xtrue ; then
+
+  # Change flags: if all tests are successfull, accept this changes; if 
+  # the tests are not successfull, use the old flags.
+  if test x"${QT_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${QT_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${QT_LIB_PATH}"  -Wl,-rpath,"${QT_LIB_PATH}        
+  fi
+
+ 
+  #if test x$HAVE_QT_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [qxml.h],
+      [HAVE_QT_=true],
+      [HAVE_QT_=false
+      AC_MSG_WARN(qxml.h not found!)],
+      [])
+  #fi
+
+  
+  if test x$HAVE_QT_4_ == xtrue ; then
+    AC_CHECK_LIB(QtCore,[main],
+	         [],
+                 [HAVE_QT_=false
+                 AC_MSG_WARN(libQtCore not found!)])
+  fi
+
+  if test x$HAVE_QT_4_ == xtrue ; then
+    AC_CHECK_LIB(QtXml,[main],
+	         [],
+		 [HAVE_QT_=false
+		 AC_MSG_WARN(libQtXml not found!)])
+  fi
+
+  if test x$HAVE_QT_5_ == xtrue ; then
+    AC_CHECK_LIB(Qt5Core,[write],
+  	         [],
+   		 [HAVE_QT_=true #force true if there but not found
+  		 AC_MSG_WARN(libQt5Core not checked for!)])
+  fi
+
+  if test x$HAVE_QT_5_ == xtrue ; then
+    AC_CHECK_LIB(Qt5Xml,[qt_version_tag],
+  	         [],
+  		 [HAVE_QT_=true
+  		 AC_MSG_WARN(libQt5Xml not checked for!)])
+  fi
+	
+
+
+
+  # If all checks are OK we add Qt version 5 to the FLAGS.
+  if test x$HAVE_QT_ != xtrue ; then	
+    if test x"${QT_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+    fi
+  fi
+
+  if test x$HAVE_QT_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_QT, 1,[Availability of Qt version 5 confirmed])
+    AC_DEFINE_UNQUOTED(HAVE_LIBQTXML, 1, [Availability of Qt version 5 confirmed])
+    AC_DEFINE(QT_NO_VERSION_TAGGING, 1,[Availability of Qt version 5 confirmed])
+    echo "QT PATH ====================================>" ${QT_INCL_PATH}
+    echo "QT LIB  ====================================>" ${QT_LIB_PATH}
+  fi
+
+fi
+
+AC_LANG_POP
+##
+##-- end QT5 -- check header files and libs
+
+
+##---------------------------------------------------------------------------
+##---------------------------------------------------------------------------
+##-- JSON -- path and options -
+##-- JSON header files required
+##
+
+JSON_PREFIX=""
+JSON_INCL_PATH=""
+JSON_LIB_PATH=""
+JSON_OPTION=""
+
+AC_ARG_ENABLE(
+  [json],
+  AC_HELP_STRING([--enable-json-inc],
+		 [enable json use [default=no]]),
+  [HAVE_JSON_=true]
+)
+
+
+if test x$HAVE_JSON_ == xtrue ; then
+  AC_ARG_WITH(
+    json,
+    AC_HELP_STRING(
+      [--with-json= location of json],
+      [prefix giving the json base directory]),
+    [HAVE_JSON_=true
+     JSON_PREFIX=$withval
+     JSON_INCL_PATH="-I"${JSON_PREFIX}"/include"
+     JSON_LIB_PATH=${JSON_PREFIX}"/libs/linux-gcc-6.3.0"
+    ]
+)
+fi    
+##
+##-- end JSON -- path and options
+##---------------------------------------------------------
+
+
+
+
+##---------------------------------------------------------------------------
+##-- JSON -- check header files only
+##
+AC_LANG_PUSH([C++])
+
+if test x$HAVE_JSON_ == xtrue ; then
+
+  # Change flags: if all tests are successful, accept these additions,
+  # else use the old flags.
+  if test x"${JSON_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${JSON_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${JSON_LIB_PATH}"  -Wl,-rpath,"${JSON_LIB_PATH}
+    echo ${JSON_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  #if test x$HAVE_JSON_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [json/json.h],
+      [HAVE_JSON_=true],
+      [HAVE_JSON_=false
+	AC_MSG_WARN(json.h not found!)],
+      [])
+  #fi
+
+		
+   if test x$HAVE_JSON_ == xtrue ; then
+     AC_CHECK_LIB(json_linux-gcc-6.3.0_libmt,[main],
+	          [],
+		  [HAVE_JSON=false
+		  AC_MSG_WARN(libjson_linux-gcc-6.3.0_libmt not found!)])
+   fi
+	
+
+    # If all checks are OK we add json to the FLAGS.
+    if test x$HAVE_JSON_ != xtrue ; then
+      if test x"${JSON_PREFIX}" != x"" ; then
+	CPPFLAGS=${TEMP_CPPFLAGS}
+	LDFLAGS=${TEMP_LDFLAGS}
+	echo ${CPPFLAGS}
+      fi
+    fi
+
+
+    if test x$HAVE_JSON_ == xtrue ; then
+      AC_DEFINE_UNQUOTED(HAVE_JSON, 1, [Availability of json])      
+      echo "JSON PATH ====================================>" ${JSON_INCL_PATH}
+      echo "JSON LIB  ====================================>" ${JSON_LIB_PATH}
+    fi
+fi
+
+AC_LANG_POP
+##
+##-- end JSON-- check header files only
+##-----------------------------
+
+##---------------------------------------------------------------------------
+##---------------------------------------------------------------------------
+##-- Zeromq -- path and options -
+##-- Zeromq header files required
+##
+
+ZEROMQ_PREFIX=""
+ZEROMQ_INCL_PATH=""
+ZEROMQ_LIB_PATH=""
+ZEROMQ_OPTION=""
+
+AC_ARG_ENABLE(
+	[zeromq],
+        AC_HELP_STRING([--enable-zeromq],
+		       [enable zeromq use [default=no]]),
+	[HAVE_ZEROMQ_=true]
+)
+
+if test x$HAVE_ZEROMQ_ == xtrue ; then
+  AC_ARG_WITH(
+    zeromq,
+    AC_HELP_STRING(
+	 [--with-zeromq = location of zeromq],
+	 [prefix giving the zeromq base directory]),
+    [HAVE_ZEROMQ_=true
+     ZEROMQ_PREFIX=$withval
+     ZEROMQ_INCL_PATH="-I"${ZEROMQ_PREFIX}"/include"
+     ZEROMQ_LIB_PATH=${ZEROMQ_PREFIX}"/lib"
+    ]
+  )
+fi
+
+##
+##-- end ZEROMQ -- path and options
+##---------------------------------------------------------
+
+
+##---------------------------------------------------------------------------
+##-- ZEROMQ -- check header files and library
+#
+AC_LANG_PUSH([C++])
+
+if test x"$HAVE_ZEROMQ_" == xtrue ; then
+
+  # Change flags: if all tests are successful, accept these additions,
+  # else use the old flags.
+  if test x"${ZEROMQ_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${ZEROMQ_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${ZEROMQ_LIB_PATH}"  -Wl,-rpath,"${ZEROMQ_LIB_PATH}
+    echo ${ZEROMQ_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  #if test x$HAVE_ZEROMQ_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [zmq.h],
+      [HAVE_ZEROMQ_=true],
+      [HAVE_ZEROMQ_=false
+	 AC_MSG_WARN(zmq.h not found!)],
+	 [])
+  #fi
+
+  if test x$HAVE_ZEROMQ_ == xtrue ; then
+    AC_CHECK_LIB(zmq,[main],
+	         [],
+		 [HAVE_ZEROMQ_=false
+		    AC_MSG_WARN(libzmq not found!)])
+  fi
+	
+
+  # If all checks are OK we add Zeromq to the FLAGS.
+		
+  if test x$HAVE_ZEROMQ_ != xtrue ; then
+    if test x"${ZEROMQ_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+      echo ${CPPFLAGS}
+    fi
+  fi
+
+
+  if test x$HAVE_ZEROMQ_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_ZEROMQ, 1, [Availability of zeromq])
+    echo "ZMQ PATH ====================================>" ${ZEROMQ_INCL_PATH}
+    echo "ZMQ LIB  ====================================>" ${ZEROMQ_LIB_PATH}
+  fi
+fi
+
+AC_LANG_POP
+##
+##-- end ZEROMQ-- check header files and lib
+##-----------------------------
+
+
+##---------------------------------------------------------------------------
+##---------------------------------------------------------------------------
+##-- CURL -- path and options -
+##-- CURL header files required
+##
+
+CURL_PREFIX=""
+CURL_INCL_PATH=""
+CURL_LIB_PATH=""
+CURL_OPTION=""
+
+AC_ARG_ENABLE(
+  [curl],
+  AC_HELP_STRING([--enable-curl],
+		 [enable curl use [default=no]]),
+	[HAVE_CURL_=true]
+)
+
+if test x$HAVE_CURL_ == xtrue ; then
+  AC_ARG_WITH(
+   curl,
+   AC_HELP_STRING(
+	 [--with-curl = location of curl],
+	 [prefix giving the curl base directory]),
+   [HAVE_CURL_=true
+    CURL_PREFIX=$withval
+    CURL_INCL_PATH="-I"${CURL_PREFIX}"/include"
+    CURL_LIB_PATH=${CURL_PREFIX}"/lib/.libs"
+   ]
+  )
+fi
+
+##
+##-- end CURL -- path and options
+##---------------------------------------------------------
+
+
+##---------------------------------------------------------------------------
+##-- CURL -- check header files only
+##
+AC_LANG_PUSH([C++])
+
+if test x$HAVE_CURL_ == xtrue ; then
+
+  # Change flags: if all tests are successful, accept these additions,
+  # else use the old flags.
+  if test x"${CURL_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${CURL_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${CURL_LIB_PATH}"  -Wl,-rpath,"${CURL_LIB_PATH}
+    echo ${CURL_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  #if test x$HAVE_CURL_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [curl/curl.h],
+      [HAVE_CURL_=true],
+      [HAVE_CURL_=false
+       AC_MSG_WARN(curl/curl.h not found!)],
+       [])
+  #fi
+
+  if test x$HAVE_CURL_ == xtrue ; then
+     AC_CHECK_LIB(curl,[main],
+	          [],
+		  [HAVE_CURL=false
+		     AC_MSG_WARN(libcurl not found!)])
+  fi
+	
+
+  # If all checks are OK we add curl to the FLAGS.
+		
+  if test x$HAVE_CURL_ != xtrue ; then
+    if test x"${CURL_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+      echo ${CPPFLAGS}
+    fi
+  fi
+
+
+  if test x$HAVE_CURL_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_CURL, 1, [Availability of curl])
+    echo "CURL PATH ====================================>" ${CURL_INCL_PATH}
+    echo "CURL LIB ====================================>" ${CURL_LIB_PATH}
+  fi
+fi
+
+AC_LANG_POP
+##
+##-- end CURL-- check header files only
+##-----------------------------
+
+
+
+##---------------------------------------------------------------------------
+##---------------------------------------------------------------------------
+##-- LZ4 -- path and options -
+##-- LZ4 header files required
+##
+
+LZ4_PREFIX=""
+LZ4_INCL_PATH=""
+LZ4_LIB_PATH=""
+LZ4_OPTION=""
+
+AC_ARG_ENABLE(
+  [lz4],
+  AC_HELP_STRING([--enable-lz4],
+		 [enable LZ4 use [default=no]]),
+  [HAVE_LZ4_=true]
+)
+
+if test x$HAVE_LZ4_ == xtrue ; then
+  AC_ARG_WITH(
+    lz4,
+    AC_HELP_STRING(
+	 [--with-lz4 = location of lz4],
+	 [prefix giving the lz4 base directory]),
+    [#HAVE_LZ4_=true
+     LZ4_PREFIX=$withval
+     LZ4_INCL_PATH="-I"${LZ4_PREFIX}
+     LZ4_LIB_PATH=${LZ4_PREFIX}
+    ]
+)
+fi
+
+##
+##-- end LZ4 -- path and options
+##---------------------------------------------------------
+
+
+##---------------------------------------------------------------------------
+##-- LZ4 -- check header files and library
+## 
+
+AC_LANG_PUSH([C++])
+
+if test x$HAVE_LZ4_ == xtrue ; then
+
+  # Change flags: if all tests are successful, accept these additions,
+  # else use the old flags.
+  if test x"${LZ4_PREFIX}" != x"" ; then
+    TEMP_CPPFLAGS=${CPPFLAGS}
+    CPPFLAGS=${CPPFLAGS}" "${LZ4_INCL_PATH}
+    TEMP_LDFLAGS=${LDFLAGS}
+    LDFLAGS=${LDFLAGS}" -L"${LZ4_LIB_PATH}"  -Wl,-rpath,"${LZ4_LIB_PATH}
+    echo ${LZ4_INCL_PATH}
+    echo ${CPPFLAGS}
+  fi
+
+  #if test x$HAVE_LZ4_ == xtrue ; then
+    AC_CHECK_HEADERS(
+      [lz4.h],
+      [HAVE_LZ4_=true],
+      [HAVE_LZ4_=false
+	 AC_MSG_WARN(lz4.h not found!)],
+      [])
+  #fi
+
+  if test x$HAVE_LZ4_ == xtrue ; then
+    AC_CHECK_LIB(lz4,[main],
+	         [],
+		 [HAVE_LZ4=false
+		    AC_MSG_WARN(liblz4 not found!)])
+  fi
+	
+
+  # If all checks are OK we add LZ4 to the FLAGS.
+		
+  if test x$HAVE_LZ4_ != xtrue ; then
+    if test x"${LZ4_PREFIX}" != x"" ; then
+      CPPFLAGS=${TEMP_CPPFLAGS}
+      LDFLAGS=${TEMP_LDFLAGS}
+        echo ${CPPFLAGS}
+    fi
+  fi
+
+  if test x$HAVE_LZ4_ == xtrue ; then
+    AC_DEFINE_UNQUOTED(HAVE_LZ4, 1, [Availability of LZ4])
+    echo "LZ4 PATH ====================================>" ${LZ4_INCL_PATH}
+    echo "LZ4 LIB  ====================================>" ${LZ4_LIB_PATH}
+  fi
+fi
+
+AC_LANG_POP
+##
+##-- end LZ4-- check header files only
+##-----------------------------
+
+CPPFLAGS=$CPPFLAGS
+echo "REPORTING -> current CPPFLAGS = "$CPPFLAGS
+LDFLAGS=$LDFLAGS
+echo "REPORTING -> current LDFLAGS = "$LDFLAGS
+
+##
+##-- end  Check
+##--
+
+# Generate makefiles
+
+AC_SUBST(AM_CPPFLAGS, $CPPFLAGS)
+AC_SUBST(AM_LDFLAGS, $LDFLAGS)
+
+#echo "HAVE_PYTHON_="$HAVE_PYTHON_ 
+#echo "HAVE_ZEROMQ_="$HAVE_ZEROMQ_
+
+AM_CONDITIONAL(HAVE_PYTHON_, test x$HAVE_PYTHON_ == xtrue)
+AM_CONDITIONAL(HAVE_PYCAFE_EXT_, test x$HAVE_PYTHON_ == xtrue)
+AM_CONDITIONAL(HAVE_ZEROMQ_, test x$HAVE_ZEROMQ_ == xtrue)
+
+AC_CONFIG_FILES([makefile
+		src/makefile
+		include/makefile])
+
+AC_OUTPUT

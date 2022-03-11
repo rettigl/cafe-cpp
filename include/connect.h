@@ -32,8 +32,7 @@
 #include <boost/chrono.hpp>
 #endif
 
-
-
+#include <epicsVersion.h>
 
 class Connect
 {
@@ -202,6 +201,14 @@ public:
         return ca_flush_io();
     }
 
+    std::string _ca_version(){
+      return (std::string) ca_version();
+    }  
+
+    std::string _epics_version(){
+      return (std::string) EPICS_VERSION_STRING;
+    }  
+   
     int _ca_flush_io()
     {
         return ca_flush_io();

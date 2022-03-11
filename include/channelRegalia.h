@@ -179,13 +179,13 @@ public:
         }
     };
 
-    std::string         getCafeConnectionStateAsString()
+    std::string getCafeConnectionStateAsString()
     {
         return cafeStatus.csc.message(cafeConnectionState);
     };
 
     ChannelRegalia():channelID((chid) NULL), connectFlag(false), nelem((unsigned int) 1),
-        dataType((chtype) CAFE_TYPENOTCONN),
+        dataType(chtype((int)CAFE_TYPENOTCONN)),
         accessRead((unsigned short) 0), accessWrite((unsigned short) 0),
         connectionState((int) CA_OP_CONN_DOWN), cafeConnectionState((int) ICAFE_CS_NEVER_CONN)
     {

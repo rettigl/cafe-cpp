@@ -2,7 +2,6 @@
 //  A simple example
 //
 #include <cafe.h>
-
 #include "callbacks.h" //ca callback funtions
 
 // Test with 6 PVS
@@ -64,7 +63,14 @@ int main( int argc, char *argv[] )
     //Instantaite CAFE
     CAFE  * cafe = new CAFE();
 
-
+    //PVCtrlHolder pvcd;
+    //dbr_string_t str_out;
+    //cafe->open("SF-OP:CR-MSG:OP-MSG1.DESC", handle);
+    //cafe->open("ARIDI-BPM:OFB-YRMS", handle);
+    //status = cafe->getCtrl("ARIDI-BPM:OFB-YRMS", pvcd);
+    //pvcd.print();
+    //cout << "status " << status << " value " << str_out << endl;  
+    //exit(1);
 
     //------------------------------------------------------------
     //(1) Establishing connections to EPICS Process Variables (PVs)

@@ -85,11 +85,10 @@ DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(top_srcdir)/./include/config.in $(include_HEADERS) \
 	.//AUTHORS COPYING .//COPYING .//ChangeLog .//INSTALL .//NEWS \
 	.//README config.guess .//config.guess config.sub \
-	.//config.sub depcomp .//depcomp install-sh .//install-sh \
-	missing .//missing ltmain.sh .//ltmain.sh \
-	$(top_srcdir)/./config.guess $(top_srcdir)/./config.sub \
-	$(top_srcdir)/./install-sh $(top_srcdir)/./ltmain.sh \
-	$(top_srcdir)/./missing
+	.//config.sub install-sh .//install-sh missing .//missing \
+	ltmain.sh .//ltmain.sh $(top_srcdir)/./config.guess \
+	$(top_srcdir)/./config.sub $(top_srcdir)/./install-sh \
+	$(top_srcdir)/./ltmain.sh $(top_srcdir)/./missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -232,22 +231,22 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing aclocal-1.13
 AMTAR = $${TAR-tar}
-AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/ioc/python/latest/include/python3.10 -I/ioc/python/latest/lib/python3.10/site-packages/numpy/core/include -I$(top_srcdir)/include 
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7.0.6/include/ -I/usr/local/epics/base-7.0.6/include/os/Linux -I/usr/local/epics/base-7.0.6/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.5/latest/include/python3.5m -I/opt/gfa/python-3.5/latest/lib/python3.5/site-packages/numpy/core/include  -I/opt/gfa/python-3.5/latest/include  -I/opt/gfa/python-3.5/latest/include/QtCore  -I/opt/gfa/python-3.5/latest/include/QtXml -I$(top_srcdir)/include 
 AM_DEFAULT_VERBOSITY = 1
-AM_LDFLAGS =  -L/usr/local/epics/base/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/RHEL7-x86_64 -L/ioc/python/latest/lib  -Wl,-rpath,/ioc/python/latest/lib @CAFE_LIBS@
+AM_LDFLAGS =  -L/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -L/opt/gfa/python-3.5/latest/lib  -Wl,-rpath,/opt/gfa/python-3.5/latest/lib -L/opt/gfa/python-3.5/latest/lib   -Wl,-rpath,/opt/gfa/python-3.5/latest/lib  @CAFE_LIBS@
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing autoheader
 AUTOMAKE = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing automake-1.13
 AWK = gawk
 CAFE_CPPFLAGS = -I$(top_srcdir)/include 
-CC = /opt/psi/Programming/gcc/9.3.0/bin/gcc
+CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = /opt/psi/Programming/gcc/9.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base/include/ -I/usr/local/epics/base/include/os/Linux -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/ioc/python/latest/include/python3.10 -I/ioc/python/latest/lib/python3.10/site-packages/numpy/core/include
-CXX = /opt/psi/Programming/gcc/9.3.0/bin/g++
-CXXCPP = /opt/psi/Programming/gcc/9.3.0/bin/g++ -E
+CPP = /opt/psi/Programming/gcc/7.3.0/bin/gcc -E
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7.0.6/include/ -I/usr/local/epics/base-7.0.6/include/os/Linux -I/usr/local/epics/base-7.0.6/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.5/latest/include/python3.5m -I/opt/gfa/python-3.5/latest/lib/python3.5/site-packages/numpy/core/include  -I/opt/gfa/python-3.5/latest/include  -I/opt/gfa/python-3.5/latest/include/QtCore  -I/opt/gfa/python-3.5/latest/include/QtXml
+CXX = /opt/psi/Programming/gcc/7.3.0/bin/g++
+CXXCPP = /opt/psi/Programming/gcc/7.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
@@ -269,9 +268,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base/lib/RHEL7-x86_64 -L/ioc/python/latest/lib  -Wl,-rpath,/ioc/python/latest/lib
+LDFLAGS =  -L/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -L/opt/gfa/python-3.5/latest/lib  -Wl,-rpath,/opt/gfa/python-3.5/latest/lib -L/opt/gfa/python-3.5/latest/lib   -Wl,-rpath,/opt/gfa/python-3.5/latest/lib 
 LIBOBJS = 
-LIBS = -lpython3.10 
+LIBS = -lQtXml -lQtCore -lpython3.5m 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -289,23 +288,23 @@ OTOOL64 =
 PACKAGE = cafe
 PACKAGE_BUGREPORT = Bug reports to: jan.chrin@psi.ch
 PACKAGE_NAME = CAFE
-PACKAGE_STRING = CAFE 1.14.4
+PACKAGE_STRING = CAFE 1.15.0
 PACKAGE_TARNAME = cafe
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.14.4
+PACKAGE_VERSION = 1.15.0
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.14.4
+VERSION = 1.15.0
 abs_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 abs_top_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
 ac_ct_AR = ar
-ac_ct_CC = /opt/psi/Programming/gcc/9.3.0/bin/gcc
+ac_ct_CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 ac_ct_CXX = 
 ac_ct_DUMPBIN = 
 am__include = include
@@ -334,7 +333,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.14.4-py310-gcc-9.3.0/lib/RHEL7-x86_64
+libdir = /opt/gfa/cafe/cpp/cafe-1.15.0-py35-gcc-7.3.0/lib/RHEL7-x86_64
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -342,7 +341,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.14.4-py310-gcc-9.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-1.15.0-py35-gcc-7.3.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin

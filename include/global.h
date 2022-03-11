@@ -21,8 +21,6 @@ extern bool CHECK_CONSISTENCY_CA_STATE;
 extern bool MUTEX;
 extern epicsMutex cafeMutex;
 
-
-
 extern cafeConduit_set cs;
 extern cafeGroup_set gs;
 extern std::vector<PVGroup> PVGroupV;
@@ -32,14 +30,11 @@ extern std::map<std::vector<unsigned int>, std::string> groupPseudoMap;
 
 extern std::vector<std::string> globalChannelList;
 
-
 extern std::string contentsS;
 extern std::string contentsBS;
 
 extern unsigned long nCBs;
-
 extern bool callbackLiveFlag;
-
 extern bool SF_WITH_PULSE_ID;
 
 

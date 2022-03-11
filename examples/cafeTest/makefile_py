@@ -9,7 +9,7 @@
 
 
 #CAFE version to link to
-CAFE_VERSION=pyzcafe-1.12.5-gcc-7.3.0
+CAFE_VERSION=cafe-1.15.0-gcc-7.3.0
 
 PYTHON_INCLUDE=/opt/gfa/python-3.7/latest/include/python3.7m
 PYTHON_LIB=/opt/gfa/python-3.7/latest/lib

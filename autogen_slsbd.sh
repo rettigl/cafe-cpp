@@ -22,7 +22,7 @@ automake --force --add-missing --copy
 #Used by ./configure
 #Assumes format ${EPICS}/base-3.14.12
 #source cafeVersion-gcc-7.3.0
-CAFE_V="cafe-1.14.1"
+CAFE_V="cafe-1.15.0"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 
@@ -206,7 +206,15 @@ then
     CAFE_V+="-py37" 
 #else
     #ENABLE_OPTIONS+=" --enable-qt5" 
+elif  [ "$CACLIENT" = "py34" ]
+then
+    ENABLE_OPTIONS+=" --enable-python34"
+    ENABLE_OPTIONS+=" --enable-qt4"
+    CAFE_V+="-py34" 
+#else
+    #ENABLE_OPTIONS+=" --enable-qt5" 
 fi
+
 
 if [ "$FACILITY" = "sf" ] && [ "$CACLIENT" != "matlab" ]
 then
@@ -263,6 +271,7 @@ echo 'EPICS='${EPICS}
     --with-epics3=${EPICS}/base \
     --with-python37=/opt/gfa/python-3.7/latest \
     --with-python35=/opt/gfa/python-3.5/latest \
+    --with-python34=/opt/psi/Programming/psi-python34/2.1.0 \
     --with-qt5=/opt/gfa/python-3.7/latest \
     --with-qt4=/opt/gfa/python-3.5/latest \
     --with-json=/opt/gfa/zmsglog/json/jsoncpp-src-0.6.0-rc2 \

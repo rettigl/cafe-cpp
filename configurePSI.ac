@@ -9,7 +9,7 @@
 #  Standard macros
 AC_PREREQ(2.63)
 AC_COPYRIGHT([CAFE,Jan Chrin, 2010-2021])
-AC_INIT([CAFE], [1.14.4], [Bug reports to: jan.chrin@psi.ch])
+AC_INIT([CAFE], [1.15.0], [Bug reports to: jan.chrin@psi.ch])
 
 AC_CONFIG_AUX_DIR(./)
 
@@ -166,6 +166,8 @@ if test x$HAVE_EPICS == xtrue; then
     CPPFLAGS=${CPPFLAGS}" "${EPICS_INCL_PATH}
     TEMP_LDFLAGS=${LDFLAGS}
     LDFLAGS=${LDFLAGS}" -L"${EPICS_LIB_PATH}" -Wl,-rpath,"${EPICS_LIB_PATH}
+    #LDFLAGS=${LDFLAGS}" -L/opt/psi/Programming/gcc/7.3.0/lib64 -Wl,-rpath,/opt/psi/Programming/gcc/7.3.0/lib64"
+    #LDFLAGS=${LDFLAGS}" -L/opt/psi/Programming/gcc/7.3.0/lib -Wl,-rpath,/opt/psi/Programming/gcc/7.3.0/lib"
   fi
 
   if test x$HAVE_EPICS == xtrue ; then
@@ -363,6 +365,31 @@ PYTHON_OPTION=""
 ##-- Python 3.5/3.7 -- path and options
 ##-- Python header files required for callbacks
 
+
+ 
+AC_ARG_ENABLE(
+  [python34],
+  AC_HELP_STRING([--enable-python34],
+		 [enable python use [default=no]]),
+  [HAVE_PYTHON_=true 
+   HAVE_PY34_=true]
+)
+
+if test x$HAVE_PY34_ == xtrue ; then
+  AC_ARG_WITH(
+    python34,
+    AC_HELP_STRING(
+      [--with-python34 = location of python],
+      [prefix giving the python base directory]),
+      [#HAVE_PYTHON_=true       
+       PYTHON_PREFIX=$withval
+       PYTHON_INCL_PATH="-I"${PYTHON_PREFIX}/include/python3.4m
+       PYTHON_INCL_PATH=${PYTHON_INCL_PATH}" -I"${PYTHON_PREFIX}\
+"/lib/python3.4/site-packages/numpy/core/include" 
+       PYTHON_LIB_PATH=${PYTHON_PREFIX}"/lib" 
+      ]
+  )
+fi
  
 AC_ARG_ENABLE(
   [python35],
@@ -394,7 +421,8 @@ AC_ARG_ENABLE(
 		 [enable python use [default=no]]),
   [HAVE_PYTHON_=true 
    HAVE_PY37_=true 
-   HAVE_PY35_=false]
+   HAVE_PY35_=false
+   HAVE_PY34_=false]
 )
 
 if test x$HAVE_PY37_ == xtrue ; then 
@@ -421,7 +449,8 @@ AC_ARG_ENABLE(
   [HAVE_PYTHON_=true 
    HAVE_PY38_=true
    HAVE_PY37_=false
-   HAVE_PY35_=false]
+   HAVE_PY35_=false   
+   HAVE_PY34_=false]
 )
 
 if test x$HAVE_PY38_ == xtrue ; then 
@@ -449,7 +478,8 @@ AC_ARG_ENABLE(
    HAVE_PY310_=true
    HAVE_PY38_=false
    HAVE_PY37_=false
-   HAVE_PY35_=false]
+   HAVE_PY35_=false
+   HAVE_PY34_=false]
 )
 
 if test x$HAVE_PY310_ == xtrue ; then 
@@ -539,6 +569,16 @@ if test x$HAVE_PYTHON_ == xtrue ; then
 		 AC_MSG_WARN(libpython3.5m not found!)]
     )
   fi 	
+
+
+  if test x$HAVE_PY34_ == xtrue ; then
+    
+    AC_CHECK_LIB(python3.4m,[main], [],
+		 [HAVE_PYTHON_=false
+		 AC_MSG_WARN(libpython3.4m not found!)]
+    )
+  fi 	
+
 
   # If all checks are OK we add Qt version 4 to the FLAGS.
 		
@@ -691,7 +731,40 @@ if test x$HAVE_QT_5py310_ == xtrue ; then
   )
 fi
 
+
+AC_ARG_ENABLE(
+  [qt4py34],
+  AC_HELP_STRING([--enable-qt4py34],
+                 [enable Qt version 4 use [default=no]]),
+  [HAVE_QT_=true 
+   HAVE_QT_4py34_=true
+   HAVE_QT_5py310_=false
+   HAVE_QT_5py38_=false	
+   HAVE_QT_5_=false
+   HAVE_QT_4_=false] 
+)
    
+
+#Only if enable flag is set
+if test x$HAVE_QT_4py34_ == xtrue ; then
+  AC_ARG_WITH(
+    qt4py34,
+    AC_HELP_STRING([--with-qt4py34=PREFIX],
+      [prefix, parent directory where the Qt version 4 library is installed]),
+    [#HAVE_QT_=true
+     QT_PREFIX=$withval  
+     QT_INCL_BASE=" -I"${QT_PREFIX}"/include"
+     QT_INCL_PATH=${QT_INCL_BASE}
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtCore"     
+     QT_INCL_PATH=${QT_INCL_PATH}" "${QT_INCL_BASE}"/QtXml"   
+     QT_LIB_PATH=${QT_PREFIX}"/lib "
+    ]
+  )
+fi
+
+
+ 
+  
 ##
 ##---------------------------------------------------------------------------
 

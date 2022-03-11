@@ -3,7 +3,7 @@
 #<facility = sls sls2 sf>  default is sf
 #<target_language = cpp matlab python> 
 module unload gcc
-module load gcc/9.3.0
+module load gcc/7.3.0
 ### psi specific - end
 
 rm -f configure.ac
@@ -22,7 +22,7 @@ automake --force --add-missing --copy
 #Used by ./configure
 #Assumes format ${EPICS}/base-3.14.12
 #source cafeVersion-gcc-7.3.0
-CAFE_V="cafe-1.14.4"
+CAFE_V="cafe-1.14.5"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 
@@ -280,7 +280,7 @@ echo 'ENABLE_OPTIONS='$ENABLE_OPTIONS
     --with-qt5py38=/opt/gfa/python-3.8/latest \
     --with-qt5=/opt/gfa/python-3.7/latest \
     --with-qt4=/opt/gfa/python-3.5/latest \
-    --with-json=/opt/gfa/zmsglog/json/jsoncpp-src-0.6.0-rc2 \
+    --with-json=/opt/gfa/zmq/json/jsoncpp-src-0.6.0-rc2 \
     --with-zeromq=/opt/gfa/zmq/zeromq-4.2.3-gcc-6.3.0 \
     --with-curl=/opt/gfa/zmq/curl-7.55.1 \
     --with-lz4=/opt/gfa/zmq/lz4/lib \

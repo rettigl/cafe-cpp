@@ -228,7 +228,7 @@ public:
     };
 
 
-    int asInt (std::string message)
+    int asInt(std::string message)
     {
         for (pos=mapAlarmCondition.begin(); pos != mapAlarmCondition.end(); ++pos)
         {

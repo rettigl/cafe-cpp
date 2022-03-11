@@ -8,9 +8,9 @@
 #include <connect.h>
 #include <conduitFriends.h>
 
-extern cafeConduit_set cs;
-extern bool MUTEX;
-extern epicsMutex cafeMutex;
+//extern cafeConduit_set cs;
+//extern bool MUTEX;
+//extern epicsMutex cafeMutex;
 
 /**
  *  Callback function for callbackHandlerAccessRights \n

@@ -5,6 +5,8 @@
 /// \version CAFE 1.6.0
 ///
 
+#include <epicsMutex.h>
+
 #include <connect.h>
 #include <conduitFriends.h>
 #include <conduitConnectionHandlerArgs.h>
@@ -24,7 +26,9 @@
 #endif
 #endif
 
+
 using namespace std;
+epicsMutex cafeMutex;
 
 /**
  *  \brief Return epics Version as an unsigned short \n

@@ -20,7 +20,6 @@
 ///
 
 
-
 #include <cafe.h>
 #include <conduitGroup.h>
 #include <cafeEnum.h>
@@ -34,7 +33,6 @@ using namespace std;
 bool MUTEX=true;
 bool CHECK_CONSISTENCY_CA_STATE=true;
 bool SF_WITH_PULSE_ID = false;
-epicsMutex  cafeMutex;
 
 vector<PVGroup> PVGroupV;
 vector<PVGroup> PVGroupPseudo;
@@ -44,7 +42,6 @@ map<vector<unsigned int>, string> groupPseudoMap;
 
 cafeGroup_set gs;
 cafeConduit_set cs;
-
 
 
 //5+ long long
