@@ -9,7 +9,7 @@
 
 #ifndef GLOBAL_H
 #define GLOBAL_H
-
+#include <epicsMutex.h>
 #include <cadef.h>
 #include <hashConduit.h>
 #include <hashConduitGroup.h>

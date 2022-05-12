@@ -792,7 +792,7 @@ int  Granules::channelVerifyGet(const unsigned int  _handle, chtype _dbrType)
         }
 
         // This check of the datatype requested by client and that recorded in the hash table
-        // is now done in advance of CAFENUM::GET_CACHE_NO_CHECK check made in getCache in instanst.cpp
+        // is now done in advance of CAFENUM::GET_CACHE_NO_CHECK check made in getCache in instant.cpp
         channelRequestMetaDataClient= (*it_handle).getChannelRequestMetaDataClient();  // 2
 
         //2
@@ -927,7 +927,7 @@ int  Granules::channelPrepareGet(const unsigned int  _handle)
         {
 
 
-            //cout << __METHOD__ << endl;
+	    //cout << __METHOD__ << endl;
             //cout << " channelRequestMetaData.getNelem() " << channelRequestMetaData.getNelem() << endl;
             //cout << " channelRequestMetaDataClient.getNelem() " << channelRequestMetaDataClient.getNelem() << endl;
             //cout << " channelRequestMetaDataClient.getOffset() " <<  channelRequestMetaDataClient.getOffset() << endl;

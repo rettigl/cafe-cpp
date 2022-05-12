@@ -182,6 +182,10 @@ int  getCache(const unsigned int  handle, dbr_long_t * _val,  dbr_short_t &alarm
     return cafeLatte.getCache(handle, DBR_TIME_LONG, _val, alarmStatus, alarmSeverity, ts);
 };
 //4
+int  getCacheCharArray(const unsigned int  handle, dbr_char_t * _val)
+{
+    return cafeCappuccino.getCache(handle, DBR_CHAR, _val);
+};
 int  getCache(const unsigned int  handle, dbr_char_t * _val)
 {
     return cafeCappuccino.getCache(handle, DBR_CHAR, _val);

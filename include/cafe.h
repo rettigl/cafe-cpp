@@ -7,12 +7,13 @@
 #ifndef CAFE_H
 #define CAFE_H
 
+
 #include <hashConduit.h>
 #include <connect.h>
 #include <conduitEventHandlerArgs.h>
 #include <instant.h>
 #include <cafeDataType.h>
-#include <global.h>
+
 #if HAVE_PYTHON_H
 #include <unicodeobject.h>
 #endif

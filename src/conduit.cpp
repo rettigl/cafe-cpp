@@ -565,13 +565,14 @@ int  Conduit::putWithCallback(pCallback callbackHandlerPut) const
 int  Conduit::get(void) const
 {
 #define __METHOD__  "Conduit::get(void) "
-    /* For testing readout time for waveforms!
+  /* For testing readout time for waveforms! */
+  /*
     using namespace boost::posix_time;
     ptime timeStart(microsec_clock::local_time());
     double  timeElapsed=0;
     unsigned int  nPoll=0;
-   
-    for (int i=0; i< 100000; ++i) {
+    unsigned nevent = 10;
+    for (int i=0; i< nevent; ++i) {
         ca_array_get(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
 			  channelRegalia.channelID,dataBuffer);
     } 
@@ -580,7 +581,8 @@ int  Conduit::get(void) const
     timeElapsed= (double) duration.total_microseconds()/1000000.0;
 
     std::cout << "Time Elapsed " << timeElapsed << std::endl;
-    */
+    std::cout << "Time Elapsed/per event " << timeElapsed/nevent << std::endl;
+    */ 
     return ca_array_get(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
                         channelRegalia.channelID, dataBuffer);
 
@@ -596,6 +598,47 @@ int  Conduit::get(void) const
 int  Conduit::getWithCallback(pCallback callbackHandlerGet) const
 {
 #define __METHOD__ "Conduit::getCallback(pCallback callbackHandlerGet) "
+
+  /*
+  if (channelRequestMetaData.nelem > 1) {
+
+    using namespace boost::posix_time;
+    ptime timeStart(microsec_clock::local_time());
+    double  timeElapsed=0;
+    unsigned int  nPoll=0;
+    unsigned int nevent = 1000;
+
+    std::cout << "NELM ==>  " << channelRequestMetaData.nelem << std::endl;
+
+    for (int i=0; i< nevent; ++i) {
+        ca_array_get(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
+			  channelRegalia.channelID,dataBuffer);
+    } 
+    ptime timeEnd(microsec_clock::local_time());
+    time_duration duration(timeEnd-timeStart);
+    timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+    std::cout << "Time Elapsed nevents " << timeElapsed << " " << nevent << std::endl;
+    std::cout << "Time Elapsed/per event " << timeElapsed/nevent << std::endl;
+
+    ptime timeStart2(microsec_clock::local_time());
+    timeElapsed=0;
+    nPoll=0;
+  
+    for (int i=0; i<nevent; ++i) {
+        ca_array_get_callback(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
+                                 channelRegalia.channelID,callbackHandlerGet,(void *) (long long) handle );
+       
+    } 
+    ptime timeEnd2(microsec_clock::local_time());
+    time_duration duration2(timeEnd2-timeStart2);
+    timeElapsed= (double) duration2.total_microseconds()/1000000.0;
+
+    std::cout << "Time Elapsed with CB " << timeElapsed << std::endl;
+    std::cout << "Time Elapsed/per event " << timeElapsed/nevent << std::endl;
+
+  }
+ */
 
     return ca_array_get_callback(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
                                  channelRegalia.channelID,callbackHandlerGet,(void *) (long long) handle );

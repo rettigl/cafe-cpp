@@ -28,7 +28,7 @@
 
 
 using namespace std;
-epicsMutex cafeMutex;
+//epicsMutex cafeMutex;
 
 /**
  *  \brief Return epics Version as an unsigned short \n

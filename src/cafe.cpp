@@ -42,7 +42,7 @@ map<vector<unsigned int>, string> groupPseudoMap;
 
 cafeGroup_set gs;
 cafeConduit_set cs;
-
+epicsMutex cafeMutex;
 
 //5+ long long
 /**

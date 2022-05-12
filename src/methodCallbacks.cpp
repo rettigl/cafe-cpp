@@ -123,7 +123,7 @@ void CALLBACK_CAFE::PyHandlerGet( struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
+      
         ChannelRequestStatus  channelRequestStatusGet=(*it_handle).getChannelRequestStatusGet();
         channelRequestStatusGet.setCallbackKind(false, true);
 
@@ -138,6 +138,7 @@ void CALLBACK_CAFE::PyHandlerGet( struct event_handler_args args)
         {
             cafeMutex.unlock();
         }
+	
         (*it_handle).PyGetHandler();
     }
     else

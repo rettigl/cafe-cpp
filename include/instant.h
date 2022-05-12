@@ -456,12 +456,7 @@ public:
 };
 
 
-
-
 //include <instant.cpp>
-
-
-
 
 /**
  *  \brief Set values of data type CTYPE
@@ -818,8 +813,6 @@ template <class CTYPE> int  Instant<CTYPE>::getCache(const unsigned int  _handle
 		 cafeMutex.unlock();
 	       }; //unlock
 	}
-
-
 
         //ifNeverConnected - return error
         if ( (*it_handle).getChannelRegalia().getCafeConnectionState() == ICAFE_CS_NEVER_CONN)
