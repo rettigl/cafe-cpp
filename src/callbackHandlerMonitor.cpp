@@ -162,7 +162,7 @@ void MonitorPolicy::PyCallbackHandlerMonitor (struct event_handler_args args)
 
     if (it_handle != handle_index.end())
     {
-
+	
         if(MUTEX)
         {
             cafeMutex.lock();
@@ -175,7 +175,9 @@ void MonitorPolicy::PyCallbackHandlerMonitor (struct event_handler_args args)
             cafeMutex.unlock();
         }
 
+
 #if HAVE_PYTHON_H
+       
         unsigned long monid = (unsigned long) (*it_handle).getUsrArgs(); 
 	MonitorPolicy mp = (*it_handle).getMonitorPolicy(monid);
         ptime timeNow(microsec_clock::local_time());
@@ -199,12 +201,14 @@ void MonitorPolicy::PyCallbackHandlerMonitor (struct event_handler_args args)
 	else {
 	   mp.setLastUpdate(timeNow);
 	   handle_index.modify(it_handle, change_monitorPolicy(mp));
-	}	
+	}
+	
 	//cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         //(*it_handle).PyEventHandler();
         //(*it_handle).CyEventHandler(); //pushes handle, pvname
         (*it_handle).CyMonitorHandler();
 #endif
+
 
     }
     else

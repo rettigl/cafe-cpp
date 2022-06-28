@@ -44,6 +44,116 @@ cafeGroup_set gs;
 cafeConduit_set cs;
 epicsMutex cafeMutex;
 
+/*
+int CAFE::wfExpress(const unsigned int handle) {
+  int status = ICAFE_NORMAL;
+  
+  cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+  cafeConduit_set_by_handle::iterator it_handle;
+
+  it_handle = handle_index.find(handle);
+
+  if (it_handle != handle_index.end())
+    {
+      std::cout << "Initiate Callback =============" << std::endl;
+      status=(*it_handle).getWithCallback(CALLBACK_CAFE::handlerGet);
+      ca_flush_io();  
+    }
+
+  return status; 
+}
+*/
+
+int CAFE::wfExpress(const unsigned int handle,  const unsigned int nelem, dbr_char_t * chval) {
+
+  int status = ICAFE_NORMAL;
+  
+  chval = new dbr_char_t[nelem];
+  //dbr_float_t * val = new dbr_float_t[nelem];
+
+
+  //cafeGranules.channelExecuteGet(handle);
+
+  cafeConduit_set_by_handle & handle_index = cs.get<by_handle> ();
+  cafeConduit_set_by_handle::iterator it_handle;
+
+  it_handle = handle_index.find(handle);
+
+  if (it_handle != handle_index.end())
+    {
+      
+      
+      std::cout << "Initiate Callback =============" << std::endl;
+      status=(*it_handle).getWithCallback(CALLBACK_CAFE::handlerGet);
+      ca_flush_io();
+      for (int i=0; i <20; ++i) {
+
+	sleep(0.05);
+	//std::cout << "iscb done " << cafeGranules.isGetCallbackDone(handle) << std::endl;
+
+      }
+      
+
+     //(*it_handle).getWithCallback(CALLBACK_CAFE::handlerGet);
+      
+      union db_access_val * PVDataL  = (*it_handle).getDataBuffer();
+
+      for (unsigned int  i=0; i<nelem; ++i) {
+      	//val[i] =  (dbr_float_t) (*(&((PVDataL)->tfltval.value)+i));
+	chval[i] =  (dbr_char_t) (*(&((PVDataL)->tchrval.value)+i));
+      }
+         
+
+      //memcpy( chval, &(&((PVDataL)->charval))[0], sizeof(dbr_char_t)*nelem);
+      std::cout << chval[0] << " //0//==> "  << (short)  chval[0] << std::endl;
+      std::cout << chval[1] << " //1//==> "  << (short)  chval[1] << std::endl;
+    }
+
+  delete [] chval;
+
+  return status; 
+
+
+ 
+  //union db_access_val * data;
+  ChannelRegalia channelInfo;
+  CAFE::getChannelInfo(handle, channelInfo);
+  chid channelID = channelInfo.getChannelID();
+
+  dbr_time_char * data = (dbr_time_char *) malloc(dbr_size_n(DBR_TIME_CHAR, nelem));
+  
+  //chval[0] = 2;
+
+  std::cout << channelID << " // " << nelem << std::endl;
+  //data = (db_access_val *) malloc (dbr_size_n(DBR_CHAR, nelem) );
+
+  status = ca_array_get(DBR_TIME_CHAR, nelem, channelID, data);
+  
+  status = ca_pend_io(4.1);
+  std::cout << status << " // " << nelem << std::endl;
+
+  if (status == ICAFE_NORMAL) {
+
+  dbr_char_t * value = & data->value;
+ 
+  std::cout << value[0] << "///"  << (short)  value[0] << std::endl; 
+  std::cout << value[1] << "///"  << (short)  value[1] << std::endl; 
+  }
+  //memcpy(chval, &((data)->charval), nelem*sizeof(dbr_char_t));
+  /*
+ 
+  for (unsigned int  i=0; i<nelem; ++i)
+        {	
+	  chval[i] = (unsigned short) value[i]; //(*(&((data)->charval)+i));
+        }
+  std::cout << chval[0] << "///"  << (unsigned short)  chval[0] << std::endl; 
+  */
+  free(data);
+  
+  return status; 
+}
+
+
 //5+ long long
 /**
  *  \brief Set an array of handles with long long(s)

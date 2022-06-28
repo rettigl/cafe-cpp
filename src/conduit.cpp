@@ -415,7 +415,7 @@ void * Conduit::CyDataEventHandler() const
 
 void * Conduit::CyMonitorHandler() const
 {
-#define __METHOD__ "Conduit::CyMonitorHandler( "
+#define __METHOD__ "Conduit::CyMonitorHandler() "
 
     void * cythonCallback = NULL;
     unsigned int ncbparameters = 1;
@@ -589,6 +589,8 @@ int  Conduit::get(void) const
 #undef __METHOD__
 };
 
+
+
 /**
  * \brief Called from Granules.cc \n
  *  Retrieves PV data through channel access into the Conduit::dataBuffer thru callbackHandlerGet
@@ -598,7 +600,7 @@ int  Conduit::get(void) const
 int  Conduit::getWithCallback(pCallback callbackHandlerGet) const
 {
 #define __METHOD__ "Conduit::getCallback(pCallback callbackHandlerGet) "
-
+  //Need ca_pend_io and ca-flush_io!!
   /*
   if (channelRequestMetaData.nelem > 1) {
 
@@ -639,6 +641,11 @@ int  Conduit::getWithCallback(pCallback callbackHandlerGet) const
 
   }
  */
+
+  //std::cout << "Datatype " << channelRequestMetaData.dbrDataType << std::endl;
+  //std::cout << "Nelem    " << channelRequestMetaData.nelem << std::endl;
+  //std::cout << "channelRegalia.channelID " <<  channelRegalia.channelID << std::endl;
+  //std::cout << "handle " << handle << std::endl;
 
     return ca_array_get_callback(channelRequestMetaData.dbrDataType, channelRequestMetaData.nelem,
                                  channelRegalia.channelID,callbackHandlerGet,(void *) (long long) handle );

@@ -9,7 +9,7 @@
 #  Standard macros
 AC_PREREQ(2.63)
 AC_COPYRIGHT([CAFE,Jan Chrin, 2010-2021])
-AC_INIT([CAFE], [1.15.1], [Bug reports to: jan.chrin@psi.ch])
+AC_INIT([CAFE], [1.16.0], [Bug reports to: jan.chrin@psi.ch])
 
 AC_CONFIG_AUX_DIR(./)
 

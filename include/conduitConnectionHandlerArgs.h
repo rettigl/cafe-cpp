@@ -299,7 +299,7 @@ struct change_dataBufferSize_CTRL
         {
             //std::cout << "sizeof c.ctrlBuffer " << dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem())  << std::endl;
             c.ctrlBuffer = (db_access_val *) malloc ( dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem()) );
-            c.channelRequestMetaCtrl.byteSize=dbr_size_n(new_ctrlTypeBuffer,c.channelRequestMetaCtrl.getNelem());
+            c.channelRequestMetaCtrl.byteSize=dbr_size_n(new_ctrlTypeBuffer, c.channelRequestMetaCtrl.getNelem());
         }
 
 

@@ -162,16 +162,15 @@ void CALLBACK_CAFE::PyHandlerGet( struct event_handler_args args)
                 }
                 handle_index.modify(itcs, change_eventHandlerArgs   (args));
                 handle_index.modify(itcs, change_channelRequestStatusGet(channelRequestStatusGet));
+
                 if(MUTEX)
                 {
                     cafeMutex.unlock();
                 }
 
-
                 //if HAVE_PYTHON_H
                 (*it_handle).PyGetHandler();
                 //endif
-
 
                 internalFlag=true;
                 break;
@@ -328,11 +327,13 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
 {
 #define __METHOD__  "CALLBACK_CAFE::handlerGet"
 
-    if (args.status !=ECA_NORMAL)
+    if (args.status == ECA_NORMAL)
     {
+      if ("X09DA-FE-CCD1:FPICTURE" == ca_name (args.chid) ) {
         cout << __FILE__ << "/" << __LINE__ << "/" << __METHOD__ << endl;
         cout << "Status=" << args.status << " for channel " << ca_name (args.chid) << endl;
         if (RETURN_ON_ERROR == true) return;
+      }
     }
 
     unsigned int _handle = (unsigned long)  args.usr; // ca_puser(args.chid);
@@ -350,7 +351,7 @@ void CALLBACK_CAFE::handlerGet( struct event_handler_args args)
         {
             cafeMutex.lock();
         }
-        handle_index.modify(it_handle, change_eventHandlerArgs   (args));
+        handle_index.modify(it_handle, change_eventHandlerArgs (args));
         handle_index.modify(it_handle, change_channelRequestStatusGet(channelRequestStatusGet));
         //cout << __METHOD__ << " CALLBACK DONE " << (*it_handle).getChannelRequestStatusGet().getCallbackProgressKind() << endl;
         if(MUTEX)

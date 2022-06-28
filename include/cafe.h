@@ -113,6 +113,9 @@ public:
     // if HAVE_LIBQTXML moved to within header file
     //#endif
 
+    int wfExpress(const unsigned int handle,  const unsigned int nelem, dbr_char_t * chval);
+    //int wfExpress(const unsigned int handle);
+
     //get NON_BLOCKING
     int getNonBlocking(const unsigned int  handle)
     {
