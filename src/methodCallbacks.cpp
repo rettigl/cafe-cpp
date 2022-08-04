@@ -17,7 +17,7 @@ using namespace std;
 //#include <PyCafe_api.h>
 //#endif
 
-#define RETURN_ON_ERROR true
+#define RETURN_ON_ERROR false
 
 #if HAVE_PYTHON_H
 

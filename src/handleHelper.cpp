@@ -928,7 +928,7 @@ int  HandleHelper::getChannelRequestStatusGet    (unsigned int  _handle, Channel
  */
 int HandleHelper::getChannelRegalia(unsigned int _handle, ChannelRegalia & channelInfo)
 {
-#define __METHOD__ "HandleHelper::getChannelInfo(unsigned int _handle, ChannelRegalia channelInfo)"
+#define __METHOD__ "HandleHelper::getChannelRegalia(unsigned int _handle, ChannelRegalia channelInfo)"
     cafeConduit_set_by_handle & handle_index=cs.get<by_handle>();
     cafeConduit_set_by_handle::iterator it_handle;
     it_handle = handle_index.find(_handle);

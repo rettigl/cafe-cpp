@@ -190,16 +190,17 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
             ChannelRequestStatus cre;
             handleHelper.getChannelRequestStatusGet (handle, cre);
             nPoll=0;
+	    unsigned int microSecondsWait=2000;
 
             while (cre.getCallbackProgressKind()==(CAFENUM::CallbackProgressKind) CAFENUM::PENDING
-              && nPoll<50)
+              && nPoll<200)
             {
 
 #if HAVE_BOOST_THREAD
-                boost::this_thread::sleep_for(boost::chrono::microseconds(2000));
+                boost::this_thread::sleep_for(boost::chrono::microseconds(microSedcondsWait));
 #else
 #if HAVE_LINUX
-                usleep(2000);
+                usleep(microSecondsWait);
 #endif
 #endif
                 ++nPoll;
@@ -209,12 +210,22 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
 	    //std::cout << __FILE__ << ":" << __LINE__ << " nPoll=" << nPoll << std::endl;
             if ((*it_handle).isConnected() && cre.getCallbackProgressKind()==(CAFENUM::CallbackProgressKind) CAFENUM::PENDING)
             {
-                std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+	        std::cout << "==================================" << std::endl;
+                std::cout << __FILE__ << ":" << __LINE__ << " pv = " << pv << std::endl;
                 std::cout << __METHOD__ << std::endl;
                 std::cout << handleHelper.getPVFromHandle(handle) << " with handle " << handle << std::endl;
                 std::cout << "Value of 1 is pending, Value of 2 is complete" << std::endl;
-                std::cout << "Get Callback PENDING for createChannel?:         " << cre.getCallbackProgressKind()  << std::endl;
+                std::cout << "Get Callback PENDING for createChannel?: " << cre.getCallbackProgressKind()  << std::endl;
+		std::cout << "==================================" << std::endl;		
             }
+	    if (nPoll > 140) {
+	      std::cout << "==================================" << std::endl;	
+	      std::cout << __FILE__ << ":" << __LINE__ << " pv = " << pv << std::endl;
+	      std::cout << __METHOD__  <<  std::endl;
+	      std::cout << "nPoll = " << nPoll << std::endl;
+	      std::cout << "Wait time for all callbacks for pv to complete = " << float(microSecondsWait)/1000000*nPoll << " sec" <<std::endl;
+	      std::cout << "==================================" << std::endl;	
+	    }
 
         }//if (channelOpenPolicy.getWhenToFlushSendBuffer()==FLUSH_AFTER_EACH_CHANNEL_CREATION)
       

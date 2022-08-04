@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
-am__append_1 = PyCafe.cpp
+#am__append_1 = PyCafe.cpp
 #am__append_2 = zbsCafeService.cpp zbsDataHolders.cpp \
 #		bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c bitshuffle/iochain.c
 
@@ -137,7 +137,7 @@ am__libcafe_la_SOURCES_DIST = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	zbsCafeService.cpp zbsDataHolders.cpp \
 	bitshuffle/bitshuffle_core.c bitshuffle/bitshuffle.c \
 	bitshuffle/iochain.c
-am__objects_1 = PyCafe.lo
+#am__objects_1 = PyCafe.lo
 am__dirstamp = $(am__leading_dot)dirstamp
 #am__objects_2 = zbsCafeService.lo zbsDataHolders.lo \
 #	bitshuffle/bitshuffle_core.lo \
@@ -248,9 +248,9 @@ AMTAR = $${TAR-tar}
 #if HAVE_PYTHON_
 #libcafe_la_SOURCES += pycafe/PyCafe.cpp
 #endif
-AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7.0.6/include/ -I/usr/local/epics/base-7.0.6/include/os/Linux -I/usr/local/epics/base-7.0.6/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
+AM_CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7.0.6/include/ -I/usr/local/epics/base-7.0.6/include/os/Linux -I/usr/local/epics/base-7.0.6/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml -I$(top_srcdir)/include 
 AM_DEFAULT_VERBOSITY = 1
-AM_LDFLAGS =  -L/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+AM_LDFLAGS =  -L/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 AR = ar
 AUTOCONF = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing autoconf
 AUTOHEADER = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/missing autoheader
@@ -261,7 +261,7 @@ CC = /opt/psi/Programming/gcc/7.3.0/bin/gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = /opt/psi/Programming/gcc/7.3.0/bin/gcc -E
-CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7.0.6/include/ -I/usr/local/epics/base-7.0.6/include/os/Linux -I/usr/local/epics/base-7.0.6/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include -I/opt/gfa/python-3.7/latest/include/python3.7m -I/opt/gfa/python-3.7/latest/lib/python3.7/site-packages/numpy/core/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
+CPPFLAGS =  -fexceptions -fPIC -std=c++1z -I/usr/local/epics/base-7.0.6/include/ -I/usr/local/epics/base-7.0.6/include/os/Linux -I/usr/local/epics/base-7.0.6/include/compiler/gcc -I/opt/gfa/cafe/boost/boost_1_61_0/include/boost -I/opt/gfa/cafe/boost/boost_1_61_0/include  -I/opt/gfa/python-3.7/latest/include/qt  -I/opt/gfa/python-3.7/latest/include/qt/QtCore  -I/opt/gfa/python-3.7/latest/include/qt/QtXml
 CXX = /opt/psi/Programming/gcc/7.3.0/bin/g++
 CXXCPP = /opt/psi/Programming/gcc/7.3.0/bin/g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -285,9 +285,9 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS =  -L/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib  -Wl,-rpath,/opt/gfa/python-3.7/latest/lib -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
+LDFLAGS =  -L/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -Wl,-rpath,/usr/local/epics/base-7.0.6/lib/RHEL7-x86_64 -L/opt/gfa/python-3.7/latest/lib   -Wl,-rpath,/opt/gfa/python-3.7/latest/lib 
 LIBOBJS = 
-LIBS = -lQt5Xml -lQt5Core -lpython3.7m 
+LIBS = -lQt5Xml -lQt5Core 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -305,17 +305,17 @@ OTOOL64 =
 PACKAGE = cafe
 PACKAGE_BUGREPORT = Bug reports to: jan.chrin@psi.ch
 PACKAGE_NAME = CAFE
-PACKAGE_STRING = CAFE 1.16.0
+PACKAGE_STRING = CAFE 1.16.1
 PACKAGE_TARNAME = cafe
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.16.0
+PACKAGE_VERSION = 1.16.1
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.16.0
+VERSION = 1.16.1
 abs_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_srcdir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/src
 abs_top_builddir = /afs/psi.ch/project/cafe/gitlab/CAFE/cpp
@@ -350,7 +350,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /afs/psi.ch/project/cafe/gitlab/CAFE/cpp/install-sh
-libdir = /opt/gfa/cafe/cpp/cafe-1.16.0-py37-gcc-7.3.0/lib/RHEL7-x86_64
+libdir = /opt/gfa/cafe/cpp/cafe-1.16.1-gcc-7.3.0/lib/RHEL7-x86_64
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -358,7 +358,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /opt/gfa/cafe/cpp/cafe-1.16.0-py37-gcc-7.3.0
+prefix = /opt/gfa/cafe/cpp/cafe-1.16.1-gcc-7.3.0
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -378,7 +378,7 @@ lib_LTLIBRARIES = libcafe.la
 #2nd: age
 #3rd: revision
 #1.9.1   1.10.2     1.11.0 1.11.1   1.12.0 1.12.1 1.12.2    1.12.4
-libcafe_la_LDFLAGS = -version-info 17:0:16
+libcafe_la_LDFLAGS = -version-info 17:1:16
 libcafe_la_SOURCES = cafe.cpp cafeCache.cpp cafeGroup.cpp \
 	cafeVectors.cpp cafeXML.cpp callbackHandlerCreate.cpp \
 	callbackHandlerMonitor.cpp conduit.cpp connect.cpp \
