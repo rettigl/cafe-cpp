@@ -29,9 +29,12 @@ struct change_eventHandlerArgs
       //c.eventHandlerArgs = new_eventHandlerArgs;   
         c.status= new_eventHandlerArgs.status;
 
+	//Must always return else segmentataion fault
+	//But all initCallbacksComplete method will return false
+	//Change this to stop this happening
         if(c.status!=ECA_NORMAL) {
-	  std::cout << __METHOD__ << " STATUS IS " << c.status << std::endl;
-          std::cout << __METHOD__ << " return from method ***IS*** enforced " << std::endl;
+	  std::cout << "conduitEventHandlerArgs.h/" << __LINE__ << " " << __METHOD__ << " STATUS IS " << c.status << std::endl;
+          std::cout << "conduitEventHandlerArgs.h/" << __LINE__ << " " << __METHOD__ << " return from method ***IS *** enforced " << std::endl;
           return;
         }
 	//std::cout << __METHOD__ << " STATUS IS " << c.status << std::endl;

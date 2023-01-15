@@ -132,10 +132,17 @@ public:
                                 std::vector<unsigned int> handleAction, std::vector<std::string> valAction, std::vector<unsigned int> handleMatch,
                                 CTYPE tolerance, double timeout, bool printFlag);
 
-    int  matchMany( 													          	const chtype dbrType, std::vector<CTYPE> valSet, std::vector<unsigned int> handleMatch,
+    int  matchMany( 													          	
+            const chtype dbrType, std::vector<CTYPE> valSet, std::vector<unsigned int> handleMatch,
             CTYPE tolerance, double timeout, bool printFlag);
 
-    int  match( 													          	const chtype dbrType, CTYPE valSet, unsigned int handleMatch,
+
+    int  matchManyWithStatus( 													          	
+            const chtype dbrType, std::vector<CTYPE> valSet, std::vector<unsigned int> handleMatch,
+            CTYPE tolerance, double timeout, bool printFlag, std::vector<int> & statusV);
+
+    int  match( 													          	
+            const chtype dbrType, CTYPE valSet, unsigned int handleMatch,
             CTYPE tolerance, double timeout, bool printFlag);
 
     int  setMany(std::vector<unsigned int> handleSet, const chtype dbrType, std::vector<CTYPE> valSet, bool printFlag);
@@ -3718,6 +3725,442 @@ template <class CTYPE> int  Instant<CTYPE>::matchMany(const chtype dbrType, std:
 }
 
 
+
+
+
+
+/**
+ *  \brief Set Channels followed by a corresponding readback of Channels \n
+ *  Method verifies whether or not the set/readback values agree within the given tolerance and timeout \n
+ *  Method returns with ECA_NORMAL as soon as a match is reached
+ *  \param dbrType input: chtype of set value
+ *  \param valSet input: vector of CTYPE values to set
+ *  \param handleMatch input: vector of handles of readback channel
+ *  \param tolerance input: CTYPE of tolerance  margin
+ *  \param timeout input:  double value; maximum time allowed for agreement to occur
+ *  \param printFlag input: bool, set to true for diagnostics
+ *  \param statusV ouput: vector of individual status
+ *  \return ECA_NORMAL if all OK else first ECAFE error encountered
+ */
+template <class CTYPE> int  Instant<CTYPE>::matchManyWithStatus(
+    const chtype dbrType, std::vector<CTYPE> valSet, std::vector<unsigned int> handleMatch,
+    CTYPE tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+#define __METHOD__ "Instant<CTYPE>::matchManyWithStatus(const chtype dbrType, std::vector<CTYPE>valSet, std::vector<unsigned int>handleMatch, \
+			CTYPE tolerance, double timeout, bool printFlag, std::vector<int> &statusV))"
+
+
+    Connect connect;
+    CAFEStatus cstat;
+
+    CTYPE valGetA[1];
+    ////CTYPE valSetA[1];
+
+    status=ICAFE_NORMAL;
+    statusV.clear();
+    statusV.reserve(handleMatch.size());
+
+
+    if (handleMatch.size() != valSet.size() )
+    {
+        return ECAFE_HANDLE_MISMATCH_SET_AND_MATCH;
+    }
+ 
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+        if ( !helper.isChannelConnected(handleMatch[i]))
+        {
+            std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+            std::cout << "NOT ALL CHANNELS CONNECTED: " << std::endl;
+
+            helper.printHandle(handleMatch[i]);
+            status=helper.getStatus(handleMatch[i]);
+	  
+        }
+    }
+
+
+    if (status!=ICAFE_NORMAL)
+    {
+        return status;
+    }
+
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+        if (printFlag)
+        {
+            std::cout << "SET VALUE IS = " << valSet[i] << std::endl;
+            std::cout << "READBACK PV=" << helper.getPVFromHandle(handleMatch[i])
+                      << "  tolerance= " << fabs((double)tolerance) << std::endl;
+            std::cout << "TIME ALLOWED FOR MATCH IS " << timeout << " (sec) " << std::endl;
+        }
+    }
+
+
+    std::vector<CTYPE> valSetUpper;
+    std::vector<CTYPE> valSetLower;
+
+    std::vector<unsigned int> monitorID;
+    std::vector<int> statMonitor;
+    std::vector<unsigned short> nMonitors;
+    std::vector<CTYPE> valGet;
+
+    std::vector<unsigned int> nelemPreviousCache;
+
+    valSetUpper.reserve( handleMatch.size());
+    valSetLower.reserve( handleMatch.size());
+    monitorID.reserve( handleMatch.size());
+    statMonitor.reserve( handleMatch.size());
+    valGet.reserve( handleMatch.size());
+    nMonitors.reserve( handleMatch.size() );
+
+    nelemPreviousCache.reserve(handleMatch.size());
+
+    
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+        
+        switch (dbrType)
+        {
+        case DBR_LONG :
+        case DBR_SHORT :
+        case DBR_ENUM:
+            valSetUpper[i]  = valSet[i] + abs((int)tolerance);
+            valSetLower[i]  = valSet[i] - abs((int)tolerance);
+            break;
+        case DBR_CHAR :
+            valSetUpper[i]  = (unsigned short) valSet[i] + abs((unsigned short) tolerance);
+            valSetLower[i]  = (unsigned short) valSet[i] - abs((unsigned short) tolerance);
+            break;
+        case DBR_FLOAT:
+        case DBR_DOUBLE:
+        default:
+
+            valSetUpper[i]  = (CTYPE) (valSet[i] + fabs((double)tolerance));
+            valSetLower[i]  = (CTYPE) (valSet[i] - fabs((double)tolerance));
+
+            break;
+        }
+
+
+        std::vector<MonitorPolicy> mpVMatch;
+        mpVMatch.clear();
+
+        helper.getMonitorPolicyVector(handleMatch[i], mpVMatch);
+
+        nMonitors[i]=mpVMatch.size();
+
+        monitorID[i]=0;
+
+        ////valGetA[0][i]=0;
+        valGet[i]=0;
+
+        statMonitor[i]=ICAFE_NORMAL;
+	statusV.push_back(ICAFE_NORMAL);  
+    }
+
+
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+
+        //what is monitorpolicy??
+        if (nMonitors[i]==0)
+        {
+
+            unsigned int  _nelemPrevious, _nelemRequestedCheck=0;
+            unsigned int  _nelemRequested=1;
+            _nelemPrevious=helper.getNelemClient(handleMatch[i]);
+            //Check the number of elements requested?
+            if (_nelemPrevious>1)
+            {
+                _nelemRequestedCheck = helper.setNelem(handleMatch[i],_nelemRequested);
+                if (_nelemRequestedCheck != _nelemRequested)
+                {
+                    std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+                    std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
+                              << _nelemPrevious << std::endl;
+                    std::cout << "to: " << _nelemRequested << " but got instead: "
+                              << _nelemRequestedCheck  << std::endl;
+                }
+            }
+
+            //first do get to update cache before monitor starts
+            status=Instant::get(handleMatch[i], dbrType, valGetA);
+
+            valGet[i]=valGetA[0];
+
+            if (_nelemPrevious>1)
+            {
+                helper.setNelem(handleMatch[i],_nelemPrevious);
+            }
+
+
+            if (status!=ICAFE_NORMAL)
+            {
+                std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+                cstat.report(status);
+            }
+
+            ChannelWhenToFlushSendBufferPolicyKind whenKind=
+                connect.channelMonitorPolicy.getWhenToFlushSendBuffer();
+            connect.channelMonitorPolicy.setWhenToFlushSendBuffer(FLUSH_AUTOMATIC);
+
+            statMonitor[i]=connect.monitorStart(handleMatch[i], monitorID[i]);
+
+            if (statMonitor[i]!=ICAFE_NORMAL)
+            {
+                std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+                cstat.report(statMonitor[i]);
+            }
+            else
+            {
+                if(printFlag)
+                {
+                    std::cout << "MONITOR STARTED WITH ID=" << monitorID[i] << std::endl;
+                }
+            }
+            //revert to previous
+            if (whenKind != FLUSH_AUTOMATIC)
+            {
+                connect.channelMonitorPolicy.setWhenToFlushSendBuffer(whenKind);
+            }
+
+        } //if nMonitors
+
+        ////valSetA[0][i]=valSet[i];
+
+        //set No of Elements to 1
+
+        unsigned int  nelemPrevious, nelemRequestedCheck=0;
+        unsigned int  nelemRequested=1;
+
+
+        nelemPrevious=helper.getNelemClient(handleMatch[i]);
+        //Check the number of elements requested?
+        if (nelemPrevious>1)
+        {
+            nelemRequestedCheck = helper.setNelem(handleMatch[i],nelemRequested);
+            if (nelemRequestedCheck != nelemRequested)
+            {
+                std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+                std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
+                          << nelemPrevious << std::endl;
+                std::cout << "to: " << nelemRequested << " but got instead: "
+                          << nelemRequestedCheck  << std::endl;
+            }
+        }
+
+        //No of elements to get from Cache
+
+        ////unsigned int nelemPreviousCheck=0;
+        nelemRequested=1;
+        nelemRequestedCheck=0;
+        nelemPreviousCache[i]=helper.getNelemRequest(handleMatch[i]);
+
+        //Check the number of elements requested
+        //See set and Match; this needs to be checked
+        //Avoid problem when readback channel is the very same as the set(!)
+        if (nelemPreviousCache[i]>0  && helper.getNelemNative(handleMatch[i])>1)
+        {
+            nelemRequestedCheck = helper.setNelemToRetrieveFromCache(handleMatch[i],nelemRequested);
+            if (nelemRequestedCheck != nelemRequested)
+            {
+                std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+                std::cout << "Internal CAFE FUNNY: Wanted to set the no. elements from: "
+                          << nelemPreviousCache[i] << std::endl;
+                std::cout << "to: " << nelemRequested << " but got instead: "
+                          << nelemRequestedCheck  << std::endl;
+            }
+        }
+
+    } //if size_t
+
+    //start time
+
+    double timeElapsed=0;
+    double timeElapsed2=0;
+    double timeElapsedBase=0;
+    using namespace boost::posix_time;
+
+    ptime timeStart(microsec_clock::local_time());
+
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+
+        valGetA[0]=0;
+
+        status=Instant::getCache(handleMatch[i], dbrType, valGetA);
+
+        valGet[i]=valGetA[0];
+
+        if (status !=ICAFE_NORMAL)
+        {
+            std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+            cstat.report(status);
+        }
+
+        ///valGet[i]=valGetA[0][i];
+        if (dbrType==DBR_CHAR)
+        {
+            valGet[i] = (unsigned short) valGet[i];
+        }
+
+        if(printFlag)
+        {
+            std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+            std::cout << "Current Cached Value = " << valGet[i] << std::endl;
+            std::cout << "Lower/Upper Target Values = " << valSetLower[i] << " and " << valSetUpper[i] << std::endl;
+        }
+
+    } //for size_t
+
+
+
+    ptime timeEnd(microsec_clock::local_time());
+    time_duration duration(timeEnd-timeStart);
+    timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+
+
+        while ( (valGet[i]>valSetUpper[i] || valGet[i]<valSetLower[i] )
+                && timeElapsed < timeout )
+        {
+
+            valGetA[0]=0;
+
+            status=Instant::getCache(handleMatch[i], dbrType, valGetA);
+            valGet[i]=valGetA[0];
+
+            //std::cout <<"Cached value " << valGet[i] << std::endl;
+
+            if (dbrType==DBR_CHAR)
+            {
+                valGet[i] = (unsigned short) valGet[i];
+            }
+
+            //std::cout << valSetUpper[i] << " U/L " << valSetLower[i] << std::endl;
+
+            ptime timeEnd(microsec_clock::local_time());
+            time_duration duration(timeEnd-timeStart);
+            timeElapsed= (double) duration.total_microseconds()/1000000.0;
+
+            timeElapsed2=timeElapsed-timeElapsedBase;
+
+            if (printFlag && timeElapsed2>1 && status==ICAFE_NORMAL)
+            {
+
+                for (size_t ij=0; ij< handleMatch.size(); ++ij)
+                {
+                    status=Instant::getCache(handleMatch[ij], dbrType, valGetA);
+                    valGet[ij]=valGetA[0];
+                    if (valGet[ij]>valSetUpper[ij] || valGet[ij]<valSetLower[ij])
+                    {
+                        std::cout << "REPORTING ON: " << helper.getPVFromHandle(handleMatch[ij]) << " SET VALUE= " << valSet[ij] \
+                                  <<" WHILE CURRENT READBACK VALUE=" << valGet[ij]
+                                  << " TimeElapsed " << timeElapsed << " (sec) " << std::endl;
+
+                    }
+                }
+                timeElapsedBase=timeElapsed;
+
+            }
+
+
+#if HAVE_BOOST_THREAD
+            boost::this_thread::sleep_for(boost::chrono::microseconds(20));
+#else
+#if HAVE_LINUX
+            usleep(20);
+#endif
+#endif
+        }
+
+
+
+    } //for size_t
+
+
+
+    if (timeout <=timeElapsed )
+    {
+        std::cout << "*****TIMEOUT REACHED****** AFTER " << timeout << " (sec) " << std::endl;
+        status=ECAFE_TIMEOUT_SET_AND_MATCH;
+      
+        for (size_t i=0; i< handleMatch.size(); ++i)
+        {
+	  if (valGet[i]>valSetUpper[i] || valGet[i]<valSetLower[i] ) {
+	    statusV[i] = status;
+	  }
+	}
+               
+    }
+    else
+    {
+
+        for (size_t i=0; i< handleMatch.size(); ++i)
+        {
+
+            //if (printFlag) {std::cout << "MONITOR STARTED WITH ID/2-/=" << monitorID[i] << std::endl;}
+            if (printFlag)
+            {
+                valGetA[0]=0;
+                status=Instant::getCache(handleMatch[i], dbrType, valGetA);
+                valGet[i]=valGetA[0];
+                std::cout << "GAME SET AND MATCH==>: "   << " SET VALUE= " << valSet[i] << " // " << helper.getPVFromHandle(handleMatch[i])  << " READBACK VALUE= " << valGet[i] //pvdMatch.getAsDouble()
+                          << " TimeElapsed " << timeElapsed << " (sec) " << "status " << statusV[i] << std::endl;
+		
+            }
+
+        } //for
+    }
+
+
+    for (size_t i=0; i< handleMatch.size(); ++i)
+    {
+        unsigned int  nelemPreviousCheck;
+        unsigned int  nelemRequested=1;
+
+
+        if (nelemPreviousCache[i]>1)
+        {
+            nelemPreviousCheck= helper.setNelemToRetrieveFromCache(handleMatch[i],nelemPreviousCache[i]);
+            if (nelemPreviousCheck != nelemPreviousCache[i])
+            {
+                std::cout << __FILE__ << "//" << __LINE__ << "//" << __METHOD__ << std::endl;
+                std::cout << "Internal CAFE FUNNY: Wanted to re-set the no. elements from: "
+                          << nelemRequested << std::endl;
+                std::cout << "to the previous: " << nelemPreviousCache[i] << " but got instead: "
+                          << nelemPreviousCheck  << std::endl;
+            }
+        }
+
+
+
+        if (nMonitors[i]==0 && statMonitor[i]==ICAFE_NORMAL)
+        {
+            std::cout << "STOPPING MONITOR WITH ID=" << monitorID[i] << std::endl;
+            int statm;
+            statm=connect.monitorStop(handleMatch[i], monitorID[i]);
+            if(status==ICAFE_NORMAL)
+            {
+                status=statm;
+            }
+        }
+
+    } //for
+
+
+    return status;
+#undef __METHOD__
+}
 
 
 

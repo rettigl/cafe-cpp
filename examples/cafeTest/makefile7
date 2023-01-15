@@ -39,6 +39,10 @@ LIB_DIR += -L$(EPICS_BASE)/lib/${EPICS_HOST_ARCH} \
 
 LIBS += -lcafe -lca -lCom -lQt5Core -lpython3.7m
 
+${EPICS_HOST_ARCH}/monitorTest: monitorTest.cc 
+	g++ monitorTest.cc -o ${EPICS_HOST_ARCH}/monitorTest \
+	$(INCLUDE_PATH) $(LIB_DIR) $(LIBS)
+
 cafeTest: cafeTest.cc callbacks.h
 	g++ cafeTest.cc -o cafeTest \
 	$(INCLUDE_PATH) $(LIB_DIR) $(LIBS)

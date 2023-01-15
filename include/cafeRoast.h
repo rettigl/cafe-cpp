@@ -325,6 +325,128 @@ int matchMany(std::vector<std::string> valSetV, std::vector<unsigned int> handle
 
 
 
+
+//
+int matchManyWithStatus(std::vector<dbr_double_t> valSet, std::vector<unsigned int> handleMatch,
+			dbr_double_t tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+  
+  status = cafeDoppio.matchManyWithStatus(DBR_DOUBLE, valSet, handleMatch, tolerance, timeout, printFlag, statusV);
+ 
+  return status;
+}
+
+
+int matchManyWithStatus(std::vector<dbr_float_t> valSet, std::vector<unsigned int> handleMatch,
+              dbr_float_t tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+    return cafeFrappuccino.matchManyWithStatus(DBR_FLOAT, valSet, handleMatch, tolerance, timeout, printFlag, statusV);
+}
+
+
+int matchManyWithStatus(std::vector<dbr_char_t> valSet, std::vector<unsigned int> handleMatch,
+              dbr_char_t tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+    return cafeCappuccino.matchManyWithStatus(DBR_CHAR, valSet, handleMatch, tolerance, timeout, printFlag, statusV);
+}
+
+int matchManyWithStatus(std::vector<dbr_enum_t> valSet, std::vector<unsigned int> handleMatch,
+              dbr_enum_t tolerance, double timeout, bool printFlag,  std::vector<int> statusV)
+{
+    return cafeEspresso.matchManyWithStatus(DBR_ENUM, valSet, handleMatch, tolerance, timeout, printFlag, statusV);
+}
+
+int matchManyWithStatus(std::vector<dbr_short_t> valSet, std::vector<unsigned int> handleMatch,
+              dbr_short_t tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+    return cafeSchale.matchManyWithStatus(DBR_SHORT, valSet, handleMatch, tolerance, timeout, printFlag, statusV);
+}
+
+
+int matchManyWithStatus(std::vector<dbr_long_t> valSet, std::vector<unsigned int> handleMatch,
+              dbr_long_t tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+    return cafeLatte.matchManyWithStatus(DBR_LONG, valSet, handleMatch, tolerance, timeout, printFlag, statusV);
+}
+
+
+int matchManyWithStatus(std::vector<long long> valSet, std::vector<unsigned int> handleMatch,
+              long long tolerance, double timeout, bool printFlag,  std::vector<int> &statusV)
+{
+
+    std::vector<dbr_double_t> valSetDoubleV;
+    valSetDoubleV.reserve(valSet.size());
+
+    std::copy(valSet.begin(), valSet.end(),
+              std::back_inserter(valSetDoubleV));
+
+    dbr_double_t toleranceDouble = tolerance;
+
+    return cafeDoppio.matchManyWithStatus(DBR_DOUBLE, valSetDoubleV, handleMatch, toleranceDouble, timeout, printFlag, statusV);
+}
+
+
+
+
+int matchManyWithStatus(std::vector<std::string> valSetV, std::vector<unsigned int> handleMatchV,
+              std::string tolerance, double timeout, bool printFlag, std::vector<int> &statusV)
+{
+#define __METHOD__ "matchManyWithStatus (std::vector<string> valSetV, std::vector<unsigned int> handleMatchV, \
+                string tolerance, double timeout, bool printFlag, std::vector<int> statusV)"
+
+    std::vector<dbr_double_t> valSetDoubleV;
+
+    std::istringstream ss;
+    dbr_double_t d=0;
+    dbr_double_t toleranceDouble = 0;
+    for (size_t i=0; i< valSetV.size(); ++i)
+    {
+        d=0;
+        ss.clear();
+        ss.str(valSetV[i]);
+        ss>>d;
+
+        if ( !ss.fail())
+        {
+            valSetDoubleV.push_back(d);
+        }
+        else
+        {
+            std::cout << __METHOD__ << __LINE__ << std::endl;
+            std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
+            std::cout << "***WARNING*** COULD NOT CONVERT: ";
+            std::cout << valSetV[i];
+            std::cout << " TO DOUBLE!" << std::endl;
+            return ECAFE_NO_CONVERT;
+        }
+    }
+
+    d=0;
+    ss.clear();
+    ss.str(tolerance);
+    ss>>d;
+
+    if ( !ss.fail())
+    {
+        toleranceDouble=d;
+    }
+    else
+    {
+        std::cout << __METHOD__ << __LINE__ << std::endl;
+        std::cout << "***WARNING*** NO STRING TO DBR_DOUBLE CONVERSION " << std::endl;
+        std::cout << "***WARNING*** COULD NOT CONVERT: ";
+        std::cout << tolerance;
+        std::cout << " TO DOUBLE!" << std::endl;
+        return ECAFE_NO_CONVERT;
+    }
+
+    return cafeDoppio.matchManyWithStatus(DBR_DOUBLE, valSetDoubleV, handleMatchV, toleranceDouble, timeout, printFlag, statusV);
+#undef __METHOD__
+}
+
+
+
+
 int setAndMatchMany(std::vector<unsigned int> handleSet, std::vector<dbr_double_t> valSet, std::vector<unsigned int> handleMatch,
                     dbr_double_t tolerance, double timeout, bool printFlag)
 {

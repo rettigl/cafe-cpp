@@ -1124,7 +1124,7 @@ int main( int argc, char *argv[] )
 
     MonitorPolicy mp, mp2;
     mp.setUserArgs((void *) pvArray[0].c_str());
-    mp.setHandler(callbackHandlerMonitor);
+    mp.setHandler(callbackHandlerMoqnitor);
     mp.setCafeDbrType(CAFENUM::DBR_TIME);
     mp.setDataType(DBR_STS_FLOAT); //THis will overwrite DBR_TIME above
     mp.setMask(DBE_VALUE | DBE_LOG | DBE_ALARM);

@@ -23,7 +23,7 @@ automake --force --add-missing --copy
 #Used by ./configure
 #Assumes format ${EPICS}/base-3.14.12
 #source cafeVersion-gcc-7.3.0
-CAFE_V="cafe-1.16.1"
+CAFE_V="cafe-1.18.0"
 #For later check of existence of HOST_ARCH for $EPICS/include/os/$HOST_ARCH
 #Assume Linux but check if Darwin
 CAFE_HOST_FLAG_DARWIN=$(echo ${EPICS_HOST_ARCH} | grep -c "Darwin") 
@@ -249,7 +249,7 @@ CAFE_V+="-gcc-"$GCC_VERSION
 
 echo "$CAFE_V"
 
-#echo 'EPICS BASE IS='$EPICS_BASE
+echo 'EPICS BASE IS='$EPICS_BASE
 #echo 'EPICS BASE DIR='${EPICS}/base-7.0.4.1
 
 EB1=$(echo $EPICS_BASE | sed -e "s/[a-zA-Z]*-//g")
@@ -275,7 +275,7 @@ export CAFE_EPICS_V_PATCH=$EBPAT
 #ENABLE_OPTIONS+=" --enable-curl"
 #ENABLE_OPTIONS+=" --enable-lz4"
 
-echo 'ENABLE_OPTIONS='$ENABLE_OPTIONS
+echo 'ENABLE_OPTIONS============> '$ENABLE_OPTIONS
 
 ./configure \
     --prefix=/opt/gfa/cafe/cpp/${CAFE_V} \
