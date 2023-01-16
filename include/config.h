@@ -72,7 +72,7 @@
 /* #undef HAVE_LIBPYTHON3_8 */
 
 /* Define to 1 if you have the `Qt5Core' library (-lQt5Core). */
-/* #undef HAVE_LIBQT5CORE */
+#define HAVE_LIBQT5CORE 1
 
 /* Define to 1 if you have the `Qt5Xml' library (-lQt5Xml). */
 #define HAVE_LIBQT5XML 1
@@ -160,6 +160,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "cafe"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "1.18.0"
