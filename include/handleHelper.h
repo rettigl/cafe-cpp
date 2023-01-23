@@ -259,8 +259,8 @@ public:
         {
             std::string nsS = static_cast<std::ostringstream*>( &(std::ostringstream() << ts.nsec) )->str();
             int l=nsS.length();
-            int startPos=std::max(l-6,0);
-            std::string pidS = nsS.substr(startPos,std::min(6,l));
+            int startPos=(std::max)(l-6,0);
+            std::string pidS = nsS.substr(startPos,(std::min)(6,l));
             if ( ! (std::istringstream(pidS) >> pulseID) ) pulseID = 0;
         }
         return status;
@@ -271,8 +271,8 @@ public:
         unsigned int pulseID;
         std::string nsS = static_cast<std::ostringstream*>( &(std::ostringstream() << ts.nsec) )->str();
         int l=nsS.length();
-        int startPos=std::max(l-6,0);
-        std::string pidS = nsS.substr(startPos,std::min(6,l));
+        int startPos=(std::max)(l-6,0);
+        std::string pidS = nsS.substr(startPos,(std::min)(6,l));
         if ( ! (std::istringstream(pidS) >> pulseID) ) pulseID = 0;
         return pulseID;
     }

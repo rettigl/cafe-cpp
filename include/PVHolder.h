@@ -301,7 +301,7 @@ public:
     };
     void set(long long l)
     {
-        if (l > std::numeric_limits<dbr_long_t>::max())
+        if (l > (std::numeric_limits<dbr_long_t>::max)())
         {
             std::cout << "WARNING: INPUT VALUE GREATER THAN MAX LIMIT OF dbr_long_t " << std::endl;
             std::cout << "TYPE CASTING TO DOUBLE! " << std::endl;
@@ -321,7 +321,7 @@ public:
     };
     void set(unsigned long long  l)
     {
-        if (l > (unsigned long long) std::numeric_limits<dbr_long_t>::max())
+        if (l > (unsigned long long) (std::numeric_limits<dbr_long_t>::max)())
         {
             std::cout << "WARNING: INPUT VALUE GREATER THAN MAX LIMIT OF dbr_long_t " << std::endl;
             std::cout << "TYPE CASTING TO DOUBLE! " << std::endl;

@@ -233,7 +233,7 @@ public:
     }
     void print(unsigned int  npvToPrint)
     {
-        npvToPrint=std::min(npvToPrint,npv);
+        npvToPrint=(std::min)(npvToPrint,npv);
         std::cout << "------------ PVGroup Handle = " << groupHandle << " ------------ "<< std::endl;
         std::cout << "PVGROUP: " << name << " HAS " << npv << " MEMBERS " << std::endl;
         std::cout << "PRINTING THE REQUESTED " << npvToPrint << " MEMBERS " << std::endl;
@@ -252,7 +252,7 @@ public:
     }
     void print(unsigned int  npvToPrint, unsigned int  maxNelemWF)
     {
-        npvToPrint=std::min(npvToPrint,npv);
+        npvToPrint=(std::min)(npvToPrint,npv);
         std::cout << "------------ PVGroup Handle = " << groupHandle << " ------------ "<< std::endl;
         std::cout << "PVGROUP: " << name << " HAS " << npv << " MEMBERS " << std::endl;
         std::cout << "PRINTING THE REQUESTED " << npvToPrint << " MEMBERS " << std::endl;
@@ -266,7 +266,7 @@ public:
         {
             std::cout <<  "------------------------------------------" << std::endl;
             std::cout <<  "Element [" << i << "] of " << npvToPrint << " in group: " << name << std::endl;
-            pvdata[i].print(std::min(maxNelemWF,pvdata[i].getNelem()));
+            pvdata[i].print((std::min)(maxNelemWF,pvdata[i].getNelem()));
         }
     }
 

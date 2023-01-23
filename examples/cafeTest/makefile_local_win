@@ -1,22 +1,26 @@
-INCLUDES = -Ic:\CAFE\CAFE\cpp\include -Ic:\CAFE\CAFE\cpp -Ic:\local\boost_1_62_0 \
--Ic:\local\boost_1_62_0\boost  -Ic:\epics\base-3.14.12.5\include -Ic:\epics\base-3.14.12.5\include\os\WIN32 \
--Ic:\Qt\4.8.4\include
+INCLUDES = -Ic:\EPICS\CAFE\cpp\include -Ic:\EPICS\CAFE\cpp -Ic:\EPICS\boost_1_81_0 \
+-Ic:\EPICS\boost_1_81_0\boost  -IC:\epics\epics-base\include -IC:\epics\epics-base\include\os\WIN32 \
+-Ic:\EPICS\epics-base\include\compiler\msvc \
+#-Ic:\Qt\4.8.4\include
 CXX=cl
-CXXFLAGS = /W4 /EHsc
-OUTPUT_OPTION = /o $@
-LIB_LOCAL = C:\epics\base-3.14.12.5\lib\windows-x64\Com.lib C:\epics\base-3.14.12.5\lib\windows-x64\ca.lib \
-C:\CAFE\CAFE\cpp\cafe.lib \
-C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_thread-vc100-mt-s-1_62.lib \
-C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_system-vc100-mt-s-1_62.lib \
-C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_date_time-vc100-mt-s-1_62.lib \
-C:\local\boost_1_62_0\lib64-msvc-10.0\libboost_chrono-vc100-mt-s-1_62.lib \
-C:\Qt\4.8.4\lib\QtCore4.lib C:\Qt\4.8.4\lib\QtXml4.lib
+CXXFLAGS = -DUSE_TYPED_RSET  -EHsc   -nologo -FC -D__STDC__=0 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE    -Ox -GL -Oy-   -W3        -MD -c
+OUTPUT_OPTION = /Fo"$@"
+LIB_LOCAL = C:\epics\epics-base\lib\win32-x86\Com.lib C:\epics\epics-base\lib\win32-x86\ca.lib \
+C:\EPICS\CAFE\cpp\cafe.lib \
+C:\EPICS\boost_1_81_0\stage\lib\\libboost_thread-vc142-mt-x32-1_81.lib \
+C:\EPICS\boost_1_81_0\stage\lib\\libboost_system-vc142-mt-x32-1_81.lib \
+C:\EPICS\boost_1_81_0\stage\lib\\libboost_date_time-vc142-mt-x32-1_81.lib \
+C:\EPICS\boost_1_81_0\stage\lib\\libboost_chrono-vc142-mt-x32-1_81.lib \
+# C:\Qt\4.8.4\lib\QtCore4.lib C:\Qt\4.8.4\lib\QtXml4.lib
 
 cafeTest: cafeTest.obj
-	$(CXX) cafeTest.obj $(LIB_LOCAL) 
+	link -nologo  -LTCG -incremental:no -opt:ref -release cafeTest.obj $(LIB_LOCAL)
 	
-cafeTest.obj: cafeTest.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) /c cafeTest.cpp
+cafeTest.obj: cafeTest.cc
+	$(CXX) $(CXXFLAGS) $(INCLUDES) cafeTest.cc
+
+clean:
+	del *.obj 
 	
 #"C:\Program Files (x86)\GnuWin32\bin\make" 
 

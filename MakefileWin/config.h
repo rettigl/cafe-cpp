@@ -1,15 +1,15 @@
 
 /* epics major release */
-#define EPICS_MAJOR 3
+#define EPICS_MAJOR 7
 
 /* epics minor release */
-#define EPICS_MINOR 14
+#define EPICS_MINOR 0
 
 /* epics patch release */
-#define EPICS_PATCH 12
+#define EPICS_PATCH 6
 
 /* epics version */
-#define HAVE_EPICS 3.14.12
+#define HAVE_EPICS 7.0.6
 
 /* Define to 1 if you have the <epicsTypes.h> header file. */
 #define HAVE_EPICSTYPES_H 1
@@ -23,3 +23,6 @@
 /* Define to 1 if you have the <Python.h> header file. */
 /*#define HAVE_PYTHON_H 1 */
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif

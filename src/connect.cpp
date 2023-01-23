@@ -197,7 +197,7 @@ int Connect::createChannel(unsigned int handle, const char * pv, chid &pCh)
             {
 
 #if HAVE_BOOST_THREAD
-                boost::this_thread::sleep_for(boost::chrono::microseconds(microSedcondsWait));
+                boost::this_thread::sleep_for(boost::chrono::microseconds(microSecondsWait));
 #else
 #if HAVE_LINUX
                 usleep(microSecondsWait);

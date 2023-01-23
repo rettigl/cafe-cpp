@@ -88,7 +88,13 @@ int CAFE::wfExpress(const unsigned int handle,  const unsigned int nelem, dbr_ch
       ca_flush_io();
       for (int i=0; i <20; ++i) {
 
-	sleep(0.05);
+#if HAVE_BOOST_THREAD
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
+#else
+#if HAVE_LINUX
+	    sleep(0.05);
+#endif
+#endif
 	//std::cout << "iscb done " << cafeGranules.isGetCallbackDone(handle) << std::endl;
 
       }
@@ -5238,7 +5244,13 @@ int CAFE::supplementHandlesV(std::vector<unsigned int> hV)
     for (int ij=0; ij<20; ++ij) {
 	    if (!initCallbackComplete(allHandles) ) {
 	      //cout << "Will wait for " << ij << " " << (1+ij)*0.1 << " ======= SECONDS ==== " << endl;
-	      usleep(100000); //tenth of a sec and loop over 2 sec
+#if HAVE_BOOST_THREAD
+                boost::this_thread::sleep_for(boost::chrono::microseconds(100000)); //tenth of a sec and loop over 2 sec
+#else
+#if HAVE_LINUX
+                usleep(100000); //tenth of a sec and loop over 2 sec
+#endif
+#endif
 	    }
      }
    

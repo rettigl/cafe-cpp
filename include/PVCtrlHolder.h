@@ -387,7 +387,7 @@ public:
     void print(unsigned int  nelemToPrint)
     {
 
-        nelemToPrint=std::min(nelemToPrint,nelem);
+        nelemToPrint=(std::min)(nelemToPrint,nelem);
         std::cout <<  "------------------------------------------" << std::endl;
         std::cout <<  "PVCtrlHolder:" << std::endl;
         std::cout <<  "processVariable= "  << pv << std::endl;

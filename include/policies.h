@@ -120,7 +120,7 @@ public:
     }
     unsigned short setPriority(unsigned short p)
     {
-        priority=std::min(p,(unsigned short) CA_SERVER_DISPATCH_PRIORITY_MAX);
+        priority=(std::min)(p,(unsigned short) CA_SERVER_DISPATCH_PRIORITY_MAX);
         return priority;
     }
 
@@ -462,17 +462,17 @@ public:
     };
     double setTimeout(double t)
     {
-        timeout=std::max(t,TIMEOUT_PEND_IO_MIN);
-        return timeout=std::min(timeout,TIMEOUT_PEND_IO_MAX);
+        timeout=(std::max)(t,TIMEOUT_PEND_IO_MIN);
+        return timeout=(std::min)(timeout,TIMEOUT_PEND_IO_MAX);
     };
     double setDeltaTimeout(double dt)
     {
-        deltaTimeout=std::max(dt,PEND_IO_INCREMENT_TIME_MIN);
-        return deltaTimeout=std::min(deltaTimeout,PEND_IO_INCREMENT_TIME_MAX);
+        deltaTimeout=(std::max)(dt,PEND_IO_INCREMENT_TIME_MIN);
+        return deltaTimeout=(std::min)(deltaTimeout,PEND_IO_INCREMENT_TIME_MAX);
     };
     unsigned short setNtries(unsigned short nt)
     {
-        return ntries=std::min(nt, PEND_IO_MAX_TRIES);
+        return ntries=(std::min)(nt, PEND_IO_MAX_TRIES);
     };
 
     double setDefaultTimeout(double t)

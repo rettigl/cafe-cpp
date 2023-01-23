@@ -263,7 +263,7 @@ public:
 
     void print(unsigned int  nelemToPrint)
     {
-        nelemToPrint=std::min(nelemToPrint,nelem);
+        nelemToPrint=(std::min)(nelemToPrint,nelem);
         if (strcmp(pv,"")==0)
         {
             std::cout <<  "Process Variable NOT ASSIGNED!" << std::endl;

@@ -113,7 +113,7 @@ public:
         double g;
         int  st;
         st=getTimeout(_handle, p, g);
-        pg=std::min(p,g);
+        pg=(std::min)(p,g);
         return st;
     }
     int  getTimeoutPut(unsigned int  _handle, double &p)
@@ -192,7 +192,7 @@ public:
         double g;
         int  st;
         st=getSGTimeout(_handle, p, g);
-        pg=std::min(p,g);
+        pg=(std::min)(p,g);
         return st;
     }
     int  getSGTimeoutPut(unsigned int  _handle, double &p)

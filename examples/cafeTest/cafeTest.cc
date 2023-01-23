@@ -1124,7 +1124,7 @@ int main( int argc, char *argv[] )
 
     MonitorPolicy mp, mp2;
     mp.setUserArgs((void *) pvArray[0].c_str());
-    mp.setHandler(callbackHandlerMoqnitor);
+    mp.setHandler(callbackHandlerMonitor);
     mp.setCafeDbrType(CAFENUM::DBR_TIME);
     mp.setDataType(DBR_STS_FLOAT); //THis will overwrite DBR_TIME above
     mp.setMask(DBE_VALUE | DBE_LOG | DBE_ALARM);
@@ -1142,7 +1142,13 @@ int main( int argc, char *argv[] )
 
 
     cafe->set(hArray[0], 1.1023456);
-    usleep(100000); // 0.1s just about long enough to trigger an extra monitor
+#if HAVE_BOOST_THREAD
+    boost::this_thread::sleep_for(boost::chrono::microseconds(100000)); // 0.1s just about long enough to trigger an extra monitor
+#else
+#if HAVE_LINUX
+	usleep(100000); // 0.1s just about long enough to trigger an extra monitor
+#endif
+#endif
 
 
 
@@ -1302,7 +1308,13 @@ int main( int argc, char *argv[] )
         cout << glist[i]  << " " << i << endl;
     }
 
-    sleep(5);
+#if HAVE_BOOST_THREAD
+        boost::this_thread::sleep_for(boost::chrono::seconds(5));
+#else
+#if HAVE_LINUX
+	    sleep(5);
+#endif
+#endif
 
     cafe->groupClose();
     glist.clear();
