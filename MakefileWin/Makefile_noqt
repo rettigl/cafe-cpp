@@ -5,7 +5,7 @@ INCLUDES = -IC:\EPICS\CAFE\cpp\include -IC:\EPICS\CAFE\cpp -IC:\EPICS\boost_1_81
 #-IC:\Qt\qt-4.8.6-msvc2010\include\QtXml \
 #-IC:\Users\chrin\AppData\Local\Continuum\Anaconda3\envs\py345\include
 CXX=cl
-CXXFLAGS = -DUSE_TYPED_RSET  -EHsc   -nologo -FC -D__STDC__=0 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE    -Ox -GL -Oy-   -W3        -MDd -DEPICS_BUILD_DLL -DEPICS_CALL_DLL -c
+CXXFLAGS = -DUSE_TYPED_RSET  -EHsc   -nologo -FC -D__STDC__=0 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE    -Ox -GL -Oy-   -W3        -MD -DEPICS_BUILD_DLL -DEPICS_CALL_DLL -c
 
 #OUTPUT_OPTION = /o "$@"
 OUTPUT_OPTION = /Fo"$@"

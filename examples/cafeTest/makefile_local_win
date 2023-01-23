@@ -3,7 +3,7 @@ INCLUDES = -Ic:\EPICS\CAFE\cpp\include -Ic:\EPICS\CAFE\cpp -Ic:\EPICS\boost_1_81
 -Ic:\EPICS\epics-base\include\compiler\msvc \
 #-Ic:\Qt\4.8.4\include
 CXX=cl
-CXXFLAGS = -DUSE_TYPED_RSET  -EHsc   -nologo -FC -D__STDC__=0 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE    -Ox -GL -Oy-   -W3        -MD -c
+CXXFLAGS = -DUSE_TYPED_RSET  -EHsc   -nologo -FC -D__STDC__=0 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE    -Ox -GL -Oy-   -W3        -MD -DEPICS_BUILD_DLL -DEPICS_CALL_DLL -c
 OUTPUT_OPTION = /Fo"$@"
 LIB_LOCAL = C:\epics\epics-base\lib\win32-x86\Com.lib C:\epics\epics-base\lib\win32-x86\ca.lib \
 C:\EPICS\CAFE\cpp\cafe.lib \
